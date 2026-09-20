@@ -1,0 +1,158 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      FRAPPE_COMMIT: c1f1e8ec3708750d7254f7f99d869ffb9886f19f
+      ERPNEXT_COMMIT: 12cd563fb9a79731f75ae2a45b1446a0a2dd9e74
+      BENCH_PATH: /home/runner/frappe-bench
+      CI: "Yes"
+    services:
+      mariadb:
+        image: mariadb@sha256:79d59758afc91b89b120b0a8904d637f5a3b3e1c4900f29b740d6d46c72fef68
+        env:
+          MARIADB_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mariadb-admin ping -proot"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+      redis:
+        image: redis@sha256:7aec734b2bb298a1d769fd8729f13b8514a41bf90fcdd1f38ec52267fbaa8ee6
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+
+    steps:
+      - name: Check out frappe_lt
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Python 3.14
+        uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
+        with:
+          python-version: "3.14"
+
+      - name: Set up Node 24
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+        with:
+          node-version: "24"
+          package-manager-cache: false
+
+      - name: Install bench prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes mariadb-client libmariadb-dev pkg-config
+          python -m pip install --disable-pip-version-check "frappe-bench==5.31.0"
+
+      - name: Fetch pinned Frappe
+        run: |
+          git init /home/runner/frappe
+          git -C /home/runner/frappe remote add origin https://github.com/frappe/frappe.git
+          git -C /home/runner/frappe fetch --depth 1 origin "$FRAPPE_COMMIT"
+          git -C /home/runner/frappe checkout --detach FETCH_HEAD
+          bench init --skip-assets --skip-redis-config-generation --python "$(which python)" --frappe-path /home/runner/frappe "$BENCH_PATH"
+
+      - name: Configure bench services
+        working-directory: /home/runner/frappe-bench
+        run: |
+          bench set-config -g db_host 127.0.0.1
+          bench set-config -g redis_cache redis://127.0.0.1:6379/0
+          bench set-config -g redis_queue redis://127.0.0.1:6379/1
+          bench set-config -g redis_socketio redis://127.0.0.1:6379/2
+
+      - name: Fetch pinned ERPNext before frappe_lt
+        run: |
+          git init /home/runner/erpnext
+          git -C /home/runner/erpnext remote add origin https://github.com/frappe/erpnext.git
+          git -C /home/runner/erpnext fetch --depth 1 origin "$ERPNEXT_COMMIT"
+          git -C /home/runner/erpnext checkout --detach FETCH_HEAD
+          bench get-app --skip-assets erpnext /home/runner/erpnext
+          test "$(git -C apps/erpnext status --porcelain)" = " M banking/yarn.lock"
+          git -C apps/erpnext restore --source="$ERPNEXT_COMMIT" --staged --worktree -- banking/yarn.lock
+          bench get-app --skip-assets frappe_lt "$GITHUB_WORKSPACE"
+          bench setup requirements --dev --python
+        working-directory: /home/runner/frappe-bench
+
+      - name: Assert upstream commits
+        working-directory: /home/runner/frappe-bench
+        run: |
+          test "$(git -C apps/frappe rev-parse HEAD)" = "$FRAPPE_COMMIT"
+          test "$(git -C apps/erpnext rev-parse HEAD)" = "$ERPNEXT_COMMIT"
+
+      - name: Create site and install in order
+        working-directory: /home/runner/frappe-bench
+        run: |
+          bench new-site test_site --db-host 127.0.0.1 --db-root-username root --db-root-password root --admin-password admin --mariadb-user-host-login-scope='%'
+          bench --site test_site install-app erpnext
+          bench --site test_site install-app frappe_lt
+          test "$(bench --site test_site list-apps --format json | python -c 'import json,sys; print(",".join(json.load(sys.stdin)["test_site"]))')" = "frappe,erpnext,frappe_lt"
+          bench --site test_site set-config allow_tests true
+
+      - name: Run static and unit tests
+        working-directory: /home/runner/frappe-bench
+        run: |
+          env/bin/python -m compileall -q apps/frappe_lt/frappe_lt
+          env/bin/python -m unittest frappe_lt.tests.test_verify
+
+      - name: Run integrated verification
+        working-directory: /home/runner/frappe-bench
+        run: >-
+          bench --site test_site execute frappe_lt.verify.run
+          --kwargs '{"site":"test_site","mode":"ci"}'
+
+      - name: Prove wrong digest fails with diagnostics
+        working-directory: /home/runner/frappe-bench
+        run: |
+          set +e
+          output="$(bench --site test_site execute frappe_lt.verify.run --kwargs '{"site":"test_site","mode":"ci","expected_digest":"0000000000000000000000000000000000000000000000000000000000000000"}' 2>&1)"
+          status=$?
+          set -e
+          printf '%s\n' "$output"
+          test "$status" -ne 0
+          for value in \
+            0000000000000000000000000000000000000000000000000000000000000000 \
+            "$FRAPPE_COMMIT" "$ERPNEXT_COMMIT" \
+            16.34.0 16.35.0 3.14 2.16.0 \
+            "first build:" "second build:"
+          do
+            printf '%s\n' "$output" | grep --fixed-strings "$value"
+          done
+
+      - name: Prove database masking behavior
+        working-directory: /home/runner/frappe-bench
+        run: bench --site test_site run-tests --app frappe_lt --module frappe_lt.tests.test_runtime
+
+      - name: Assert all app worktrees are clean
+        if: always()
+        working-directory: /home/runner/frappe-bench
+        run: |
+          git -C apps/frappe status --short
+          git -C apps/erpnext status --short
+          git -C apps/frappe_lt status --short
+          test -z "$(git -C apps/frappe status --porcelain)"
+          test -z "$(git -C apps/erpnext status --porcelain)"
+          test -z "$(git -C apps/frappe_lt status --porcelain)"

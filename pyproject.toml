@@ -1,0 +1,30 @@
+[project]
+name = "frappe_lt"
+authors = [
+    { name = "lokysai" }
+]
+description = "Lithuanian translations for Frappe and ERPNext"
+requires-python = ">=3.14,<3.15"
+readme = "README.md"
+license = { file = "LICENSE" }
+dynamic = ["version"]
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/lokysai/frappe-lt"
+
+[build-system]
+requires = ["flit_core >=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.ruff]
+line-length = 110
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["F", "E", "W", "I", "UP", "B", "RUF"]
+ignore = ["E501", "W191"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "tab"
