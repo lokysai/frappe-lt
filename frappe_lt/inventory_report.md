@@ -1,6 +1,6 @@
 # Translation Inventory Report
 
-Inventory digest: `faf0e9ee03edf64e7db6ff5265b72f70c403351abc62eae1aa71276606fc11aa`
+Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e1107b7`
 
 ## Lifecycle
 

@@ -24,7 +24,9 @@ from frappe_lt.inventory import (
 from frappe_lt.runtime_extraction import (
 	METADATA_SIGNATURE_CATEGORIES,
 	RUNTIME_METADATA_CATEGORIES,
+	_erpnext_installer_navbar_labels,
 	_metadata_digest,
+	_navbar_owners,
 	_validate_metadata_signatures,
 	extract_runtime,
 )
@@ -696,6 +698,29 @@ N_("marker context", "Marker")
 
 
 class RuntimeExtractionTest(TestCase):
+	def test_navbar_ownership_uses_frappe_hooks_and_erpnext_installer_source(self):
+		class FakeFrappe:
+			@staticmethod
+			def get_hooks(hook, app_name=None):
+				self.assertEqual(app_name, "frappe")
+				return [{"item_label": "About"}] if hook == "standard_navbar_items" else []
+
+		self.assertEqual(
+			set(_erpnext_installer_navbar_labels()),
+			{"Documentation", "Frappe School", "Report an Issue", "User Forum"},
+		)
+		self.assertEqual(
+			_navbar_owners(FakeFrappe()),
+			{
+				"About": {"frappe"},
+				"Documentation": {"erpnext"},
+				"Frappe School": {"erpnext"},
+				"Report an Issue": {"erpnext"},
+				"User Forum": {"erpnext"},
+			},
+		)
+		self.assertNotIn("Delete Demo Data", _navbar_owners(FakeFrappe()))
+
 	def test_runtime_requires_a_non_development_site_with_exact_pinned_apps(self):
 		class FakeFrappe:
 			class local:
@@ -886,6 +911,44 @@ class RuntimeExtractionTest(TestCase):
 		metadata["page"]["page"].append({"name": "spoofed", "title": "Spoofed", "module": "Core"})
 
 		with self.assertRaisesRegex(ValueError, "page.*computed"):
+			_validate_metadata_signatures(metadata, expected)
+
+	def test_fresh_post_install_navbar_signature_is_required(self):
+		fresh_labels = [
+			"About",
+			"Documentation",
+			"Frappe School",
+			"Frappe Support",
+			"Keyboard Shortcuts",
+			"Report an Issue",
+			"System Health",
+			"User Forum",
+		]
+		stale_labels = [
+			"About",
+			"Delete Demo Data",
+			"Frappe Support",
+			"Keyboard Shortcuts",
+			"System Health",
+		]
+		metadata = {category: {category: []} for category in METADATA_SIGNATURE_CATEGORIES}
+		metadata["navbar"] = {"Navbar Item": [{"item_label": label} for label in fresh_labels]}
+		expected = {
+			category: _metadata_digest(metadata[category]) for category in METADATA_SIGNATURE_CATEGORIES
+		}
+		self.assertEqual(
+			expected["navbar"],
+			"cc77f1af258ebbb42d2c9cc0fe13541bae0e11426611089bc95317f6c01f2946",
+		)
+		expected["navbar"] = load_compatibility()["runtime_metadata_sha256"]["navbar"]
+		_validate_metadata_signatures(metadata, expected)
+
+		metadata["navbar"] = {"Navbar Item": [{"item_label": label} for label in stale_labels]}
+		self.assertEqual(
+			_metadata_digest(metadata["navbar"]),
+			"22953e8a5717671cf6758317fa97cdeb7f330c7764923d60e9ac0c318d9c1d12",
+		)
+		with self.assertRaisesRegex(ValueError, "navbar.*computed"):
 			_validate_metadata_signatures(metadata, expected)
 
 	def test_runtime_rejects_custom_metadata_before_extracting(self):

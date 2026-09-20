@@ -163,6 +163,18 @@ jobs:
               location["origin"] == "runtime" and location["extractor"] == "custom_field"
               for location in by_key[(source, None)]["source_locations"]
             )
+          for source in ("Documentation", "Frappe School", "Report an Issue", "User Forum"):
+            entry = by_key[(source, None)]
+            assert entry["extraction_origin"] == "both"
+            assert entry["apps"] == ["erpnext"]
+            assert any(
+              location["origin"] == "runtime" and location["extractor"] == "navbar"
+              for location in entry["source_locations"]
+            )
+          assert not any(
+            location["origin"] == "runtime" and location["extractor"] == "navbar"
+            for location in by_key[("Delete Demo Data", None)]["source_locations"]
+          )
           report = by_key[("Calculated Discount Mismatch", None)]
           assert report["apps"] == ["erpnext"]
           assert any(
@@ -194,6 +206,7 @@ jobs:
           } <= extractors
           manifest = json.loads(Path("/tmp/inventory-first/compatibility.json").read_text())
           report = json.loads(Path("/tmp/inventory-first/inventory_report.json").read_text())
+          assert manifest["runtime_metadata_sha256"]["navbar"] == "cc77f1af258ebbb42d2c9cc0fe13541bae0e11426611089bc95317f6c01f2946"
           assert manifest["inventory_digest"] == report["inventory_digest"]
           for name, expected in manifest["artifact_sha256"].items():
             assert hashlib.sha256(Path("/tmp/inventory-first", name).read_bytes()).hexdigest() == expected

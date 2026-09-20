@@ -1,6 +1,9 @@
+import ast
 import hashlib
+import inspect
 import json
 import re
+import textwrap
 from dataclasses import dataclass
 
 from frappe_lt.inventory import RUNTIME_METADATA_CATEGORIES, ExtractionEvent
@@ -156,6 +159,52 @@ def _system_custom_field_app(field: dict) -> str:
 	return "erpnext"
 
 
+class _InstallerTranslationIdentity(ast.NodeTransformer):
+	def visit_Call(self, node: ast.Call):
+		if (
+			isinstance(node.func, ast.Name)
+			and node.func.id == "_"
+			and len(node.args) == 1
+			and not node.keywords
+		):
+			return self.visit(node.args[0])
+		raise ValueError("ERPNext installer Navbar definition contains a non-literal call")
+
+
+def _erpnext_installer_navbar_labels() -> tuple[str, ...]:
+	from erpnext.setup import install
+
+	tree = ast.parse(textwrap.dedent(inspect.getsource(install.add_standard_navbar_items)))
+	for node in ast.walk(tree):
+		if not isinstance(node, ast.Assign) or not any(
+			isinstance(target, ast.Name) and target.id == "erpnext_navbar_items" for target in node.targets
+		):
+			continue
+		items = ast.literal_eval(ast.fix_missing_locations(_InstallerTranslationIdentity().visit(node.value)))
+		if not isinstance(items, list) or not items:
+			break
+		labels = tuple(
+			item.get("item_label")
+			for item in items
+			if isinstance(item, dict) and item.get("is_standard") == 1
+		)
+		if len(labels) != len(items) or any(not isinstance(label, str) or not label for label in labels):
+			break
+		return labels
+	raise ValueError("could not read standard Navbar items from ERPNext installer source")
+
+
+def _navbar_owners(frappe) -> dict[str, set[str]]:
+	owners: dict[str, set[str]] = {}
+	for hook in ("standard_navbar_items", "standard_help_items"):
+		for item in frappe.get_hooks(hook, app_name="frappe") or []:
+			if label := item.get("item_label"):
+				owners.setdefault(label, set()).add("frappe")
+	for label in _erpnext_installer_navbar_labels():
+		owners.setdefault(label, set()).add("erpnext")
+	return owners
+
+
 def extract_runtime(frappe, metadata_sha256: dict) -> RuntimeExtraction:
 	"""Extract metadata from the clean pinned site without invoking mixed source helpers."""
 	site = getattr(frappe.local, "site", None)
@@ -200,12 +249,7 @@ def extract_runtime(frappe, metadata_sha256: dict) -> RuntimeExtraction:
 		"Report Filter", fields=["parent", "fieldname", "label"], order_by="parent asc, idx asc"
 	)
 
-	navbar_owners: dict[str, set[str]] = {}
-	for app in EXPECTED_RUNTIME_APPS:
-		for hook in ("standard_navbar_items", "standard_help_items"):
-			for item in frappe.get_hooks(hook, app_name=app) or []:
-				if label := item.get("item_label"):
-					navbar_owners.setdefault(label, set()).add(app)
+	navbar_owners = _navbar_owners(frappe)
 	navbar_items = frappe.get_all(
 		"Navbar Item",
 		filters={"item_label": ("is", "set")},
