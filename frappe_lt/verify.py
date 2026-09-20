@@ -3,21 +3,18 @@ import os
 import platform
 import shutil
 import subprocess
-import sys
-from importlib.metadata import version
 from pathlib import Path
 
 from babel.messages.pofile import read_po
 
+from frappe_lt.inventory import load_compatibility, validate_tool_versions, verify_owned_artifacts
+
 EXPECTED_APP_ORDER = ["frappe", "erpnext", "frappe_lt"]
-EXPECTED_COMMITS = {
-	"frappe": "c1f1e8ec3708750d7254f7f99d869ffb9886f19f",
-	"erpnext": "12cd563fb9a79731f75ae2a45b1446a0a2dd9e74",
-}
-EXPECTED_VERSIONS = {"frappe": "16.34.0", "erpnext": "16.35.0"}
-EXPECTED_BABEL_VERSION = "2.16.0"
-EXPECTED_MO_SHA256 = "0567500572f35d9f1ea41421bb00f0efca56625eaa011d8a817ceb6e36159744"
-SOURCE_DATE_EPOCH = "1704067200"
+COMPATIBILITY = load_compatibility()
+EXPECTED_COMMITS = {app: pin["commit"] for app, pin in COMPATIBILITY["upstream"].items()}
+EXPECTED_VERSIONS = {app: pin["version"] for app, pin in COMPATIBILITY["upstream"].items()}
+EXPECTED_MO_SHA256 = COMPATIBILITY["mo_sha256"]
+SOURCE_DATE_EPOCH = str(COMPATIBILITY["source_date_epoch"])
 FIXED_PO_DATE = "2024-01-01 00:00+0000"
 
 
@@ -105,13 +102,14 @@ def _git_commit(path: Path) -> str:
 def _environment(frappe) -> dict[str, str]:
 	import erpnext
 
+	tools = validate_tool_versions(COMPATIBILITY)
 	environment = {
 		"frappe_commit": _git_commit(Path(frappe.get_app_source_path("frappe"))),
 		"erpnext_commit": _git_commit(Path(frappe.get_app_source_path("erpnext"))),
 		"frappe_version": frappe.__version__,
 		"erpnext_version": erpnext.__version__,
 		"python": platform.python_version(),
-		"babel": version("Babel"),
+		"babel": tools["babel"],
 	}
 	for app, expected in EXPECTED_COMMITS.items():
 		actual = environment[f"{app}_commit"]
@@ -121,10 +119,6 @@ def _environment(frappe) -> dict[str, str]:
 		actual = environment[f"{app}_version"]
 		if actual != expected:
 			raise ValueError(f"{app} version must be {expected}; found {actual}")
-	if sys.version_info[:2] != (3, 14):
-		raise ValueError(f"Python must be 3.14.x; found {environment['python']}")
-	if environment["babel"] != EXPECTED_BABEL_VERSION:
-		raise ValueError(f"Babel must be {EXPECTED_BABEL_VERSION}; found {environment['babel']}")
 	return environment
 
 
@@ -197,6 +191,7 @@ def run(site: str, mode: str = "local", expected_digest: str | None = None) -> d
 
 	if frappe.local.site != site:
 		raise ValueError(f"command site {site!r} does not match initialized site {frappe.local.site!r}")
+	verify_owned_artifacts()
 	environment = _environment(frappe)
 	print("Verified pinned environment:", environment)
 	installed_apps = validate_app_order(frappe.get_installed_apps(), mode)
