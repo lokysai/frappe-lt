@@ -91,6 +91,8 @@ jobs:
           git -C /home/runner/erpnext fetch --depth 1 origin "$ERPNEXT_COMMIT"
           git -C /home/runner/erpnext checkout --detach FETCH_HEAD
           bench get-app --skip-assets erpnext /home/runner/erpnext
+          test "$(git -C apps/erpnext status --porcelain)" = " M banking/yarn.lock"
+          git -C apps/erpnext restore --source="$ERPNEXT_COMMIT" --staged --worktree -- banking/yarn.lock
           bench get-app --skip-assets frappe_lt "$GITHUB_WORKSPACE"
           bench setup requirements --dev --python
         working-directory: /home/runner/frappe-bench
