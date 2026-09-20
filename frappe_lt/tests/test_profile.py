@@ -611,60 +611,101 @@ class LithuanianProfileTest(IntegrationTestCase):
 	def test_duplicate_user_defaults_are_canonicalized_and_restored_in_order(self):
 		user = self._make_user("profile-duplicates@example.com", enabled=1)
 		frappe.defaults.clear_default("date_format", parent=user)
-		for name, value in (
-			("zzz-profile-default", "dd/mm/yyyy"),
-			("000-profile-default", "yyyy-mm-dd"),
-		):
-			frappe.get_doc(
-				{
-					"doctype": "DefaultValue",
-					"name": name,
-					"parent": user,
-					"parenttype": "__default",
-					"parentfield": "system_defaults",
-					"defkey": "date_format",
-					"defvalue": value,
-				}
-			).insert(ignore_permissions=True)
+		generated = frappe.get_doc(
+			{
+				"doctype": "DefaultValue",
+				"parent": user,
+				"parenttype": "__default",
+				"parentfield": "system_defaults",
+				"defkey": "date_format",
+				"defvalue": "dd/mm/yyyy",
+			}
+		).insert(ignore_permissions=True)
+		custom_name = "zzzzzzzzzzzzzzzzzzzz-profile-default"
+		custom = frappe.get_doc(
+			{
+				"doctype": "DefaultValue",
+				"name": custom_name,
+				"parent": user,
+				"parenttype": "__default",
+				"parentfield": "system_defaults",
+				"defkey": "date_format",
+				"defvalue": "yyyy-mm-dd",
+			}
+		).insert(ignore_permissions=True)
+		shared_creation = "2026-01-02 03:04:05.000000"
+		frappe.db.sql(
+			"update tabDefaultValue set name=case when name=%s then %s else name end, creation=%s "
+			"where name in %s",
+			(custom.name, custom_name, shared_creation, (generated.name, custom.name)),
+		)
 		frappe.db.commit()
 		before = frappe.db.sql(
-			"select defvalue from tabDefaultValue where parent=%s and defkey='date_format' "
+			"select name, creation, defvalue from tabDefaultValue where parent=%s and defkey='date_format' "
 			"order by creation, name",
 			user,
-			pluck=True,
+			as_dict=True,
 		)
-		self.assertEqual(before, ["dd/mm/yyyy", "yyyy-mm-dd"])
+		self.assertEqual([row.defvalue for row in before], ["dd/mm/yyyy", "yyyy-mm-dd"])
 		set_default = frappe.defaults.set_default
+		add_default = frappe.defaults.add_default
+		retained_name = "zzzzzzzzzzzzzzzzzzzz-current-default"
 
 		def pinned_early_return(key, value, parent, parenttype="__default"):
 			if parent == user and key == "date_format":
 				return
 			return set_default(key, value, parent, parenttype)
 
+		def ci_ordering_add_default(key, value, parent, parenttype=None):
+			if parent != user or key != "date_format":
+				return add_default(key, value, parent, parenttype)
+			row = frappe.get_doc(
+				{
+					"doctype": "DefaultValue",
+					"name": "000-ci-restored-default",
+					"parent": parent,
+					"parenttype": parenttype or "__default",
+					"parentfield": "system_defaults",
+					"defkey": key,
+					"defvalue": value,
+				}
+			).insert(ignore_permissions=True)
+			frappe.db.sql(
+				"update tabDefaultValue set name=%s, creation=%s where name=%s",
+				("000-ci-restored-default", shared_creation, row.name),
+			)
+
 		with patch.object(frappe.defaults, "set_default", side_effect=pinned_early_return):
 			profile.apply()
 
-		self.assertEqual(
-			frappe.db.sql(
-				"select defvalue from tabDefaultValue where parent=%s and defkey='date_format' "
-				"order by creation, name",
-				user,
-				pluck=True,
-			),
-			["yyyy-mm-dd"],
+		applied = frappe.db.get_value(
+			"DefaultValue",
+			{"parent": user, "defkey": "date_format"},
+			["name", "creation", "defvalue"],
+			as_dict=True,
 		)
-
-		profile.restore()
-
-		self.assertEqual(
-			frappe.db.sql(
-				"select defvalue from tabDefaultValue where parent=%s and defkey='date_format' "
-				"order by creation, name",
-				user,
-				pluck=True,
-			),
-			before,
+		self.assertEqual(applied.defvalue, "yyyy-mm-dd")
+		frappe.db.sql(
+			"update tabDefaultValue set name=%s where name=%s",
+			(retained_name, applied.name),
 		)
+		frappe.db.commit()
+
+		with patch.object(frappe.defaults, "add_default", side_effect=ci_ordering_add_default):
+			profile.restore()
+
+		restored = frappe.db.sql(
+			"select name, creation, defvalue from tabDefaultValue where parent=%s and defkey='date_format' "
+			"order by creation, name",
+			user,
+			as_dict=True,
+		)
+		self.assertEqual(
+			[(row.name, row.defvalue) for row in restored],
+			[(retained_name, "dd/mm/yyyy"), ("000-ci-restored-default", "yyyy-mm-dd")],
+		)
+		self.assertEqual(restored[0].creation, applied.creation)
+		self.assertGreater(restored[1].creation, restored[0].creation)
 
 	def test_restore_reports_unchanged_and_does_not_rewrite_values_already_original(self):
 		state = self._capture_profile_environment()
@@ -1287,22 +1328,9 @@ class LithuanianProfileTest(IntegrationTestCase):
 	def test_every_later_manual_change_is_preserved_by_restore(self):
 		user = self._make_user("profile-manual@example.com", enabled=1)
 		frappe.db.commit()
+		state = self._capture_profile_environment()
 		language_fields = list(profile.LANGUAGE_VALUES)
 		system_fields = list(profile.SYSTEM_VALUES)
-		language_before = dict(
-			zip(
-				language_fields,
-				frappe.db.get_value("Language", "lt", language_fields),
-				strict=True,
-			)
-		)
-		system_before = dict(
-			zip(
-				system_fields,
-				frappe.db.get_value("System Settings", None, system_fields),
-				strict=True,
-			)
-		)
 		manual_language = {
 			"enabled": 0,
 			"date_format": "dd-mm-yyyy",
@@ -1386,12 +1414,7 @@ class LithuanianProfileTest(IntegrationTestCase):
 			}
 			self.assertLessEqual(expected, skipped)
 		finally:
-			frappe.db.set_value("Language", "lt", language_before, update_modified=False)
-			system = frappe.get_single("System Settings")
-			system.update(system_before)
-			system.save(ignore_permissions=True)
-			frappe.db.commit()
-			frappe.clear_cache()
+			self._restore_profile_environment(state)
 
 	def test_deleted_target_is_reported_and_not_recreated(self):
 		user = self._make_user("profile-deleted@example.com", enabled=1)

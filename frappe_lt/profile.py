@@ -2,6 +2,7 @@ import json
 import os
 import secrets
 from contextlib import contextmanager
+from datetime import timedelta
 from hashlib import sha256
 
 import frappe
@@ -587,7 +588,11 @@ def _validate_user_payload(payload, operation):
 		raise _invalid_storage(operation, "User values")
 	_validate_values(payload["values"], USER_VALUES, operation, "User", direct=True)
 	_validate_values(
-		payload["defaults"], USER_DEFAULT_VALUES, operation, "User Default", allow_previous_list=True
+		payload["defaults"],
+		USER_DEFAULT_VALUES,
+		operation,
+		"User Default",
+		allow_previous_list=True,
 	)
 
 
@@ -1022,7 +1027,7 @@ def _restore_all_default_rows(parent, saved_rows):
 
 def _lock_default_state(user, field):
 	rows = frappe.db.sql(
-		"select name, defvalue from tabDefaultValue where parent=%s and defkey=%s "
+		"select name, creation, defvalue from tabDefaultValue where parent=%s and defkey=%s "
 		"order by creation, name for update",
 		(user, field),
 		as_dict=True,
@@ -1225,12 +1230,33 @@ def _restore_default_in_place(parent, field, state, rows):
 		values = state["value"]
 	else:
 		values = [state["value"]]
-	for row, value in zip(rows, values, strict=False):
-		frappe.db.set_value("DefaultValue", row.name, "defvalue", value, update_modified=False)
+	retained_rows = rows[: len(values)]
+	for row, value in zip(retained_rows, values[: len(retained_rows)], strict=True):
+		if not _same_value(row.defvalue, value):
+			frappe.db.set_value("DefaultValue", row.name, "defvalue", value, update_modified=False)
 	for row in rows[len(values) :]:
 		frappe.db.delete("DefaultValue", {"name": row.name})
-	for value in values[len(rows) :]:
+	retained_names = {row.name for row in retained_rows}
+	now = now_datetime()
+	last_creation = max((row.creation for row in retained_rows if row.creation is not None), default=now)
+	last_creation = max(last_creation, now)
+	for offset, value in enumerate(values[len(rows) :], start=1):
 		frappe.defaults.add_default(field, value, parent)
+		current_rows = _lock_default_state(parent, field)["rows"]
+		added_rows = [row for row in current_rows if row.name not in retained_names]
+		if len(added_rows) != 1:
+			raise frappe.ValidationError(f"Default row insertion failed for {parent}/{field}")
+		added = added_rows[0]
+		frappe.db.set_value(
+			"DefaultValue",
+			added.name,
+			"creation",
+			last_creation + timedelta(microseconds=offset),
+			update_modified=False,
+		)
+		retained_names.add(added.name)
+	if _lock_default_state(parent, field)["state"] != state:
+		raise frappe.ValidationError(f"Default postcondition failed for {parent}/{field}")
 
 
 def _restore_unmanaged_single_rows(locked_image):
