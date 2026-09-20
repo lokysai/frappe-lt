@@ -48,6 +48,26 @@ The command validates the pinned Frappe and ERPNext commits, Python 3.14, Babel 
 
 The generated `sites/assets/locale/lt/LC_MESSAGES/frappe_lt.mo` is intentionally untracked.
 
+## Release inventory
+
+The machine-readable compatibility contract is [`frappe_lt/compatibility.json`](frappe_lt/compatibility.json). It is the authority for upstream commits and versions, artifact schema versions, Python/Babel versions, `SOURCE_DATE_EPOCH`, clean-install runtime metadata signatures, and the expected inventory and MO digests. Its `artifact_sha256` map authenticates every versioned release artifact other than the manifest itself.
+
+Generate all release artifacts from a clean site after installing ERPNext but before installing `frappe_lt`:
+
+```bash
+bench --site inventory.localhost build-translation-inventory
+```
+
+The one public orchestration function is `frappe_lt.inventory.run`; the Bench command is only its pre-install transport. It requires exactly `frappe` and `erpnext`, rejects metadata that differs from the authenticated clean-install signatures (while accepting the exact system-generated Custom Fields and Property Setters), rejects dirty or unpinned upstream worktrees, checks the pinned Python and Babel versions, and validates every record in [`frappe_lt/provenance.json`](frappe_lt/provenance.json). Missing, unknown, duplicate, or contradictory provenance blocks generation before any artifacts are written. A successful run atomically writes these owned artifacts:
+
+- `frappe_lt/release_inventory.json`
+- `frappe_lt/inventory_report.json`
+- `frappe_lt/inventory_report.md`
+- `frappe_lt/provenance.json`
+- `frappe_lt/compatibility.json`, replaced last as the commit marker
+
+For release comparison, pass both `--previous-inventory` and `--previous-compatibility`. The prior manifest digest must match the exact prior inventory bytes.
+
 See the [one-time smoke report](docs/smoke-report.md) for runtime and browser evidence status.
 
 ## Tests
@@ -56,6 +76,7 @@ Inside the bench environment:
 
 ```bash
 env/bin/python -m unittest frappe_lt.tests.test_verify
+env/bin/python -m unittest frappe_lt.tests.test_inventory
 bench --site development.localhost run-tests --app frappe_lt
 ```
 

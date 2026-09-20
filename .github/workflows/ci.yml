@@ -19,8 +19,6 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:
-      FRAPPE_COMMIT: c1f1e8ec3708750d7254f7f99d869ffb9886f19f
-      ERPNEXT_COMMIT: 12cd563fb9a79731f75ae2a45b1446a0a2dd9e74
       BENCH_PATH: /home/runner/frappe-bench
       CI: "Yes"
     services:
@@ -56,6 +54,17 @@ jobs:
         with:
           python-version: "3.14"
 
+      - name: Load compatibility pins
+        run: |
+          python - <<'PY' >> "$GITHUB_ENV"
+          import json
+          from pathlib import Path
+
+          manifest = json.loads(Path("frappe_lt/compatibility.json").read_text())
+          print(f"FRAPPE_COMMIT={manifest['upstream']['frappe']['commit']}")
+          print(f"ERPNEXT_COMMIT={manifest['upstream']['erpnext']['commit']}")
+          PY
+
       - name: Set up Node 24
         uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
@@ -66,7 +75,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install --yes mariadb-client libmariadb-dev pkg-config
-          python -m pip install --disable-pip-version-check "frappe-bench==5.31.0"
+          python -m pip install --disable-pip-version-check "frappe-bench==5.31.0" "ruff==0.13.0"
 
       - name: Fetch pinned Frappe
         run: |
@@ -103,20 +112,147 @@ jobs:
           test "$(git -C apps/frappe rev-parse HEAD)" = "$FRAPPE_COMMIT"
           test "$(git -C apps/erpnext rev-parse HEAD)" = "$ERPNEXT_COMMIT"
 
-      - name: Create site and install in order
+      - name: Create clean pinned site
         working-directory: /home/runner/frappe-bench
         run: |
           bench new-site test_site --db-host 127.0.0.1 --db-root-username root --db-root-password root --admin-password admin --mariadb-user-host-login-scope='%'
           bench --site test_site install-app erpnext
+          test "$(bench --site test_site list-apps --format json | python -c 'import json,sys; print(",".join(json.load(sys.stdin)["test_site"]))')" = "frappe,erpnext"
+
+      - name: Build real source and runtime inventory twice
+        working-directory: /home/runner/frappe-bench
+        run: |
+          bench --site test_site build-translation-inventory --output-dir /tmp/inventory-first
+          bench --site test_site build-translation-inventory --output-dir /tmp/inventory-second
+          for artifact in compatibility.json provenance.json release_inventory.json inventory_report.json inventory_report.md
+          do
+            cmp "/tmp/inventory-first/$artifact" "/tmp/inventory-second/$artifact"
+            cmp "/tmp/inventory-first/$artifact" "$GITHUB_WORKSPACE/frappe_lt/$artifact"
+          done
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          inventory = json.loads(Path("/tmp/inventory-first/release_inventory.json").read_text())
+          assert inventory["entries"]
+          assert any(entry["extraction_origin"] in {"runtime", "both"} for entry in inventory["entries"])
+          expected_runtime_categories = {
+            "custom_field", "doctype", "navbar", "page", "property_setter", "report", "workflow",
+            "workspace", "workspace_sidebar"
+          }
+          assert set(inventory["runtime_categories"]) == expected_runtime_categories
+          assert set(inventory["runtime_category_counts"]) == expected_runtime_categories
+          assert inventory["runtime_category_counts"]["workflow"] == 0
+          assert inventory["runtime_category_counts"]["property_setter"] == 0
+          assert all(
+            inventory["runtime_category_counts"][category] > 0
+            for category in expected_runtime_categories - {"property_setter", "workflow"}
+          )
+          runtime_extractors = {
+            location["extractor"]
+            for entry in inventory["entries"]
+            for location in entry["source_locations"]
+            if location["origin"] == "runtime"
+          }
+          assert expected_runtime_categories - {"property_setter", "workflow"} <= runtime_extractors
+          by_key = {(entry["key"]["source"], entry["key"]["context"]): entry for entry in inventory["entries"]}
+          for source in ("Compact Item Print", "Print UOM after Quantity", "Print taxes with zero amount"):
+            assert by_key[(source, None)]["extraction_origin"] == "both"
+            assert any(
+              location["origin"] == "runtime" and location["extractor"] == "custom_field"
+              for location in by_key[(source, None)]["source_locations"]
+            )
+          report = by_key[("Calculated Discount Mismatch", None)]
+          assert report["apps"] == ["erpnext"]
+          assert any(
+            location["origin"] == "runtime" and location["extractor"] == "report"
+            for location in report["source_locations"]
+          )
+          extractors = {
+              location["extractor"]
+              for entry in inventory["entries"]
+              for location in entry["source_locations"]
+              if location["origin"] == "source"
+          }
+          assert {
+              "erpnext.gettext.extractors.incoterms",
+              "erpnext.gettext.extractors.lines_from_txt_file",
+              "erpnext.gettext.extractors.uom_data",
+              "extract_babel_python",
+              "frappe.gettext.extractors.desktop_icon",
+              "frappe.gettext.extractors.doctype",
+              "frappe.gettext.extractors.html_template",
+              "frappe.gettext.extractors.javascript",
+              "frappe.gettext.extractors.module_onboarding",
+              "frappe.gettext.extractors.navbar",
+              "frappe.gettext.extractors.onboarding_step",
+              "frappe.gettext.extractors.report",
+              "frappe.gettext.extractors.web_form",
+              "frappe.gettext.extractors.workspace",
+              "frappe.gettext.extractors.workspace_sidebar",
+          } <= extractors
+          manifest = json.loads(Path("/tmp/inventory-first/compatibility.json").read_text())
+          report = json.loads(Path("/tmp/inventory-first/inventory_report.json").read_text())
+          assert manifest["inventory_digest"] == report["inventory_digest"]
+          for name, expected in manifest["artifact_sha256"].items():
+            assert hashlib.sha256(Path("/tmp/inventory-first", name).read_bytes()).hexdigest() == expected
+          assert manifest["artifact_sha256"]["release_inventory.json"] == manifest["inventory_digest"]
+          PY
+
+      - name: Reject spoofed standard metadata without artifacts
+        working-directory: /home/runner/frappe-bench
+        run: |
+          bench --site test_site execute frappe.db.set_value --args '["Page","setup-wizard","title","Spoofed Setup Wizard"]'
+          set +e
+          output="$(bench --site test_site build-translation-inventory --output-dir /tmp/inventory-spoofed 2>&1)"
+          status=$?
+          set -e
+          printf '%s\n' "$output"
+          test "$status" -ne 0
+          printf '%s\n' "$output" | grep --fixed-strings "runtime metadata differs from the pinned clean-install source"
+          test ! -e /tmp/inventory-spoofed
+          bench --site test_site execute frappe.db.set_value --args '["Page","setup-wizard","title","Setup Wizard"]'
+
+      - name: Reject custom runtime metadata without artifacts
+        working-directory: /home/runner/frappe-bench
+        run: |
+          bench --site test_site execute frappe.client.insert --kwargs '{"doc":{"doctype":"Translation","language":"lt","source_text":"Inventory Custom Probe","translated_text":"Bandymas"}}'
+          set +e
+          output="$(bench --site test_site build-translation-inventory --output-dir /tmp/inventory-custom 2>&1)"
+          status=$?
+          set -e
+          printf '%s\n' "$output"
+          test "$status" -ne 0
+          printf '%s\n' "$output" | grep --fixed-strings "local/custom metadata"
+          test ! -e /tmp/inventory-custom
+
+      - name: Install frappe_lt after inventory generation
+        working-directory: /home/runner/frappe-bench
+        run: |
           bench --site test_site install-app frappe_lt
           test "$(bench --site test_site list-apps --format json | python -c 'import json,sys; print(",".join(json.load(sys.stdin)["test_site"]))')" = "frappe,erpnext,frappe_lt"
           bench --site test_site set-config allow_tests true
+
+      - name: Reject extra installed app without artifacts
+        working-directory: /home/runner/frappe-bench
+        run: |
+          set +e
+          output="$(bench --site test_site build-translation-inventory --output-dir /tmp/inventory-extra 2>&1)"
+          status=$?
+          set -e
+          printf '%s\n' "$output"
+          test "$status" -ne 0
+          printf '%s\n' "$output" | grep --fixed-strings "exactly frappe and erpnext"
+          test ! -e /tmp/inventory-extra
 
       - name: Run static and unit tests
         working-directory: /home/runner/frappe-bench
         run: |
           env/bin/python -m compileall -q apps/frappe_lt/frappe_lt
-          env/bin/python -m unittest frappe_lt.tests.test_verify
+          ruff check apps/frappe_lt/frappe_lt
+          ruff format --check apps/frappe_lt/frappe_lt
+          env/bin/python -m unittest frappe_lt.tests.test_verify frappe_lt.tests.test_inventory
 
       - name: Run integrated verification
         working-directory: /home/runner/frappe-bench

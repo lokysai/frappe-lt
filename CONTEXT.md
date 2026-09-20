@@ -96,8 +96,11 @@ _Vengti_: Paskyra, kliento sąskaita
 Naudotojo tapatybė ir jos prieiga prie sistemos.
 _Vengti_: Sąskaita
 
+<a id="saskaita-account-contextless-collision"></a>
+
 **Sąskaita** (`Account`, contextless collision):
 Patvirtintas bendras vertimas konteksto neturinčiam raktui, kurį v16 naudoja ir apskaitos dokumente, ir el. pašto paskyros lauke.
+Release inventory generation applies this decision only when the pinned runtime metadata proves both `Account` and `Email Account.account_section` locations.
 _Vengti_: Paskyra
 
 **Banko sąskaita** (`Bank Account`):
