@@ -2,6 +2,8 @@ name: CI
 
 on:
   push:
+    branches:
+      - main
   pull_request:
   workflow_dispatch:
 
@@ -90,7 +92,7 @@ jobs:
           git -C /home/runner/erpnext checkout --detach FETCH_HEAD
           bench get-app --skip-assets erpnext /home/runner/erpnext
           bench get-app --skip-assets frappe_lt "$GITHUB_WORKSPACE"
-          bench setup requirements --dev
+          bench setup requirements --dev --python
         working-directory: /home/runner/frappe-bench
 
       - name: Assert upstream commits
