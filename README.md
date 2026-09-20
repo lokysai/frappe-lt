@@ -2,6 +2,8 @@
 
 `frappe_lt` is a GPL-3.0 Frappe v16 app for Lithuanian translations. This first vertical slice ships one native gettext override: contextless `Item` -> `Prekė`.
 
+[`CONTEXT.md`](CONTEXT.md) is the authoritative translation context. It was bootstrapped from `lokysai/Fab` commit `a40dc5f554df751a4227a192d55590fdd1eda4ed`; subsequent context maintenance happens only in this repository.
+
 ## Compatibility
 
 The first smoke target is pinned exactly:
