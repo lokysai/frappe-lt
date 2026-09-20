@@ -240,11 +240,27 @@ jobs:
           printf '%s\n' "$output" | grep --fixed-strings "local/custom metadata"
           test ! -e /tmp/inventory-custom
 
-      - name: Install frappe_lt after inventory generation
+      - name: Resume profile after after_install preflight failure
         working-directory: /home/runner/frappe-bench
         run: |
-          bench --site test_site install-app frappe_lt
+          bench --site test_site execute frappe.db.delete --args '["Language", {"name":"lt"}]'
+          set +e
+          output="$(bench --site test_site install-app frappe_lt 2>&1)"
+          status=$?
+          set -e
+          printf '%s\n' "$output"
+          test "$status" -ne 0
+          printf '%s\n' "$output" | grep --fixed-strings "Language/lt is missing"
           test "$(bench --site test_site list-apps --format json | python -c 'import json,sys; print(",".join(json.load(sys.stdin)["test_site"]))')" = "frappe,erpnext,frappe_lt"
+          bench --site test_site execute frappe.core.doctype.language.language.sync_languages
+          {
+            bench --site test_site execute frappe.db.sql --args '["select enabled,date_format,time_format,number_format,first_day_of_the_week from tabLanguage where name='"'"'lt'"'"'"]'
+            bench --site test_site execute frappe.db.sql --args '["select field,value from tabSingles where doctype='"'"'System Settings'"'"' and field in ('"'"'country'"'"','"'"'language'"'"','"'"'time_zone'"'"','"'"'date_format'"'"','"'"'time_format'"'"','"'"'number_format'"'"','"'"'first_day_of_the_week'"'"','"'"'currency'"'"') order by field"]'
+            bench --site test_site execute frappe.db.sql --args '["select defkey,defvalue from tabDefaultValue where parent='"'"'__default'"'"' and defkey in ('"'"'country'"'"','"'"'language'"'"','"'"'time_zone'"'"','"'"'date_format'"'"','"'"'time_format'"'"','"'"'number_format'"'"','"'"'first_day_of_the_week'"'"','"'"'lang'"'"','"'"'currency'"'"') order by defkey,creation,name"]'
+            bench --site test_site execute frappe.db.sql --args '["select name,language,time_zone from tabUser where enabled=1 and name<>'"'"'Guest'"'"' order by name"]'
+            bench --site test_site execute frappe.db.sql --args '["select parent,defkey,defvalue from tabDefaultValue where parent in (select name from tabUser where enabled=1 and name<>'"'"'Guest'"'"') and defkey in ('"'"'date_format'"'"','"'"'time_format'"'"','"'"'number_format'"'"','"'"'first_day_of_the_week'"'"','"'"'time_zone'"'"') order by parent,defkey,creation,name"]'
+          } > /tmp/frappe-lt-profile-original
+          test "$(bench --site test_site setup-lithuanian-profile | python -c 'import json,sys; print(json.load(sys.stdin)["state_after"])')" = "APPLIED"
           bench --site test_site set-config allow_tests true
 
       - name: Reject extra installed app without artifacts
@@ -291,9 +307,61 @@ jobs:
             printf '%s\n' "$output" | grep --fixed-strings "$value"
           done
 
-      - name: Prove database masking behavior
+      - name: Run site integration tests
         working-directory: /home/runner/frappe-bench
-        run: bench --site test_site run-tests --app frappe_lt --module frappe_lt.tests.test_runtime
+        run: |
+          bench --site test_site run-tests --app frappe_lt --module frappe_lt.tests.test_runtime
+          bench --site test_site run-tests --app frappe_lt --module frappe_lt.tests.test_profile
+          bench --site test_site show-lithuanian-profile-status |
+            python -c 'import json,sys; status=json.load(sys.stdin); assert status["state_after"] == "APPLIED", status'
+          test "$(bench --site test_site execute frappe.db.sql --args '["select count(*) from tabUser where name like '"'"'profile-%'"'"'"]')" = "[[0]]"
+
+      - name: Prove native install and uninstall lifecycle
+        working-directory: /home/runner/frappe-bench
+        run: |
+          set +e
+          output="$(bench --site test_site uninstall-app frappe_lt --yes --no-backup 2>&1)"
+          status=$?
+          set -e
+          printf '%s\n' "$output"
+          test "$status" -ne 0
+          printf '%s\n' "$output" | grep --fixed-strings "Uninstall is blocked"
+
+          set +e
+          output="$(bench --site test_site uninstall-app frappe_lt --yes --no-backup --force 2>&1)"
+          status=$?
+          set -e
+          printf '%s\n' "$output"
+          test "$status" -ne 0
+          printf '%s\n' "$output" | grep --fixed-strings "restore-lithuanian-profile"
+
+          bench --site test_site restore-lithuanian-profile
+          {
+            bench --site test_site execute frappe.db.sql --args '["select enabled,date_format,time_format,number_format,first_day_of_the_week from tabLanguage where name='"'"'lt'"'"'"]'
+            bench --site test_site execute frappe.db.sql --args '["select field,value from tabSingles where doctype='"'"'System Settings'"'"' and field in ('"'"'country'"'"','"'"'language'"'"','"'"'time_zone'"'"','"'"'date_format'"'"','"'"'time_format'"'"','"'"'number_format'"'"','"'"'first_day_of_the_week'"'"','"'"'currency'"'"') order by field"]'
+            bench --site test_site execute frappe.db.sql --args '["select defkey,defvalue from tabDefaultValue where parent='"'"'__default'"'"' and defkey in ('"'"'country'"'"','"'"'language'"'"','"'"'time_zone'"'"','"'"'date_format'"'"','"'"'time_format'"'"','"'"'number_format'"'"','"'"'first_day_of_the_week'"'"','"'"'lang'"'"','"'"'currency'"'"') order by defkey,creation,name"]'
+            bench --site test_site execute frappe.db.sql --args '["select name,language,time_zone from tabUser where enabled=1 and name<>'"'"'Guest'"'"' order by name"]'
+            bench --site test_site execute frappe.db.sql --args '["select parent,defkey,defvalue from tabDefaultValue where parent in (select name from tabUser where enabled=1 and name<>'"'"'Guest'"'"') and defkey in ('"'"'date_format'"'"','"'"'time_format'"'"','"'"'number_format'"'"','"'"'first_day_of_the_week'"'"','"'"'time_zone'"'"') order by parent,defkey,creation,name"]'
+          } > /tmp/frappe-lt-profile-restored
+          diff -u /tmp/frappe-lt-profile-original /tmp/frappe-lt-profile-restored
+
+          set +e
+          output="$(bench --site test_site install-app frappe_lt --force 2>&1)"
+          status=$?
+          set -e
+          printf '%s\n' "$output"
+          test "$status" -ne 0
+          printf '%s\n' "$output" | grep --fixed-strings "cannot be recovered by a forced current install"
+          test "$(bench --site test_site show-lithuanian-profile-status | python -c 'import json,sys; print(json.load(sys.stdin)["state_after"])')" = "RESTORED"
+
+          bench --site test_site uninstall-app frappe_lt --yes --no-backup --force
+          test "$(bench --site test_site execute frappe.db.sql --args '["select count(*) from tabDefaultValue where parent='"'"'frappe_lt.profile.v1'"'"'"]')" = "[[0]]"
+
+          bench --site test_site install-app frappe_lt
+          bench --site test_site leave-lithuanian-profile --confirm-leave-profile
+          bench --site test_site uninstall-app frappe_lt --yes --no-backup --force
+          test "$(bench --site test_site execute frappe.db.sql --args '["select count(*) from tabDefaultValue where parent='"'"'frappe_lt.profile.v1'"'"'"]')" = "[[0]]"
+          test "$(bench --site test_site list-apps --format json | python -c 'import json,sys; print(",".join(json.load(sys.stdin)["test_site"]))')" = "frappe,erpnext"
 
       - name: Assert all app worktrees are clean
         if: always()
