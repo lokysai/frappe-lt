@@ -17,17 +17,20 @@ class LithuanianProfileTest(IntegrationTestCase):
 		super().setUp()
 		self.test_users = []
 		self._restore_and_forget_profile()
+		self._baseline_environment = self._capture_profile_environment()
 
 	def tearDown(self):
-		frappe.db.rollback()
-		self._restore_and_forget_profile()
-		for user in self.test_users:
-			frappe.db.delete("DefaultValue", {"parent": user})
-			frappe.db.delete("User", {"name": user})
-		frappe.db.commit()
-		super().tearDown()
-		frappe.db.rollback()
-		profile.apply()
+		try:
+			frappe.db.rollback()
+			for user in self.test_users:
+				frappe.db.delete("DefaultValue", {"parent": user})
+				frappe.db.delete("User", {"name": user})
+			frappe.db.commit()
+		finally:
+			try:
+				super().tearDown()
+			finally:
+				self._restore_baseline_and_apply()
 
 	def _restore_and_forget_profile(self):
 		state = profile.status()["state_after"]
@@ -62,7 +65,7 @@ class LithuanianProfileTest(IntegrationTestCase):
 			),
 			"global_rows": frappe.db.sql(
 				"select defkey, defvalue from tabDefaultValue "
-				"where parent=%s and defkey in %s order by creation, name",
+				"where parent=%s and defkey in %s order by defkey, creation, name",
 				("__default", global_keys),
 			),
 			"local_lang": getattr(frappe.local, "lang", None),
@@ -98,6 +101,10 @@ class LithuanianProfileTest(IntegrationTestCase):
 		frappe.db.commit()
 		profile._clear_profile_caches(list(state["users"]))
 		frappe.local.lang = state["local_lang"]
+
+	def _restore_baseline_and_apply(self):
+		self._restore_profile_environment(self._baseline_environment)
+		profile.apply()
 
 	def _assert_profile_environment_restored(self, state):
 		current = self._capture_profile_environment()
@@ -1569,6 +1576,7 @@ class LithuanianProfileTest(IntegrationTestCase):
 		self.assertEqual(profile.after_install()["state_after"], "APPLIED")
 
 	def test_terminal_manifest_rejects_invalid_reinstall_authorization(self):
+		baseline = self._baseline_environment
 		profile.apply()
 		profile.abandon(confirmed=True)
 		row = frappe.db.get_value("DefaultValue", {"parent": profile.NAMESPACE, "defkey": "manifest"}, "name")
@@ -1589,6 +1597,13 @@ class LithuanianProfileTest(IntegrationTestCase):
 		finally:
 			frappe.db.delete("DefaultValue", {"parent": profile.NAMESPACE})
 			frappe.db.commit()
+
+		self._restore_baseline_and_apply()
+		self.assertEqual(profile.status()["state_after"], "APPLIED")
+		profile.restore()
+		self._assert_profile_environment_restored(baseline)
+		self._restore_baseline_and_apply()
+		self.assertEqual(profile.status()["state_after"], "APPLIED")
 
 	def _profile_manifest(self):
 		return json.loads(

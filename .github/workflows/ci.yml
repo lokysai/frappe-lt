@@ -343,7 +343,7 @@ jobs:
             bench --site test_site execute frappe.db.sql --args '["select name,language,time_zone from tabUser where enabled=1 and name<>'"'"'Guest'"'"' order by name"]'
             bench --site test_site execute frappe.db.sql --args '["select parent,defkey,defvalue from tabDefaultValue where parent in (select name from tabUser where enabled=1 and name<>'"'"'Guest'"'"') and defkey in ('"'"'date_format'"'"','"'"'time_format'"'"','"'"'number_format'"'"','"'"'first_day_of_the_week'"'"','"'"'time_zone'"'"') order by parent,defkey,creation,name"]'
           } > /tmp/frappe-lt-profile-restored
-          cmp /tmp/frappe-lt-profile-original /tmp/frappe-lt-profile-restored
+          diff -u /tmp/frappe-lt-profile-original /tmp/frappe-lt-profile-restored
 
           set +e
           output="$(bench --site test_site install-app frappe_lt --force 2>&1)"
