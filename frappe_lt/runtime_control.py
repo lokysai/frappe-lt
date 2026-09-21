@@ -508,9 +508,44 @@ class SiteControl:
 			):
 				raise RuntimeError("fixture portal Customer does not match its exact postconditions")
 		if "item-draft" in fixture_ids:
-			for doctype, name in (("Item Group", "All Item Groups"), ("UOM", "Nos")):
-				if not self.frappe.db.exists(doctype, name):
-					raise RuntimeError(f"fixture item-draft requires {doctype} {name!r}")
+			if not self.frappe.db.exists("Item Group", "All Item Groups"):
+				self.before_document_mutation("Item Group", "All Item Groups")
+				root = self.frappe.get_doc(
+					{
+						"doctype": "Item Group",
+						"is_group": 1,
+						"item_group_name": "All Item Groups",
+					}
+				)
+				root.name = "All Item Groups"
+				root.flags.name_set = True
+				with self.suppress_process_effects() as effects:
+					root.insert(ignore_permissions=True)
+				if any(effects.values()):
+					raise RuntimeError("fixture root Item Group attempted an external side effect")
+			if not self.frappe.db.get_value("Item Group", "All Item Groups", "is_group"):
+				raise RuntimeError("fixture item-draft requires root Item Group 'All Item Groups'")
+			if not self.frappe.db.exists("UOM", "Nos"):
+				self.before_document_mutation("UOM", "Nos")
+				uom = self.frappe.get_doc(
+					{
+						"doctype": "UOM",
+						"enabled": 1,
+						"must_be_whole_number": 1,
+						"uom_name": "Nos",
+					}
+				)
+				uom.name = "Nos"
+				uom.flags.name_set = True
+				with self.suppress_process_effects() as effects:
+					uom.insert(ignore_permissions=True)
+				if any(effects.values()):
+					raise RuntimeError("fixture UOM attempted an external side effect")
+			uom_state = self.frappe.db.get_value(
+				"UOM", "Nos", ["enabled", "must_be_whole_number"], as_dict=True
+			)
+			if not uom_state or not uom_state.enabled or not uom_state.must_be_whole_number:
+				raise RuntimeError("fixture item-draft requires enabled whole-number UOM 'Nos'")
 
 		for profile in profiles["profiles"]:
 			if profile["administrator"]:

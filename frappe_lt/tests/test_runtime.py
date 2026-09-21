@@ -68,9 +68,11 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 			)
 			for doctype, parent_field in (
 				("Customer Group", "parent_customer_group"),
+				("Item Group", "parent_item_group"),
 				("Territory", "parent_territory"),
 			)
 		}
+		uom_before = frappe.db.get_value("UOM", "Nos", ["enabled", "must_be_whole_number"], as_dict=True)
 		with control.lease():
 			self.assertEqual(control.recover_stale(), [])
 			control.start()
@@ -155,6 +157,7 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 					)
 				for doctype, root_name in (
 					("Customer Group", "All Customer Groups"),
+					("Item Group", "All Item Groups"),
 					("Territory", "All Territories"),
 				):
 					if not any(row["name"] == root_name for row in tree_before[doctype]):
@@ -184,10 +187,15 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 				)
 				for doctype, parent_field in (
 					("Customer Group", "parent_customer_group"),
+					("Item Group", "parent_item_group"),
 					("Territory", "parent_territory"),
 				)
 			},
 			tree_before,
+		)
+		self.assertEqual(
+			frappe.db.get_value("UOM", "Nos", ["enabled", "must_be_whole_number"], as_dict=True),
+			uom_before,
 		)
 		self.assertEqual(control.residue_scan(), [])
 

@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const { defineConfig } = require("cypress");
 const { EvidencePublisher, redactJson } = require("./cypress/support/runtime_evidence");
+const { browserFromRunResults } = require("./cypress/support/runtime_toolchain");
 
 const planPath = process.env.FRAPPE_LT_RUNTIME_PLAN;
 const resultPath = process.env.FRAPPE_LT_RUNTIME_RESULT;
@@ -54,20 +55,6 @@ module.exports = defineConfig({
 		testIsolation: false,
 		setupNodeEvents(on, config) {
 			config.env.runtimePlan = plan;
-			const browserName = config.browser?.displayName || config.browser?.name;
-			const browserVersion = config.browser?.version;
-			if (typeof browserName !== "string" || !browserName || typeof browserVersion !== "string" || !browserVersion) {
-				throw new Error("Cypress did not report an exact browser version");
-			}
-			const toolchain = canonical({
-				browser: { name: browserName, version: browserVersion },
-				cypress: { version: require("cypress/package.json").version },
-				node: { version: process.version },
-				plugins: {
-					"@testing-library/cypress": require("@testing-library/cypress/package.json").version,
-				},
-				schema_version: 1,
-			});
 			const secrets = [plan.token];
 			for (const credential of Object.values(plan.credentials)) {
 				for (const value of Object.values(credential)) secrets.push(value);
@@ -86,7 +73,16 @@ module.exports = defineConfig({
 					return evidence.publish(request);
 				},
 			});
-			on("after:run", () => {
+			on("after:run", (runResults) => {
+				const toolchain = canonical({
+					browser: browserFromRunResults(runResults),
+					cypress: { version: require("cypress/package.json").version },
+					node: { version: process.version },
+					plugins: {
+						"@testing-library/cypress": require("@testing-library/cypress/package.json").version,
+					},
+					schema_version: 1,
+				});
 				const output = canonical({
 					schema_version: 4,
 					scenarios: [...results.values()].sort((left, right) =>
