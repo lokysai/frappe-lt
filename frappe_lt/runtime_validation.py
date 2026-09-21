@@ -14,7 +14,12 @@ from urllib.parse import quote, quote_plus
 
 from frappe_lt.inventory import _json_object, canonical_json, verify_environment
 from frappe_lt.runtime_contracts import load_contracts, safe_relative_path
-from frappe_lt.runtime_control import SiteControl, redact_sensitive
+from frappe_lt.runtime_control import (
+	SiteControl,
+	_active_translation_key,
+	_active_translation_keys,
+	redact_sensitive,
+)
 from frappe_lt.runtime_discovery import coverage, discover
 
 REPORT_SCHEMA_VERSION = 3
@@ -85,7 +90,11 @@ def _read_json(path: Path) -> dict:
 		raise ValueError(f"could not read browser result: {error}") from error
 
 
-def _validate_fallback(value: object, scenario: dict) -> dict:
+def _validate_fallback(
+	value: object,
+	scenario: dict,
+	active_keys: frozenset[tuple[str, str | None]],
+) -> dict:
 	scenario_id = scenario["id"]
 	value = _exact(
 		value,
@@ -157,6 +166,12 @@ def _validate_fallback(value: object, scenario: dict) -> dict:
 			and exclusion_target != target["value"]
 		):
 			raise ValueError("lookup evidence exclusion is not an exact reviewed scenario exclusion")
+	if (
+		value["visible"]
+		and not value["excluded"]
+		and _active_translation_key(key["source"], key["context"], active_keys) is None
+	):
+		raise ValueError("rendered lookup is absent from the authenticated Release Inventory")
 	return value
 
 
@@ -295,6 +310,7 @@ def validate_browser_results(
 	if value["schema_version"] != BROWSER_SCHEMA_VERSION or not isinstance(value["scenarios"], list):
 		raise ValueError("unsupported browser result schema")
 	_validate_toolchain(value["toolchain"])
+	active_keys = _active_translation_keys()
 	manifest = {scenario["id"]: scenario for scenario in scenarios["scenarios"]}
 	results = []
 	total_evidence = 0
@@ -392,7 +408,7 @@ def validate_browser_results(
 		if not all(isinstance(result[field], list) for field in ("evidence", "fallbacks", "layouts")):
 			raise ValueError("browser findings and evidence must be lists")
 		result["fallbacks"] = sorted(
-			(_validate_fallback(item, manifest[scenario_id]) for item in result["fallbacks"]),
+			(_validate_fallback(item, manifest[scenario_id], active_keys) for item in result["fallbacks"]),
 			key=lambda item: (
 				item["key"]["source"],
 				item["key"]["context"] or "",
@@ -414,20 +430,24 @@ def validate_browser_results(
 		if scenario_evidence > MAX_EVIDENCE_PER_SCENARIO:
 			raise ValueError(f"scenario {scenario_id!r} exceeds its evidence byte limit")
 		total_evidence += scenario_evidence
+		has_active_lookup = any(
+			_active_translation_key(item["key"]["source"], item["key"]["context"], active_keys) is not None
+			for item in result["fallbacks"]
+		)
 		blocking_fallback = any(
-			item["render_status"] == "unique"
+			item["render_status"] != "unrendered"
 			and item["visible"]
 			and not item["excluded"]
 			and (item["source"] == "missing" or item["effective"] == item["key"]["source"])
 			for item in result["fallbacks"]
 		)
 		blocking_layout = any(item["severity"] == "functional" for item in result["layouts"])
-		if result["status"] == "pass" and (not result["ready"] or not result["fallbacks"]):
+		if result["status"] == "pass" and (not result["ready"] or not has_active_lookup):
 			result["status"] = "blocked"
 			result["blocked_reason"] = (
 				"scenario did not prove readiness"
 				if not result["ready"]
-				else "scenario produced no effective translation lookup evidence"
+				else "scenario produced no active effective translation lookup evidence"
 			)
 			result["attempts"][-1]["outcome"] = "blocked"
 			result["attempts"][-1]["error"] = result["blocked_reason"]
@@ -725,7 +745,7 @@ def _build_report(
 		for result in results
 		for finding in result["fallbacks"]
 		if finding["visible"]
-		and finding["render_status"] == "unique"
+		and finding["render_status"] != "unrendered"
 		and not finding["excluded"]
 		and (finding["source"] == "missing" or finding["effective"] == finding["key"]["source"])
 	)

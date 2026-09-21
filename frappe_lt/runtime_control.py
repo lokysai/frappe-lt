@@ -9,9 +9,10 @@ import time
 from contextlib import contextmanager
 from datetime import date, datetime
 from datetime import time as datetime_time
+from functools import lru_cache
 from pathlib import Path
 
-from frappe_lt.inventory import _json_object, canonical_json
+from frappe_lt.inventory import COMPATIBILITY_PATH, _json_object, canonical_json, load_compatibility
 
 JOURNAL_SCHEMA_VERSION = 2
 RUN_MARKER_PREFIX = "frappe-lt-runtime-"
@@ -697,11 +698,13 @@ class SiteControl:
 			fixtures["item-draft"] = {"item_name": name}
 		if "todo-draft" in fixture_ids:
 			name = f"{self.marker}-todo"
+			due_date = date(2099, 12, 31)
 			self.before_document_mutation("ToDo", name)
 			document = self.frappe.get_doc(
 				{
 					"description": self.marker,
 					"doctype": "ToDo",
+					"date": due_date,
 					"priority": "Medium",
 					"status": "Open",
 				}
@@ -713,9 +716,21 @@ class SiteControl:
 			if any(effects.values()):
 				raise RuntimeError("fixture todo-draft attempted an external side effect")
 			actual = self.frappe.get_doc("ToDo", name)
-			if actual.docstatus != 0 or actual.description != self.marker or actual.status != "Open":
+			if (
+				actual.docstatus != 0
+				or actual.description != self.marker
+				or actual.date != due_date
+				or actual.status != "Open"
+			):
 				raise RuntimeError("fixture todo-draft does not match its exact postconditions")
-			fixtures["todo-draft"] = {"doctype": "ToDo", "name": name}
+			fixtures["todo-draft"] = {
+				"doctype": "ToDo",
+				"name": name,
+				"output_values": [
+					f"<div class='ql-snow'>{self.marker}</div>\n\t",
+					f"{due_date}\n\t",
+				],
+			}
 		fixtures["runtime-user"] = {"marker": self.marker}
 		if "portal-customer" in credentials:
 			fixtures["runtime-user"]["user"] = credentials["portal-customer"]["user"]
@@ -1167,7 +1182,59 @@ def _validate_capture(lookups: list[dict], **outputs: str) -> None:
 		raise ValueError("captured runtime output exceeds its aggregate limit")
 
 
-def _resolve_effective(frappe, raw_source: str, context: str | None, *, lookup_path: str = "server") -> dict:
+@lru_cache(maxsize=4)
+def _load_active_translation_keys(inventory_digest: str) -> frozenset[tuple[str, str | None]]:
+	path = COMPATIBILITY_PATH.with_name("release_inventory.json")
+	content = path.read_bytes()
+	if hashlib.sha256(content).hexdigest() != inventory_digest:
+		raise ValueError("Release Inventory digest mismatch")
+	inventory = json.loads(content, object_pairs_hook=_json_object)
+	if inventory.get("schema_version") != 1 or not isinstance(inventory.get("entries"), list):
+		raise ValueError("Release Inventory schema is invalid")
+	keys = []
+	for entry in inventory["entries"]:
+		key = entry.get("key") if isinstance(entry, dict) else None
+		if (
+			not isinstance(key, dict)
+			or set(key) != {"context", "source"}
+			or not isinstance(key["source"], str)
+			or not key["source"]
+			or key["source"] != key["source"].strip()
+			or (key["context"] is not None and not isinstance(key["context"], str))
+			or key["context"] == ""
+		):
+			raise ValueError("Release Inventory contains an invalid Translation Key")
+		keys.append((key["source"], key["context"]))
+	if len(keys) != len(set(keys)):
+		raise ValueError("Release Inventory contains duplicate Translation Keys")
+	return frozenset(keys)
+
+
+def _active_translation_keys() -> frozenset[tuple[str, str | None]]:
+	manifest = load_compatibility()
+	return _load_active_translation_keys(manifest["inventory_digest"])
+
+
+def _active_translation_key(
+	source: str,
+	context: str | None,
+	active_keys: frozenset[tuple[str, str | None]],
+) -> tuple[str, str | None] | None:
+	contextual = (source, context)
+	if context is not None and contextual in active_keys:
+		return contextual
+	contextless = (source, None)
+	return contextless if contextless in active_keys else None
+
+
+def _resolve_effective(
+	frappe,
+	raw_source: str,
+	context: str | None,
+	*,
+	lookup_path: str = "server",
+	active_keys: frozenset[tuple[str, str | None]] | None = None,
+) -> dict:
 	from frappe.translate import get_all_translations, get_translations_from_apps, get_user_translations
 
 	raw_source = frappe.as_unicode(raw_source)
@@ -1189,7 +1256,13 @@ def _resolve_effective(frappe, raw_source: str, context: str | None, *, lookup_p
 	database = get_user_translations("lt")
 	if selected_key is not None and database.get(selected_key) == effective:
 		origin = "database"
+	active_key = _active_translation_key(
+		normalized_source,
+		context,
+		_active_translation_keys() if active_keys is None else active_keys,
+	)
 	return {
+		"active": active_key is not None,
 		"effective": effective,
 		"key": {"context": context, "source": normalized_source},
 		"raw_source": raw_source,

@@ -5,6 +5,8 @@ const {
 	exactOutputExclusion,
 	isBlockingFallback,
 	isClippedByAncestor,
+	isUntrustedRenderedLookup,
+	isVisuallyHidden,
 	meaningfulTarget,
 } = require("../support/runtime_validation_helpers");
 
@@ -155,7 +157,13 @@ function recordLayout(result) {
 		const isVisible = (element) => {
 			const style = document.defaultView.getComputedStyle(element);
 			const bounds = element.getBoundingClientRect();
-			return style.display !== "none" && style.visibility !== "hidden" && bounds.width > 0 && bounds.height > 0;
+			return (
+				style.display !== "none" &&
+				style.visibility !== "hidden" &&
+				bounds.width > 0 &&
+				bounds.height > 0 &&
+				!isVisuallyHidden(element, document.defaultView.getComputedStyle.bind(document.defaultView))
+			);
 		};
 		if (root.scrollWidth > root.clientWidth + 1) {
 			result.layouts.push({
@@ -317,6 +325,12 @@ function collectLookups(scenario, result) {
 			}).then((response) => {
 				const resolved = response.body.message;
 				const location = locateRenderedLookup(window.document, lookup.rendered, scenario);
+				if (isUntrustedRenderedLookup(resolved.active, location.renderStatus, location.excluded)) {
+					throw new Error(
+						`rendered lookup is absent from the authenticated Release Inventory: ${resolved.key.source}`
+					);
+				}
+				if (!resolved.active) return;
 				if (resolved.effective !== lookup.effective) {
 					throw new Error(`loaded dictionary disagrees with effective lookup for ${resolved.key.source}`);
 				}
@@ -340,9 +354,12 @@ function collectLookups(scenario, result) {
 function collectServerLookups(scenario, result, lookups, targetType, output) {
 	const unique = new Map();
 	const fixture = plan.fixtures[scenario.fixture_id] || {};
+	const outputValues = Array.isArray(fixture.output_values) ? fixture.output_values : [];
 	const approvedValues = {
-		"output:fixture-values": Object.values(fixture).filter(
-			(value) => typeof value === "string" && value.startsWith(`frappe-lt-runtime-${plan.run_id}`)
+		"output:fixture-values": [...outputValues, ...Object.values(fixture)].filter(
+			(value) =>
+				typeof value === "string" &&
+				(outputValues.includes(value) || value.startsWith(`frappe-lt-runtime-${plan.run_id}`))
 		),
 		"output:recipient": typeof fixture.user === "string" ? [fixture.user] : [],
 	};
@@ -366,6 +383,12 @@ function collectServerLookups(scenario, result, lookups, targetType, output) {
 				scenario.expected_exclusions,
 				approvedValues
 			);
+			if (isUntrustedRenderedLookup(resolved.active, correlation.renderStatus, Boolean(exclusion))) {
+				throw new Error(
+					`rendered lookup is absent from the authenticated Release Inventory: ${resolved.key.source}`
+				);
+			}
+			if (!resolved.active) return;
 			if (resolved.effective !== lookup.effective) {
 				throw new Error(`server output lookup disagrees with effective translation for ${lookup.key.source}`);
 			}

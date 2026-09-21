@@ -23,6 +23,7 @@ from frappe_lt.runtime_contracts import (
 )
 from frappe_lt.runtime_control import (
 	SiteControl,
+	_active_translation_key,
 	_authorized_browser_plan,
 	_capture_http_response,
 	_capture_server_lookups,
@@ -523,6 +524,21 @@ class RuntimeDiscoveryTest(TestCase):
 		)
 		with self.assertRaisesRegex(ValueError, "Manifest references candidates not found"):
 			coverage(discovery, {"scenarios": [{"candidate_id": "page:Missing"}]}, classifications)
+		with self.assertRaisesRegex(ValueError, "both manifest and classifier"):
+			coverage(
+				discovery,
+				{"scenarios": [{"candidate_id": "page:A"}]},
+				{
+					"classifications": [
+						{
+							"candidate_id": "page:A",
+							"disposition": "non_executable",
+							"reason": "conflict",
+							"reviewed_by": "reviewer",
+						}
+					]
+				},
+			)
 
 
 def _browser_result(scenario_id, **changes):
@@ -626,10 +642,10 @@ class RuntimeReportTest(TestCase):
 			all(result["status"] == "blocked" for result in results if result["id"] != scenario_id)
 		)
 
-	def test_only_unique_visible_lookup_correlation_can_prove_a_fallback(self):
+	def test_every_rendered_lookup_correlation_can_prove_a_fallback(self):
 		scenario_id = self.scenario["id"]
 		for render_status, visible, expected in (
-			("ambiguous", True, "pass"),
+			("ambiguous", True, "fail"),
 			("unrendered", False, "pass"),
 			("unique", True, "fail"),
 		):
@@ -842,6 +858,51 @@ class RuntimeReportTest(TestCase):
 		with TemporaryDirectory() as directory, self.assertRaisesRegex(ValueError, "exact reviewed"):
 			validate_browser_results(browser, self.contracts["scenarios"], Path(directory))
 
+	def test_rendered_lookup_must_belong_to_authenticated_inventory(self):
+		scenario_id = self.scenario["id"]
+		fallback = deepcopy(_browser_result(scenario_id)["fallbacks"][0])
+		fallback.update(
+			{
+				"effective": "frappe-lt-dynamic-value",
+				"key": {"context": None, "source": "frappe-lt-dynamic-value"},
+				"raw_source": "frappe-lt-dynamic-value",
+				"source": "missing",
+			}
+		)
+		with (
+			TemporaryDirectory() as directory,
+			self.assertRaisesRegex(ValueError, "authenticated Release Inventory"),
+		):
+			validate_browser_results(
+				{
+					"schema_version": 4,
+					"scenarios": [_browser_result(scenario_id, fallbacks=[fallback])],
+					"toolchain": _toolchain(),
+				},
+				self.contracts["scenarios"],
+				Path(directory),
+			)
+
+		fallback.update(
+			{
+				"render_status": "unrendered",
+				"target": {"type": "locator", "value": "body[data-route]"},
+				"visible": False,
+			}
+		)
+		with TemporaryDirectory() as directory:
+			results = validate_browser_results(
+				{
+					"schema_version": 4,
+					"scenarios": [_browser_result(scenario_id, fallbacks=[fallback])],
+					"toolchain": _toolchain(),
+				},
+				self.contracts["scenarios"],
+				Path(directory),
+			)
+		self.assertEqual(results[0]["status"], "blocked")
+		self.assertIn("no active effective translation lookup", results[0]["blocked_reason"])
+
 	def test_reviewed_output_exclusion_keeps_its_exact_captured_interval(self):
 		scenario = next(
 			item for item in self.contracts["scenarios"]["scenarios"] if item["id"] == "todo-standard-print"
@@ -884,7 +945,7 @@ class RuntimeReportTest(TestCase):
 					"exclusion_id": None,
 					"key": {"context": None, "source": "Save"},
 					"raw_source": "Save",
-					"render_status": "unique",
+					"render_status": "ambiguous",
 					"scenario_id": scenario_id,
 					"source": "missing",
 					"target": {"type": "locator", "value": "button"},
@@ -1470,11 +1531,13 @@ class RuntimeCrashRecoveryTest(TestCase):
 		translate.get_user_translations = lambda _lang: {}
 		frappe = SimpleNamespace(as_unicode=str)
 		with patch.dict(sys.modules, {"frappe.translate": translate}):
-			client = _resolve_effective(frappe, " Save ", None, lookup_path="client")
-			server = _resolve_effective(frappe, " Save ", None, lookup_path="server")
+			active_keys = frozenset({("Save", None)})
+			client = _resolve_effective(frappe, " Save ", None, lookup_path="client", active_keys=active_keys)
+			server = _resolve_effective(frappe, " Save ", None, lookup_path="server", active_keys=active_keys)
 		self.assertEqual(
 			client,
 			{
+				"active": True,
 				"effective": " Save ",
 				"key": {"context": None, "source": "Save"},
 				"raw_source": " Save ",
@@ -1484,6 +1547,40 @@ class RuntimeCrashRecoveryTest(TestCase):
 		self.assertEqual(server["effective"], "Išsaugoti")
 		self.assertEqual(server["source"], "frappe_lt")
 		self.assertEqual(server["raw_source"], " Save ")
+
+	def test_runtime_lookups_are_bound_to_active_inventory_keys(self):
+		active_keys = frozenset({("Accounting", None), ("Save", "Button")})
+		self.assertEqual(
+			_active_translation_key("Accounting", "Item", active_keys),
+			("Accounting", None),
+		)
+		self.assertEqual(_active_translation_key("Save", "Button", active_keys), ("Save", "Button"))
+		self.assertIsNone(_active_translation_key("2026-09-21", None, active_keys))
+		self.assertIsNone(
+			_active_translation_key("<div>frappe-lt-runtime-description</div>", None, active_keys)
+		)
+
+		translate = ModuleType("frappe.translate")
+		translate.get_all_translations = lambda _lang: {}
+		translate.get_translations_from_apps = lambda _lang, apps: {}
+		translate.get_user_translations = lambda _lang: {}
+		frappe = SimpleNamespace(as_unicode=str)
+		with patch.dict(sys.modules, {"frappe.translate": translate}):
+			contextual = _resolve_effective(
+				frappe,
+				"Accounting",
+				"Item",
+				active_keys=active_keys,
+			)
+			dynamic = _resolve_effective(
+				frappe,
+				"2026-09-21",
+				None,
+				active_keys=active_keys,
+			)
+		self.assertTrue(contextual["active"])
+		self.assertEqual(contextual["key"], {"context": "Item", "source": "Accounting"})
+		self.assertFalse(dynamic["active"])
 
 	def test_cleanup_removes_only_exact_journaled_login_effects(self):
 		with TemporaryDirectory() as directory:

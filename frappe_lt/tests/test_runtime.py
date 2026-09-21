@@ -116,6 +116,14 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 				printable_doc = frappe.get_doc("ToDo", printable["name"])
 				self.assertEqual(printable_doc.docstatus, 0)
 				self.assertEqual(printable_doc.description, control.marker)
+				self.assertEqual(str(printable_doc.date), "2099-12-31")
+				self.assertEqual(
+					printable["output_values"],
+					[
+						f"<div class='ql-snow'>{control.marker}</div>\n\t",
+						"2099-12-31\n\t",
+					],
+				)
 				self.assertEqual(frappe.db.count("GL Entry"), ledger_count)
 				self.assertEqual(
 					prepared["fixtures"],

@@ -186,6 +186,9 @@ def coverage(discovery: dict, scenarios: dict, classifications: dict) -> dict:
 		raise ValueError(
 			f"candidate classifier references candidates not found by discovery: {unknown_classifications}"
 		)
+	overlap = sorted(scenario_ids & classified_ids)
+	if overlap:
+		raise ValueError(f"runtime candidates appear in both manifest and classifier: {overlap}")
 	return {
 		"covered": sorted(candidate_ids & scenario_ids),
 		"gaps": sorted(candidate_ids - scenario_ids - classified_ids),

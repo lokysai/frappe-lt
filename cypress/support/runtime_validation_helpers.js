@@ -5,7 +5,6 @@ function escapeCss(value) {
 
 function meaningfulTarget(element) {
 	if (element.dataset?.fieldname) return `[data-fieldname="${escapeCss(element.dataset.fieldname)}"]`;
-	if (element.getAttribute("role")) return `[role="${escapeCss(element.getAttribute("role"))}"]`;
 	if (element.id) return `#${escapeCss(element.id)}`;
 	if (element.getAttribute("name")) return `[name="${escapeCss(element.getAttribute("name"))}"]`;
 	if (element.getAttribute("data-label")) {
@@ -14,7 +13,20 @@ function meaningfulTarget(element) {
 	if (element.getAttribute("aria-label")) {
 		return `[aria-label="${escapeCss(element.getAttribute("aria-label"))}"]`;
 	}
+	if (element.getAttribute("role")) return `[role="${escapeCss(element.getAttribute("role"))}"]`;
 	return null;
+}
+
+function isVisuallyHidden(element, getComputedStyle) {
+	for (let candidate = element; candidate; candidate = candidate.parentElement) {
+		const style = getComputedStyle(candidate);
+		const bounds = candidate.getBoundingClientRect();
+		const tiny = bounds.width <= 2 && bounds.height <= 2;
+		const clipped = style.clip && !["auto", "none"].includes(style.clip);
+		const clipPath = style.clipPath && style.clipPath !== "none";
+		if (tiny && (clipped || clipPath)) return true;
+	}
+	return false;
 }
 
 function isClippedByAncestor(element, getComputedStyle) {
@@ -83,11 +95,17 @@ function isBlockingFallback(finding) {
 	);
 }
 
+function isUntrustedRenderedLookup(active, renderStatus, excluded) {
+	return !active && renderStatus !== "unrendered" && !excluded;
+}
+
 module.exports = {
 	correlateOutput,
 	exactOutputExclusion,
 	isBlockingFallback,
 	isClippedByAncestor,
+	isUntrustedRenderedLookup,
+	isVisuallyHidden,
 	meaningfulTarget,
 	renderedIntervals,
 };
