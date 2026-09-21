@@ -29,6 +29,7 @@ from frappe_lt.runtime_control import (
 	_finalize_recipient_message,
 	_redact_email_output,
 	_resolve_effective,
+	_runtime_default_value_name,
 	_write_durable,
 	redact_sensitive,
 )
@@ -1178,6 +1179,106 @@ class RuntimeReportTest(TestCase):
 
 
 class RuntimeCrashRecoveryTest(TestCase):
+	def test_role_profile_defaults_are_deterministic_journaled_and_recovered(self):
+		with TemporaryDirectory() as directory:
+			root = Path(directory)
+			documents = {}
+			cleared_users = []
+
+			class DB:
+				def exists(self, doctype, name):
+					return (doctype, name) in documents
+
+				def delete(self, _doctype, _filters):
+					pass
+
+				def commit(self):
+					pass
+
+				def rollback(self):
+					pass
+
+				def sql(self, _query, _values=None):
+					return []
+
+			class Document:
+				def __init__(self, values):
+					self.values = values
+					self.name = None
+					self.flags = SimpleNamespace(name_set=False)
+
+				def insert(self, **_kwargs):
+					self.values["name"] = self.name
+					documents[(self.values["doctype"], self.name)] = dict(self.values)
+
+			class Frappe:
+				db = DB()
+				enqueue = None
+				sendmail = None
+
+				def get_site_path(self, *parts):
+					return str(root.joinpath(*parts))
+
+				def get_doc(self, doctype, name=None):
+					if isinstance(doctype, dict):
+						return Document(dict(doctype))
+					return SimpleNamespace(**documents[(doctype, name)])
+
+				def delete_doc(self, doctype, name, **_kwargs):
+					documents.pop((doctype, name), None)
+
+				def clear_cache(self, *, user):
+					cleared_users.append(user)
+
+				def get_all(self, *_args, **_kwargs):
+					return []
+
+			run_id = "a" * 32
+			user = f"frappe-lt-runtime-{run_id}-accounts-user@invalid.example"
+			defaults = {
+				"date_format": "yyyy-mm-dd",
+				"first_day_of_the_week": "Monday",
+				"number_format": "# ###,##",
+				"time_format": "HH:mm",
+				"time_zone": "Europe/Vilnius",
+			}
+			control = SiteControl(Frappe(), "development.localhost", run_id, site_path=root)
+			control.start()
+			control._create_role_profile_defaults(user, defaults)
+
+			expected_names = [
+				_runtime_default_value_name(control.marker, user, key) for key in sorted(defaults)
+			]
+			journal = json.loads(control.journal_path.read_bytes())
+			self.assertEqual(
+				[mutation["target"] for mutation in journal["mutations"]],
+				[{"doctype": "DefaultValue", "name": name} for name in expected_names],
+			)
+			self.assertEqual(
+				set(documents),
+				{("DefaultValue", name) for name in expected_names},
+			)
+			for key, name in zip(sorted(defaults), expected_names, strict=True):
+				self.assertTrue(name.startswith(f"{control.marker}-default-"))
+				self.assertEqual(
+					documents[("DefaultValue", name)],
+					{
+						"defkey": key,
+						"defvalue": defaults[key],
+						"doctype": "DefaultValue",
+						"name": name,
+						"parent": user,
+						"parentfield": "defaults",
+						"parenttype": "User",
+					},
+				)
+
+			recovery = SiteControl(Frappe(), "development.localhost", "b" * 32, site_path=root)
+			self.assertEqual(recovery.recover_stale(), [])
+			self.assertEqual(documents, {})
+			self.assertFalse(control.journal_path.exists())
+			self.assertEqual(cleared_users, [user] * 6)
+
 	def test_standard_http_capture_correlates_the_same_body_and_suppresses_access_log(self):
 		def translator(msg, lang=None, context=None):
 			non_translated_string = msg

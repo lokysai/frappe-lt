@@ -48,6 +48,10 @@ class CIWorkflowTest(TestCase):
 			)
 		self.assertLess(
 			commands.index("export-lithuanian-runtime-candidates"),
+			commands.index("frappe_lt.tests.test_runtime"),
+		)
+		self.assertLess(
+			commands.index("export-lithuanian-runtime-candidates"),
 			commands.index("validate-lithuanian-runtime"),
 		)
 		self.assertNotIn("uninstall-app", commands)

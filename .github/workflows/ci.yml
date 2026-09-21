@@ -544,10 +544,6 @@ jobs:
             python -c 'import json,sys; status=json.load(sys.stdin); assert status["state_after"] == "APPLIED", status'
           bench build --apps frappe,erpnext,frappe_lt
 
-      - name: Run expanded runtime integration tests
-        working-directory: /home/runner/frappe-bench
-        run: bench --site development.localhost run-tests --app frappe_lt --module frappe_lt.tests.test_runtime
-
       - name: Export pinned runtime candidates
         working-directory: /home/runner/frappe-bench
         run: |
@@ -561,6 +557,10 @@ jobs:
           Path("/tmp/frappe-lt-runtime-backups-before.json").write_text(json.dumps(paths, separators=(",", ":")) + "\n")
           PY
           bench --site development.localhost export-lithuanian-runtime-candidates --output "$RUNTIME_ARTIFACT_DIR/candidate-snapshot.json"
+
+      - name: Run expanded runtime integration tests
+        working-directory: /home/runner/frappe-bench
+        run: bench --site development.localhost run-tests --app frappe_lt --module frappe_lt.tests.test_runtime
 
       - name: Print browser version and start runtime web process
         working-directory: /home/runner/frappe-bench

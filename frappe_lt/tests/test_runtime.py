@@ -7,6 +7,8 @@ from frappe.tests import IntegrationTestCase
 from frappe_lt.runtime_contracts import load_contracts
 from frappe_lt.runtime_control import (
 	SiteControl,
+	_load_journal,
+	_runtime_default_value_name,
 	_write_durable,
 	capture_portal,
 	capture_print,
@@ -46,9 +48,16 @@ class DatabaseMaskingTest(IntegrationTestCase):
 
 
 class RuntimeSiteControlTest(IntegrationTestCase):
+	def _assert_clean_control(self, control):
+		frappe.set_user("Administrator")
+		cleanup = control.cleanup()
+		residue = control.residue_scan()
+		self.assertEqual({"cleanup": cleanup, "residue": residue}, {"cleanup": [], "residue": []})
+
 	def test_prepare_owns_exact_portal_and_draft_print_fixtures_without_ledger_entries(self):
 		run_id = "b" * 32
 		control = SiteControl(frappe, frappe.local.site, run_id)
+		self.addCleanup(self._assert_clean_control, control)
 		contracts = load_contracts()
 		ledger_count = frappe.db.count("GL Entry")
 		with control.lease():
@@ -90,12 +99,87 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 					prepared["fixtures"],
 					["item-draft", "portal-contact", "runtime-user", "todo-draft"],
 				)
+				expected_defaults = {}
+				for profile in contracts["profiles"]["profiles"]:
+					if profile["administrator"]:
+						continue
+					user = f"{control.marker}-{profile['id']}@invalid.example"
+					profile_defaults = {**profile["defaults"], "time_zone": profile["time_zone"]}
+					for key, value in sorted(profile_defaults.items()):
+						name = _runtime_default_value_name(control.marker, user, key)
+						expected_defaults[name] = {
+							"defkey": key,
+							"defvalue": value,
+							"parent": user,
+							"parentfield": "defaults",
+							"parenttype": "User",
+						}
+				actual_defaults = {
+					row.pop("name"): row
+					for row in frappe.get_all(
+						"DefaultValue",
+						filters={"parent": ("like", f"{control.marker}%")},
+						fields=["name", "parent", "parentfield", "parenttype", "defkey", "defvalue"],
+					)
+				}
+				self.assertEqual(actual_defaults, expected_defaults)
+				journal = _load_journal(control.journal_path)
+				targets = [mutation["target"] for mutation in journal["mutations"]]
+				for name, default in expected_defaults.items():
+					self.assertIn({"doctype": "DefaultValue", "name": name}, targets)
+					self.assertLess(
+						targets.index({"doctype": "User", "name": default["parent"]}),
+						targets.index({"doctype": "DefaultValue", "name": name}),
+					)
 			finally:
 				cleanup = control.cleanup()
 			self.assertEqual(cleanup, [])
 
 		self.assertEqual(frappe.db.count("GL Entry"), ledger_count)
+		self.assertFalse(frappe.db.exists("DefaultValue", {"parent": ("like", f"{control.marker}%")}))
 		self.assertEqual(control.residue_scan(), [])
+
+	def test_stale_recovery_removes_exact_journaled_role_profile_defaults(self):
+		run_id = "9" * 32
+		control = SiteControl(frappe, frappe.local.site, run_id)
+		self.addCleanup(self._assert_clean_control, control)
+		contracts = load_contracts()
+		profile = next(
+			profile for profile in contracts["profiles"]["profiles"] if profile["id"] == "accounts-user"
+		)
+		with control.lease():
+			self.assertEqual(control.recover_stale(), [])
+			control.start()
+			control.prepare({"profiles": [profile]}, {"scenarios": []})
+			user = f"{control.marker}-{profile['id']}@invalid.example"
+			expected_names = [
+				_runtime_default_value_name(control.marker, user, key)
+				for key in sorted({*profile["defaults"], "time_zone"})
+			]
+			self.assertEqual(
+				frappe.get_all(
+					"DefaultValue",
+					filters={"parent": user},
+					pluck="name",
+					order_by="name asc",
+				),
+				sorted(expected_names),
+			)
+			journal_targets = [
+				mutation["target"] for mutation in _load_journal(control.journal_path)["mutations"]
+			]
+			self.assertTrue(
+				all({"doctype": "DefaultValue", "name": name} in journal_targets for name in expected_names)
+			)
+
+		recovery = SiteControl(frappe, frappe.local.site, "8" * 32)
+		self.addCleanup(self._assert_clean_control, recovery)
+		with recovery.lease():
+			self.assertEqual(recovery.recover_stale(), [])
+		self.assertFalse(frappe.db.exists("User", user))
+		self.assertFalse(frappe.db.exists("DefaultValue", {"name": ("in", expected_names)}))
+		self.assertFalse(control.journal_path.exists())
+		self.assertEqual(recovery.residue_scan(marker=control.marker), [])
 
 	def test_standard_outputs_capture_exact_response_without_queue_or_access_log(self):
 		run_id = "a" * 32
@@ -213,21 +297,28 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 		run_id = "d" * 32
 		user = f"frappe-lt-runtime-{run_id}@invalid.example"
 		control = SiteControl(frappe, frappe.local.site, run_id)
+		self.addCleanup(self._assert_clean_control, control)
 		with control.lease():
 			self.assertEqual(control.recover_stale(), [])
 			control.start()
 			try:
 				control.before_document_mutation("User", user)
-				frappe.get_doc(
-					{
-						"doctype": "User",
-						"email": user,
-						"first_name": "Runtime Cleanup",
-						"send_welcome_email": 0,
-					}
-				).insert(ignore_permissions=True)
+				with control.journal_default_writes(user) as default_writes:
+					frappe.get_doc(
+						{
+							"doctype": "User",
+							"email": user,
+							"first_name": "Runtime Cleanup",
+							"send_welcome_email": 0,
+						}
+					).insert(ignore_permissions=True)
 				frappe.db.commit()
 				self.assertTrue(frappe.db.exists("User", user))
+				self.assertEqual(len(default_writes["add"]), 5)
+				self.assertEqual(default_writes["clear"], [])
+				self.assertEqual(
+					len(frappe.get_all("DefaultValue", filters={"parent": user}, pluck="name")), 5
+				)
 			finally:
 				cleanup = control.cleanup()
 			self.assertEqual(cleanup, [])

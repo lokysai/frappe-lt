@@ -21,6 +21,11 @@ _LOGIN_LOCK = threading.Lock()
 _PRINT_CAPTURE_LOCK = threading.Lock()
 
 
+def _runtime_default_value_name(marker: str, user: str, key: str) -> str:
+	digest = hashlib.sha256(f"{user}\0{key}".encode()).hexdigest()
+	return f"{marker}-default-{digest}"
+
+
 def redact_sensitive(value: object, *, max_chars: int = 2048) -> str:
 	text = str(value)
 	text = re.sub(
@@ -234,6 +239,26 @@ class SiteControl:
 			if original_add_docshare is not None:
 				share.add_docshare = original_add_docshare
 
+	@contextmanager
+	def journal_default_writes(self, user: str):
+		writes = {"add": [], "clear": []}
+		original_add_default = self.frappe.defaults.add_default
+		original_clear_default = self.frappe.defaults.clear_default
+
+		def add_default(key, value, parent, parenttype=None):
+			if parent != user:
+				raise RuntimeError("test identity creation attempted a default write for another owner")
+			writes["add"].append((key, value, parent, parenttype))
+			self._create_role_profile_defaults(parent, {key: value})
+
+		self.frappe.defaults.add_default = add_default
+		self.frappe.defaults.clear_default = lambda *args, **kwargs: writes["clear"].append((args, kwargs))
+		try:
+			yield writes
+		finally:
+			self.frappe.defaults.add_default = original_add_default
+			self.frappe.defaults.clear_default = original_clear_default
+
 	def recover_stale(self) -> list[dict]:
 		with self.operation(exclusive=True):
 			return self._recover_stale_locked()
@@ -370,6 +395,25 @@ class SiteControl:
 			values["after"] = dict(self.frappe.db.get_value("User", user, LOGIN_USER_FIELDS, as_dict=True))
 			_write_durable(self.journal_path, self.journal)
 
+	def _create_role_profile_defaults(self, user: str, defaults: dict) -> None:
+		for key, value in sorted(defaults.items()):
+			name = _runtime_default_value_name(self.marker, user, key)
+			self.before_document_mutation("DefaultValue", name)
+			document = self.frappe.get_doc(
+				{
+					"defkey": key,
+					"defvalue": value,
+					"doctype": "DefaultValue",
+					"parent": user,
+					"parentfield": "defaults",
+					"parenttype": "User",
+				}
+			)
+			document.name = name
+			document.flags.name_set = True
+			document.insert(ignore_permissions=True)
+		self.frappe.clear_cache(user=user)
+
 	def prepare(self, profiles: dict, scenarios: dict, *, diagnostic_sampling: bool = False) -> dict:
 		if not isinstance(diagnostic_sampling, bool):
 			raise ValueError("diagnostic_sampling must be boolean")
@@ -429,13 +473,14 @@ class SiteControl:
 			if profile["administrator"]:
 				administrator = self.frappe.get_doc("User", "Administrator")
 				effective = self.frappe.defaults.get_defaults_for("Administrator")
+				expected_defaults = {**profile["defaults"], "time_zone": profile["time_zone"]}
 				if (
 					administrator.default_app != profile["default_app"]
 					or administrator.time_zone != profile["time_zone"]
 					or administrator.language != profile["language"]
 					or administrator.module_profile != profile["module_profile"]
 					or administrator.user_type != profile["user_type"]
-					or {key: effective.get(key) for key in profile["defaults"]} != profile["defaults"]
+					or {key: effective.get(key) for key in expected_defaults} != expected_defaults
 				):
 					raise RuntimeError("Administrator does not match its Runtime Role Profile")
 				credentials[profile["id"]] = {"user": "Administrator"}
@@ -444,7 +489,10 @@ class SiteControl:
 			password = secrets.token_urlsafe(24)
 			self.before_document_mutation("Notification Settings", user)
 			self.before_document_mutation("User", user)
-			with self.suppress_process_effects() as effects:
+			with (
+				self.suppress_process_effects() as effects,
+				self.journal_default_writes(user) as default_writes,
+			):
 				self.frappe.get_doc(
 					{
 						"default_app": profile["default_app"],
@@ -454,10 +502,6 @@ class SiteControl:
 						"language": profile["language"],
 						"module_profile": profile["module_profile"],
 						"new_password": password,
-						"defaults": [
-							{"defkey": key, "defvalue": value}
-							for key, value in sorted(profile["defaults"].items())
-						],
 						"roles": [{"role": role} for role in profile["roles"]],
 						"send_welcome_email": 0,
 						"time_zone": profile["time_zone"],
@@ -473,6 +517,14 @@ class SiteControl:
 				raise RuntimeError("test identity creation attempted outbound mail")
 			if len(effects["share"]) != 1:
 				raise RuntimeError("test identity creation did not emit exactly one suppressible self-share")
+			expected_defaults = {**profile["defaults"], "time_zone": profile["time_zone"]}
+			expected_default_writes = {(key, value, user, None) for key, value in expected_defaults.items()}
+			if (
+				default_writes["clear"]
+				or len(set(default_writes["add"])) != len(default_writes["add"])
+				or set(default_writes["add"]) != expected_default_writes
+			):
+				raise RuntimeError("test identity creation attempted unexpected implicit default writes")
 			actual = self.frappe.get_doc("User", user)
 			effective = self.frappe.defaults.get_defaults_for(user)
 			if (
@@ -482,7 +534,7 @@ class SiteControl:
 				or actual.module_profile != profile["module_profile"]
 				or actual.user_type != profile["user_type"]
 				or sorted(role.role for role in actual.roles) != profile["roles"]
-				or {key: effective.get(key) for key in profile["defaults"]} != profile["defaults"]
+				or {key: effective.get(key) for key in expected_defaults} != expected_defaults
 			):
 				raise RuntimeError(f"test identity does not match Runtime Role Profile {profile['id']!r}")
 			if profile["portal_link"] is not None:
@@ -742,8 +794,11 @@ class SiteControl:
 			if original_add_docshare is not None:
 				share.add_docshare = lambda *args, _shared=shared, **kwargs: _shared.append((args, kwargs))
 			try:
+				default_parent = mutation["before"].get("parent") if mutation["before"] else None
 				if mutation["before"] is None:
 					if self.frappe.db.exists(target["doctype"], target["name"]):
+						if target["doctype"] == "DefaultValue":
+							default_parent = self.frappe.get_doc(target["doctype"], target["name"]).parent
 						self.frappe.delete_doc(
 							target["doctype"],
 							target["name"],
@@ -778,6 +833,8 @@ class SiteControl:
 							delete_dynamic_links(kwargs["doctype"], kwargs["name"])
 				if mailed:
 					raise RuntimeError("cleanup attempted outbound mail")
+				if default_parent is not None:
+					self.frappe.clear_cache(user=default_parent)
 				self.frappe.db.commit()
 			except Exception as error:
 				self.frappe.db.rollback()
