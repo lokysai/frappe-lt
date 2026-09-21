@@ -566,6 +566,31 @@ jobs:
         working-directory: /home/runner/frappe-bench
         run: bench --site development.localhost run-tests --app frappe_lt --module frappe_lt.tests.test_runtime
 
+      - name: Install locked Frappe UI runner dependencies
+        working-directory: /home/runner/frappe-bench
+        env:
+          UI_RUNNER_ROOT: /tmp/frappe-lt-ui-runner
+        run: |
+          test "$(yarn --version)" = "1.22.22"
+          install -d -m 700 "$UI_RUNNER_ROOT"
+          yarn --cwd "$GITHUB_WORKSPACE/.github/ui-runner" install --frozen-lockfile --non-interactive --modules-folder "$UI_RUNNER_ROOT/node_modules"
+          frappe_modules="$BENCH_PATH/apps/frappe/node_modules"
+          for package in cypress cypress-real-events cypress-split @4tw/cypress-drag-drop @cypress/code-coverage @testing-library/cypress @testing-library/dom
+          do
+            test -e "$UI_RUNNER_ROOT/node_modules/$package"
+            test ! -e "$frappe_modules/$package"
+            mkdir -p "$(dirname "$frappe_modules/$package")"
+            ln -s "$UI_RUNNER_ROOT/node_modules/$package" "$frappe_modules/$package"
+          done
+          mkdir -p "$frappe_modules/.bin"
+          test ! -e "$frappe_modules/.bin/cypress"
+          ln -s "$UI_RUNNER_ROOT/node_modules/.bin/cypress" "$frappe_modules/.bin/cypress"
+          test "$(node -p "require('$frappe_modules/cypress/package.json').version")" = "13.17.0"
+          test -x "$frappe_modules/.bin/cypress"
+          test -z "$(git -C apps/frappe status --porcelain)"
+          test -z "$(git -C apps/erpnext status --porcelain)"
+          test -z "$(git -C apps/frappe_lt status --porcelain)"
+
       - name: Print browser version and start runtime web process
         working-directory: /home/runner/frappe-bench
         run: |

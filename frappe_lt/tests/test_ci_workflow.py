@@ -1,3 +1,4 @@
+import json
 import re
 from pathlib import Path
 from unittest import TestCase
@@ -6,6 +7,8 @@ import yaml
 
 ROOT = Path(__file__).parents[2]
 WORKFLOW_PATH = ROOT / ".github" / "workflows" / "ci.yml"
+UI_RUNNER_PACKAGE_PATH = ROOT / ".github" / "ui-runner" / "package.json"
+UI_RUNNER_LOCK_PATH = ROOT / ".github" / "ui-runner" / "yarn.lock"
 
 
 class CIWorkflowTest(TestCase):
@@ -54,6 +57,10 @@ class CIWorkflowTest(TestCase):
 			commands.index("export-lithuanian-runtime-candidates"),
 			commands.index("validate-lithuanian-runtime"),
 		)
+		self.assertLess(
+			commands.index("--frozen-lockfile"),
+			commands.index("validate-lithuanian-runtime"),
+		)
 		self.assertNotIn("uninstall-app", commands)
 		self.assertNotIn("frappe.utils.install.complete_setup_wizard", commands)
 		for required in (
@@ -73,6 +80,41 @@ class CIWorkflowTest(TestCase):
 		self.assertTrue(
 			any(step.get("if") == "always()" and "Stop runtime web process" in step["name"] for step in steps)
 		)
+
+	def test_runtime_browser_dependencies_are_fully_locked(self):
+		package = json.loads(UI_RUNNER_PACKAGE_PATH.read_text(encoding="utf-8"))
+		self.assertEqual(
+			package["dependencies"],
+			{
+				"@4tw/cypress-drag-drop": "2.3.1",
+				"@cypress/code-coverage": "3.14.7",
+				"@testing-library/cypress": "10.1.3",
+				"@testing-library/dom": "8.17.1",
+				"cypress": "13.17.0",
+				"cypress-real-events": "1.15.1",
+				"cypress-split": "1.25.0",
+			},
+		)
+		self.assertEqual(set(package["resolutions"].values()), {"8.70.0"})
+		lock = UI_RUNNER_LOCK_PATH.read_text(encoding="utf-8")
+		for name, version in package["dependencies"].items():
+			self.assertIn(f'{name}@{version}":' if name.startswith("@") else f"{name}@{version}:", lock)
+
+		commands = "\n".join(
+			step.get("run", "") for step in self.workflow["jobs"]["runtime-browser"]["steps"]
+		)
+		for required in (
+			"--frozen-lockfile",
+			"--modules-folder",
+			"@4tw/cypress-drag-drop",
+			"@cypress/code-coverage",
+			"@testing-library/cypress",
+			"@testing-library/dom",
+			"cypress-real-events",
+			"cypress-split",
+			"node_modules/.bin/cypress",
+		):
+			self.assertIn(required, commands)
 
 	def test_actions_and_runtime_artifact_allowlist_are_exact(self):
 		for job in self.workflow["jobs"].values():
