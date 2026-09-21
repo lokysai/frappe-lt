@@ -94,6 +94,27 @@ def leave_lithuanian_profile(context, confirm_leave_profile):
 	_run_profile_command(context, "abandon", confirmed=confirm_leave_profile)
 
 
+@click.command("validate-lithuanian-runtime")
+@click.option("--output-dir", type=click.Path(file_okay=False, path_type=str))
+@pass_context
+def validate_lithuanian_runtime(context, output_dir=None):
+	"""Validate the reviewed running-interface denominator."""
+	import frappe
+
+	from frappe_lt.runtime_validation import run
+
+	site = get_site(context)
+	frappe.init(site=site)
+	frappe.connect()
+	try:
+		result = run(site, output_dir)
+		click.echo(json.dumps(result, ensure_ascii=False, sort_keys=True))
+		if result["exit_code"]:
+			raise click.exceptions.Exit(result["exit_code"])
+	finally:
+		frappe.destroy()
+
+
 commands = [
 	build_translation_inventory,
 	catalog_quality_gate,
@@ -101,4 +122,5 @@ commands = [
 	show_lithuanian_profile_status,
 	restore_lithuanian_profile,
 	leave_lithuanian_profile,
+	validate_lithuanian_runtime,
 ]
