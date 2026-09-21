@@ -18,7 +18,7 @@ const planFields = [
 	"schema_version",
 	"scenarios",
 	"token",
-];
+].sort();
 if (
 	!plan ||
 	Array.isArray(plan) ||

@@ -719,17 +719,13 @@ class RuntimeReportTest(TestCase):
 				returncode=1,
 				pid=123,
 				stdout=io.BytesIO(
-					b"diagnostic-start\n"
-					+ b"discarded-install-output\n" * 4096
-					+ b"terminal-cypress-error\n"
+					b"diagnostic-start\n" + b"discarded-install-output\n" * 4096 + b"terminal-cypress-error\n"
 				),
 				wait=lambda timeout=None: 1,
 			)
 
 			with patch("frappe_lt.runtime_validation.subprocess.Popen", return_value=process):
-				_value, _returncode, diagnostic = _default_browser_runner(
-					"development.localhost", root, plan
-				)
+				_value, _returncode, diagnostic = _default_browser_runner("development.localhost", root, plan)
 
 			self.assertIn("diagnostic-start", diagnostic)
 			self.assertIn("terminal-cypress-error", diagnostic)
