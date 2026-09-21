@@ -1679,6 +1679,80 @@ SiteControl(
 				],
 			)
 
+	def test_cleanup_restores_with_the_current_document_timestamp(self):
+		with TemporaryDirectory() as directory:
+			root = Path(directory)
+			state = {
+				"doctype": "User",
+				"modified": "before-runtime-action",
+				"name": "runtime-user",
+				"value": "before",
+			}
+			saved_timestamps = []
+
+			class Document:
+				def __init__(self):
+					self.values = dict(state)
+
+				@property
+				def modified(self):
+					return self.values["modified"]
+
+				@modified.setter
+				def modified(self, value):
+					self.values["modified"] = value
+
+				def as_dict(self, **_kwargs):
+					return dict(self.values)
+
+				def update(self, values):
+					self.values.update(values)
+
+				def save(self, **_kwargs):
+					saved_timestamps.append(self.modified)
+					if self.modified != state["modified"]:
+						raise RuntimeError("document timestamp is stale")
+					state.update(self.values)
+
+			class DB:
+				def exists(self, _doctype, _name):
+					return True
+
+				def commit(self):
+					pass
+
+				def delete(self, _doctype, _filters):
+					pass
+
+				def rollback(self):
+					pass
+
+				def sql(self, _query, _values=None):
+					return []
+
+			class Frappe:
+				db = DB()
+				enqueue = None
+				sendmail = None
+
+				def get_site_path(self, *parts):
+					return str(root.joinpath(*parts))
+
+				def get_doc(self, _doctype, _name):
+					return Document()
+
+				def get_all(self, *_args, **_kwargs):
+					return []
+
+			control = SiteControl(Frappe(), "development.localhost", "a" * 32, site_path=root)
+			control.start()
+			control.before_document_mutation("User", "runtime-user")
+			state.update(modified="after-runtime-action", value="after")
+
+			self.assertEqual(control.cleanup(), [])
+			self.assertEqual(saved_timestamps, ["after-runtime-action"])
+			self.assertEqual(state["value"], "before")
+
 	def test_cleanup_preserves_prior_failures_when_residue_scan_itself_fails(self):
 		with TemporaryDirectory() as directory:
 			root = Path(directory)

@@ -60,6 +60,17 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 		self.addCleanup(self._assert_clean_control, control)
 		contracts = load_contracts()
 		ledger_count = frappe.db.count("GL Entry")
+		tree_before = {
+			doctype: frappe.get_all(
+				doctype,
+				fields=["name", parent_field, "old_parent", "lft", "rgt"],
+				order_by="name asc",
+			)
+			for doctype, parent_field in (
+				("Customer Group", "parent_customer_group"),
+				("Territory", "parent_territory"),
+			)
+		}
 		with control.lease():
 			self.assertEqual(control.recover_stale(), [])
 			control.start()
@@ -75,12 +86,20 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 				for value in (
 					portal["contact"],
 					portal["customer"],
+					portal["customer_group"],
+					portal["territory"],
 					printable["name"],
 				):
 					self.assertTrue(value.startswith(control.marker))
-				self.assertEqual(portal["customer_group"], "Commercial")
-				self.assertEqual(portal["territory"], "Rest Of The World")
 				self.assertEqual(portal["user"], plan["credentials"]["portal-customer"]["user"])
+				self.assertEqual(
+					frappe.db.get_value("Customer Group", portal["customer_group"], "parent_customer_group"),
+					"All Customer Groups",
+				)
+				self.assertEqual(
+					frappe.db.get_value("Territory", portal["territory"], "parent_territory"),
+					"All Territories",
+				)
 				contact = frappe.get_doc("Contact", portal["contact"])
 				self.assertEqual(contact.user, portal["user"])
 				self.assertEqual(
@@ -125,6 +144,19 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 				self.assertEqual(actual_defaults, expected_defaults)
 				journal = _load_journal(control.journal_path)
 				targets = [mutation["target"] for mutation in journal["mutations"]]
+				for doctype, name in (
+					("Customer Group", portal["customer_group"]),
+					("Territory", portal["territory"]),
+				):
+					self.assertIn({"doctype": doctype, "name": name}, targets)
+					self.assertLess(
+						targets.index({"doctype": doctype, "name": name}),
+						targets.index({"doctype": "Customer", "name": portal["customer"]}),
+					)
+				self.assertLess(
+					targets.index({"doctype": "Customer", "name": portal["customer"]}),
+					targets.index({"doctype": "Contact", "name": portal["contact"]}),
+				)
 				for name, default in expected_defaults.items():
 					self.assertIn({"doctype": "DefaultValue", "name": name}, targets)
 					self.assertLess(
@@ -137,6 +169,20 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 
 		self.assertEqual(frappe.db.count("GL Entry"), ledger_count)
 		self.assertFalse(frappe.db.exists("DefaultValue", {"parent": ("like", f"{control.marker}%")}))
+		self.assertEqual(
+			{
+				doctype: frappe.get_all(
+					doctype,
+					fields=["name", parent_field, "old_parent", "lft", "rgt"],
+					order_by="name asc",
+				)
+				for doctype, parent_field in (
+					("Customer Group", "parent_customer_group"),
+					("Territory", "parent_territory"),
+				)
+			},
+			tree_before,
+		)
 		self.assertEqual(control.residue_scan(), [])
 
 	def test_stale_recovery_removes_exact_journaled_role_profile_defaults(self):

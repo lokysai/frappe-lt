@@ -429,17 +429,47 @@ class SiteControl:
 						f"Runtime Role Profile {profile['id']!r} requires missing role {role!r}"
 					)
 		customer = None
-		customer_group = "Commercial"
-		territory = "Rest Of The World"
+		customer_group = f"{self.marker}-customer-group"
+		territory = f"{self.marker}-territory"
 		if "portal-contact" in fixture_ids:
-			for doctype, name in (
-				("Customer Group", customer_group),
-				("Territory", territory),
+			for doctype, name, label_field, parent_field, parent in (
+				(
+					"Customer Group",
+					customer_group,
+					"customer_group_name",
+					"parent_customer_group",
+					"All Customer Groups",
+				),
+				(
+					"Territory",
+					territory,
+					"territory_name",
+					"parent_territory",
+					"All Territories",
+				),
 			):
-				if not self.frappe.db.exists(doctype, name):
-					raise RuntimeError(f"fixture portal-contact requires {doctype} {name!r}")
-				if self.frappe.db.get_value(doctype, name, "is_group"):
-					raise RuntimeError(f"fixture portal-contact requires leaf {doctype} {name!r}")
+				if not self.frappe.db.exists(doctype, parent) or not self.frappe.db.get_value(
+					doctype, parent, "is_group"
+				):
+					raise RuntimeError(f"fixture portal-contact requires root {doctype} {parent!r}")
+				self.before_document_mutation(doctype, name)
+				document = self.frappe.get_doc(
+					{
+						"doctype": doctype,
+						"is_group": 0,
+						label_field: name,
+						parent_field: parent,
+					}
+				)
+				document.name = name
+				document.flags.name_set = True
+				with self.suppress_process_effects() as effects:
+					document.insert(ignore_permissions=True)
+				if any(effects.values()):
+					raise RuntimeError(f"fixture {doctype} attempted an external side effect")
+				actual = self.frappe.get_doc(doctype, name)
+				if actual.is_group or actual.get(parent_field) != parent:
+					raise RuntimeError(f"fixture portal-contact {doctype} does not match postconditions")
 			customer = f"{self.marker}-customer"
 			self.before_document_mutation("Customer", customer)
 			document = self.frappe.get_doc(
@@ -814,7 +844,10 @@ class SiteControl:
 					before = mutation["before"]
 					if self.frappe.db.exists(target["doctype"], target["name"]):
 						current = self.frappe.get_doc(target["doctype"], target["name"])
+						current_modified = getattr(current, "modified", None)
 						current.update(before)
+						if current_modified is not None:
+							current.modified = current_modified
 						current.save(ignore_permissions=True)
 					else:
 						self.frappe.get_doc(before).insert(ignore_permissions=True)
