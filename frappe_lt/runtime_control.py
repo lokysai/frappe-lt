@@ -448,9 +448,22 @@ class SiteControl:
 					"All Territories",
 				),
 			):
-				if not self.frappe.db.exists(doctype, parent) or not self.frappe.db.get_value(
-					doctype, parent, "is_group"
-				):
+				if not self.frappe.db.exists(doctype, parent):
+					self.before_document_mutation(doctype, parent)
+					root = self.frappe.get_doc(
+						{
+							"doctype": doctype,
+							"is_group": 1,
+							label_field: parent,
+						}
+					)
+					root.name = parent
+					root.flags.name_set = True
+					with self.suppress_process_effects() as effects:
+						root.insert(ignore_permissions=True)
+					if any(effects.values()):
+						raise RuntimeError(f"fixture root {doctype} attempted an external side effect")
+				if not self.frappe.db.get_value(doctype, parent, "is_group"):
 					raise RuntimeError(f"fixture portal-contact requires root {doctype} {parent!r}")
 				self.before_document_mutation(doctype, name)
 				document = self.frappe.get_doc(

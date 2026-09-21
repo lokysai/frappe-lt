@@ -63,7 +63,7 @@ def _redact_browser_diagnostic(value: bytes, plan: dict) -> str:
 	for secret in sorted(set(secrets), key=len, reverse=True):
 		for encoded in {secret, quote(secret, safe=""), quote_plus(secret, safe="")}:
 			text = text.replace(encoded, "[REDACTED]")
-	return _redact(text)
+	return redact_sensitive(text, max_chars=65 * 1024)
 
 
 def _exact(value: object, fields: set[str], label: str) -> dict:
@@ -499,12 +499,24 @@ def _default_browser_runner(site: str, run_root: Path, plan_path: Path) -> tuple
 		start_new_session=True,
 	)
 	diagnostic_bytes = bytearray()
+	diagnostic_truncated = False
 
 	def drain_output():
+		nonlocal diagnostic_truncated
 		while chunk := process.stdout.read(8192):
-			remaining = 64 * 1024 - len(diagnostic_bytes)
-			if remaining > 0:
-				diagnostic_bytes.extend(chunk[:remaining])
+			diagnostic_bytes.extend(chunk)
+			if len(diagnostic_bytes) > 64 * 1024:
+				del diagnostic_bytes[32 * 1024 : -32 * 1024]
+				diagnostic_truncated = True
+
+	def diagnostic_output():
+		if not diagnostic_truncated:
+			return bytes(diagnostic_bytes)
+		return (
+			bytes(diagnostic_bytes[: 32 * 1024])
+			+ b"\n...[diagnostic output truncated]...\n"
+			+ bytes(diagnostic_bytes[-32 * 1024 :])
+		)
 
 	drain = threading.Thread(target=drain_output, name="frappe-lt-cypress-output", daemon=True)
 	drain.start()
@@ -518,7 +530,7 @@ def _default_browser_runner(site: str, run_root: Path, plan_path: Path) -> tuple
 			os.killpg(process.pid, signal.SIGKILL)
 			process.wait()
 		drain.join(timeout=10)
-		diagnostic = _redact_browser_diagnostic(bytes(diagnostic_bytes), plan)
+		diagnostic = _redact_browser_diagnostic(diagnostic_output(), plan)
 		result_path.unlink(missing_ok=True)
 		raise BrowserRunnerError(
 			f"Cypress exceeded its {int(deadline_seconds)} second run deadline",
@@ -528,7 +540,7 @@ def _default_browser_runner(site: str, run_root: Path, plan_path: Path) -> tuple
 	if drain.is_alive():
 		process.stdout.close()
 		raise BrowserRunnerError("Cypress diagnostic pipe did not close", "")
-	diagnostic = _redact_browser_diagnostic(bytes(diagnostic_bytes), plan)
+	diagnostic = _redact_browser_diagnostic(diagnostic_output(), plan)
 	if not result_path.is_file():
 		raise BrowserRunnerError(
 			f"Cypress exited {process.returncode} without writing a result",
@@ -746,7 +758,9 @@ def _build_report(
 		"blocking_causes": sorted(blocking_causes, key=lambda cause: (cause["type"], cause["detail"])),
 		"cleanup_failures": cleanup_failures,
 		"coverage": coverage_result,
-		"cypress_diagnostic_log": _redact(cypress_diagnostic_log) if cypress_diagnostic_log else None,
+		"cypress_diagnostic_log": redact_sensitive(cypress_diagnostic_log, max_chars=65 * 1024)
+		if cypress_diagnostic_log
+		else None,
 		"diagnostic_sampling": diagnostic_sampling,
 		"discovery": discovery,
 		"durations_ms": durations,

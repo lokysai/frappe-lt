@@ -153,6 +153,12 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 						targets.index({"doctype": doctype, "name": name}),
 						targets.index({"doctype": "Customer", "name": portal["customer"]}),
 					)
+				for doctype, root_name in (
+					("Customer Group", "All Customer Groups"),
+					("Territory", "All Territories"),
+				):
+					if not any(row["name"] == root_name for row in tree_before[doctype]):
+						self.assertIn({"doctype": doctype, "name": root_name}, targets)
 				self.assertLess(
 					targets.index({"doctype": "Customer", "name": portal["customer"]}),
 					targets.index({"doctype": "Contact", "name": portal["contact"]}),

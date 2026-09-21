@@ -705,6 +705,37 @@ class RuntimeReportTest(TestCase):
 			self.assertEqual(environment["FRAPPE_LT_RUNTIME_ROOT"], str(root.resolve()))
 			self.assertFalse(result_path.exists())
 
+	def test_browser_runner_keeps_bounded_diagnostic_head_and_tail(self):
+		with TemporaryDirectory() as directory:
+			root = Path(directory) / "run"
+			root.mkdir()
+			plan = Path(directory) / "plan.json"
+			plan.write_text('{"scenarios": []}')
+			result_path = root / "browser-results.json"
+			result_path.write_text(
+				json.dumps({"scenarios": [], "schema_version": 4, "toolchain": _toolchain()})
+			)
+			process = SimpleNamespace(
+				returncode=1,
+				pid=123,
+				stdout=io.BytesIO(
+					b"diagnostic-start\n"
+					+ b"discarded-install-output\n" * 4096
+					+ b"terminal-cypress-error\n"
+				),
+				wait=lambda timeout=None: 1,
+			)
+
+			with patch("frappe_lt.runtime_validation.subprocess.Popen", return_value=process):
+				_value, _returncode, diagnostic = _default_browser_runner(
+					"development.localhost", root, plan
+				)
+
+			self.assertIn("diagnostic-start", diagnostic)
+			self.assertIn("terminal-cypress-error", diagnostic)
+			self.assertIn("diagnostic output truncated", diagnostic)
+			self.assertLessEqual(len(diagnostic.encode()), 65 * 1024)
+
 	def test_evidence_is_allowlisted_bounded_and_digest_verified(self):
 		scenario_id = self.scenario["id"]
 		with TemporaryDirectory() as directory:
