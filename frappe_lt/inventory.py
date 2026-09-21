@@ -2,6 +2,7 @@ import hashlib
 import html
 import json
 import os
+import platform
 import re
 import subprocess
 import sys
@@ -615,18 +616,67 @@ def _git_value(path: Path, *arguments: str) -> str:
 
 
 def _verify_upstream(frappe, manifest: dict) -> None:
+	verify_environment(frappe, site=frappe.local.site, require_clean_upstream=True)
+
+
+def verify_environment(
+	frappe,
+	*,
+	site: str,
+	require_clean_upstream: bool = False,
+	required_apps: tuple[str, ...] = ("frappe", "erpnext"),
+) -> dict:
+	"""Read-only verification of the site and pinned Compatibility environment."""
 	import erpnext
 
+	if not site or getattr(frappe.local, "site", None) != site:
+		raise ValueError(f"command site {site!r} does not match initialized site {frappe.local.site!r}")
+	manifest = verify_owned_artifacts()
+	tools = validate_tool_versions(manifest)
+	installed_apps = frappe.get_installed_apps()
+	positions = []
+	for app in required_apps:
+		if app not in installed_apps:
+			raise ValueError(f"required app {app!r} is not installed on {site}")
+		positions.append(installed_apps.index(app))
+	if positions != sorted(positions) or len(set(positions)) != len(positions):
+		raise ValueError(f"required app order is {list(required_apps)}; installed order is {installed_apps}")
+
 	versions = {"frappe": frappe.__version__, "erpnext": erpnext.__version__}
+	upstream = {}
+	bench_paths = set()
 	for app, pin in manifest["upstream"].items():
-		path = Path(frappe.get_app_source_path(app))
+		source_path = Path(frappe.get_app_source_path(app)).resolve()
+		path = Path(_git_value(source_path, "rev-parse", "--show-toplevel")).resolve()
+		bench_paths.add(path.parent.parent)
 		commit = _git_value(path, "rev-parse", "HEAD")
 		if commit != pin["commit"]:
 			raise ValueError(f"{app} commit must be {pin['commit']}; found {commit}")
 		if versions[app] != pin["version"]:
 			raise ValueError(f"{app} version must be {pin['version']}; found {versions[app]}")
-		if dirty := _git_value(path, "status", "--porcelain"):
+		if require_clean_upstream and (dirty := _git_value(path, "status", "--porcelain")):
 			raise ValueError(f"{app} worktree must be clean before extraction; found:\n{dirty}")
+		upstream[app] = {"commit": commit, "path": path.as_posix(), "version": versions[app]}
+	if len(bench_paths) != 1:
+		raise ValueError(
+			f"pinned upstream applications are not in one bench: {sorted(map(str, bench_paths))}"
+		)
+	bench_path = bench_paths.pop()
+	active_directory = bench_path / "sites"
+	if Path.cwd().resolve() != active_directory:
+		raise ValueError(
+			f"active directory must be bench sites directory {active_directory}; found {Path.cwd().resolve()}"
+		)
+
+	return {
+		"active_directory": active_directory.as_posix(),
+		"babel": tools["babel"],
+		"installed_apps": installed_apps,
+		"inventory_digest": manifest["inventory_digest"],
+		"python": platform.python_version(),
+		"site": site,
+		"upstream": upstream,
+	}
 
 
 def _load_provenance(path: Path) -> dict:
@@ -718,7 +768,12 @@ def run(
 		raise ValueError(f"command site {site!r} does not match initialized site {frappe.local.site!r}")
 	manifest = load_compatibility()
 	validate_tool_versions(manifest)
-	_verify_upstream(frappe, manifest)
+	verify_environment(
+		frappe,
+		site=site,
+		require_clean_upstream=True,
+		required_apps=("frappe", "erpnext"),
+	)
 	runtime = extract_runtime(frappe, manifest["runtime_metadata_sha256"])
 	events = runtime.events
 	events.extend(extract_sources(frappe))

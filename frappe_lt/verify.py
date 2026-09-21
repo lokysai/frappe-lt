@@ -1,11 +1,10 @@
 import hashlib
 import os
-import platform
 import shutil
 import subprocess
 from pathlib import Path
 
-from frappe_lt.inventory import load_compatibility, validate_tool_versions, verify_owned_artifacts
+from frappe_lt.inventory import load_compatibility, verify_environment, verify_owned_artifacts
 from frappe_lt.po import compile_po, parse_po
 
 EXPECTED_APP_ORDER = ["frappe", "erpnext", "frappe_lt"]
@@ -89,26 +88,19 @@ def _git_commit(path: Path) -> str:
 
 
 def _environment(frappe) -> dict[str, str]:
-	import erpnext
-
-	tools = validate_tool_versions(COMPATIBILITY)
-	environment = {
-		"frappe_commit": _git_commit(Path(frappe.get_app_source_path("frappe"))),
-		"erpnext_commit": _git_commit(Path(frappe.get_app_source_path("erpnext"))),
-		"frappe_version": frappe.__version__,
-		"erpnext_version": erpnext.__version__,
-		"python": platform.python_version(),
-		"babel": tools["babel"],
+	verified = verify_environment(
+		frappe,
+		site=frappe.local.site,
+		required_apps=tuple(EXPECTED_APP_ORDER),
+	)
+	return {
+		"frappe_commit": verified["upstream"]["frappe"]["commit"],
+		"erpnext_commit": verified["upstream"]["erpnext"]["commit"],
+		"frappe_version": verified["upstream"]["frappe"]["version"],
+		"erpnext_version": verified["upstream"]["erpnext"]["version"],
+		"python": verified["python"],
+		"babel": verified["babel"],
 	}
-	for app, expected in EXPECTED_COMMITS.items():
-		actual = environment[f"{app}_commit"]
-		if actual != expected:
-			raise ValueError(f"{app} commit must be {expected}; found {actual}")
-	for app, expected in EXPECTED_VERSIONS.items():
-		actual = environment[f"{app}_version"]
-		if actual != expected:
-			raise ValueError(f"{app} version must be {expected}; found {actual}")
-	return environment
 
 
 def _run_bench(bench_path: Path, *arguments: str, env: dict[str, str] | None = None) -> None:

@@ -205,18 +205,8 @@ def _navbar_owners(frappe) -> dict[str, set[str]]:
 	return owners
 
 
-def extract_runtime(frappe, metadata_sha256: dict) -> RuntimeExtraction:
-	"""Extract metadata from the clean pinned site without invoking mixed source helpers."""
-	site = getattr(frappe.local, "site", None)
-	if site == "development.localhost":
-		raise ValueError("runtime inventory must not use development.localhost")
-	installed_apps = frappe.get_installed_apps()
-	if installed_apps != EXPECTED_RUNTIME_APPS:
-		raise ValueError(f"runtime site must contain exactly frappe and erpnext; found {installed_apps}")
-	for doctype, filters in CUSTOM_METADATA:
-		if frappe.get_all(doctype, filters=filters, fields=["name"], limit=1):
-			raise ValueError(f"runtime site contains local/custom metadata in {doctype}")
-
+def collect_standard_metadata(frappe) -> dict[str, dict[str, list[dict]]]:
+	"""Bulk-collect the standard metadata boundary shared by inventory and discovery."""
 	doctypes = frappe.get_all(
 		"DocType",
 		filters={"custom": 0},
@@ -249,7 +239,6 @@ def extract_runtime(frappe, metadata_sha256: dict) -> RuntimeExtraction:
 		"Report Filter", fields=["parent", "fieldname", "label"], order_by="parent asc, idx asc"
 	)
 
-	navbar_owners = _navbar_owners(frappe)
 	navbar_items = frappe.get_all(
 		"Navbar Item",
 		filters={"item_label": ("is", "set")},
@@ -322,7 +311,39 @@ def extract_runtime(frappe, metadata_sha256: dict) -> RuntimeExtraction:
 			"Workspace Sidebar Item": sidebar_items,
 		},
 	}
+	return metadata
+
+
+def extract_runtime(frappe, metadata_sha256: dict) -> RuntimeExtraction:
+	"""Extract metadata from the clean pinned site without invoking mixed source helpers."""
+	site = getattr(frappe.local, "site", None)
+	if site == "development.localhost":
+		raise ValueError("runtime inventory must not use development.localhost")
+	installed_apps = frappe.get_installed_apps()
+	if installed_apps != EXPECTED_RUNTIME_APPS:
+		raise ValueError(f"runtime site must contain exactly frappe and erpnext; found {installed_apps}")
+	for doctype, filters in CUSTOM_METADATA:
+		if frappe.get_all(doctype, filters=filters, fields=["name"], limit=1):
+			raise ValueError(f"runtime site contains local/custom metadata in {doctype}")
+
+	metadata = collect_standard_metadata(frappe)
 	_validate_metadata_signatures(metadata, metadata_sha256)
+	doctypes = metadata["doctype"]["DocType"]
+	fields = metadata["doctype"]["DocField"]
+	permissions = metadata["doctype"]["DocPerm"]
+	links = metadata["doctype"]["DocType Link"]
+	pages = metadata["page"]["Page"]
+	reports = metadata["report"]["Report"]
+	report_columns = metadata["report"]["Report Column"]
+	report_filters = metadata["report"]["Report Filter"]
+	navbar_items = metadata["navbar"]["Navbar Item"]
+	workspaces = metadata["workspace"]["Workspace"]
+	workspace_children = {name: rows for name, rows in metadata["workspace"].items() if name != "Workspace"}
+	sidebars = metadata["workspace_sidebar"]["Workspace Sidebar"]
+	sidebar_items = metadata["workspace_sidebar"]["Workspace Sidebar Item"]
+	custom_fields = metadata["custom_field"]["Custom Field"]
+	property_setters = metadata["property_setter"]["Property Setter"]
+	navbar_owners = _navbar_owners(frappe)
 
 	doctype_apps = {}
 	events = []

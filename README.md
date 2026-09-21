@@ -84,6 +84,22 @@ Without a segment manifest, the candidate must cover the complete Release Invent
 
 Reports are canonical schema-versioned JSON. Exit `0` means success, exit `1` means trusted input with catalog-quality errors, and exit `2` means untrusted input or a tool/filesystem failure. `--fail-fast` writes one error when the report destination remains writable. Inputs are limited to 32 MiB per artifact, 64 MiB across authenticated reads, 100,000 entries per list, 1,000 candidates, 10,000 selectors, 100,000 glossary forms, and 256 KiB per string. Findings are limited to 500,000 and reports to 32 MiB; larger inputs or outputs are rejected. CI authenticates the registry and runs every registered candidate.
 
+## Running-interface validation
+
+Run the reviewed browser and output denominator only against the pinned local release site:
+
+```bash
+bench --site development.localhost validate-lithuanian-runtime
+```
+
+The command validates the strict [`runtime_scenarios.json`](frappe_lt/runtime_scenarios.json), [`runtime_role_profiles.json`](frappe_lt/runtime_role_profiles.json), and [`runtime_candidate_classifications.json`](frappe_lt/runtime_candidate_classifications.json) contracts before mutation. It then reuses the public read-only Compatibility environment verifier, discovers standard Frappe and ERPNext candidates without executing them, reports every unreviewed Runtime Coverage Gap, acquires one mutable-site lease, recovers a stale durable journal, creates only run-marked identities and fixtures, and invokes Frappe's supported `run-ui-tests` transport. It does not create a site backup.
+
+Every document mutation has a durable before-image. Cleanup runs after pass, failure, blocked readiness, and browser errors; a later run recovers a process killed after a journaled mutation. Scenario failures, Blocked Runtime Scenarios, Runtime Coverage Gaps, English Fallback, Functional Layout Defects, and Runtime Cleanup Failures remain separate report facts. Credentials, cookies, and capability tokens are stored only in a mode-`0600` private browser plan and are deleted during cleanup.
+
+The default report is written below `sites/development.localhost/private/frappe_lt_runtime/reports/<run-id>/`. `runtime-report.json` is the bounded canonical machine artifact and `runtime-report.md` is generated only from it. Heavy Cypress evidence is disabled by default; accepted evidence must remain below the run root, match its digest, and satisfy per-scenario and per-run byte limits. Exit `0` requires no blocking facts; exit `1` means the report safely recorded at least one blocking fact. A report-publication failure exits nonzero by raising the filesystem error.
+
+The committed catalog is still a one-message vertical slice, so a real release run is expected to fail on English Fallback and Runtime Coverage Gaps until the complete catalog and reviewed scenario/classification denominator are delivered. Such a failure is the intended fail-closed result, not a skip.
+
 See the [one-time smoke report](docs/smoke-report.md) for runtime and browser evidence status.
 
 ## Tests
@@ -94,6 +110,7 @@ Inside the bench environment:
 env/bin/python -m unittest frappe_lt.tests.test_verify
 env/bin/python -m unittest frappe_lt.tests.test_inventory
 env/bin/python -m unittest frappe_lt.tests.test_catalog_quality
+env/bin/python -m unittest frappe_lt.tests.test_runtime_validation
 bench --site development.localhost run-tests --app frappe_lt
 ```
 
