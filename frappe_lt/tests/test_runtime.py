@@ -277,12 +277,13 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 					frappe.db.exists("Access Log", {"reference_document": print_fixture["name"]})
 				)
 
-				email = capture_welcome_email(
-					run_id,
-					token,
-					"standard-welcome-email",
-					plan["fixtures"]["runtime-user"]["user"],
-				)
+				with patch("frappe.utils.get_assets_json", return_value={}):
+					email = capture_welcome_email(
+						run_id,
+						token,
+						"standard-welcome-email",
+						plan["fixtures"]["runtime-user"]["user"],
+					)
 				self.assertEqual(email["suppressed"], {"email_queue": 0, "enqueue": 0, "outbound": 1})
 				self.assertIn("MIME-Version", email["output"])
 				self.assertIn("key=[REDACTED]", email["visible_output"])

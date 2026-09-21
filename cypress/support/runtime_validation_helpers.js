@@ -74,9 +74,19 @@ function exactOutputExclusion(output, correlation, exclusions, approvedValues) {
 	return null;
 }
 
+function isBlockingFallback(finding) {
+	return (
+		finding.render_status !== "unrendered" &&
+		finding.visible &&
+		!finding.excluded &&
+		(finding.source === "missing" || finding.effective === finding.key.source)
+	);
+}
+
 module.exports = {
 	correlateOutput,
 	exactOutputExclusion,
+	isBlockingFallback,
 	isClippedByAncestor,
 	meaningfulTarget,
 	renderedIntervals,

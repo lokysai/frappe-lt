@@ -1180,7 +1180,7 @@ def _resolve_effective(frappe, raw_source: str, context: str | None, *, lookup_p
 	selected_key = contextual_key if contextual_key and merged.get(contextual_key) else None
 	if selected_key is None and merged.get(lookup_source):
 		selected_key = lookup_source
-	effective = merged[selected_key] if selected_key is not None else lookup_source
+	effective = merged[selected_key] if selected_key is not None else raw_source
 	origin = "merged" if selected_key is not None else "missing"
 	for app in ("frappe", "erpnext", "frappe_lt"):
 		dictionary = get_translations_from_apps("lt", apps=[app])
@@ -1327,11 +1327,12 @@ def _capture_server_lookups(frappe):
 			previous(frame, event, value)
 		if event != "return" or frame.f_code is not translator_code or not isinstance(value, str):
 			return
-		source = frappe.as_unicode(
+		raw_source = frappe.as_unicode(
 			frame.f_locals.get("non_translated_string", frame.f_locals.get("msg", ""))
-		).strip()
+		)
+		source = raw_source.strip()
 		context = frame.f_locals.get("context")
-		lookup_bytes = len(source.encode()) + len(value.encode())
+		lookup_bytes = len(raw_source.encode()) + len(value.encode())
 		if context is not None:
 			lookup_bytes += len(frappe.as_unicode(context).encode())
 		budget["bytes"] += lookup_bytes
@@ -1343,6 +1344,7 @@ def _capture_server_lookups(frappe):
 				{
 					"effective": value,
 					"key": {"context": context, "source": source},
+					"raw_source": raw_source,
 				}
 			)
 

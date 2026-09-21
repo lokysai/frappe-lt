@@ -55,6 +55,19 @@ class CIWorkflowTest(TestCase):
 			commands.index("validate-lithuanian-runtime"),
 		)
 		self.assertNotIn("uninstall-app", commands)
+		self.assertNotIn("frappe.utils.install.complete_setup_wizard", commands)
+		for required in (
+			"frappe.desk.page.setup_wizard.setup_wizard.setup_complete",
+			'"company_name":"Frappe LT Runtime"',
+			'"company_abbr":"FLTR"',
+			'"chart_of_accounts":"Standard"',
+			'"fy_start_date"',
+			'"fy_end_date"',
+			"frappe.db.count",
+			"frappe.db.get_single_value",
+			"frappe.defaults.get_user_default",
+		):
+			self.assertIn(required, commands)
 		self.assertIn("curl --fail", commands)
 		self.assertIn("google-chrome --version", commands)
 		self.assertTrue(

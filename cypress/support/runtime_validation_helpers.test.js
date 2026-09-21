@@ -4,6 +4,7 @@ const assert = require("node:assert/strict");
 const {
 	correlateOutput,
 	exactOutputExclusion,
+	isBlockingFallback,
 	isClippedByAncestor,
 	meaningfulTarget,
 } = require("./runtime_validation_helpers");
@@ -68,4 +69,19 @@ test("output exclusions apply only to exact approved values at the captured inte
 		null
 	);
 	assert.equal(exactOutputExclusion(output, correlation, exclusions, { "output:recipient": [] }), null);
+});
+
+test("rendered missing translations block even when their target is ambiguous", () => {
+	const finding = {
+		effective: "Save",
+		excluded: false,
+		key: { source: "Save" },
+		render_status: "ambiguous",
+		source: "missing",
+		visible: true,
+	};
+	assert.equal(isBlockingFallback(finding), true);
+	assert.equal(isBlockingFallback({ ...finding, render_status: "unrendered", visible: false }), false);
+	assert.equal(isBlockingFallback({ ...finding, excluded: true }), false);
+	assert.equal(isBlockingFallback({ ...finding, effective: "Išsaugoti", source: "frappe_lt" }), false);
 });

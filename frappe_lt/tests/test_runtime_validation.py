@@ -1398,7 +1398,13 @@ class RuntimeCrashRecoveryTest(TestCase):
 		self.assertEqual(captured["suppressed_access_logs"], 1)
 		self.assertEqual(
 			captured["lookups"],
-			[{"effective": "Spausdinti", "key": {"context": None, "source": "Print"}}],
+			[
+				{
+					"effective": "Spausdinti",
+					"key": {"context": None, "source": "Print"},
+					"raw_source": "Print",
+				}
+			],
 		)
 
 	def test_welcome_email_subject_is_read_from_the_final_mime_message(self):
@@ -1594,6 +1600,7 @@ class RuntimeCrashRecoveryTest(TestCase):
 		previous = sys.getprofile()
 		with _capture_server_lookups(frappe) as lookups:
 			self.assertEqual(preimported(" Hello {0} ", context="Greeting"), "Sveiki, {0}")
+			self.assertEqual(preimported(" Open\n\t", context="ToDo"), " Open\n\t")
 		self.assertIs(sys.getprofile(), previous)
 		self.assertEqual(
 			lookups,
@@ -1601,7 +1608,13 @@ class RuntimeCrashRecoveryTest(TestCase):
 				{
 					"effective": "Sveiki, {0}",
 					"key": {"context": "Greeting", "source": "Hello {0}"},
-				}
+					"raw_source": " Hello {0} ",
+				},
+				{
+					"effective": " Open\n\t",
+					"key": {"context": "ToDo", "source": "Open"},
+					"raw_source": " Open\n\t",
+				},
 			],
 		)
 

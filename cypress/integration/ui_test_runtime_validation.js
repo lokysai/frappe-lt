@@ -3,6 +3,7 @@ const scenarioResults = new Map();
 const {
 	correlateOutput,
 	exactOutputExclusion,
+	isBlockingFallback,
 	isClippedByAncestor,
 	meaningfulTarget,
 } = require("../support/runtime_validation_helpers");
@@ -73,13 +74,7 @@ function finishScenario(scenario, result, started) {
 		result.status = "blocked";
 		result.blocked_reason = `scenario exceeded ${scenario.scenario_timeout_ms} ms`;
 	}
-	const blockingFallback = result.fallbacks.some(
-		(finding) =>
-			finding.render_status === "unique" &&
-			finding.visible &&
-			!finding.excluded &&
-			(finding.source === "missing" || finding.effective === finding.key.source)
-	);
+	const blockingFallback = result.fallbacks.some(isBlockingFallback);
 	const blockingLayout = result.layouts.some((finding) => finding.severity === "functional");
 	if (result.status === "pass" && (blockingFallback || blockingLayout)) {
 		result.status = "fail";
@@ -352,7 +347,7 @@ function collectServerLookups(scenario, result, lookups, targetType, output) {
 		"output:recipient": typeof fixture.user === "string" ? [fixture.user] : [],
 	};
 	for (const lookup of lookups) {
-		unique.set(`${lookup.key.source}\u0000${lookup.key.context || ""}`, lookup);
+		unique.set(`${lookup.raw_source}\u0000${lookup.key.context || ""}\u0000${lookup.effective}`, lookup);
 	}
 	return cy.wrap([...unique.values()], { log: false }).each((lookup) => {
 		cy.runtimeCall("frappe_lt.runtime_control.resolve_translation", {
@@ -360,7 +355,7 @@ function collectServerLookups(scenario, result, lookups, targetType, output) {
 			lookup_path: "server",
 			run_id: plan.run_id,
 			scenario_id: scenario.id,
-			source: lookup.key.source,
+			source: lookup.raw_source,
 			token: plan.token,
 		}).then((response) => {
 			const resolved = response.body.message;

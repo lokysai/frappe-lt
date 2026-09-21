@@ -536,7 +536,11 @@ jobs:
         run: |
           bench new-site development.localhost --db-host 127.0.0.1 --db-root-username root --db-root-password root --admin-password admin --mariadb-user-host-login-scope='%'
           bench --site development.localhost install-app erpnext
-          bench --site development.localhost execute frappe.utils.install.complete_setup_wizard
+          SETUP_KWARGS="$(python -c 'import datetime,json; year=datetime.date.today().year; print(json.dumps({"args":{"language":"English","email":"runtime@example.invalid","full_name":"Runtime Administrator","password":"admin","country":"Lithuania","timezone":"Europe/Vilnius","currency":"EUR","enable_telemetry":0,"company_name":"Frappe LT Runtime","company_abbr":"FLTR","chart_of_accounts":"Standard","fy_start_date":f"{year}-01-01","fy_end_date":f"{year}-12-31","setup_demo":0}}))')"
+          bench --site development.localhost execute frappe.desk.page.setup_wizard.setup_wizard.setup_complete --kwargs "$SETUP_KWARGS"
+          test "$(bench --site development.localhost execute frappe.db.count --args '["Company"]')" = "1"
+          test "$(bench --site development.localhost execute frappe.db.get_single_value --args '["Global Defaults", "default_company"]')" = "Frappe LT Runtime"
+          test "$(bench --site development.localhost execute frappe.defaults.get_user_default --args '["Company", "Administrator"]')" = "Frappe LT Runtime"
           bench --site development.localhost install-app frappe_lt
           test "$(bench --site development.localhost list-apps --format json | python -c 'import json,sys; print(",".join(json.load(sys.stdin)["development.localhost"]))')" = "frappe,erpnext,frappe_lt"
           bench --site development.localhost set-config allow_tests true
