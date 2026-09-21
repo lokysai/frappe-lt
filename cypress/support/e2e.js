@@ -1,5 +1,3 @@
-import "@testing-library/cypress/add-commands";
-
 Cypress.Commands.add("runtimeLogin", (scenario) => {
 	const plan = Cypress.env("runtimePlan");
 	const csrfToken = Cypress.env("runtimeCsrfToken");

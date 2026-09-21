@@ -559,7 +559,7 @@ def _toolchain():
 		"browser": {"name": "Electron", "version": "138.0.7204.185"},
 		"cypress": {"version": "15.2.0"},
 		"node": {"version": "v24.8.0"},
-		"plugins": {"@testing-library/cypress": "10.0.3"},
+		"plugins": {},
 		"schema_version": 1,
 	}
 

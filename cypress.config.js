@@ -78,9 +78,7 @@ module.exports = defineConfig({
 					browser: browserFromRunResults(runResults),
 					cypress: { version: require("cypress/package.json").version },
 					node: { version: process.version },
-					plugins: {
-						"@testing-library/cypress": require("@testing-library/cypress/package.json").version,
-					},
+					plugins: {},
 					schema_version: 1,
 				});
 				const output = canonical({

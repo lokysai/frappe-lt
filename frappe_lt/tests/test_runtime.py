@@ -1,4 +1,5 @@
 import json
+from unittest.mock import patch
 
 import frappe
 import frappe.translate
@@ -254,7 +255,8 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 				token = plan["token"]
 				portal_fixture = plan["fixtures"]["portal-contact"]
 				frappe.set_user(portal_fixture["user"])
-				portal = capture_portal(run_id, token, "portal-account-desktop", "/me")
+				with patch("frappe.utils.get_assets_json", return_value={}):
+					portal = capture_portal(run_id, token, "portal-account-desktop", "/me")
 				self.assertEqual(portal["status"], 200)
 				self.assertIn(control.marker, portal["html"])
 
