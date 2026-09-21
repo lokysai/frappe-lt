@@ -35,6 +35,21 @@ def build_translation_inventory(
 		frappe.destroy()
 
 
+@click.command("catalog-quality-gate")
+@click.option("--candidate", "candidate_name", required=True)
+@click.option("--output", "output_path", required=True, type=click.Path(dir_okay=False, path_type=str))
+@click.option("--report", "report_path", required=True, type=click.Path(dir_okay=False, path_type=str))
+@click.option("--fail-fast", is_flag=True)
+def catalog_quality_gate(candidate_name, output_path, report_path, fail_fast):
+	"""Validate, compile, and atomically publish a registered catalog candidate."""
+	from frappe_lt.catalog_quality import run
+
+	result = run(candidate_name, output_path, report_path, fail_fast=fail_fast)
+	click.echo(json.dumps(result, ensure_ascii=False, sort_keys=True))
+	if result["exit_code"]:
+		raise click.exceptions.Exit(result["exit_code"])
+
+
 def _run_profile_command(context, method, **kwargs):
 	import frappe
 
@@ -81,6 +96,7 @@ def leave_lithuanian_profile(context, confirm_leave_profile):
 
 commands = [
 	build_translation_inventory,
+	catalog_quality_gate,
 	setup_lithuanian_profile,
 	show_lithuanian_profile_status,
 	restore_lithuanian_profile,

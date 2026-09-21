@@ -64,9 +64,25 @@ The one public orchestration function is `frappe_lt.inventory.run`; the Bench co
 - `frappe_lt/inventory_report.json`
 - `frappe_lt/inventory_report.md`
 - `frappe_lt/provenance.json`
+- `frappe_lt/catalog_segments.json`
+- `frappe_lt/collision_resolutions.json`
+- `frappe_lt/glossary_selectors.json`
+- `frappe_lt/translation_exceptions.json`
 - `frappe_lt/compatibility.json`, replaced last as the commit marker
 
 For release comparison, pass both `--previous-inventory` and `--previous-compatibility`. The prior manifest digest must match the exact prior inventory bytes.
+
+## Catalog quality gate
+
+`frappe_lt.catalog_quality.run` is the sole candidate-generation path. The Bench transport accepts only a candidate authenticated by [`frappe_lt/catalog_segments.json`](frappe_lt/catalog_segments.json):
+
+```bash
+bench catalog-quality-gate --candidate NAME --output /tmp/candidate.po --report /tmp/catalog-quality.json
+```
+
+Without a segment manifest, the candidate must cover the complete Release Inventory. A segment candidate must exactly cover its registered, non-overlapping manifest. The gate validates coverage, Preserved Tokens, strict HTML equivalence, Significant Whitespace, Translation Exceptions, collision resolutions, and literal Glossary Selectors before parsing and compiling through the installed Frappe v16 gettext implementation in a disposable workspace. It publishes the requested candidate PO atomically only after every check and compilation succeeds; it never publishes the application `frappe_lt/locale/lt.po`.
+
+Reports are canonical schema-versioned JSON. Exit `0` means success, exit `1` means trusted input with catalog-quality errors, and exit `2` means untrusted input or a tool/filesystem failure. `--fail-fast` writes one error when the report destination remains writable. Inputs are limited to 32 MiB per artifact, 64 MiB across authenticated reads, 100,000 entries per list, 1,000 candidates, 10,000 selectors, 100,000 glossary forms, and 256 KiB per string. Findings are limited to 500,000 and reports to 32 MiB; larger inputs or outputs are rejected. CI authenticates the registry and runs every registered candidate.
 
 See the [one-time smoke report](docs/smoke-report.md) for runtime and browser evidence status.
 
@@ -77,6 +93,7 @@ Inside the bench environment:
 ```bash
 env/bin/python -m unittest frappe_lt.tests.test_verify
 env/bin/python -m unittest frappe_lt.tests.test_inventory
+env/bin/python -m unittest frappe_lt.tests.test_catalog_quality
 bench --site development.localhost run-tests --app frappe_lt
 ```
 
