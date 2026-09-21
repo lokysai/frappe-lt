@@ -643,7 +643,7 @@ class SiteControl:
 						)
 					self.frappe.db.delete(
 						"Deleted Document",
-						{"deleted_doctype": target["doctype"], "deleted_name": target["name"]},
+						{"deleted_name": target["name"]},
 					)
 				else:
 					before = mutation["before"]

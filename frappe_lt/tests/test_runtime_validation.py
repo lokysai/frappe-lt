@@ -749,7 +749,7 @@ SiteControl(
 				[
 					(
 						"Deleted Document",
-						{"deleted_doctype": "User", "deleted_name": "runtime-user"},
+						{"deleted_name": "runtime-user"},
 					)
 				],
 			)
