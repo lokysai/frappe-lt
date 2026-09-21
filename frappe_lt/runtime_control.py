@@ -641,6 +641,10 @@ class SiteControl:
 							force=True,
 							ignore_permissions=True,
 						)
+					self.frappe.db.delete(
+						"Deleted Document",
+						{"deleted_doctype": target["doctype"], "deleted_name": target["name"]},
+					)
 				else:
 					before = mutation["before"]
 					if self.frappe.db.exists(target["doctype"], target["name"]):

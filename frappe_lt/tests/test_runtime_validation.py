@@ -631,6 +631,9 @@ SiteControl(
 				def exists(self, _doctype, _name):
 					return False
 
+				def delete(self, _doctype, _filters):
+					pass
+
 				def commit(self):
 					pass
 
@@ -699,6 +702,7 @@ SiteControl(
 		with TemporaryDirectory() as directory:
 			root = Path(directory)
 			deleted = []
+			deleted_audits = []
 
 			class DB:
 				present = False
@@ -708,6 +712,9 @@ SiteControl(
 
 				def commit(self):
 					pass
+
+				def delete(self, doctype, filters):
+					deleted_audits.append((doctype, filters))
 
 				def rollback(self):
 					pass
@@ -737,6 +744,15 @@ SiteControl(
 			self.assertEqual(control.cleanup(), [])
 			self.assertEqual(len(deleted), 1)
 			self.assertTrue(deleted[0][2]["delete_permanently"])
+			self.assertEqual(
+				deleted_audits,
+				[
+					(
+						"Deleted Document",
+						{"deleted_doctype": "User", "deleted_name": "runtime-user"},
+					)
+				],
+			)
 
 	def test_process_effect_suppression_records_and_restores_calls(self):
 		with TemporaryDirectory() as directory:
@@ -804,6 +820,9 @@ os._exit(23)
 			class DB:
 				def exists(self, _doctype, name):
 					return name in json.loads(state_path.read_text())
+
+				def delete(self, _doctype, _filters):
+					pass
 
 				def commit(self):
 					pass
