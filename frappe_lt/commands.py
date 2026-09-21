@@ -94,10 +94,35 @@ def leave_lithuanian_profile(context, confirm_leave_profile):
 	_run_profile_command(context, "abandon", confirmed=confirm_leave_profile)
 
 
+@click.command("export-lithuanian-runtime-candidates")
+@click.option(
+	"--output",
+	"output_path",
+	required=True,
+	type=click.Path(dir_okay=False, path_type=str),
+)
+@pass_context
+def export_lithuanian_runtime_candidates(context, output_path):
+	"""Export pinned runtime discovery without mutating the site."""
+	import frappe
+
+	from frappe_lt.runtime_discovery import export_candidate_snapshot
+
+	site = get_site(context)
+	frappe.init(site=site)
+	frappe.connect()
+	try:
+		result = export_candidate_snapshot(site, output_path)
+		click.echo(json.dumps(result, ensure_ascii=False, sort_keys=True))
+	finally:
+		frappe.destroy()
+
+
 @click.command("validate-lithuanian-runtime")
+@click.option("--diagnostic-sampling", is_flag=True)
 @click.option("--output-dir", type=click.Path(file_okay=False, path_type=str))
 @pass_context
-def validate_lithuanian_runtime(context, output_dir=None):
+def validate_lithuanian_runtime(context, diagnostic_sampling=False, output_dir=None):
 	"""Validate the reviewed running-interface denominator."""
 	import frappe
 
@@ -107,7 +132,7 @@ def validate_lithuanian_runtime(context, output_dir=None):
 	frappe.init(site=site)
 	frappe.connect()
 	try:
-		result = run(site, output_dir)
+		result = run(site, output_dir, diagnostic_sampling=diagnostic_sampling)
 		click.echo(json.dumps(result, ensure_ascii=False, sort_keys=True))
 		if result["exit_code"]:
 			raise click.exceptions.Exit(result["exit_code"])
@@ -122,5 +147,6 @@ commands = [
 	show_lithuanian_profile_status,
 	restore_lithuanian_profile,
 	leave_lithuanian_profile,
+	export_lithuanian_runtime_candidates,
 	validate_lithuanian_runtime,
 ]
