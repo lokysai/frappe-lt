@@ -82,7 +82,10 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 					contracts["profiles"], contracts["scenarios"], diagnostic_sampling=True
 				)
 				plan = json.loads(control.secret_path.read_bytes())
+				evidence_secret = json.loads(control.evidence_secret_path.read_bytes())
 				self.assertEqual(plan["schema_version"], 2)
+				self.assertEqual(evidence_secret["key"], prepared["evidence_key"])
+				self.assertEqual(evidence_secret["run_id"], run_id)
 				self.assertTrue(plan["diagnostic_sampling"])
 				portal = plan["fixtures"]["portal-contact"]
 				printable = plan["fixtures"]["todo-draft"]
@@ -187,6 +190,7 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 
 		self.assertEqual(frappe.db.count("GL Entry"), ledger_count)
 		self.assertFalse(frappe.db.exists("DefaultValue", {"parent": ("like", f"{control.marker}%")}))
+		self.assertFalse(control.evidence_secret_path.exists())
 		self.assertEqual(
 			{
 				doctype: frappe.get_all(
@@ -248,6 +252,7 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 		self.assertFalse(frappe.db.exists("User", user))
 		self.assertFalse(frappe.db.exists("DefaultValue", {"name": ("in", expected_names)}))
 		self.assertFalse(control.journal_path.exists())
+		self.assertFalse(control.evidence_secret_path.exists())
 		self.assertEqual(recovery.residue_scan(marker=control.marker), [])
 
 	def test_standard_outputs_capture_exact_response_without_queue_or_access_log(self):
@@ -333,6 +338,10 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 				],
 				"token": token,
 			},
+		)
+		_write_durable(
+			control.evidence_secret_path,
+			{"key": "11" * 32, "run_id": run_id, "schema_version": 1},
 		)
 		documents = []
 		try:

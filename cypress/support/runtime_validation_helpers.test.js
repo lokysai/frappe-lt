@@ -5,19 +5,22 @@ const {
 	correlateOutput,
 	exactOutputExclusion,
 	isBlockingFallback,
+	isBlockingInventoryLookup,
 	isClippedByAncestor,
-	isUntrustedRenderedLookup,
 	isVisuallyHidden,
 	meaningfulTarget,
 } = require("./runtime_validation_helpers");
 
-function element(bounds, { attributes = {}, dataset = {}, parentElement = null } = {}) {
+function element(bounds, { attributes = {}, classes = [], dataset = {}, focused = false, parentElement = null } = {}) {
 	return {
+		classList: { contains: (name) => classes.includes(name) },
 		dataset,
 		id: attributes.id || "",
 		parentElement,
+		tagName: "BUTTON",
 		getAttribute: (name) => attributes[name] || null,
 		getBoundingClientRect: () => bounds,
+		matches: (selector) => selector === ":focus" && focused,
 	};
 }
 
@@ -41,16 +44,54 @@ test("below-fold controls are not clipped unless a clipping ancestor cuts them",
 
 test("layout findings require a stable meaningful target", () => {
 	assert.equal(meaningfulTarget(element({}, { dataset: { fieldname: "item_code" } })), '[data-fieldname="item_code"]');
-	assert.equal(meaningfulTarget(element({}, { attributes: { "aria-label": "Open menu" } })), '[aria-label="Open\\ menu"]');
-	assert.equal(meaningfulTarget(element({}, { attributes: { "data-label": "Save" } })), '[data-label="Save"]');
+	assert.equal(meaningfulTarget(element({}, { attributes: { "aria-label": "Open menu" } })), "button[aria-label]");
+	assert.equal(meaningfulTarget(element({}, { attributes: { "data-label": "Save" } })), "button[data-label]");
 	assert.equal(
 		meaningfulTarget(element({}, { attributes: { "aria-label": "Skip", role: "link" } })),
-		'[aria-label="Skip"]'
+		"button[aria-label]"
 	);
+	const first = element({}, { attributes: { "aria-label": "Private A" } });
+	const second = element({}, { attributes: { "aria-label": "Private B" } });
+	const parent = { children: [first, second], id: "toolbar", parentElement: null, tagName: "DIV" };
+	first.parentElement = parent;
+	second.parentElement = parent;
+	assert.equal(meaningfulTarget(second), "#toolbar > button[aria-label]:nth-of-type(2)");
 	assert.equal(meaningfulTarget(element({})), null);
 });
 
 test("screen-reader-only controls are not treated as visible layout targets", () => {
+	const skipLink = element({ height: 20, width: 100 }, { classes: ["sr-only", "sr-only-focusable"] });
+	const hiddenStyle = {
+		clip: "rect(0px, 0px, 0px, 0px)",
+		clipPath: "none",
+		overflow: "hidden",
+		position: "absolute",
+	};
+	assert.equal(isVisuallyHidden(skipLink, () => hiddenStyle), true);
+	assert.equal(isVisuallyHidden(skipLink, () => ({ overflow: "visible", position: "static" })), false);
+	assert.equal(
+		isVisuallyHidden(skipLink, () => ({
+			clip: "auto",
+			clipPath: "inset(0)",
+			overflow: "hidden",
+			position: "absolute",
+		})),
+		false
+	);
+	const focusedSkipLink = element(
+		{ height: 20, width: 100 },
+		{ classes: ["sr-only", "sr-only-focusable"], focused: true }
+	);
+	assert.equal(isVisuallyHidden(focusedSkipLink, () => hiddenStyle), true);
+	assert.equal(
+		isVisuallyHidden(focusedSkipLink, () => ({
+			clip: "auto",
+			clipPath: "none",
+			overflow: "visible",
+			position: "static",
+		})),
+		false
+	);
 	const control = element({ height: 1, width: 1 });
 	assert.equal(
 		isVisuallyHidden(control, () => ({
@@ -117,6 +158,7 @@ test("output exclusions apply only to exact approved values at the captured inte
 
 test("rendered missing translations block even when their target is ambiguous", () => {
 	const finding = {
+		active: true,
 		effective: "Save",
 		excluded: false,
 		key: { source: "Save" },
@@ -128,12 +170,18 @@ test("rendered missing translations block even when their target is ambiguous", 
 	assert.equal(isBlockingFallback({ ...finding, render_status: "unrendered", visible: false }), false);
 	assert.equal(isBlockingFallback({ ...finding, excluded: true }), false);
 	assert.equal(isBlockingFallback({ ...finding, effective: "Išsaugoti", source: "frappe_lt" }), false);
+	assert.equal(isBlockingFallback({ ...finding, active: false }), false);
 });
 
-test("rendered lookups absent from the inventory fail closed unless exactly excluded", () => {
-	assert.equal(isUntrustedRenderedLookup(false, "unique", false), true);
-	assert.equal(isUntrustedRenderedLookup(false, "ambiguous", false), true);
-	assert.equal(isUntrustedRenderedLookup(false, "unrendered", false), false);
-	assert.equal(isUntrustedRenderedLookup(false, "unique", true), false);
-	assert.equal(isUntrustedRenderedLookup(true, "unique", false), false);
+test("rendered inactive lookups fail closed as inventory gaps", () => {
+	const finding = {
+		active: false,
+		excluded: false,
+		render_status: "ambiguous",
+		visible: true,
+	};
+	assert.equal(isBlockingInventoryLookup(finding), true);
+	assert.equal(isBlockingInventoryLookup({ ...finding, active: true }), false);
+	assert.equal(isBlockingInventoryLookup({ ...finding, excluded: true }), false);
+	assert.equal(isBlockingInventoryLookup({ ...finding, render_status: "unrendered", visible: false }), false);
 });

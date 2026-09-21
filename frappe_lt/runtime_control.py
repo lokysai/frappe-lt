@@ -1,5 +1,6 @@
 import fcntl
 import hashlib
+import hmac
 import json
 import os
 import re
@@ -195,6 +196,7 @@ class SiteControl:
 		self.lock_path = self.root / "mutable.lock"
 		self.operation_lock_path = self.root / "operation.lock"
 		self.secret_path = self.root / f"{run_id}.browser.json"
+		self.evidence_secret_path = self.root / f"{run_id}.evidence.json"
 		self.journal = None
 		self.recoveries = []
 
@@ -289,18 +291,27 @@ class SiteControl:
 				]
 			journal["state"] = "cleaning"
 			_write_durable(self.journal_path, journal)
-		stale_secret = self.root / f"{journal['run_id']}.browser.json"
 		failures = []
-		try:
-			stale_secret.unlink(missing_ok=True)
-		except OSError as error:
-			failures.append(
-				{
-					"error": f"could not revoke stale browser capability: {error}"[:2048],
-					"mutation_id": 0,
-					"target": {"doctype": "Runtime Browser Plan", "name": stale_secret.name},
-				}
+		stale_secrets = []
+		for suffix, doctype in (
+			("browser.json", "Runtime Browser Plan"),
+			("evidence.json", "Runtime Evidence Key"),
+		):
+			stale_secrets.append((self.root / f"{journal['run_id']}.{suffix}", doctype))
+			stale_secrets.extend(
+				(path, doctype) for path in sorted(self.root.glob(f".{journal['run_id']}.{suffix}.*.tmp"))
 			)
+		for stale_secret, doctype in stale_secrets:
+			try:
+				stale_secret.unlink(missing_ok=True)
+			except OSError as error:
+				failures.append(
+					{
+						"error": f"could not revoke stale runtime secret: {error}"[:2048],
+						"mutation_id": 0,
+						"target": {"doctype": doctype, "name": stale_secret.name},
+					}
+				)
 		failures.extend(self._cleanup_login_effects(journal))
 		failures.extend(self._restore(journal))
 		failures.extend(
@@ -751,6 +762,7 @@ class SiteControl:
 			}
 			_write_durable(self.journal_path, self.journal)
 		self.frappe.db.commit()
+		evidence_key = secrets.token_hex(32)
 		browser = {
 			"credentials": credentials,
 			"diagnostic_sampling": diagnostic_sampling,
@@ -760,8 +772,16 @@ class SiteControl:
 			"scenarios": scenarios["scenarios"],
 			"token": secrets.token_urlsafe(32),
 		}
+		_write_durable(
+			self.evidence_secret_path,
+			{"key": evidence_key, "run_id": self.run_id, "schema_version": 1},
+		)
 		_write_durable(self.secret_path, browser)
-		return {"browser_plan": str(self.secret_path), "fixtures": sorted(fixtures)}
+		return {
+			"browser_plan": str(self.secret_path),
+			"evidence_key": evidence_key,
+			"fixtures": sorted(fixtures),
+		}
 
 	def cleanup(self) -> list[dict]:
 		with self.operation(exclusive=True):
@@ -784,16 +804,28 @@ class SiteControl:
 			_write_durable(self.journal_path, self.journal)
 		failures = self._cleanup_login_effects(self.journal)
 		failures.extend(self._restore(self.journal))
-		try:
-			self.secret_path.unlink(missing_ok=True)
-		except OSError as error:
-			failures.append(
-				{
-					"error": f"could not revoke browser capability: {error}"[:2048],
-					"mutation_id": 0,
-					"target": {"doctype": "Runtime Browser Plan", "name": self.secret_path.name},
-				}
+		runtime_secrets = [
+			(self.secret_path, "Runtime Browser Plan"),
+			(self.evidence_secret_path, "Runtime Evidence Key"),
+		]
+		for suffix, doctype in (
+			("browser.json", "Runtime Browser Plan"),
+			("evidence.json", "Runtime Evidence Key"),
+		):
+			runtime_secrets.extend(
+				(path, doctype) for path in sorted(self.root.glob(f".{self.run_id}.{suffix}.*.tmp"))
 			)
+		for path, doctype in runtime_secrets:
+			try:
+				path.unlink(missing_ok=True)
+			except OSError as error:
+				failures.append(
+					{
+						"error": f"could not revoke runtime secret: {error}"[:2048],
+						"mutation_id": 0,
+						"target": {"doctype": doctype, "name": path.name},
+					}
+				)
 		failures.extend(self._residue_failures(self.run_id))
 		if failures:
 			with self.journal_lock():
@@ -1080,6 +1112,20 @@ class SiteControl:
 					"target": {"doctype": f"__Auth/{doctype}", "name": name},
 				}
 			)
+		for pattern in (
+			"*.browser.json",
+			"*.evidence.json",
+			".*.browser.json.*.tmp",
+			".*.evidence.json.*.tmp",
+		):
+			for path in sorted(self.root.glob(pattern)):
+				residue.append(
+					{
+						"error": "runtime secret remains after cleanup",
+						"mutation_id": 0,
+						"target": {"doctype": "Runtime Secret", "name": path.name},
+					}
+				)
 		unique = {
 			(finding["error"], finding["target"]["doctype"], finding["target"]["name"]): finding
 			for finding in residue
@@ -1139,6 +1185,31 @@ def _authorized_browser_plan(frappe, run_id: str, token: str) -> dict:
 	):
 		raise frappe.PermissionError
 	return plan
+
+
+def _runtime_evidence_key(control: SiteControl) -> bytes:
+	try:
+		value = json.loads(control.evidence_secret_path.read_bytes(), object_pairs_hook=_json_object)
+	except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+		raise ValueError("runtime evidence key is unavailable") from error
+	if (
+		not isinstance(value, dict)
+		or set(value) != {"key", "run_id", "schema_version"}
+		or value["schema_version"] != 1
+		or value["run_id"] != control.run_id
+		or not isinstance(value["key"], str)
+		or not re.fullmatch(r"[0-9a-f]{64}", value["key"])
+	):
+		raise ValueError("runtime evidence key is invalid")
+	return bytes.fromhex(value["key"])
+
+
+def _diagnostic_id(key: bytes, scenario_id: str, *, nonce: str | None = None) -> str:
+	nonce = nonce or secrets.token_hex(16)
+	if len(key) != 32 or not re.fullmatch(r"[0-9a-f]{32}", nonce):
+		raise ValueError("runtime diagnostic inputs are invalid")
+	payload = f"{scenario_id}\0{nonce}".encode()
+	return f"hmac-sha256:{nonce}:" + hmac.new(key, payload, hashlib.sha256).hexdigest()
 
 
 def _authorized_scenario(
@@ -1297,6 +1368,8 @@ def resolve_translation(
 		scenario = next(scenario for scenario in plan["scenarios"] if scenario["id"] == scenario_id)
 		_authorized_scenario(frappe, plan, scenario_id, scenario["kind"])
 		result = _resolve_effective(frappe, source, context, lookup_path=lookup_path)
+		if not result["active"]:
+			result["diagnostic_id"] = _diagnostic_id(_runtime_evidence_key(control), scenario_id)
 		_validate_capture([result])
 		return result
 

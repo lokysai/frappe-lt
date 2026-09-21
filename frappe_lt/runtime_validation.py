@@ -1,4 +1,5 @@
 import hashlib
+import hmac
 import json
 import os
 import re
@@ -22,14 +23,15 @@ from frappe_lt.runtime_control import (
 )
 from frappe_lt.runtime_discovery import coverage, discover
 
-REPORT_SCHEMA_VERSION = 3
-BROWSER_SCHEMA_VERSION = 4
+REPORT_SCHEMA_VERSION = 4
+BROWSER_SCHEMA_VERSION = 5
 MAX_REPORT_BYTES = 32 * 1024 * 1024
 MAX_EVIDENCE_PER_ARTIFACT = 2 * 1024 * 1024
 MAX_EVIDENCE_PER_SCENARIO = 8 * 1024 * 1024
 MAX_EVIDENCE_PER_RUN = 32 * 1024 * 1024
 MAX_FINDINGS = 500_000
 SHA256 = re.compile(r"[0-9a-f]{64}")
+DIAGNOSTIC_ID = re.compile(r"hmac-sha256:([0-9a-f]{32}):([0-9a-f]{64})\Z")
 EVIDENCE_MIME = {
 	"browser": {"application/json": "browser.json"},
 	"email": {"text/plain": "email.txt"},
@@ -94,11 +96,13 @@ def _validate_fallback(
 	value: object,
 	scenario: dict,
 	active_keys: frozenset[tuple[str, str | None]],
+	diagnostic_key: bytes | None,
 ) -> dict:
 	scenario_id = scenario["id"]
 	value = _exact(
 		value,
 		{
+			"active",
 			"effective",
 			"excluded",
 			"exclusion_id",
@@ -114,6 +118,8 @@ def _validate_fallback(
 	)
 	if value["scenario_id"] != scenario_id:
 		raise ValueError("lookup evidence scenario_id does not match its scenario")
+	if not isinstance(value["active"], bool):
+		raise ValueError("lookup evidence active must be boolean")
 	key = _exact(value["key"], {"context", "source"}, "Translation Key")
 	if not isinstance(key["source"], str) or not key["source"].strip():
 		raise ValueError("Translation Key source must be nonempty text")
@@ -166,12 +172,35 @@ def _validate_fallback(
 			and exclusion_target != target["value"]
 		):
 			raise ValueError("lookup evidence exclusion is not an exact reviewed scenario exclusion")
-	if (
-		value["visible"]
-		and not value["excluded"]
-		and _active_translation_key(key["source"], key["context"], active_keys) is None
+	is_active = _active_translation_key(key["source"], key["context"], active_keys) is not None
+	if value["active"] != is_active:
+		raise ValueError("lookup evidence active disagrees with the authenticated Release Inventory")
+	diagnostic_match = DIAGNOSTIC_ID.fullmatch(key["source"])
+	if not is_active and (
+		diagnostic_match is None
+		or key["context"] is not None
+		or value["raw_source"] != key["source"]
+		or value["effective"] != key["source"]
+		or value["source"] != "missing"
 	):
-		raise ValueError("rendered lookup is absent from the authenticated Release Inventory")
+		raise ValueError("inactive lookup must contain only its trusted diagnostic identifier")
+	if not is_active:
+		if diagnostic_key is None:
+			raise ValueError("inactive lookup cannot be authenticated without its runtime evidence key")
+		nonce, signature = diagnostic_match.groups()
+		expected = hmac.new(
+			diagnostic_key,
+			f"{scenario_id}\0{nonce}".encode(),
+			hashlib.sha256,
+		).hexdigest()
+		if not hmac.compare_digest(signature, expected):
+			raise ValueError("inactive lookup diagnostic identifier failed authentication")
+		if (
+			target["type"] == "locator"
+			and not value["excluded"]
+			and target["value"] != f"diagnostic:{key['source']}"
+		):
+			raise ValueError("inactive lookup locator must contain only its diagnostic identifier")
 	return value
 
 
@@ -303,16 +332,41 @@ def validate_browser_results(
 	run_root: Path,
 	*,
 	diagnostic_sampling: bool = False,
+	diagnostic_key: str | None = None,
 ) -> list[dict]:
 	if not isinstance(diagnostic_sampling, bool):
 		raise ValueError("diagnostic_sampling must be boolean")
+
+	def contains_inactive(item: object) -> bool:
+		if isinstance(item, dict):
+			return item.get("active") is False or any(contains_inactive(child) for child in item.values())
+		if isinstance(item, list):
+			return any(contains_inactive(child) for child in item)
+		return False
+
+	declares_inactive = contains_inactive(value)
+	if declares_inactive:
+		evidence_root = run_root / "evidence"
+		try:
+			if evidence_root.is_symlink() or evidence_root.is_file():
+				evidence_root.unlink()
+			elif evidence_root.is_dir():
+				shutil.rmtree(evidence_root)
+		except OSError as error:
+			raise ValueError(f"could not remove inactive lookup evidence: {error}") from error
 	value = _exact(value, {"scenarios", "schema_version", "toolchain"}, "browser result")
 	if value["schema_version"] != BROWSER_SCHEMA_VERSION or not isinstance(value["scenarios"], list):
 		raise ValueError("unsupported browser result schema")
 	_validate_toolchain(value["toolchain"])
+	if diagnostic_key is not None and (
+		not isinstance(diagnostic_key, str) or not re.fullmatch(r"[0-9a-f]{64}", diagnostic_key)
+	):
+		raise ValueError("runtime evidence key is invalid")
+	diagnostic_key_bytes = bytes.fromhex(diagnostic_key) if diagnostic_key is not None else None
 	active_keys = _active_translation_keys()
 	manifest = {scenario["id"]: scenario for scenario in scenarios["scenarios"]}
 	results = []
+	diagnostic_ids = set()
 	total_evidence = 0
 	seen = set()
 	for result in value["scenarios"]:
@@ -354,6 +408,23 @@ def validate_browser_results(
 			result["blocked_reason"] = _redact(result["blocked_reason"])
 		if not isinstance(result["duration_ms"], int) or not 0 <= result["duration_ms"] <= 600_000:
 			raise ValueError("browser scenario duration is invalid")
+		declares_inactive = isinstance(result["fallbacks"], list) and any(
+			isinstance(item, dict) and item.get("active") is False for item in result["fallbacks"]
+		)
+		if declares_inactive:
+			evidence_root = run_root / "evidence"
+			scenario_evidence = evidence_root / scenario_id
+			try:
+				if evidence_root.is_symlink():
+					evidence_root.unlink()
+				elif scenario_evidence.is_symlink() or scenario_evidence.is_file():
+					scenario_evidence.unlink()
+				elif scenario_evidence.is_dir():
+					shutil.rmtree(scenario_evidence)
+			except OSError as error:
+				raise ValueError(f"could not remove inactive lookup evidence: {error}") from error
+			if result["evidence"]:
+				raise ValueError("inactive lookups cannot publish evidence artifacts")
 		if not isinstance(result["attempts"], list) or not result["attempts"]:
 			raise ValueError("browser scenario must record every attempt")
 		for number, attempt in enumerate(result["attempts"], start=1):
@@ -408,7 +479,10 @@ def validate_browser_results(
 		if not all(isinstance(result[field], list) for field in ("evidence", "fallbacks", "layouts")):
 			raise ValueError("browser findings and evidence must be lists")
 		result["fallbacks"] = sorted(
-			(_validate_fallback(item, manifest[scenario_id], active_keys) for item in result["fallbacks"]),
+			(
+				_validate_fallback(item, manifest[scenario_id], active_keys, diagnostic_key_bytes)
+				for item in result["fallbacks"]
+			),
 			key=lambda item: (
 				item["key"]["source"],
 				item["key"]["context"] or "",
@@ -416,6 +490,12 @@ def validate_browser_results(
 				item["target"]["value"],
 			),
 		)
+		for finding in result["fallbacks"]:
+			if not finding["active"]:
+				diagnostic_id = finding["key"]["source"]
+				if diagnostic_id in diagnostic_ids:
+					raise ValueError("inactive lookup diagnostic identifier was replayed")
+				diagnostic_ids.add(diagnostic_id)
 		result["layouts"] = sorted(
 			(_validate_layout(item, scenario_id) for item in result["layouts"]),
 			key=lambda item: (item["severity"], item["kind"], item["target"], item["detail"]),
@@ -424,38 +504,51 @@ def validate_browser_results(
 			(_validate_evidence(item, run_root, scenario_id) for item in result["evidence"]),
 			key=lambda item: item["path"],
 		)
+		if any(not item["active"] for item in result["fallbacks"]) and result["evidence"]:
+			for item in result["evidence"]:
+				try:
+					(run_root / item["path"]).unlink()
+				except OSError as error:
+					raise ValueError(f"could not remove inactive lookup evidence: {error}") from error
+			raise ValueError("inactive lookups cannot publish evidence artifacts")
 		if len({item["path"] for item in result["evidence"]}) != len(result["evidence"]):
 			raise ValueError(f"scenario {scenario_id!r} contains duplicate evidence paths")
 		scenario_evidence = sum(item["bytes"] for item in result["evidence"])
 		if scenario_evidence > MAX_EVIDENCE_PER_SCENARIO:
 			raise ValueError(f"scenario {scenario_id!r} exceeds its evidence byte limit")
 		total_evidence += scenario_evidence
-		has_active_lookup = any(
-			_active_translation_key(item["key"]["source"], item["key"]["context"], active_keys) is not None
-			for item in result["fallbacks"]
-		)
+		has_active_lookup = any(item["active"] for item in result["fallbacks"])
 		blocking_fallback = any(
-			item["render_status"] != "unrendered"
+			item["active"]
+			and item["render_status"] != "unrendered"
 			and item["visible"]
 			and not item["excluded"]
 			and (item["source"] == "missing" or item["effective"] == item["key"]["source"])
 			for item in result["fallbacks"]
 		)
+		blocking_inventory_lookup = any(
+			not item["active"]
+			and item["render_status"] != "unrendered"
+			and item["visible"]
+			and not item["excluded"]
+			for item in result["fallbacks"]
+		)
 		blocking_layout = any(item["severity"] == "functional" for item in result["layouts"])
-		if result["status"] == "pass" and (not result["ready"] or not has_active_lookup):
+		if result["status"] == "pass" and not result["ready"]:
 			result["status"] = "blocked"
-			result["blocked_reason"] = (
-				"scenario did not prove readiness"
-				if not result["ready"]
-				else "scenario produced no active effective translation lookup evidence"
-			)
+			result["blocked_reason"] = "scenario did not prove readiness"
 			result["attempts"][-1]["outcome"] = "blocked"
 			result["attempts"][-1]["error"] = result["blocked_reason"]
-		if result["status"] == "pass" and (blocking_fallback or blocking_layout):
+		if result["status"] == "pass" and (blocking_fallback or blocking_inventory_lookup or blocking_layout):
 			result["status"] = "fail"
 			result["error"] = "scenario produced blocking runtime findings"
 			result["attempts"][-1]["outcome"] = "assertion_failure"
 			result["attempts"][-1]["error"] = result["error"]
+		if result["status"] == "pass" and not has_active_lookup:
+			result["status"] = "blocked"
+			result["blocked_reason"] = "scenario produced no active effective translation lookup evidence"
+			result["attempts"][-1]["outcome"] = "blocked"
+			result["attempts"][-1]["error"] = result["blocked_reason"]
 		if result["status"] == "pass" and result["evidence"] and not diagnostic_sampling:
 			raise ValueError("pass evidence requires explicit diagnostic sampling")
 		results.append(result)
@@ -584,6 +677,7 @@ def _human_report(report: dict) -> str:
 		f"{report['summary']['fail']} fail, {report['summary']['blocked']} blocked",
 		f"- Runtime Coverage Gaps: {report['summary']['coverage_gaps']}",
 		f"- English Fallback findings: {report['summary']['english_fallbacks']}",
+		f"- Runtime Inventory Gaps: {report['summary']['runtime_inventory_gaps']}",
 		f"- Functional Layout Defects: {report['summary']['functional_layout_defects']}",
 		f"- Runtime Cleanup Failures: {report['summary']['cleanup_failures']}",
 		"",
@@ -744,10 +838,20 @@ def _build_report(
 		1
 		for result in results
 		for finding in result["fallbacks"]
-		if finding["visible"]
+		if finding["active"]
+		and finding["visible"]
 		and finding["render_status"] != "unrendered"
 		and not finding["excluded"]
 		and (finding["source"] == "missing" or finding["effective"] == finding["key"]["source"])
+	)
+	inventory_gap_count = sum(
+		1
+		for result in results
+		for finding in result["fallbacks"]
+		if not finding["active"]
+		and finding["visible"]
+		and finding["render_status"] != "unrendered"
+		and not finding["excluded"]
 	)
 	layout_count = sum(
 		1 for result in results for finding in result["layouts"] if finding["severity"] == "functional"
@@ -760,6 +864,7 @@ def _build_report(
 		"fail": sum(result["status"] == "fail" for result in results),
 		"functional_layout_defects": layout_count,
 		"pass": sum(result["status"] == "pass" for result in results),
+		"runtime_inventory_gaps": inventory_gap_count,
 		"total": len(results),
 	}
 	report_environment = None
@@ -877,6 +982,7 @@ def run(
 					contracts["scenarios"],
 					run_root,
 					diagnostic_sampling=diagnostic_sampling,
+					diagnostic_key=prepared["evidence_key"],
 				)
 				toolchain = _validate_toolchain(browser["toolchain"])
 				blocking_result = next((result for result in results if result["status"] != "pass"), None)

@@ -4,8 +4,8 @@ const {
 	correlateOutput,
 	exactOutputExclusion,
 	isBlockingFallback,
+	isBlockingInventoryLookup,
 	isClippedByAncestor,
-	isUntrustedRenderedLookup,
 	isVisuallyHidden,
 	meaningfulTarget,
 } = require("../support/runtime_validation_helpers");
@@ -29,14 +29,17 @@ function canonical(value) {
 
 function publishScenario(scenario, result, artifacts) {
 	const browserEvidence = canonical({ ...result, evidence: [] });
+	const publishable = result.fallbacks.some((finding) => !finding.active)
+		? []
+		: [
+				{ content: JSON.stringify(browserEvidence) + "\n", kind: "browser", mime: "application/json" },
+				...artifacts,
+			];
 	return cy
 		.task(
 			"runtime:publishEvidence",
 			{
-				artifacts: [
-					{ content: JSON.stringify(browserEvidence) + "\n", kind: "browser", mime: "application/json" },
-					...artifacts,
-				],
+				artifacts: publishable,
 				scenarioId: scenario.id,
 				status: result.status,
 			},
@@ -68,25 +71,30 @@ function finishScenario(scenario, result, started) {
 	if (!result.ready && result.status === "pass") {
 		result.status = "blocked";
 		result.blocked_reason = "scenario did not prove readiness";
-	} else if (result.fallbacks.length === 0 && result.status === "pass") {
-		result.status = "blocked";
-		result.blocked_reason = "scenario produced no effective translation lookup evidence";
 	}
 	if (result.duration_ms > scenario.scenario_timeout_ms && result.status === "pass") {
 		result.status = "blocked";
 		result.blocked_reason = `scenario exceeded ${scenario.scenario_timeout_ms} ms`;
 	}
 	const blockingFallback = result.fallbacks.some(isBlockingFallback);
+	const blockingInventoryLookup = result.fallbacks.some(isBlockingInventoryLookup);
 	const blockingLayout = result.layouts.some((finding) => finding.severity === "functional");
-	if (result.status === "pass" && (blockingFallback || blockingLayout)) {
+	if (result.status === "pass" && (blockingFallback || blockingInventoryLookup || blockingLayout)) {
 		result.status = "fail";
 		result.error = "scenario produced blocking runtime findings";
+	}
+	if (!result.fallbacks.some((finding) => finding.active) && result.status === "pass") {
+		result.status = "blocked";
+		result.blocked_reason = "scenario produced no active effective translation lookup evidence";
 	}
 	const attempt = result.attempts[result.attempts.length - 1];
 	attempt.duration_ms = result.duration_ms;
 	attempt.outcome = result.status === "fail" ? "assertion_failure" : result.status;
 	attempt.error = result.status === "pass" ? null : result.blocked_reason || result.error;
-	return publishScenario(scenario, result, scenarioResults.get(scenario.id)?.artifacts || []);
+	const artifacts = result.fallbacks.some((finding) => !finding.active)
+		? []
+		: scenarioResults.get(scenario.id)?.artifacts || [];
+	return publishScenario(scenario, result, artifacts);
 }
 
 function checkDeadline(scenario, started) {
@@ -315,6 +323,7 @@ function collectLookups(scenario, result) {
 			unique.set(`${lookup.raw_source}\u0000${lookup.context || ""}\u0000${lookup.rendered}`, lookup);
 		}
 		return cy.wrap([...unique.values()], { log: false }).each((lookup) => {
+			scenarioResults.get(scenario.id).resolvingLookup = true;
 			cy.runtimeCall("frappe_lt.runtime_control.resolve_translation", {
 				context: lookup.context,
 				lookup_path: "client",
@@ -323,32 +332,49 @@ function collectLookups(scenario, result) {
 				source: lookup.raw_source,
 				token: plan.token,
 			}).then((response) => {
+				scenarioResults.get(scenario.id).resolvingLookup = false;
 				const resolved = response.body.message;
 				const location = locateRenderedLookup(window.document, lookup.rendered, scenario);
-				if (isUntrustedRenderedLookup(resolved.active, location.renderStatus, location.excluded)) {
-					throw new Error(
-						`rendered lookup is absent from the authenticated Release Inventory: ${resolved.key.source}`
-					);
-				}
-				if (!resolved.active) return;
+				if (!resolved.active) scenarioResults.get(scenario.id).artifacts = [];
 				if (resolved.effective !== lookup.effective) {
-					throw new Error(`loaded dictionary disagrees with effective lookup for ${resolved.key.source}`);
+					throw new Error("loaded dictionary disagrees with effective translation lookup");
 				}
+				const evidence = lookupEvidence(resolved);
 				result.fallbacks.push({
-					effective: resolved.effective,
+					active: resolved.active,
+					effective: evidence.effective,
 					excluded: location?.excluded || false,
 					exclusion_id: location?.exclusionId || null,
-					key: resolved.key,
-					raw_source: resolved.raw_source,
+					key: evidence.key,
+					raw_source: evidence.raw_source,
 					render_status: location.renderStatus,
 					scenario_id: scenario.id,
-					source: resolved.source,
-					target: { type: "locator", value: location.target },
+					source: evidence.source,
+					target: {
+						type: "locator",
+						value:
+							!resolved.active && !location.excluded
+								? `diagnostic:${resolved.diagnostic_id}`
+								: location.target,
+					},
 					visible: location.renderStatus !== "unrendered",
 				});
 			});
 		});
 	});
+}
+
+function lookupEvidence(resolved) {
+	if (resolved.active) return resolved;
+	if (!/^hmac-sha256:[0-9a-f]{32}:[0-9a-f]{64}$/.test(resolved.diagnostic_id)) {
+		throw new Error("inactive translation lookup is missing its trusted diagnostic identifier");
+	}
+	return {
+		effective: resolved.diagnostic_id,
+		key: { context: null, source: resolved.diagnostic_id },
+		raw_source: resolved.diagnostic_id,
+		source: "missing",
+	};
 }
 
 function collectServerLookups(scenario, result, lookups, targetType, output) {
@@ -367,6 +393,7 @@ function collectServerLookups(scenario, result, lookups, targetType, output) {
 		unique.set(`${lookup.raw_source}\u0000${lookup.key.context || ""}\u0000${lookup.effective}`, lookup);
 	}
 	return cy.wrap([...unique.values()], { log: false }).each((lookup) => {
+		scenarioResults.get(scenario.id).resolvingLookup = true;
 		cy.runtimeCall("frappe_lt.runtime_control.resolve_translation", {
 			context: lookup.key.context,
 			lookup_path: "server",
@@ -375,6 +402,7 @@ function collectServerLookups(scenario, result, lookups, targetType, output) {
 			source: lookup.raw_source,
 			token: plan.token,
 		}).then((response) => {
+			scenarioResults.get(scenario.id).resolvingLookup = false;
 			const resolved = response.body.message;
 			const correlation = correlateOutput(output, resolved.effective);
 			const exclusion = exactOutputExclusion(
@@ -383,24 +411,21 @@ function collectServerLookups(scenario, result, lookups, targetType, output) {
 				scenario.expected_exclusions,
 				approvedValues
 			);
-			if (isUntrustedRenderedLookup(resolved.active, correlation.renderStatus, Boolean(exclusion))) {
-				throw new Error(
-					`rendered lookup is absent from the authenticated Release Inventory: ${resolved.key.source}`
-				);
-			}
-			if (!resolved.active) return;
+			if (!resolved.active) scenarioResults.get(scenario.id).artifacts = [];
 			if (resolved.effective !== lookup.effective) {
-				throw new Error(`server output lookup disagrees with effective translation for ${lookup.key.source}`);
+				throw new Error("server output disagrees with effective translation lookup");
 			}
+			const evidence = lookupEvidence(resolved);
 			result.fallbacks.push({
-				effective: resolved.effective,
+				active: resolved.active,
+				effective: evidence.effective,
 				excluded: Boolean(exclusion),
 				exclusion_id: exclusion?.id || null,
-				key: resolved.key,
-				raw_source: resolved.raw_source,
+				key: evidence.key,
+				raw_source: evidence.raw_source,
 				render_status: correlation.renderStatus,
 				scenario_id: scenario.id,
-				source: resolved.source,
+				source: evidence.source,
 				target: {
 					type: "output_interval",
 					value:
@@ -436,7 +461,9 @@ function verifyReadiness(scenario, result, proof = {}) {
 	}
 	if (scenario.readiness.type === "output") {
 		return cy.then(() => {
-			expect(proof.output, `output readiness ${scenario.readiness.value}`).to.be.a("string").and.not.be.empty;
+			if (typeof proof.output !== "string" || !proof.output) {
+				throw new Error(`output readiness ${scenario.readiness.value} was not proven`);
+			}
 			result.ready = true;
 		});
 	}
@@ -462,7 +489,7 @@ for (const scenario of plan.scenarios) {
 	}, function () {
 		const started = Date.now();
 		const result = emptyResult(scenario);
-		scenarioResults.set(scenario.id, { artifacts: [], result, started });
+		scenarioResults.set(scenario.id, { artifacts: [], resolvingLookup: false, result, started });
 		cy.viewport(scenario.viewport.width, scenario.viewport.height);
 		loginFor(scenario);
 		cy.then(() => checkDeadline(scenario, started));
@@ -475,11 +502,12 @@ for (const scenario of plan.scenarios) {
 				token: plan.token,
 				user,
 			}).then((response) => {
-				scenarioResults.get(scenario.id).artifacts = [
-					{ content: response.body.message.output, kind: "email", mime: "text/plain" },
-				];
-				expect(response.body.message.output).to.include("MIME-Version");
-				expect(response.body.message.subject).to.be.a("string").and.not.be.empty;
+				if (!response.body.message.output.includes("MIME-Version")) {
+					throw new Error("captured email is not a MIME message");
+				}
+				if (typeof response.body.message.subject !== "string" || !response.body.message.subject) {
+					throw new Error("captured email subject is unavailable");
+				}
 				verifyReadiness(scenario, result, { output: response.body.message.visible_output });
 				collectServerLookups(
 					scenario,
@@ -490,6 +518,11 @@ for (const scenario of plan.scenarios) {
 				);
 				cy.then(() => {
 					checkDeadline(scenario, started);
+					if (!result.fallbacks.some((finding) => !finding.active)) {
+						scenarioResults.get(scenario.id).artifacts = [
+							{ content: response.body.message.output, kind: "email", mime: "text/plain" },
+						];
+					}
 					finishScenario(scenario, result, started);
 				});
 			});
@@ -507,9 +540,6 @@ for (const scenario of plan.scenarios) {
 				token: plan.token,
 			}).then((capture) => {
 				printCapture = capture.body.message;
-				scenarioResults.get(scenario.id).artifacts = [
-					{ content: printCapture.html, kind: "print", mime: "text/html" },
-				];
 				expect(printCapture.status).to.eq(200);
 				expect(printCapture.suppressed_access_logs).to.eq(1);
 				cy.document().then((document) => {
@@ -529,12 +559,18 @@ for (const scenario of plan.scenarios) {
 				recordLayout(result);
 				cy.then(() => {
 					checkDeadline(scenario, started);
+					if (!result.fallbacks.some((finding) => !finding.active)) {
+						scenarioResults.get(scenario.id).artifacts = [
+							{ content: printCapture.html, kind: "print", mime: "text/html" },
+						];
+					}
 					finishScenario(scenario, result, started);
 				});
 			});
 			return;
 		}
 
+		let portalArtifact = null;
 		const route = scenario.target.route.replace(
 			"{fixture.item_name}",
 			plan.fixtures[scenario.fixture_id]?.item_name || ""
@@ -568,9 +604,7 @@ for (const scenario of plan.scenarios) {
 					token: plan.token,
 				}).then((response) => {
 					expect(response.body.message.status).to.eq(200);
-					scenarioResults.get(scenario.id).artifacts = [
-						{ content: response.body.message.html, kind: "portal", mime: "text/html" },
-					];
+					portalArtifact = { content: response.body.message.html, kind: "portal", mime: "text/html" };
 					collectServerLookups(
 						scenario,
 						result,
@@ -583,6 +617,9 @@ for (const scenario of plan.scenarios) {
 			recordLayout(result);
 			cy.then(() => {
 				checkDeadline(scenario, started);
+				if (portalArtifact && !result.fallbacks.some((finding) => !finding.active)) {
+					scenarioResults.get(scenario.id).artifacts = [portalArtifact];
+				}
 				finishScenario(scenario, result, started);
 			});
 		});
@@ -597,7 +634,9 @@ afterEach(function () {
 			const recorded = scenarioResults.get(scenario.id);
 			const result = recorded?.result || emptyResult(scenario);
 			result.duration_ms = recorded ? Date.now() - recorded.started : 0;
-			const error = redactError(this.currentTest.err?.message || "Cypress assertion failed");
+			const error = recorded?.resolvingLookup
+				? "runtime translation lookup request failed"
+				: redactError(this.currentTest.err?.message || "Cypress assertion failed");
 			const blocked = !result.ready || error.includes("scenario exceeded");
 			result.blocked_reason = blocked ? error : null;
 			result.error = blocked ? null : error;
@@ -606,7 +645,10 @@ afterEach(function () {
 			attempt.duration_ms = result.duration_ms;
 			attempt.error = error;
 			attempt.outcome = blocked ? "blocked" : "assertion_failure";
-			return publishScenario(scenario, result, recorded?.artifacts || []);
+			const artifacts = result.fallbacks.some((finding) => !finding.active)
+				? []
+				: recorded?.artifacts || [];
+			return publishScenario(scenario, result, artifacts);
 		}
 	}
 });

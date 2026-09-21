@@ -77,6 +77,8 @@ class CIWorkflowTest(TestCase):
 			self.assertIn(required, commands)
 		self.assertIn("curl --fail", commands)
 		self.assertIn("google-chrome --version", commands)
+		self.assertIn("*.evidence.json", commands)
+		self.assertIn(".*.evidence.json.*.tmp", commands)
 		self.assertTrue(
 			any(step.get("if") == "always()" and "Stop runtime web process" in step["name"] for step in steps)
 		)

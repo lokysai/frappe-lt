@@ -644,6 +644,9 @@ jobs:
         run: |
           test ! -e sites/development.localhost/private/frappe_lt_runtime/journal.json
           ! compgen -G 'sites/development.localhost/private/frappe_lt_runtime/*.browser.json' > /dev/null
+          ! compgen -G 'sites/development.localhost/private/frappe_lt_runtime/*.evidence.json' > /dev/null
+          ! compgen -G 'sites/development.localhost/private/frappe_lt_runtime/.*.browser.json.*.tmp' > /dev/null
+          ! compgen -G 'sites/development.localhost/private/frappe_lt_runtime/.*.evidence.json.*.tmp' > /dev/null
           test ! -e "$RUNTIME_ARTIFACT_DIR/run/browser-results.json"
           bench --site development.localhost execute frappe_lt.runtime_control.assert_no_runtime_residue
           python - <<'PY'

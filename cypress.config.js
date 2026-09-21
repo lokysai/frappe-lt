@@ -82,7 +82,7 @@ module.exports = defineConfig({
 					schema_version: 1,
 				});
 				const output = canonical({
-					schema_version: 4,
+				schema_version: 5,
 					scenarios: [...results.values()].sort((left, right) =>
 						left.id < right.id ? -1 : left.id > right.id ? 1 : 0
 					),

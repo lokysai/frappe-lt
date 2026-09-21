@@ -27,6 +27,7 @@ from frappe_lt.runtime_control import (
 	_authorized_browser_plan,
 	_capture_http_response,
 	_capture_server_lookups,
+	_diagnostic_id,
 	_email_visible_output,
 	_finalize_recipient_message,
 	_redact_email_output,
@@ -550,6 +551,7 @@ def _browser_result(scenario_id, **changes):
 		"error": None,
 		"fallbacks": [
 			{
+				"active": True,
 				"effective": "Išsaugoti",
 				"excluded": False,
 				"exclusion_id": None,
@@ -590,7 +592,7 @@ class RuntimeReportTest(TestCase):
 		scenario_id = self.scenario["id"]
 		browser = {
 			"scenarios": [_browser_result(scenario_id)],
-			"schema_version": 4,
+			"schema_version": 5,
 			"toolchain": _toolchain(),
 		}
 		with TemporaryDirectory() as directory:
@@ -604,12 +606,13 @@ class RuntimeReportTest(TestCase):
 	def test_visible_effective_fallback_and_functional_layout_force_failure(self):
 		scenario_id = self.scenario["id"]
 		browser = {
-			"schema_version": 4,
+			"schema_version": 5,
 			"scenarios": [
 				_browser_result(
 					scenario_id,
 					fallbacks=[
 						{
+							"active": True,
 							"effective": "Save",
 							"excluded": False,
 							"exclusion_id": None,
@@ -661,7 +664,7 @@ class RuntimeReportTest(TestCase):
 			with self.subTest(render_status=render_status), TemporaryDirectory() as directory:
 				results = validate_browser_results(
 					{
-						"schema_version": 4,
+						"schema_version": 5,
 						"scenarios": [_browser_result(scenario_id, fallbacks=[fallback])],
 						"toolchain": _toolchain(),
 					},
@@ -680,7 +683,7 @@ class RuntimeReportTest(TestCase):
 			with self.subTest(reason=reason), TemporaryDirectory() as directory:
 				results = validate_browser_results(
 					{
-						"schema_version": 4,
+						"schema_version": 5,
 						"scenarios": [_browser_result(scenario_id, **changes)],
 						"toolchain": _toolchain(),
 					},
@@ -699,7 +702,7 @@ class RuntimeReportTest(TestCase):
 			plan.write_text('{"scenarios": []}')
 			result_path = root / "browser-results.json"
 			result_path.write_text(
-				json.dumps({"scenarios": [], "schema_version": 4, "toolchain": _toolchain()})
+				json.dumps({"scenarios": [], "schema_version": 5, "toolchain": _toolchain()})
 			)
 			process = SimpleNamespace(
 				returncode=7,
@@ -712,7 +715,7 @@ class RuntimeReportTest(TestCase):
 				value, returncode, diagnostic = _default_browser_runner("development.localhost", root, plan)
 			self.assertEqual(
 				value,
-				{"scenarios": [], "schema_version": 4, "toolchain": _toolchain()},
+				{"scenarios": [], "schema_version": 5, "toolchain": _toolchain()},
 			)
 			self.assertEqual(returncode, 7)
 			self.assertNotIn("cypress-secret", diagnostic)
@@ -730,7 +733,7 @@ class RuntimeReportTest(TestCase):
 			plan.write_text('{"scenarios": []}')
 			result_path = root / "browser-results.json"
 			result_path.write_text(
-				json.dumps({"scenarios": [], "schema_version": 4, "toolchain": _toolchain()})
+				json.dumps({"scenarios": [], "schema_version": 5, "toolchain": _toolchain()})
 			)
 			process = SimpleNamespace(
 				returncode=1,
@@ -764,7 +767,7 @@ class RuntimeReportTest(TestCase):
 				"sha256": hashlib.sha256(b'{"safe":true}\n').hexdigest(),
 			}
 			browser = {
-				"schema_version": 4,
+				"schema_version": 5,
 				"scenarios": [_browser_result(scenario_id, evidence=[evidence])],
 				"toolchain": _toolchain(),
 			}
@@ -793,7 +796,7 @@ class RuntimeReportTest(TestCase):
 			}
 			browser = {
 				"scenarios": [_browser_result(scenario_id, evidence=[evidence])],
-				"schema_version": 4,
+				"schema_version": 5,
 				"toolchain": _toolchain(),
 			}
 			with self.assertRaisesRegex(ValueError, "diagnostic sampling"):
@@ -829,7 +832,7 @@ class RuntimeReportTest(TestCase):
 						],
 					)
 				],
-				"schema_version": 4,
+				"schema_version": 5,
 				"toolchain": _toolchain(),
 			}
 			with self.assertRaisesRegex(ValueError, "disallowed sensitive material"):
@@ -839,6 +842,7 @@ class RuntimeReportTest(TestCase):
 	def test_unreviewed_runtime_exclusion_cannot_hide_visible_fallback(self):
 		scenario_id = self.scenario["id"]
 		fallback = {
+			"active": True,
 			"effective": "Save",
 			"excluded": True,
 			"exclusion_id": "not-reviewed",
@@ -851,68 +855,215 @@ class RuntimeReportTest(TestCase):
 			"visible": True,
 		}
 		browser = {
-			"schema_version": 4,
+			"schema_version": 5,
 			"scenarios": [_browser_result(scenario_id, fallbacks=[fallback])],
 			"toolchain": _toolchain(),
 		}
 		with TemporaryDirectory() as directory, self.assertRaisesRegex(ValueError, "exact reviewed"):
 			validate_browser_results(browser, self.contracts["scenarios"], Path(directory))
 
-	def test_rendered_lookup_must_belong_to_authenticated_inventory(self):
+	def test_catalog_membership_is_authenticated_and_inactive_lookups_are_diagnostic(self):
 		scenario_id = self.scenario["id"]
 		fallback = deepcopy(_browser_result(scenario_id)["fallbacks"][0])
+		diagnostic_key = "11" * 32
+		diagnostic_id = _diagnostic_id(bytes.fromhex(diagnostic_key), scenario_id, nonce="a" * 32)
 		fallback.update(
+			{
+				"active": False,
+				"effective": diagnostic_id,
+				"key": {"context": None, "source": diagnostic_id},
+				"raw_source": diagnostic_id,
+				"source": "missing",
+				"target": {"type": "locator", "value": f"diagnostic:{diagnostic_id}"},
+			}
+		)
+		active_fallback = deepcopy(_browser_result(scenario_id)["fallbacks"][0])
+		active_fallback.update({"effective": "Išsaugoti", "source": "frappe_lt"})
+		with TemporaryDirectory() as directory:
+			results = validate_browser_results(
+				{
+					"schema_version": 5,
+					"scenarios": [_browser_result(scenario_id, fallbacks=[active_fallback, fallback])],
+					"toolchain": _toolchain(),
+				},
+				self.contracts["scenarios"],
+				Path(directory),
+				diagnostic_key=diagnostic_key,
+			)
+		self.assertEqual(results[0]["status"], "fail")
+		inactive = next(item for item in results[0]["fallbacks"] if not item["active"])
+		self.assertEqual(inactive["key"]["source"], diagnostic_id)
+		self.assertNotIn("frappe-lt-dynamic-value", json.dumps(results[0]))
+		with TemporaryDirectory() as directory:
+			inactive_only = validate_browser_results(
+				{
+					"schema_version": 5,
+					"scenarios": [_browser_result(scenario_id, fallbacks=[fallback])],
+					"toolchain": _toolchain(),
+				},
+				self.contracts["scenarios"],
+				Path(directory),
+				diagnostic_key=diagnostic_key,
+			)
+		self.assertEqual(inactive_only[0]["status"], "fail")
+		with TemporaryDirectory() as directory:
+			root = Path(directory)
+			path = root / "evidence" / scenario_id / "print.html"
+			path.parent.mkdir(parents=True)
+			content = b"private non-catalog output"
+			path.write_bytes(content)
+			evidence = {
+				"bytes": len(content),
+				"kind": "print",
+				"mime": "text/html",
+				"path": f"evidence/{scenario_id}/print.html",
+				"sha256": hashlib.sha256(content).hexdigest(),
+			}
+			with self.assertRaisesRegex(ValueError, "cannot publish evidence artifacts"):
+				validate_browser_results(
+					{
+						"schema_version": 5,
+						"scenarios": [
+							_browser_result(
+								scenario_id, evidence=[evidence], fallbacks=[active_fallback, fallback]
+							)
+						],
+						"toolchain": _toolchain(),
+					},
+					self.contracts["scenarios"],
+					root,
+					diagnostic_key=diagnostic_key,
+				)
+			self.assertFalse(path.exists())
+		with TemporaryDirectory() as directory:
+			root = Path(directory)
+			undeclared = root / "evidence" / scenario_id / "private.txt"
+			undeclared.parent.mkdir(parents=True)
+			undeclared.write_text("private non-catalog output")
+			malformed = _browser_result(scenario_id, fallbacks=[fallback])
+			malformed["unexpected"] = True
+			with self.assertRaisesRegex(ValueError, "browser scenario result fields must be exactly"):
+				validate_browser_results(
+					{
+						"schema_version": 5,
+						"scenarios": [malformed],
+						"toolchain": _toolchain(),
+					},
+					self.contracts["scenarios"],
+					root,
+					diagnostic_key=diagnostic_key,
+				)
+			self.assertFalse(undeclared.exists())
+		with TemporaryDirectory() as directory:
+			root = Path(directory)
+			undeclared = root / "evidence" / scenario_id / "private.txt"
+			undeclared.parent.mkdir(parents=True)
+			undeclared.write_text("private non-catalog output")
+			malformed = _browser_result(scenario_id)
+			malformed["fallbacks"] = {"active": False}
+			with self.assertRaisesRegex(ValueError, "browser findings and evidence must be lists"):
+				validate_browser_results(
+					{
+						"schema_version": 5,
+						"scenarios": [malformed],
+						"toolchain": _toolchain(),
+					},
+					self.contracts["scenarios"],
+					root,
+					diagnostic_key=diagnostic_key,
+				)
+			self.assertFalse(undeclared.exists())
+
+		unredacted = deepcopy(fallback)
+		unredacted.update(
 			{
 				"effective": "frappe-lt-dynamic-value",
 				"key": {"context": None, "source": "frappe-lt-dynamic-value"},
 				"raw_source": "frappe-lt-dynamic-value",
-				"source": "missing",
 			}
 		)
 		with (
 			TemporaryDirectory() as directory,
-			self.assertRaisesRegex(ValueError, "authenticated Release Inventory"),
+			self.assertRaisesRegex(ValueError, "trusted diagnostic identifier"),
 		):
 			validate_browser_results(
 				{
-					"schema_version": 4,
-					"scenarios": [_browser_result(scenario_id, fallbacks=[fallback])],
+					"schema_version": 5,
+					"scenarios": [_browser_result(scenario_id, fallbacks=[active_fallback, unredacted])],
 					"toolchain": _toolchain(),
 				},
 				self.contracts["scenarios"],
 				Path(directory),
+				diagnostic_key=diagnostic_key,
 			)
 
-		fallback.update(
-			{
-				"render_status": "unrendered",
-				"target": {"type": "locator", "value": "body[data-route]"},
-				"visible": False,
-			}
+		tampered = deepcopy(fallback)
+		tampered["key"]["source"] = tampered["raw_source"] = tampered["effective"] = (
+			"hmac-sha256:" + "a" * 32 + ":" + "0" * 64
 		)
 		with TemporaryDirectory() as directory:
-			results = validate_browser_results(
+			root = Path(directory)
+			undeclared = root / "evidence" / scenario_id / "private.txt"
+			undeclared.parent.mkdir(parents=True)
+			undeclared.write_text("private non-catalog output")
+			with self.assertRaisesRegex(ValueError, "failed authentication"):
+				validate_browser_results(
+					{
+						"schema_version": 5,
+						"scenarios": [_browser_result(scenario_id, fallbacks=[active_fallback, tampered])],
+						"toolchain": _toolchain(),
+					},
+					self.contracts["scenarios"],
+					root,
+					diagnostic_key=diagnostic_key,
+				)
+			self.assertFalse(undeclared.exists())
+
+		with (
+			TemporaryDirectory() as directory,
+			self.assertRaisesRegex(ValueError, "was replayed"),
+		):
+			validate_browser_results(
 				{
-					"schema_version": 4,
+					"schema_version": 5,
+					"scenarios": [
+						_browser_result(scenario_id, fallbacks=[active_fallback, fallback, fallback])
+					],
+					"toolchain": _toolchain(),
+				},
+				self.contracts["scenarios"],
+				Path(directory),
+				diagnostic_key=diagnostic_key,
+			)
+
+		fallback["active"] = True
+		with (
+			TemporaryDirectory() as directory,
+			self.assertRaisesRegex(ValueError, "active disagrees"),
+		):
+			validate_browser_results(
+				{
+					"schema_version": 5,
 					"scenarios": [_browser_result(scenario_id, fallbacks=[fallback])],
 					"toolchain": _toolchain(),
 				},
 				self.contracts["scenarios"],
 				Path(directory),
 			)
-		self.assertEqual(results[0]["status"], "blocked")
-		self.assertIn("no active effective translation lookup", results[0]["blocked_reason"])
 
 	def test_reviewed_output_exclusion_keeps_its_exact_captured_interval(self):
 		scenario = next(
 			item for item in self.contracts["scenarios"]["scenarios"] if item["id"] == "todo-standard-print"
 		)
+		diagnostic_key = "22" * 32
+		diagnostic_id = _diagnostic_id(bytes.fromhex(diagnostic_key), scenario["id"], nonce="b" * 32)
 		fallback = {
-			"effective": "frappe-lt-runtime-" + "a" * 32 + "-todo",
+			"active": False,
+			"effective": diagnostic_id,
 			"excluded": True,
 			"exclusion_id": "fixture-values",
-			"key": {"context": None, "source": "Runtime fixture"},
-			"raw_source": "Runtime fixture",
+			"key": {"context": None, "source": diagnostic_id},
+			"raw_source": diagnostic_id,
 			"render_status": "unique",
 			"scenario_id": scenario["id"],
 			"source": "missing",
@@ -923,11 +1074,12 @@ class RuntimeReportTest(TestCase):
 			result = validate_browser_results(
 				{
 					"scenarios": [_browser_result(scenario["id"], fallbacks=[fallback])],
-					"schema_version": 4,
+					"schema_version": 5,
 					"toolchain": _toolchain(),
 				},
 				{"scenarios": [scenario]},
 				Path(directory),
+				diagnostic_key=diagnostic_key,
 			)[0]
 		self.assertTrue(result["fallbacks"][0]["excluded"])
 		self.assertEqual(result["fallbacks"][0]["target"]["value"], "print:http-body:41-96")
@@ -940,6 +1092,7 @@ class RuntimeReportTest(TestCase):
 			status="fail",
 			fallbacks=[
 				{
+					"active": True,
 					"effective": "Save",
 					"excluded": False,
 					"exclusion_id": None,
@@ -980,7 +1133,7 @@ class RuntimeReportTest(TestCase):
 			cypress_diagnostic_log="Authorization: Bearer report-secret",
 		)
 		self.assertEqual(report["status"], "fail")
-		self.assertEqual(report["schema_version"], 3)
+		self.assertEqual(report["schema_version"], 4)
 		self.assertEqual(report["toolchain"], _toolchain())
 		self.assertTrue(report["diagnostic_sampling"])
 		self.assertNotIn("report-secret", report["cypress_diagnostic_log"])
@@ -1010,6 +1163,7 @@ class RuntimeReportTest(TestCase):
 			{"cleanup_failure", "runtime_coverage_gap", "scenario_fail"},
 		)
 		self.assertEqual(report["summary"]["english_fallbacks"], 1)
+		self.assertEqual(report["summary"]["runtime_inventory_gaps"], 0)
 		self.assertEqual(report["scenario_results"][0]["status"], "fail")
 		self.assertEqual(report["scenario_results"][0]["error"], "original scenario assertion")
 		self.assertEqual(
@@ -1020,7 +1174,7 @@ class RuntimeReportTest(TestCase):
 	def test_browser_retry_is_limited_to_named_setup_or_transport_failures(self):
 		scenario_id = self.scenario["id"]
 		browser = {
-			"schema_version": 4,
+			"schema_version": 5,
 			"scenarios": [
 				_browser_result(
 					scenario_id,
@@ -1050,7 +1204,7 @@ class RuntimeReportTest(TestCase):
 	def test_browser_attempt_records_outcome_duration_and_redacted_error(self):
 		scenario_id = self.scenario["id"]
 		browser = {
-			"schema_version": 4,
+			"schema_version": 5,
 			"scenarios": [
 				_browser_result(
 					scenario_id,
@@ -1078,7 +1232,7 @@ class RuntimeReportTest(TestCase):
 	def test_command_exit_codes_and_report_write_failure(self):
 		contracts = self.contracts
 		browser = {
-			"schema_version": 4,
+			"schema_version": 5,
 			"scenarios": [
 				_browser_result(scenario["id"]) for scenario in contracts["scenarios"]["scenarios"]
 			],
@@ -1113,7 +1267,7 @@ class RuntimeReportTest(TestCase):
 
 			def prepare(self, *_args, **kwargs):
 				type(self).prepared_diagnostic_sampling = kwargs["diagnostic_sampling"]
-				return {"browser_plan": "/private/plan.json"}
+				return {"browser_plan": "/private/plan.json", "evidence_key": "11" * 32}
 
 			def cleanup(self):
 				return []
@@ -1684,6 +1838,18 @@ class RuntimeCrashRecoveryTest(TestCase):
 					("Notification Type Preference", "preference-row"),
 					("UOM Conversion Detail", "uom-row"),
 				],
+			)
+			control.root.mkdir(parents=True)
+			(control.root / f"{'b' * 32}.evidence.json").write_text("secret")
+			(control.root / f".{'c' * 32}.evidence.json.123.tmp").write_text("temporary secret")
+			secret_residue = control.residue_scan()
+			self.assertIn(
+				("Runtime Secret", f"{'b' * 32}.evidence.json"),
+				[(finding["target"]["doctype"], finding["target"]["name"]) for finding in secret_residue],
+			)
+			self.assertIn(
+				("Runtime Secret", f".{'c' * 32}.evidence.json.123.tmp"),
+				[(finding["target"]["doctype"], finding["target"]["name"]) for finding in secret_residue],
 			)
 
 	def test_server_lookup_capture_observes_preimported_translator_references(self):

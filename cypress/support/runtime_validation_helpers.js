@@ -8,13 +8,32 @@ function meaningfulTarget(element) {
 	if (element.id) return `#${escapeCss(element.id)}`;
 	if (element.getAttribute("name")) return `[name="${escapeCss(element.getAttribute("name"))}"]`;
 	if (element.getAttribute("data-label")) {
-		return `[data-label="${escapeCss(element.getAttribute("data-label"))}"]`;
+		return structuralAttributeTarget(element, "data-label");
 	}
 	if (element.getAttribute("aria-label")) {
-		return `[aria-label="${escapeCss(element.getAttribute("aria-label"))}"]`;
+		return structuralAttributeTarget(element, "aria-label");
 	}
 	if (element.getAttribute("role")) return `[role="${escapeCss(element.getAttribute("role"))}"]`;
 	return null;
+}
+
+function structuralAttributeTarget(element, attribute) {
+	const parts = [];
+	for (let candidate = element; candidate?.tagName; candidate = candidate.parentElement) {
+		if (candidate.id) {
+			parts.unshift(`#${escapeCss(candidate.id)}`);
+			break;
+		}
+		const tag = candidate.tagName.toLowerCase();
+		let part = candidate === element ? `${tag}[${attribute}]` : tag;
+		const siblings = candidate.parentElement?.children
+			? [...candidate.parentElement.children].filter((sibling) => sibling.tagName === candidate.tagName)
+			: [];
+		if (siblings.length > 1) part += `:nth-of-type(${siblings.indexOf(candidate) + 1})`;
+		parts.unshift(part);
+		if (tag === "body") break;
+	}
+	return parts.join(" > ") || `[${attribute}]`;
 }
 
 function isVisuallyHidden(element, getComputedStyle) {
@@ -24,6 +43,17 @@ function isVisuallyHidden(element, getComputedStyle) {
 		const tiny = bounds.width <= 2 && bounds.height <= 2;
 		const clipped = style.clip && !["auto", "none"].includes(style.clip);
 		const clipPath = style.clipPath && style.clipPath !== "none";
+		const clipValues = String(style.clip || "").match(/-?\d+(?:\.\d+)?/g);
+		const fullyClipped =
+			String(style.clip || "").startsWith("rect(") &&
+			clipValues?.length === 4 &&
+			clipValues.every((value) => Number(value) === 0);
+		const screenReaderOnly =
+			candidate.classList?.contains("sr-only") &&
+			style.position === "absolute" &&
+			["clip", "hidden"].includes(style.overflow) &&
+			fullyClipped;
+		if (screenReaderOnly) return true;
 		if (tiny && (clipped || clipPath)) return true;
 	}
 	return false;
@@ -88,6 +118,7 @@ function exactOutputExclusion(output, correlation, exclusions, approvedValues) {
 
 function isBlockingFallback(finding) {
 	return (
+		finding.active &&
 		finding.render_status !== "unrendered" &&
 		finding.visible &&
 		!finding.excluded &&
@@ -95,16 +126,16 @@ function isBlockingFallback(finding) {
 	);
 }
 
-function isUntrustedRenderedLookup(active, renderStatus, excluded) {
-	return !active && renderStatus !== "unrendered" && !excluded;
+function isBlockingInventoryLookup(finding) {
+	return !finding.active && finding.render_status !== "unrendered" && finding.visible && !finding.excluded;
 }
 
 module.exports = {
 	correlateOutput,
 	exactOutputExclusion,
 	isBlockingFallback,
+	isBlockingInventoryLookup,
 	isClippedByAncestor,
-	isUntrustedRenderedLookup,
 	isVisuallyHidden,
 	meaningfulTarget,
 	renderedIntervals,
