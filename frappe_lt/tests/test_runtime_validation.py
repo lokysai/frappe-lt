@@ -906,6 +906,40 @@ class RuntimeReportTest(TestCase):
 				diagnostic_key=diagnostic_key,
 			)
 		self.assertEqual(inactive_only[0]["status"], "fail")
+		active_scenario = next(
+			item for item in self.contracts["scenarios"]["scenarios"] if item["id"] != scenario_id
+		)
+		with TemporaryDirectory() as directory:
+			root = Path(directory)
+			active_path = root / "evidence" / active_scenario["id"] / "browser.json"
+			active_path.parent.mkdir(parents=True)
+			content = b'{"safe":true}\n'
+			active_path.write_bytes(content)
+			active_evidence = {
+				"bytes": len(content),
+				"kind": "browser",
+				"mime": "application/json",
+				"path": f"evidence/{active_scenario['id']}/browser.json",
+				"sha256": hashlib.sha256(content).hexdigest(),
+			}
+			mixed = validate_browser_results(
+				{
+					"schema_version": 5,
+					"scenarios": [
+						_browser_result(scenario_id, fallbacks=[fallback]),
+						_browser_result(active_scenario["id"], evidence=[active_evidence]),
+					],
+					"toolchain": _toolchain(),
+				},
+				self.contracts["scenarios"],
+				root,
+				diagnostic_key=diagnostic_key,
+				diagnostic_sampling=True,
+			)
+			self.assertTrue(active_path.exists())
+			self.assertEqual(
+				next(item for item in mixed if item["id"] == active_scenario["id"])["status"], "pass"
+			)
 		with TemporaryDirectory() as directory:
 			root = Path(directory)
 			path = root / "evidence" / scenario_id / "print.html"
@@ -973,6 +1007,81 @@ class RuntimeReportTest(TestCase):
 					diagnostic_key=diagnostic_key,
 				)
 			self.assertFalse(undeclared.exists())
+		with TemporaryDirectory() as directory:
+			root = Path(directory)
+			undeclared = root / "evidence" / scenario_id / "private.txt"
+			undeclared.parent.mkdir(parents=True)
+			undeclared.write_text("private non-catalog output")
+			unknown = _browser_result("unknown-valid-id", fallbacks=[deepcopy(fallback)])
+			unknown["fallbacks"][0]["scenario_id"] = "unknown-valid-id"
+			with self.assertRaisesRegex(ValueError, "unknown or duplicate"):
+				validate_browser_results(
+					{
+						"schema_version": 5,
+						"scenarios": [unknown],
+						"toolchain": _toolchain(),
+					},
+					self.contracts["scenarios"],
+					root,
+					diagnostic_key=diagnostic_key,
+				)
+			self.assertFalse(undeclared.exists())
+		with TemporaryDirectory() as directory:
+			root = Path(directory)
+			undeclared = root / "evidence" / scenario_id / "private.txt"
+			undeclared.parent.mkdir(parents=True)
+			undeclared.write_text("private non-catalog output")
+			mismatched = deepcopy(fallback)
+			mismatched["scenario_id"] = active_scenario["id"]
+			with self.assertRaisesRegex(ValueError, "scenario_id does not match"):
+				validate_browser_results(
+					{
+						"schema_version": 5,
+						"scenarios": [_browser_result(scenario_id, fallbacks=[mismatched])],
+						"toolchain": _toolchain(),
+					},
+					self.contracts["scenarios"],
+					root,
+					diagnostic_key=diagnostic_key,
+				)
+			self.assertFalse((root / "evidence").exists())
+		with TemporaryDirectory() as directory:
+			root = Path(directory)
+			undeclared = root / "evidence" / active_scenario["id"] / "private.txt"
+			undeclared.parent.mkdir(parents=True)
+			undeclared.write_text("private non-catalog output")
+			nested = deepcopy(fallback)
+			nested["nested"] = {"active": False}
+			with self.assertRaisesRegex(ValueError, "lookup evidence fields must be exactly"):
+				validate_browser_results(
+					{
+						"schema_version": 5,
+						"scenarios": [_browser_result(scenario_id, fallbacks=[nested])],
+						"toolchain": _toolchain(),
+					},
+					self.contracts["scenarios"],
+					root,
+					diagnostic_key=diagnostic_key,
+				)
+			self.assertFalse((root / "evidence").exists())
+		with TemporaryDirectory() as directory:
+			root = Path(directory)
+			undeclared = root / "evidence" / scenario_id / "private.txt"
+			undeclared.parent.mkdir(parents=True)
+			undeclared.write_text("private non-catalog output")
+			with self.assertRaisesRegex(ValueError, "browser result fields must be exactly"):
+				validate_browser_results(
+					{
+						"active": False,
+						"schema_version": 5,
+						"scenarios": [_browser_result(scenario_id)],
+						"toolchain": _toolchain(),
+					},
+					self.contracts["scenarios"],
+					root,
+					diagnostic_key=diagnostic_key,
+				)
+			self.assertFalse((root / "evidence").exists())
 
 		unredacted = deepcopy(fallback)
 		unredacted.update(
@@ -1003,7 +1112,7 @@ class RuntimeReportTest(TestCase):
 		)
 		with TemporaryDirectory() as directory:
 			root = Path(directory)
-			undeclared = root / "evidence" / scenario_id / "private.txt"
+			undeclared = root / "evidence" / active_scenario["id"] / "private.txt"
 			undeclared.parent.mkdir(parents=True)
 			undeclared.write_text("private non-catalog output")
 			with self.assertRaisesRegex(ValueError, "failed authentication"):
@@ -1017,7 +1126,7 @@ class RuntimeReportTest(TestCase):
 					root,
 					diagnostic_key=diagnostic_key,
 				)
-			self.assertFalse(undeclared.exists())
+			self.assertFalse((root / "evidence").exists())
 
 		with (
 			TemporaryDirectory() as directory,

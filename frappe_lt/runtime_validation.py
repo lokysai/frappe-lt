@@ -326,7 +326,25 @@ def _validate_evidence(value: object, run_root: Path, scenario_id: str) -> dict:
 	return value
 
 
-def validate_browser_results(
+def _contains_inactive(item: object) -> bool:
+	if isinstance(item, dict):
+		return item.get("active") is False or any(_contains_inactive(child) for child in item.values())
+	if isinstance(item, list):
+		return any(_contains_inactive(child) for child in item)
+	return False
+
+
+def _remove_inactive_evidence(path: Path) -> None:
+	try:
+		if path.is_symlink() or path.is_file():
+			path.unlink()
+		elif path.is_dir():
+			shutil.rmtree(path)
+	except OSError as error:
+		raise ValueError(f"could not remove inactive lookup evidence: {error}") from error
+
+
+def _validate_browser_results(
 	value: object,
 	scenarios: dict,
 	run_root: Path,
@@ -336,24 +354,6 @@ def validate_browser_results(
 ) -> list[dict]:
 	if not isinstance(diagnostic_sampling, bool):
 		raise ValueError("diagnostic_sampling must be boolean")
-
-	def contains_inactive(item: object) -> bool:
-		if isinstance(item, dict):
-			return item.get("active") is False or any(contains_inactive(child) for child in item.values())
-		if isinstance(item, list):
-			return any(contains_inactive(child) for child in item)
-		return False
-
-	declares_inactive = contains_inactive(value)
-	if declares_inactive:
-		evidence_root = run_root / "evidence"
-		try:
-			if evidence_root.is_symlink() or evidence_root.is_file():
-				evidence_root.unlink()
-			elif evidence_root.is_dir():
-				shutil.rmtree(evidence_root)
-		except OSError as error:
-			raise ValueError(f"could not remove inactive lookup evidence: {error}") from error
 	value = _exact(value, {"scenarios", "schema_version", "toolchain"}, "browser result")
 	if value["schema_version"] != BROWSER_SCHEMA_VERSION or not isinstance(value["scenarios"], list):
 		raise ValueError("unsupported browser result schema")
@@ -387,7 +387,7 @@ def validate_browser_results(
 			"browser scenario result",
 		)
 		scenario_id = result["id"]
-		if scenario_id not in manifest or scenario_id in seen:
+		if not isinstance(scenario_id, str) or scenario_id not in manifest or scenario_id in seen:
 			raise ValueError(f"unknown or duplicate browser scenario result {scenario_id!r}")
 		seen.add(scenario_id)
 		if result["status"] not in {"blocked", "fail", "pass"}:
@@ -408,23 +408,6 @@ def validate_browser_results(
 			result["blocked_reason"] = _redact(result["blocked_reason"])
 		if not isinstance(result["duration_ms"], int) or not 0 <= result["duration_ms"] <= 600_000:
 			raise ValueError("browser scenario duration is invalid")
-		declares_inactive = isinstance(result["fallbacks"], list) and any(
-			isinstance(item, dict) and item.get("active") is False for item in result["fallbacks"]
-		)
-		if declares_inactive:
-			evidence_root = run_root / "evidence"
-			scenario_evidence = evidence_root / scenario_id
-			try:
-				if evidence_root.is_symlink():
-					evidence_root.unlink()
-				elif scenario_evidence.is_symlink() or scenario_evidence.is_file():
-					scenario_evidence.unlink()
-				elif scenario_evidence.is_dir():
-					shutil.rmtree(scenario_evidence)
-			except OSError as error:
-				raise ValueError(f"could not remove inactive lookup evidence: {error}") from error
-			if result["evidence"]:
-				raise ValueError("inactive lookups cannot publish evidence artifacts")
 		if not isinstance(result["attempts"], list) or not result["attempts"]:
 			raise ValueError("browser scenario must record every attempt")
 		for number, attempt in enumerate(result["attempts"], start=1):
@@ -561,6 +544,42 @@ def validate_browser_results(
 			blocked_result(scenario_id, "browser did not return a result for the manifest scenario")
 		)
 	return sorted(results, key=lambda result: result["id"])
+
+
+def validate_browser_results(
+	value: object,
+	scenarios: dict,
+	run_root: Path,
+	*,
+	diagnostic_sampling: bool = False,
+	diagnostic_key: str | None = None,
+) -> list[dict]:
+	declares_inactive = _contains_inactive(value)
+	try:
+		results = _validate_browser_results(
+			value,
+			scenarios,
+			run_root,
+			diagnostic_sampling=diagnostic_sampling,
+			diagnostic_key=diagnostic_key,
+		)
+	except Exception:
+		if declares_inactive:
+			_remove_inactive_evidence(run_root / "evidence")
+		raise
+	if declares_inactive:
+		evidence_root = run_root / "evidence"
+		try:
+			if evidence_root.is_symlink() or evidence_root.is_file():
+				_remove_inactive_evidence(evidence_root)
+			else:
+				for result in results:
+					if any(not finding["active"] for finding in result["fallbacks"]):
+						_remove_inactive_evidence(evidence_root / result["id"])
+		except Exception:
+			_remove_inactive_evidence(evidence_root)
+			raise
+	return results
 
 
 def blocked_result(scenario_id: str, reason: str) -> dict:
