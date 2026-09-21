@@ -581,12 +581,13 @@ class SiteControl:
 				self.frappe.db.set_value("User", user, values["before"], update_modified=False)
 			self.frappe.db.commit()
 			remaining_sessions = (
-				self.frappe.get_all(
-					"Sessions",
-					filters={"sid": ("in", baseline["sessions"])},
-					pluck="sid",
-					order_by="sid asc",
-				)
+				[
+					row[0]
+					for row in self.frappe.db.sql(
+						"select sid from tabSessions where sid in %(sids)s order by sid",
+						{"sids": tuple(baseline["sessions"])},
+					)
+				]
 				if baseline["sessions"]
 				else []
 			)
@@ -699,7 +700,7 @@ class SiteControl:
 						"target": {"doctype": doctype, "name": name},
 					}
 				)
-		for doctype, field in (("Deleted Document", "deleted_name"), ("Sessions", "user")):
+		for doctype, field in (("Deleted Document", "deleted_name"),):
 			for name in self.frappe.get_all(
 				doctype, filters={field: ("like", f"{marker}%")}, pluck=field, order_by=f"{field} asc"
 			):
@@ -710,6 +711,16 @@ class SiteControl:
 						"target": {"doctype": doctype, "name": name},
 					}
 				)
+		for (user,) in self.frappe.db.sql(
+			"select user from tabSessions where user like %s order by user", (f"{marker}%",)
+		):
+			residue.append(
+				{
+					"error": "run-marked cleanup artifact remains",
+					"mutation_id": 0,
+					"target": {"doctype": "Sessions", "name": user},
+				}
+			)
 		return residue
 
 

@@ -115,7 +115,7 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 		self.assertFalse(
 			frappe.db.exists("Deleted Document", {"deleted_doctype": "User", "deleted_name": user})
 		)
-		self.assertFalse(frappe.db.exists("Sessions", {"user": user}))
+		self.assertFalse(frappe.db.sql("select 1 from tabSessions where user=%s limit 1", (user,)))
 		self.assertFalse(control.journal_path.exists())
 
 	def test_mutable_site_lease_rejects_a_second_run(self):

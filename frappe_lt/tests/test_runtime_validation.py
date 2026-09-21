@@ -540,6 +540,14 @@ class RuntimeCrashRecoveryTest(TestCase):
 				def rollback(self):
 					pass
 
+				def sql(self, query, values=None):
+					if "where sid in" in query:
+						return [(sid,) for sid in sorted(sessions & set(values["sids"]))]
+					if "where user like" in query:
+						prefix = values[0][:-1]
+						return [(user,) for user in sorted(sessions) if user.startswith(prefix)]
+					raise AssertionError(query)
+
 			class Frappe:
 				db = DB()
 				cache = SimpleNamespace(hdel=lambda *args: cache_deletes.append(args))
@@ -548,10 +556,8 @@ class RuntimeCrashRecoveryTest(TestCase):
 					return str(root.joinpath(*parts))
 
 				def get_all(self, doctype, **kwargs):
-					if doctype == "Sessions" and kwargs.get("pluck") == "sid":
-						if "sid" in kwargs.get("filters", {}):
-							return sorted(sessions & set(kwargs["filters"]["sid"][1]))
-						return sorted(sessions)
+					if doctype == "Sessions":
+						raise AssertionError("Sessions is not a DocType")
 					if doctype == "Activity Log":
 						if "name" in kwargs.get("filters", {}):
 							return sorted(activity_logs & set(kwargs["filters"]["name"][1]))
@@ -631,6 +637,9 @@ SiteControl(
 				def rollback(self):
 					pass
 
+				def sql(self, _query, _values=None):
+					return []
+
 			class Frappe:
 				db = DB()
 				enqueue = None
@@ -668,6 +677,9 @@ SiteControl(
 				def rollback(self):
 					pass
 
+				def sql(self, _query, _values=None):
+					return []
+
 			class Frappe:
 				db = DB()
 
@@ -699,6 +711,9 @@ SiteControl(
 
 				def rollback(self):
 					pass
+
+				def sql(self, _query, _values=None):
+					return []
 
 			class Frappe:
 				db = DB()
@@ -795,6 +810,9 @@ os._exit(23)
 
 				def rollback(self):
 					pass
+
+				def sql(self, _query, _values=None):
+					return []
 
 			class Frappe:
 				local = SimpleNamespace(site="development.localhost")
