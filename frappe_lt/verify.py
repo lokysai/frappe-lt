@@ -5,9 +5,8 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from babel.messages.pofile import read_po
-
 from frappe_lt.inventory import load_compatibility, validate_tool_versions, verify_owned_artifacts
+from frappe_lt.po import compile_po, parse_po
 
 EXPECTED_APP_ORDER = ["frappe", "erpnext", "frappe_lt"]
 COMPATIBILITY = load_compatibility()
@@ -61,32 +60,22 @@ def validate_po(path: Path) -> dict[str, str]:
 	if physical_messages != 1:
 		raise ValueError(f"PO catalog must contain exactly one message; found {physical_messages}")
 
-	with path.open("rb") as po_file:
-		catalog = read_po(po_file, locale="lt", abort_invalid=True)
-	if str(catalog.locale) != "lt":
+	catalog = parse_po(path)
+	if catalog.locale != "lt":
 		raise ValueError("PO catalog language must be lt")
 	for field, actual in {
 		"POT-Creation-Date": catalog.creation_date,
 		"PO-Revision-Date": catalog.revision_date,
 	}.items():
-		if actual.strftime("%Y-%m-%d %H:%M%z") != FIXED_PO_DATE:
+		if actual != FIXED_PO_DATE:
 			raise ValueError(f"{field} must be fixed at {FIXED_PO_DATE}")
 
-	messages = [message for message in catalog if message.id]
-	if len(messages) != 1:
-		raise ValueError(f"PO catalog must resolve to exactly one message; found {len(messages)}")
-
-	message = messages[0]
-	if "fuzzy" in message.flags:
-		raise ValueError("PO message must not be fuzzy")
-	if message.context is not None:
-		raise ValueError("PO message must not have context")
-	if isinstance(message.id, tuple) or isinstance(message.string, tuple):
-		raise ValueError("PO message must not be plural")
-	if message.id != "Item" or message.string != "Prekė":
+	if len(catalog.messages) != 1:
+		raise ValueError(f"PO catalog must resolve to exactly one message; found {len(catalog.messages)}")
+	if catalog.messages != {("Item", None): "Prekė"}:
 		raise ValueError("PO message must be exactly Item -> Prekė")
 
-	return {message.id: message.string}
+	return {source: translation for (source, _context), translation in catalog.messages.items()}
 
 
 def _git_commit(path: Path) -> str:
@@ -132,24 +121,27 @@ def _compile_twice(frappe, environment: dict[str, str], expected_digest: str) ->
 	from frappe.utils import get_bench_path
 
 	bench_path = Path(get_bench_path())
+	po_path = Path(frappe.get_app_path("frappe_lt", "locale", "lt.po"))
 	mo_path = get_mo_path("frappe_lt", "lt")
 	compile_environment = os.environ.copy()
 	compile_environment["SOURCE_DATE_EPOCH"] = SOURCE_DATE_EPOCH
 	digests = []
 	for _build in range(2):
-		mo_path.unlink(missing_ok=True)
-		_run_bench(
+		compile_po(
+			po_path,
 			bench_path,
-			"compile-po-to-mo",
-			"--app",
-			"frappe_lt",
-			"--locale",
-			"lt",
-			"--force",
-			env=compile_environment,
+			mo_path=mo_path,
+			compiler=lambda _po_path, _workspace: _run_bench(
+				bench_path,
+				"compile-po-to-mo",
+				"--app",
+				"frappe_lt",
+				"--locale",
+				"lt",
+				"--force",
+				env=compile_environment,
+			),
 		)
-		if not mo_path.is_file():
-			raise ValueError(f"compile did not create {mo_path}")
 		digests.append(hashlib.sha256(mo_path.read_bytes()).hexdigest())
 
 	assert_digest(expected_digest, digests[0], digests[1], environment)

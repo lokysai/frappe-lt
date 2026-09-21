@@ -11,6 +11,7 @@ from unittest.mock import patch
 from frappe_lt.inventory import (
 	ExtractionEvent,
 	_load_provenance,
+	_quality_artifacts_for_inventory,
 	build_inventory,
 	build_report,
 	canonical_json,
@@ -43,7 +44,7 @@ class CompatibilityManifestTest(TestCase):
 	def test_manifest_is_the_authority_for_pinned_release(self):
 		manifest = load_compatibility()
 
-		self.assertEqual(manifest["schema_version"], 1)
+		self.assertEqual(manifest["schema_version"], 2)
 		self.assertEqual(
 			manifest["upstream"],
 			{
@@ -70,6 +71,16 @@ class CompatibilityManifestTest(TestCase):
 				"release_inventory.json",
 			},
 		)
+		self.assertEqual(manifest["quality_gate"]["schema_version"], 1)
+		self.assertEqual(
+			set(manifest["quality_gate"]["artifact_sha256"]),
+			{
+				"catalog_segments.json",
+				"collision_resolutions.json",
+				"glossary_selectors.json",
+				"translation_exceptions.json",
+			},
+		)
 
 	def test_manifest_rejects_noncanonical_pins(self):
 		manifest = load_compatibility()
@@ -79,6 +90,20 @@ class CompatibilityManifestTest(TestCase):
 			path.write_bytes(canonical_json(manifest))
 			with self.assertRaisesRegex(ValueError, "full commit"):
 				load_compatibility(path)
+
+	def test_only_authenticated_legacy_baselines_may_use_schema_one_without_quality_fields(self):
+		manifest = load_compatibility()
+		legacy = {**manifest, "schema_version": 1}
+		legacy.pop("quality_gate")
+		with TemporaryDirectory() as directory:
+			path = Path(directory) / "compatibility.json"
+			path.write_bytes(canonical_json(legacy))
+			with self.assertRaisesRegex(ValueError, "schema_version must be 2"):
+				load_compatibility(path)
+			self.assertEqual(
+				load_compatibility(path, allow_legacy_baseline=True)["schema_version"],
+				1,
+			)
 
 
 class ReleaseInventoryTest(TestCase):
@@ -417,6 +442,8 @@ class ReleaseInventoryTest(TestCase):
 		old_digest = hashlib.sha256(old_bytes).hexdigest()
 		prior_manifest["inventory_digest"] = old_digest
 		prior_manifest["artifact_sha256"]["release_inventory.json"] = old_digest
+		prior_manifest["schema_version"] = 1
+		prior_manifest.pop("quality_gate")
 		current = build_inventory(
 			[ExtractionEvent("Item", None, "frappe", "source", "Item", "frappe/item.py", "python")],
 			manifest,
@@ -985,6 +1012,75 @@ class RuntimeExtractionTest(TestCase):
 
 
 class ArtifactWriteTest(TestCase):
+	def test_quality_bundle_copies_authenticated_registered_candidates_and_manifests(self):
+		with TemporaryDirectory() as directory:
+			root = Path(directory)
+			inventory_digest = "a" * 64
+			candidate = canonical_json({"schema_version": 1, "entries": []})
+			segment = canonical_json({"schema_version": 1, "keys": []})
+			candidate_name = "catalog_candidates/nested/item-smoke.json"
+			segment_name = "catalog_segments/nested/item-smoke.json"
+			for name, content in ((candidate_name, candidate), (segment_name, segment)):
+				path = root / name
+				path.parent.mkdir(parents=True, exist_ok=True)
+				path.write_bytes(content)
+			registry = canonical_json(
+				{
+					"schema_version": 1,
+					"inventory_digest": inventory_digest,
+					"candidates": [
+						{
+							"name": "item-smoke",
+							"candidate": candidate_name,
+							"candidate_sha256": hashlib.sha256(candidate).hexdigest(),
+							"manifest": segment_name,
+							"manifest_sha256": hashlib.sha256(segment).hexdigest(),
+						}
+					],
+				}
+			)
+			(root / "catalog_segments.json").write_bytes(registry)
+			manifest = {
+				"quality_gate": {
+					"artifact_sha256": {"catalog_segments.json": hashlib.sha256(registry).hexdigest()}
+				}
+			}
+
+			artifacts = _quality_artifacts_for_inventory(manifest, inventory_digest, root)
+			self.assertEqual(
+				artifacts,
+				{
+					"catalog_segments.json": registry,
+					candidate_name: candidate,
+					segment_name: segment,
+				},
+			)
+			for output_name in ("first", "second"):
+				write_artifacts(
+					root / output_name,
+					{**artifacts, "compatibility.json": b"manifest\n"},
+				)
+			for name, content in artifacts.items():
+				self.assertEqual((root / "first" / name).read_bytes(), content)
+				self.assertEqual((root / "second" / name).read_bytes(), content)
+
+			(root / candidate_name).write_bytes(b"tampered\n")
+			with self.assertRaisesRegex(ValueError, "candidate digest mismatch"):
+				_quality_artifacts_for_inventory(manifest, inventory_digest, root)
+
+	def test_stale_quality_bundle_is_rejected_before_inventory_publication(self):
+		with TemporaryDirectory() as directory:
+			root = Path(directory)
+			content = canonical_json({"schema_version": 1, "inventory_digest": "a" * 64})
+			(root / "catalog_segments.json").write_bytes(content)
+			manifest = {
+				"quality_gate": {
+					"artifact_sha256": {"catalog_segments.json": hashlib.sha256(content).hexdigest()}
+				}
+			}
+			with self.assertRaisesRegex(ValueError, "newly generated Release Inventory"):
+				_quality_artifacts_for_inventory(manifest, "b" * 64, root)
+
 	def test_manifest_authenticates_every_owned_nonmanifest_artifact(self):
 		manifest = verify_owned_artifacts()
 		self.assertEqual(manifest["inventory_digest"], manifest["artifact_sha256"]["release_inventory.json"])

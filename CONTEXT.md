@@ -41,6 +41,42 @@ _Avoid_: Number of translated source phrases
 An entry in the reviewed exception list for a product name, abbreviation, technical identifier, or code value that must remain unchanged.
 _Avoid_: Untranslated phrase, fallback
 
+<a id="catalog-quality-gate"></a>
+
+**Catalog Quality Gate**:
+Vienintelis viešas kandidatinio katalogo generavimo kelias, kuris autentifikuoja **Release Inventory** ir susietus manifestus, patikrina visas technines bei žodyno taisykles ir publikuoja kandidatą tik po izoliuoto Frappe gettext kompiliavimo.
+_Vengti_: Atskiras PO tikrintuvas, neautentifikuotas generatorius
+
+<a id="catalog-segment"></a>
+
+**Catalog Segment**:
+Versijuotame registre įvardytas nesikertantis **Release Inventory** **Translation Key** poaibis, susietas su tiksliu inventoriaus digestu ir vienu registruotu kandidatu.
+_Vengti_: Neužregistruotas vertimų paketas, savavališkas raktų poaibis
+
+<a id="html-equivalence"></a>
+
+**HTML Equivalence**:
+Griežtas HTML5 fragmentų lygiavertiškumas, leidžiantis perkelti pilnas gretimas aukščiausio lygio žymų šakas, bet išsaugantis kiekvienos šakos vidinę struktūrą, mixed text/tail ryšius, žymų kiekį, neverčiamus atributus ir URL.
+_Vengti_: Naršyklės tyliai pataisytas HTML, vien žymų kiekio palyginimas
+
+<a id="significant-whitespace"></a>
+
+**Significant Whitespace**:
+Šaltinio kraštiniai ir kartotiniai tarpai, tabuliacija bei tiksli CR, LF ir CRLF seka kiekvienoje plain string arba suporuotoje HTML text/tail reikšmėje.
+_Vengti_: Normalizuoti eilučių lūžiai, visų tarpų ignoravimas
+
+<a id="unknown-token-syntax"></a>
+
+**Unknown Token Syntax**:
+Į parametrą ar šablono išraišką panaši sintaksė, likusi pašalinus visas žinomas **Preserved Token** gramatikas ir jų escaped formas; ji blokuoja kandidato generavimą.
+_Vengti_: Nežinomo tokeno perspėjimas, paprasto panašaus teksto blokavimas
+
+<a id="glossary-selector"></a>
+
+**Glossary Selector**:
+Versijuota reviewed machine-readable taisyklė, kuri pagal tikslų **Translation Key**, source digest, **Frappe Context** ir prireikus stabilias **Source Location** parenka literal accepted bei forbidden formas su aiškia case ir Unicode politika.
+_Vengti_: Morphology spėjimas, laisva blokuojanti regex
+
 **English Fallback**:
 A visible English **Source Phrase** produced when the effective highest-precedence translation lookup has no approved Lithuanian result, including an English database override that hides a valid application translation.
 _Avoid_: Translation Exception
@@ -59,6 +95,8 @@ A translation error that can cause a wrong financial or administrative action, c
 _Avoid_: Style issue, awkward wording
 
 ### ERP Terms
+
+<a id="glossary-preke"></a>
 
 **Prekė** (`Item`):
 ERPNext įrašas, kuris gali žymėti prekę, paslaugą, žaliavą, gaminį arba turtą.

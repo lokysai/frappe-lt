@@ -124,7 +124,7 @@ jobs:
         run: |
           bench --site test_site build-translation-inventory --output-dir /tmp/inventory-first
           bench --site test_site build-translation-inventory --output-dir /tmp/inventory-second
-          for artifact in compatibility.json provenance.json release_inventory.json inventory_report.json inventory_report.md
+          for artifact in compatibility.json provenance.json release_inventory.json inventory_report.json inventory_report.md catalog_segments.json collision_resolutions.json glossary_selectors.json translation_exceptions.json catalog_candidates/item-smoke.json catalog_segments/item-smoke.json
           do
             cmp "/tmp/inventory-first/$artifact" "/tmp/inventory-second/$artifact"
             cmp "/tmp/inventory-first/$artifact" "$GITHUB_WORKSPACE/frappe_lt/$artifact"
@@ -281,7 +281,55 @@ jobs:
           env/bin/python -m compileall -q apps/frappe_lt/frappe_lt
           ruff check apps/frappe_lt/frappe_lt
           ruff format --check apps/frappe_lt/frappe_lt
-          env/bin/python -m unittest frappe_lt.tests.test_verify frappe_lt.tests.test_inventory
+          env/bin/python -m unittest frappe_lt.tests.test_verify frappe_lt.tests.test_inventory frappe_lt.tests.test_catalog_quality
+
+      - name: Run every registered Catalog Quality Gate candidate
+        working-directory: /home/runner/frappe-bench
+        run: |
+          env/bin/python - <<'PY'
+          import hashlib
+          import json
+          import subprocess
+          import tempfile
+          from pathlib import Path
+
+          from frappe_lt.catalog_quality import registered_candidates
+
+          active_po = Path("apps/frappe_lt/frappe_lt/locale/lt.po")
+          active_mo = Path("sites/assets/locale/lt/LC_MESSAGES/frappe_lt.mo")
+
+          def state(path):
+              return (
+                  path.exists(),
+                  hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None,
+              )
+
+          sentinel = {
+              path: state(path)
+              for path in (active_po, active_mo)
+          }
+
+          with tempfile.TemporaryDirectory(prefix="frappe-lt-ci-catalog-") as directory:
+              output = Path(directory)
+              for candidate in registered_candidates():
+                  candidate_po = output / f"{candidate}.po"
+                  report_path = output / f"{candidate}.json"
+                  subprocess.run(
+                      [
+                          "bench", "catalog-quality-gate", "--candidate", candidate,
+                          "--output", str(candidate_po),
+                          "--report", str(report_path),
+                      ],
+                      check=True,
+                  )
+                  assert candidate_po.parent == output and candidate_po.is_file()
+                  assert report_path.parent == output
+                  assert json.loads(report_path.read_text())["exit_code"] == 0
+                  assert sentinel == {
+                      path: state(path)
+                      for path in sentinel
+                  }
+          PY
 
       - name: Run integrated verification
         working-directory: /home/runner/frappe-bench

@@ -18,6 +18,12 @@ AUTHENTICATED_ARTIFACTS = (
 	"provenance.json",
 	"release_inventory.json",
 )
+QUALITY_GATE_ARTIFACTS = (
+	"catalog_segments.json",
+	"collision_resolutions.json",
+	"glossary_selectors.json",
+	"translation_exceptions.json",
+)
 ACCOUNT_CONTEXT_DECISION = "CONTEXT.md#saskaita-account-contextless-collision"
 ACCOUNT_COLLISION_LOCATORS = {
 	"erpnext:doctype:Account:name",
@@ -36,6 +42,15 @@ RUNTIME_METADATA_CATEGORIES = (
 )
 
 
+def _json_object(pairs):
+	value = {}
+	for key, child in pairs:
+		if key in value:
+			raise ValueError(f"duplicate JSON object member {key!r}")
+		value[key] = child
+	return value
+
+
 @dataclass(frozen=True)
 class ExtractionEvent:
 	source: str
@@ -49,11 +64,11 @@ class ExtractionEvent:
 	stable_locator: str | None = None
 
 
-def load_compatibility(path: Path = COMPATIBILITY_PATH) -> dict:
-	"""Load the release compatibility contract used by inventory and verification."""
-	manifest = json.loads(path.read_text(encoding="utf-8"))
-	if manifest.get("schema_version") != 1:
-		raise ValueError("compatibility manifest schema_version must be 1")
+def validate_compatibility(manifest: dict, *, allow_legacy_baseline: bool = False) -> dict:
+	"""Validate the release compatibility contract used by inventory and verification."""
+	schema_version = manifest.get("schema_version")
+	if schema_version != 2 and not (allow_legacy_baseline and schema_version == 1):
+		raise ValueError("compatibility manifest schema_version must be 2")
 	if set(manifest.get("upstream", {})) != {"frappe", "erpnext"}:
 		raise ValueError("compatibility manifest must pin exactly frappe and erpnext")
 	for app, pin in manifest["upstream"].items():
@@ -73,6 +88,16 @@ def load_compatibility(path: Path = COMPATIBILITY_PATH) -> dict:
 	for name, digest in artifact_sha256.items():
 		if not isinstance(digest, str) or not re.fullmatch("[0-9a-f]{64}", digest):
 			raise ValueError(f"artifact_sha256 for {name} must be a SHA-256 digest")
+	quality_gate = manifest.get("quality_gate")
+	if schema_version == 2 or quality_gate is not None:
+		if not isinstance(quality_gate, dict) or quality_gate.get("schema_version") != 1:
+			raise ValueError("unsupported Catalog Quality Gate schema")
+		quality_digests = quality_gate.get("artifact_sha256")
+		if not isinstance(quality_digests, dict) or set(quality_digests) != set(QUALITY_GATE_ARTIFACTS):
+			raise ValueError(f"Catalog Quality Gate must authenticate exactly {list(QUALITY_GATE_ARTIFACTS)}")
+		for name, digest in quality_digests.items():
+			if not isinstance(digest, str) or not re.fullmatch("[0-9a-f]{64}", digest):
+				raise ValueError(f"Catalog Quality Gate digest for {name} must be a SHA-256 digest")
 	for field in ("mo_sha256", "inventory_digest"):
 		value = manifest.get(field)
 		if value is not None and (not isinstance(value, str) or not re.fullmatch("[0-9a-f]{64}", value)):
@@ -90,10 +115,29 @@ def load_compatibility(path: Path = COMPATIBILITY_PATH) -> dict:
 	return manifest
 
 
+def load_compatibility(path: Path = COMPATIBILITY_PATH, *, allow_legacy_baseline: bool = False) -> dict:
+	"""Load the release compatibility contract used by inventory and verification."""
+	manifest = json.loads(
+		path.read_text(encoding="utf-8"),
+		object_pairs_hook=_json_object,
+		parse_constant=lambda value: (_ for _ in ()).throw(ValueError(f"non-finite JSON number {value}")),
+	)
+	return validate_compatibility(manifest, allow_legacy_baseline=allow_legacy_baseline)
+
+
 def verify_owned_artifacts(path: Path = COMPATIBILITY_PATH) -> dict:
 	"""Verify every versioned artifact authenticated by the compatibility commit marker."""
 	manifest = load_compatibility(path)
 	for name, expected in manifest["artifact_sha256"].items():
+		artifact_path = path.parent / name
+		try:
+			content = artifact_path.read_bytes()
+		except OSError as error:
+			raise ValueError(f"could not read authenticated artifact {name}: {error}") from error
+		actual = hashlib.sha256(content).hexdigest()
+		if actual != expected:
+			raise ValueError(f"artifact digest mismatch for {name}: expected {expected}; computed {actual}")
+	for name, expected in manifest["quality_gate"]["artifact_sha256"].items():
 		artifact_path = path.parent / name
 		try:
 			content = artifact_path.read_bytes()
@@ -513,17 +557,35 @@ def _markdown_cell(value: str) -> str:
 
 
 def write_artifacts(output_dir: Path, artifacts: dict[str, bytes], replace=os.replace) -> None:
-	"""Write complete sibling temp files and replace compatibility.json last as the commit marker."""
+	"""Write complete temp files and replace compatibility.json last as the commit marker."""
 	if "compatibility.json" not in artifacts:
 		raise ValueError("artifact transaction requires compatibility.json commit marker")
-	if any(Path(name).name != name for name in artifacts):
-		raise ValueError("artifact names must be plain filenames")
 	output_dir.mkdir(parents=True, exist_ok=True)
+	output_dir = output_dir.resolve()
+	paths = {}
+	for name in artifacts:
+		relative = PurePosixPath(name) if isinstance(name, str) else None
+		if (
+			relative is None
+			or not name
+			or "\\" in name
+			or relative.is_absolute()
+			or str(relative) != name
+			or any(part in {"", ".", ".."} for part in relative.parts)
+		):
+			raise ValueError(f"invalid artifact path {name!r}")
+		target = output_dir.joinpath(*relative.parts)
+		target.parent.mkdir(parents=True, exist_ok=True)
+		if target.resolve().parent != output_dir and output_dir not in target.resolve().parents:
+			raise ValueError(f"artifact path escapes output directory: {name}")
+		if any(path.is_symlink() for path in (target, *target.parents) if path != output_dir.parent):
+			raise ValueError(f"artifact path uses a symlink: {name}")
+		paths[name] = target
 	temporary = {}
 	try:
 		for name, content in sorted(artifacts.items()):
-			target = output_dir / name
-			fd, raw_temp = tempfile.mkstemp(prefix=f".{name}.", suffix=".tmp", dir=output_dir)
+			target = paths[name]
+			fd, raw_temp = tempfile.mkstemp(prefix=f".{target.name}.", suffix=".tmp", dir=target.parent)
 			temp = Path(raw_temp)
 			with os.fdopen(fd, "wb") as stream:
 				stream.write(content)
@@ -577,6 +639,69 @@ def _load_provenance(path: Path) -> dict:
 	return provenance
 
 
+def _quality_artifacts_for_inventory(
+	manifest: dict, inventory_digest: str, root: Path | None = None
+) -> dict[str, bytes]:
+	root = (root or Path(__file__).parent).resolve()
+	artifacts = {}
+	quality_objects = {}
+	for name, expected in manifest["quality_gate"]["artifact_sha256"].items():
+		content = (root / name).read_bytes()
+		if hashlib.sha256(content).hexdigest() != expected:
+			raise ValueError(f"artifact digest mismatch for {name}")
+		quality_artifact = json.loads(
+			content,
+			object_pairs_hook=_json_object,
+			parse_constant=lambda value: (_ for _ in ()).throw(ValueError(f"non-finite JSON number {value}")),
+		)
+		if quality_artifact.get("inventory_digest") != inventory_digest:
+			raise ValueError(f"{name} does not reference the newly generated Release Inventory digest")
+		artifacts[name] = content
+		quality_objects[name] = quality_artifact
+
+	registry = quality_objects["catalog_segments.json"]
+	records = registry.get("candidates")
+	if not isinstance(records, list) or not all(isinstance(record, dict) for record in records):
+		raise ValueError("Catalog Segment registry candidates must be a list of objects")
+	for record in records:
+		for path_field, digest_field, label in (
+			("candidate", "candidate_sha256", "candidate"),
+			("manifest", "manifest_sha256", "segment manifest"),
+		):
+			name = record.get(path_field)
+			expected = record.get(digest_field)
+			if name is None and expected is None and path_field == "manifest":
+				continue
+			relative = PurePosixPath(name) if isinstance(name, str) else None
+			if (
+				relative is None
+				or not name
+				or "\\" in name
+				or relative.is_absolute()
+				or str(relative) != name
+				or any(part in {"", ".", ".."} for part in relative.parts)
+			):
+				raise ValueError(f"invalid registered {label} path {name!r}")
+			if not isinstance(expected, str) or not re.fullmatch("[0-9a-f]{64}", expected):
+				raise ValueError(f"registered {label} digest must be a SHA-256 digest")
+			path = root.joinpath(*relative.parts)
+			for component in (path, *path.parents):
+				if component == root.parent:
+					break
+				if component.is_symlink():
+					raise ValueError(f"registered {label} path uses a symlink: {name}")
+			resolved = path.resolve()
+			if resolved.parent != root and root not in resolved.parents:
+				raise ValueError(f"registered {label} path escapes the inventory root: {name}")
+			content = path.read_bytes()
+			if hashlib.sha256(content).hexdigest() != expected:
+				raise ValueError(f"{label} digest mismatch for {record.get('name')!r}")
+			if name in artifacts and artifacts[name] != content:
+				raise ValueError(f"registered artifact path collision: {name}")
+			artifacts[name] = content
+	return artifacts
+
+
 def run(
 	site: str,
 	output_dir: str | None = None,
@@ -606,7 +731,7 @@ def run(
 			raise ValueError("previous inventory and compatibility manifest must be provided together")
 		baseline_bytes = Path(previous_inventory).read_bytes()
 		baseline = json.loads(baseline_bytes)
-		baseline_manifest = load_compatibility(Path(previous_compatibility))
+		baseline_manifest = load_compatibility(Path(previous_compatibility), allow_legacy_baseline=True)
 		baseline_digest = baseline_manifest.get("inventory_digest")
 		if not baseline_digest:
 			raise ValueError("baseline compatibility manifest has no inventory_digest")
@@ -628,10 +753,12 @@ def run(
 		"release_inventory.json": canonical_json(inventory),
 	}
 	artifact_sha256 = {name: hashlib.sha256(content).hexdigest() for name, content in artifacts.items()}
+	new_inventory_digest = artifact_sha256["release_inventory.json"]
+	artifacts.update(_quality_artifacts_for_inventory(manifest, new_inventory_digest))
 	manifest = {
 		**manifest,
 		"artifact_sha256": artifact_sha256,
-		"inventory_digest": artifact_sha256["release_inventory.json"],
+		"inventory_digest": new_inventory_digest,
 	}
 	if manifest["inventory_digest"] != report["inventory_digest"]:
 		raise ValueError("release inventory bytes do not match the machine report digest")
