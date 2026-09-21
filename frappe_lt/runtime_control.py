@@ -7,6 +7,8 @@ import secrets
 import threading
 import time
 from contextlib import contextmanager
+from datetime import date, datetime
+from datetime import time as datetime_time
 from pathlib import Path
 
 from frappe_lt.inventory import _json_object, canonical_json
@@ -24,6 +26,14 @@ _PRINT_CAPTURE_LOCK = threading.Lock()
 def _runtime_default_value_name(marker: str, user: str, key: str) -> str:
 	digest = hashlib.sha256(f"{user}\0{key}".encode()).hexdigest()
 	return f"{marker}-default-{digest}"
+
+
+def _login_user_state(frappe, user: str) -> dict:
+	values = dict(frappe.db.get_value("User", user, LOGIN_USER_FIELDS, as_dict=True))
+	return {
+		key: str(value) if isinstance(value, date | datetime | datetime_time) else value
+		for key, value in values.items()
+	}
 
 
 def redact_sensitive(value: object, *, max_chars: int = 2048) -> str:
@@ -392,7 +402,7 @@ class SiteControl:
 			values = self.journal["login_baseline"]["user_values"].get(user)
 			if values is None:
 				raise RuntimeError("runtime login user is not authorized by the journal")
-			values["after"] = dict(self.frappe.db.get_value("User", user, LOGIN_USER_FIELDS, as_dict=True))
+			values["after"] = _login_user_state(self.frappe, user)
 			_write_durable(self.journal_path, self.journal)
 
 	def _create_role_profile_defaults(self, user: str, defaults: dict) -> None:
@@ -718,9 +728,7 @@ class SiteControl:
 				"user_values": {
 					user: {
 						"after": None,
-						"before": dict(
-							self.frappe.db.get_value("User", user, LOGIN_USER_FIELDS, as_dict=True)
-						),
+						"before": _login_user_state(self.frappe, user),
 					}
 					for user in login_users
 				},
@@ -808,7 +816,7 @@ class SiteControl:
 				if values["after"] is None:
 					self.frappe.db.set_value("User", user, values["before"], update_modified=False)
 					continue
-				current = dict(self.frappe.db.get_value("User", user, LOGIN_USER_FIELDS, as_dict=True))
+				current = _login_user_state(self.frappe, user)
 				if current == values["before"]:
 					continue
 				if current != values["after"]:

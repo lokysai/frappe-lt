@@ -262,13 +262,14 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 
 				frappe.set_user("Administrator")
 				print_fixture = plan["fixtures"]["todo-draft"]
-				printed = capture_print(
-					run_id,
-					token,
-					"todo-standard-print",
-					print_fixture["doctype"],
-					print_fixture["name"],
-				)
+				with patch("frappe.utils.get_assets_json", return_value={}):
+					printed = capture_print(
+						run_id,
+						token,
+						"todo-standard-print",
+						print_fixture["doctype"],
+						print_fixture["name"],
+					)
 				self.assertEqual(printed["status"], 200)
 				self.assertEqual(printed["suppressed_access_logs"], 1)
 				self.assertIn(control.marker, printed["html"])

@@ -6,6 +6,7 @@ import subprocess
 import sys
 from contextlib import nullcontext
 from copy import deepcopy
+from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import ModuleType, SimpleNamespace
@@ -1206,6 +1207,51 @@ class RuntimeReportTest(TestCase):
 
 
 class RuntimeCrashRecoveryTest(TestCase):
+	def test_login_metadata_is_serialized_before_the_durable_journal_write(self):
+		with TemporaryDirectory() as directory:
+			root = Path(directory)
+			user = "runtime-user@example.invalid"
+
+			class DB:
+				def get_value(self, _doctype, _name, _fields, *, as_dict):
+					if not as_dict:
+						raise AssertionError("login metadata must be read as a mapping")
+					return {
+						"last_active": datetime(2026, 9, 21, 16, 20, 12, 123456),
+						"last_ip": "127.0.0.1",
+						"last_login": None,
+					}
+
+			class Frappe:
+				db = DB()
+
+				def get_site_path(self, *parts):
+					return str(root.joinpath(*parts))
+
+			control = SiteControl(Frappe(), "development.localhost", "a" * 32, site_path=root)
+			control.start()
+			journal = json.loads(control.journal_path.read_bytes())
+			journal["login_baseline"] = {
+				"activity_logs": [],
+				"sessions": [],
+				"user_values": {
+					user: {
+						"after": None,
+						"before": {field: None for field in ("last_active", "last_ip", "last_login")},
+					}
+				},
+				"users": [user],
+			}
+			_write_durable(control.journal_path, journal)
+
+			control.after_runtime_login(user)
+
+			after = json.loads(control.journal_path.read_bytes())["login_baseline"]["user_values"][user][
+				"after"
+			]
+			self.assertEqual(after["last_active"], "2026-09-21 16:20:12.123456")
+			self.assertEqual(after["last_ip"], "127.0.0.1")
+
 	def test_role_profile_defaults_are_deterministic_journaled_and_recovered(self):
 		with TemporaryDirectory() as directory:
 			root = Path(directory)
