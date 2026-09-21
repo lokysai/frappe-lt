@@ -81,6 +81,40 @@ _Vengti_: Morphology spėjimas, laisva blokuojanti regex
 A visible English **Source Phrase** produced when the effective highest-precedence translation lookup has no approved Lithuanian result, including an English database override that hides a valid application translation.
 _Avoid_: Translation Exception
 
+### Running Interface Validation
+
+**Runtime Scenario Manifest**:
+Versijuotas ir peržiūrėtas fiksuotas saugiai vykdomų sąsajos scenarijų rinkinys, sudarantis vieno leidimo runtime tikrinimo vardiklį.
+_Vengti_: Dinamiškai atrastų maršrutų sąrašas, visas sąsajos inventorius
+
+**Runtime Coverage Gap**:
+Prisegtoje versijoje aptiktas standartinis route arba output kandidatas, kurio nėra **Runtime Scenario Manifest**, kuris iki peržiūros neįtraukiamas į runtime tikrinimo vardiklį ir blokuoja leidimą.
+_Vengti_: Nepavykęs scenarijus, tyliai į manifestą įtrauktas kandidatas
+
+**Blocked Runtime Scenario**:
+**Runtime Scenario Manifest** scenarijus, kurio nepavyko įvykdyti dėl trūkstamos fixture, nepasiekiamo route ar kitos parengties klaidos ir kuris blokuoja leidimą.
+_Vengti_: Praleistas scenarijus, perspėjimas
+
+**Expected Runtime Exclusion**:
+Tiksliai apibrėžtas scenarijaus turinys ar sritis, nepatenkanti į vertimo produkto apimtį, pavyzdžiui, naudotojo įvesti duomenys arba kodo reikšmės.
+_Vengti_: Žinomo fallback ar layout defekto išimtis, Translation Exception
+
+**Runtime Role Profile**:
+Versijuota testinė tapatybė su tiksliu Frappe ir ERPNext rolių rinkiniu, naudojama konkrečios darbo srities sąsajai tikrinti.
+_Vengti_: Vienas visas roles turintis naudotojas, Administrator pakaitalas
+
+**Runtime Cleanup Failure**:
+Po runtime tikrinimo likęs pažymėtas testinis įrašas arba neatkurta suppression nustatymo reikšmė, dėl kurios visas paleidimas negali būti laikomas sėkmingu.
+_Vengti_: Informacinis cleanup perspėjimas
+
+**Functional Layout Defect**:
+Teksto arba valdiklio išdėstymo problema, kuri paslepia prasmę, uždengia ar nukerpa turinį, sukuria puslapio lygio horizontalų perpildymą arba padaro valdiklį netinkamą naudoti.
+_Vengti_: Kosmetinis eilutės lūžis, pikselių skirtumas
+
+**Runtime Output Scenario**:
+Scenarijus, kuris standartiniu produkto veiksmu sukuria galutinį print arba email rezultatą ir jį patikrina sulaikęs išorinį pristatymą bei kitus šalutinius poveikius.
+_Vengti_: Tiesioginis šablono render testas, išsiųstas testinis laiškas
+
 **Inherited Translation**:
 A Lithuanian translation carried forward from the Frappe or ERPNext v15 catalogs.
 
@@ -346,6 +380,16 @@ _Vengti_: Nekaitomas žodyno termino įterpimas
 - A **Translation Key** consists of one **Source Phrase** and zero or one **Frappe Context** value
 - A **Source Phrase** can have many **Source Locations**
 - An approved **Translation Exception** counts toward **Translation Coverage** but is not an **English Fallback**
+- A failed translation lookup is an **English Fallback** only when it reaches rendered visible UI, print, or email output; unrendered misses remain diagnostic evidence
+- A **Runtime Scenario Manifest** is the fixed denominator for one release, while every discovered but unreviewed route or output is reported as a **Runtime Coverage Gap**
+- Every **Runtime Coverage Gap** must be reviewed into the **Runtime Scenario Manifest** or explicitly classified out of scope before release
+- Every **Blocked Runtime Scenario** remains in the **Runtime Scenario Manifest** denominator and fails the release check
+- An **Expected Runtime Exclusion** removes only out-of-scope content from evaluation and never waives a standard-interface fallback or layout defect
+- A normal-user scenario uses the matching **Runtime Role Profile**, while Administrator scenarios remain separate
+- Any **Runtime Cleanup Failure** fails the whole runtime validation run even when every interface assertion passed
+- A **Functional Layout Defect** fails runtime validation, while cosmetic wrapping is retained as non-blocking report evidence
+- A **Runtime Output Scenario** must exercise the standard product flow; direct template rendering alone does not satisfy runtime coverage
+- Runtime validation authenticates the target site's exact Frappe and ERPNext versions and commits before any mutable scenario
 - A **Suspicious Translation** remains inherited until an **AI Translation** replaces it
 - **Prekės kodas** identifies exactly one **Prekė** within an ERPNext site
 - A **Klientas** can buy one or more **Prekės**
@@ -377,6 +421,9 @@ _Vengti_: Nekaitomas žodyno termino įterpimas
 - "Context" was used for both a runtime lookup qualifier and a source-code location; resolved: **Frappe Context** changes the **Translation Key**, while **Source Location** only informs translation choices.
 - "Full user interface" could mean every English-looking string; resolved: **Translation Coverage** counts extracted **Active Translation Keys**, including keys exercised through standard portal, print, and email output; visible unmarked English is reported separately as an interface-quality defect, while user-created content, code, and logs remain outside scope; approved **Translation Exceptions** remain in the denominator and count as covered.
 - "Complete" could mean source-text coverage without contexts; resolved: **Translation Coverage** is measured by **Translation Key**, not by unique English text.
+- "All runtime scenarios" could mean every dynamically discovered route or output; resolved: the reviewed **Runtime Scenario Manifest** is the release denominator, while discovery records separate **Runtime Coverage Gaps** without silently expanding it.
+- "Expected exclusions" could mean accepted interface defects; resolved: an **Expected Runtime Exclusion** identifies only out-of-scope content and cannot waive standard-interface fallback or layout failures.
+- "Effective fallback" could include every observed lookup miss; resolved: only a miss tied to rendered visible UI, print, or email output is an **English Fallback**, while unrendered misses are diagnostic.
 - "Critical" could include any poor wording; resolved: a **Critical Translation Error** is defined by harmful action or blocked work, not by style alone.
 - "Item" could mean only a physical product; resolved: **Prekė** is the short interface name for the broader ERPNext record, including services and non-stock uses.
 - "Customer" could mean a buyer on one document or the long-lived ERP record; resolved: use **Klientas** for the ERPNext record and reserve "pirkėjas" for prose that explicitly describes the buyer's role.
