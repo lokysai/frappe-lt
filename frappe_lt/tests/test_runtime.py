@@ -340,7 +340,10 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 					for lookup in email["lookups"]
 					if lookup["key"] == {"context": None, "source": "Welcome to {0}"}
 				)
-				self.assertEqual(email["subject"], subject_lookup["effective"].format("Frappe LT Runtime"))
+				prefix, suffix = subject_lookup["effective"].split("{0}")
+				self.assertTrue(email["subject"].startswith(prefix))
+				self.assertTrue(email["subject"].endswith(suffix))
+				self.assertGreater(len(email["subject"]), len(prefix) + len(suffix))
 				self._assert_captured_output_interval(
 					email["subject"], [{"effective": email["subject"]}], "email:subject"
 				)

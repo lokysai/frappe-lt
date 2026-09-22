@@ -615,7 +615,7 @@ jobs:
         run: |
           runtime_exit=0
           bench --site development.localhost validate-lithuanian-runtime --output-dir "$RUNTIME_ARTIFACT_DIR/run" || runtime_exit=$?
-          RUNTIME_EXIT="$runtime_exit" python - <<'PY'
+          RUNTIME_EXIT="$runtime_exit" env/bin/python - <<'PY'
           import json
           import os
           from pathlib import Path
