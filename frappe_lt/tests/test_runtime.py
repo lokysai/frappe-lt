@@ -304,9 +304,7 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 				self.assertEqual(portal["status"], 200)
 				self.assertIn(control.marker, portal["html"])
 				self.assertTrue(portal["lookups"])
-				self._assert_captured_output_interval(
-					portal["html"], portal["lookups"], "portal:http-body"
-				)
+				self._assert_captured_output_interval(portal["html"], portal["lookups"], "portal:http-body")
 
 				frappe.set_user("Administrator")
 				print_fixture = plan["fixtures"]["todo-draft"]
@@ -322,9 +320,7 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 				self.assertEqual(printed["suppressed_access_logs"], 1)
 				self.assertIn(control.marker, printed["html"])
 				self.assertTrue(printed["lookups"])
-				self._assert_captured_output_interval(
-					printed["html"], printed["lookups"], "print:http-body"
-				)
+				self._assert_captured_output_interval(printed["html"], printed["lookups"], "print:http-body")
 				self.assertFalse(
 					frappe.db.exists("Access Log", {"reference_document": print_fixture["name"]})
 				)
@@ -339,8 +335,14 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 				self.assertEqual(email["suppressed"], {"email_queue": 0, "enqueue": 0, "outbound": 1})
 				self.assertIn("MIME-Version", email["output"])
 				self.assertTrue(email["lookups"])
+				subject_lookup = next(
+					lookup
+					for lookup in email["lookups"]
+					if lookup["key"] == {"context": None, "source": "Welcome to {0}"}
+				)
+				self.assertEqual(email["subject"], subject_lookup["effective"].format("Frappe LT Runtime"))
 				self._assert_captured_output_interval(
-					email["visible_output"], email["lookups"], "email:subject-body"
+					email["subject"], [{"effective": email["subject"]}], "email:subject"
 				)
 				self.assertIn("key=[REDACTED]", email["visible_output"])
 				self.assertNotIn("/update-password?key=" + control.marker, email["output"])

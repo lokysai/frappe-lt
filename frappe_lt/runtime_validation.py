@@ -408,21 +408,15 @@ def _validate_evidence(value: object, run_root: Path, scenario_id: str) -> dict:
 	relative = safe_relative_path(value["path"])
 	try:
 		with ExitStack() as descriptors:
-			directory_flags = (
-				os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
-			)
+			directory_flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
 			directory_descriptor = os.open(run_root, directory_flags)
 			descriptors.callback(os.close, directory_descriptor)
 			for component in relative.parts[:-1]:
-				directory_descriptor = os.open(
-					component, directory_flags, dir_fd=directory_descriptor
-				)
+				directory_descriptor = os.open(component, directory_flags, dir_fd=directory_descriptor)
 				descriptors.callback(os.close, directory_descriptor)
 			descriptor = os.open(
 				relative.parts[-1],
-				os.O_RDONLY
-				| getattr(os, "O_NOFOLLOW", 0)
-				| getattr(os, "O_NONBLOCK", 0),
+				os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0),
 				dir_fd=directory_descriptor,
 			)
 			descriptors.callback(os.close, descriptor)
@@ -431,9 +425,7 @@ def _validate_evidence(value: object, run_root: Path, scenario_id: str) -> dict:
 				raise ValueError(f"evidence artifact size or identity mismatch: {value['path']}")
 			content = bytearray()
 			while len(content) <= MAX_EVIDENCE_PER_ARTIFACT:
-				chunk = os.read(
-					descriptor, min(64 * 1024, MAX_EVIDENCE_PER_ARTIFACT + 1 - len(content))
-				)
+				chunk = os.read(descriptor, min(64 * 1024, MAX_EVIDENCE_PER_ARTIFACT + 1 - len(content)))
 				if not chunk:
 					break
 				content.extend(chunk)
@@ -509,9 +501,7 @@ def _validate_browser_results(
 ) -> list[dict]:
 	if not isinstance(diagnostic_sampling, bool):
 		raise ValueError("diagnostic_sampling must be boolean")
-	value = _exact(
-		value, {"harness_contract", "scenarios", "schema_version", "toolchain"}, "browser result"
-	)
+	value = _exact(value, {"harness_contract", "scenarios", "schema_version", "toolchain"}, "browser result")
 	if value["schema_version"] != BROWSER_SCHEMA_VERSION or not isinstance(value["scenarios"], list):
 		raise ValueError("unsupported browser result schema")
 	_validate_harness_contract(value["harness_contract"])

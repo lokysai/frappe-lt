@@ -102,9 +102,7 @@ class CIWorkflowTest(TestCase):
 		self.assertEqual(gate_commands[0], "runtime_exit=0")
 		self.assertIn("|| runtime_exit=$?", gate_commands[1])
 		self.assertNotIn('summary["total"] == 10', commands)
-		self.assertIn(
-			'assert blocker_types == {"runtime_coverage_gap", "scenario_fail"}', commands
-		)
+		self.assertIn('assert blocker_types == {"runtime_coverage_gap", "scenario_fail"}', commands)
 		self.assertIn("*.evidence.json", commands)
 		self.assertIn(".*.evidence.json.*.tmp", commands)
 		self.assertTrue(

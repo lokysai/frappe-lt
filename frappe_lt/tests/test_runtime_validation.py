@@ -709,8 +709,7 @@ class RuntimeReportTest(TestCase):
 			result = results[0]
 		self.assertEqual(result["status"], "pass")
 		self.assertFalse(
-			{"blocked-readiness-contract", "blocked-timeout-contract"}
-			& {item["id"] for item in results}
+			{"blocked-readiness-contract", "blocked-timeout-contract"} & {item["id"] for item in results}
 		)
 		invalid = deepcopy(browser)
 		invalid["toolchain"]["unexpected"] = "value"
