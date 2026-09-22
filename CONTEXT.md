@@ -127,6 +127,8 @@ A new or corrected Lithuanian translation produced by an OpenCode agent under th
 
 **Translation Review Evidence**:
 Struktūruotas vieno **Translation Key** peržiūros rezultatas, kuriame yra būsena, kontroliuojamas sprendimo priežasties kodas, tikslūs agento ir modelio identifikatoriai bei iš peržiūros turinio deterministiškai apskaičiuotas run ID. Pataisytas vertimas ir patvirtinta išimtis papildomai turi trumpą sprendimo paaiškinimą; nepakeistas paveldėtas vertimas gali naudoti `accepted_as_is` kodą.
+Versijos 1 evidence turi tik `status`, `reason`, `agent`, `model`, `explanation` ir `run_id` laukus. `reason` reikšmės yra `accepted_as_is`, `new_translation`, `terminology_correction`, `grammar_correction`, `meaning_correction`, `punctuation_correction`, `foreign_language_correction` ir `approved_translation_exception`; pataisymo bei išimties reikšmės nuo `terminology_correction` iki `approved_translation_exception` reikalauja paaiškinimo.
+Versijos 1 `run_id` yra lowercase SHA-256 iš repository canonical JSON objekto, turinčio tik `agent`, `explanation`, `key`, `model`, `origin`, `reason`, `source_digest`, `status` ir `translation`. Pats `run_id`, `flags`, laiko žymos, laikini keliai, procesų ID ir kitos vykdymo aplinkos reikšmės į preimage neįtraukiamos.
 _Vengti_: Atsitiktinis run ID, laiko žyma deterministiniame kandidate, vien laisvos formos review tekstas, origin reikšmė vietoje peržiūros priežasties
 
 **Suspicious Translation**:

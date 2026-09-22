@@ -77,6 +77,8 @@ class CompatibilityManifestTest(TestCase):
 		self.assertEqual(
 			set(manifest["quality_gate"]["artifact_sha256"]),
 			{
+				"catalog_partition.json",
+				"catalog_segment_ownership_overrides.json",
 				"catalog_segments.json",
 				"collision_resolutions.json",
 				"glossary_selectors.json",
@@ -1027,8 +1029,8 @@ class ArtifactWriteTest(TestCase):
 			inventory_digest = "a" * 64
 			candidate = canonical_json({"schema_version": 1, "entries": []})
 			segment = canonical_json({"schema_version": 1, "keys": []})
-			candidate_name = "catalog_candidates/nested/item-smoke.json"
-			segment_name = "catalog_segments/nested/item-smoke.json"
+			candidate_name = "catalog_candidates/test.json"
+			segment_name = "catalog_segments/erpnext-operations.json"
 			for name, content in ((candidate_name, candidate), (segment_name, segment)):
 				path = root / name
 				path.parent.mkdir(parents=True, exist_ok=True)
@@ -1039,7 +1041,7 @@ class ArtifactWriteTest(TestCase):
 					"inventory_digest": inventory_digest,
 					"candidates": [
 						{
-							"name": "item-smoke",
+							"name": "test",
 							"candidate": candidate_name,
 							"candidate_sha256": hashlib.sha256(candidate).hexdigest(),
 							"manifest": segment_name,
@@ -1049,9 +1051,36 @@ class ArtifactWriteTest(TestCase):
 				}
 			)
 			(root / "catalog_segments.json").write_bytes(registry)
+			overrides = canonical_json(
+				{
+					"classifier_schema_version": 1,
+					"entries": [],
+					"inventory_digest": inventory_digest,
+					"schema_version": 1,
+				}
+			)
+			partition = canonical_json(
+				{
+					"inventory_digest": inventory_digest,
+					"schema_version": 1,
+					"segments": [
+						{
+							"id": "erpnext-operations",
+							"manifest": segment_name,
+							"manifest_sha256": hashlib.sha256(segment).hexdigest(),
+						}
+					],
+				}
+			)
+			(root / "catalog_partition.json").write_bytes(partition)
+			(root / "catalog_segment_ownership_overrides.json").write_bytes(overrides)
 			manifest = {
 				"quality_gate": {
-					"artifact_sha256": {"catalog_segments.json": hashlib.sha256(registry).hexdigest()}
+					"artifact_sha256": {
+						"catalog_partition.json": hashlib.sha256(partition).hexdigest(),
+						"catalog_segment_ownership_overrides.json": hashlib.sha256(overrides).hexdigest(),
+						"catalog_segments.json": hashlib.sha256(registry).hexdigest(),
+					}
 				}
 			}
 
@@ -1059,6 +1088,8 @@ class ArtifactWriteTest(TestCase):
 			self.assertEqual(
 				artifacts,
 				{
+					"catalog_partition.json": partition,
+					"catalog_segment_ownership_overrides.json": overrides,
 					"catalog_segments.json": registry,
 					candidate_name: candidate,
 					segment_name: segment,
