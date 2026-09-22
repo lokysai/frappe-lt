@@ -77,6 +77,22 @@ class CIWorkflowTest(TestCase):
 			self.assertIn(required, commands)
 		self.assertIn("curl --fail", commands)
 		self.assertIn("google-chrome --version", commands)
+		for required in (
+			"assert runtime_exit == 1",
+			'assert report["status"] == "fail"',
+			'"coverage_gaps": 1534',
+			'"english_fallbacks": 389',
+			'"functional_layout_defects": 0',
+			'"runtime_inventory_gaps": 51',
+			"assert summary == expected_summary",
+			'"desk-general-ledger-report": (35, 8, 0)',
+			'"desk-system-settings-administrator": (62, 21, 0)',
+			"assert actual_findings == expected_findings",
+			'{cause["type"] for cause in report["blocking_causes"]}',
+			'"runtime_coverage_gap"',
+			'"scenario_fail"',
+		):
+			self.assertIn(required, commands)
 		self.assertIn("*.evidence.json", commands)
 		self.assertIn(".*.evidence.json.*.tmp", commands)
 		self.assertTrue(

@@ -608,9 +608,86 @@ jobs:
           done
           curl --fail --silent --show-error http://development.localhost:8000/api/method/ping > /dev/null
 
-      - name: Validate Lithuanian runtime through Frappe UI runner
+      - name: Validate expected incomplete Lithuanian runtime result
         working-directory: /home/runner/frappe-bench
-        run: bench --site development.localhost validate-lithuanian-runtime --output-dir "$RUNTIME_ARTIFACT_DIR/run"
+        run: |
+          runtime_exit=0
+          bench --site development.localhost validate-lithuanian-runtime --output-dir "$RUNTIME_ARTIFACT_DIR/run" || runtime_exit=$?
+          RUNTIME_EXIT="$runtime_exit" python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          runtime_exit = int(os.environ["RUNTIME_EXIT"])
+          report = json.loads(Path(os.environ["RUNTIME_ARTIFACT_DIR"], "run", "runtime-report.json").read_text())
+          summary = report["summary"]
+          scenario_results = report["scenario_results"]
+
+          expected_summary = {
+              "blocked": 0,
+              "cleanup_failures": 0,
+              "coverage_gaps": 1534,
+              "english_fallbacks": 389,
+              "fail": 10,
+              "functional_layout_defects": 0,
+              "pass": 0,
+              "runtime_inventory_gaps": 51,
+              "total": 10,
+          }
+          expected_findings = {
+              "desk-general-ledger-report": (35, 8, 0),
+              "desk-item-form-desktop": (85, 15, 0),
+              "desk-item-list-desktop": (63, 4, 0),
+              "desk-item-list-mobile": (18, 0, 0),
+              "desk-permission-manager-page": (90, 2, 0),
+              "desk-system-settings-administrator": (62, 21, 0),
+              "portal-account-desktop": (8, 0, 0),
+              "portal-account-mobile": (8, 0, 0),
+              "standard-welcome-email": (8, 0, 0),
+              "todo-standard-print": (12, 1, 0),
+          }
+          actual_findings = {}
+          for result in scenario_results:
+              english_fallbacks = sum(
+                  finding["active"]
+                  and finding["visible"]
+                  and finding["render_status"] != "unrendered"
+                  and not finding["excluded"]
+                  and (finding["source"] == "missing" or finding["effective"] == finding["key"]["source"])
+                  for finding in result["fallbacks"]
+              )
+              inventory_gaps = sum(
+                  not finding["active"]
+                  and finding["visible"]
+                  and finding["render_status"] != "unrendered"
+                  and not finding["excluded"]
+                  for finding in result["fallbacks"]
+              )
+              functional_layout_defects = sum(
+                  finding["severity"] == "functional" for finding in result["layouts"]
+              )
+              actual_findings[result["id"]] = (
+                  english_fallbacks,
+                  inventory_gaps,
+                  functional_layout_defects,
+              )
+
+          assert runtime_exit == 1, runtime_exit
+          assert report["status"] == "fail", report["status"]
+          assert summary == expected_summary, summary
+          assert actual_findings == expected_findings, actual_findings
+          assert len(scenario_results) == summary["total"], summary
+          assert summary["pass"] + summary["fail"] + summary["blocked"] == summary["total"], summary
+          assert {cause["type"] for cause in report["blocking_causes"]} <= {
+              "runtime_coverage_gap",
+              "scenario_fail",
+          }, report["blocking_causes"]
+          assert all(
+              result["status"] in {"pass", "fail"}
+              and (result["status"] == "pass" or result["error"] == "scenario produced blocking runtime findings")
+              for result in scenario_results
+          ), scenario_results
+          PY
 
       - name: Stop runtime web process
         if: always()
