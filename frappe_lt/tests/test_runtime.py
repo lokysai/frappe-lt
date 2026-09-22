@@ -99,6 +99,9 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 					self.assertTrue(value.startswith(control.marker))
 				self.assertEqual(portal["user"], plan["credentials"]["portal-customer"]["user"])
 				self.assertEqual(
+					frappe.db.get_value("User", portal["user"], "first_name"), "Frappe LT Runtime"
+				)
+				self.assertEqual(
 					frappe.db.get_value("Customer Group", portal["customer_group"], "parent_customer_group"),
 					"All Customer Groups",
 				)
@@ -107,6 +110,7 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 					"All Territories",
 				)
 				contact = frappe.get_doc("Contact", portal["contact"])
+				self.assertEqual(contact.first_name, "Frappe LT Runtime")
 				self.assertEqual(contact.user, portal["user"])
 				self.assertEqual(
 					[(row.email_id, row.is_primary) for row in contact.email_ids],

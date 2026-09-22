@@ -17,6 +17,7 @@ from frappe_lt.inventory import COMPATIBILITY_PATH, _json_object, canonical_json
 
 JOURNAL_SCHEMA_VERSION = 2
 RUN_MARKER_PREFIX = "frappe-lt-runtime-"
+RUNTIME_DISPLAY_NAME = "Frappe LT Runtime"
 MAX_CAPTURE_BYTES = 8 * 1024 * 1024
 MAX_CAPTURE_LOOKUPS = 5000
 LOGIN_USER_FIELDS = ("last_active", "last_ip", "last_login")
@@ -598,7 +599,7 @@ class SiteControl:
 						"default_app": profile["default_app"],
 						"doctype": "User",
 						"email": user,
-						"first_name": self.marker,
+						"first_name": RUNTIME_DISPLAY_NAME,
 						"language": profile["language"],
 						"module_profile": profile["module_profile"],
 						"new_password": password,
@@ -645,7 +646,7 @@ class SiteControl:
 					{
 						"doctype": profile["portal_link"]["doctype"],
 						"email_ids": [{"email_id": user, "is_primary": 1}],
-						"first_name": self.marker,
+						"first_name": RUNTIME_DISPLAY_NAME,
 						"links": [
 							{
 								"link_doctype": profile["portal_link"]["dynamic_link_doctype"],
