@@ -127,7 +127,7 @@ jobs:
         run: |
           bench --site test_site build-translation-inventory --output-dir /tmp/inventory-first
           bench --site test_site build-translation-inventory --output-dir /tmp/inventory-second
-          for artifact in compatibility.json provenance.json release_inventory.json inventory_report.json inventory_report.md catalog_segments.json collision_resolutions.json glossary_selectors.json translation_exceptions.json catalog_candidates/item-smoke.json catalog_segments/item-smoke.json
+          for artifact in compatibility.json provenance.json release_inventory.json inventory_report.json inventory_report.md catalog_partition.json catalog_segment_ownership_overrides.json catalog_segments.json collision_resolutions.json glossary_selectors.json translation_exceptions.json catalog_segments/frappe.json catalog_segments/erpnext-finance-commerce.json catalog_segments/erpnext-operations.json
           do
             cmp "/tmp/inventory-first/$artifact" "/tmp/inventory-second/$artifact"
             cmp "/tmp/inventory-first/$artifact" "$GITHUB_WORKSPACE/frappe_lt/$artifact"
@@ -284,7 +284,7 @@ jobs:
           env/bin/python -m compileall -q apps/frappe_lt/frappe_lt
           ruff check apps/frappe_lt/frappe_lt
           ruff format --check apps/frappe_lt/frappe_lt
-          env/bin/python -m unittest frappe_lt.tests.test_verify frappe_lt.tests.test_inventory frappe_lt.tests.test_catalog_quality frappe_lt.tests.test_runtime_validation frappe_lt.tests.test_ci_workflow
+          env/bin/python -m unittest frappe_lt.tests.test_verify frappe_lt.tests.test_inventory frappe_lt.tests.test_catalog_partition frappe_lt.tests.test_review_evidence frappe_lt.tests.test_catalog_quality frappe_lt.tests.test_runtime_validation frappe_lt.tests.test_ci_workflow
           node --test apps/frappe_lt/cypress/support/*.test.js
           shopt -s globstar nullglob
           javascript=(apps/frappe_lt/cypress.config.js apps/frappe_lt/cypress/**/*.js)
@@ -294,17 +294,20 @@ jobs:
             node --check "$file"
           done
 
-      - name: Run every registered Catalog Quality Gate candidate
+      - name: Authenticate the production partition and run every registered candidate
         working-directory: /home/runner/frappe-bench
         run: |
           env/bin/python - <<'PY'
           import hashlib
           import json
+          import shutil
           import subprocess
           import tempfile
           from pathlib import Path
 
-          from frappe_lt.catalog_quality import registered_candidates
+          from frappe_lt.catalog_quality import registered_candidates, run
+          from frappe_lt.inventory import canonical_json
+          from frappe_lt.review_evidence import review_run_id
 
           active_po = Path("apps/frappe_lt/frappe_lt/locale/lt.po")
           active_mo = Path("sites/assets/locale/lt/LC_MESSAGES/frappe_lt.mo")
@@ -320,6 +323,26 @@ jobs:
               for path in (active_po, active_mo)
           }
 
+          root = Path("apps/frappe_lt/frappe_lt")
+          compatibility = json.loads(root.joinpath("compatibility.json").read_text())
+          inventory = json.loads(root.joinpath("release_inventory.json").read_text())
+          provenance = json.loads(root.joinpath("provenance.json").read_text())
+          partition = json.loads(root.joinpath("catalog_partition.json").read_text())
+          inventory_keys = {
+              (entry["key"]["source"], entry["key"]["context"])
+              for entry in inventory["entries"]
+          }
+          claimed = set()
+          manifests = {}
+          for segment in partition["segments"]:
+              manifest = json.loads(root.joinpath(segment["manifest"]).read_text())
+              keys = {(item["key"]["source"], item["key"]["context"]) for item in manifest["keys"]}
+              assert not claimed & keys
+              claimed |= keys
+              manifests[segment["id"]] = (segment, manifest)
+          assert claimed == inventory_keys
+
+          candidate_checks = 0
           with tempfile.TemporaryDirectory(prefix="frappe-lt-ci-catalog-") as directory:
               output = Path(directory)
               for candidate in registered_candidates():
@@ -340,6 +363,119 @@ jobs:
                       path: state(path)
                       for path in sentinel
                   }
+                  candidate_checks += 1
+
+              item = next(
+                  entry
+                  for entry in inventory["entries"]
+                  if entry["key"] == {"context": None, "source": "Item"}
+              )
+              item_provenance = next(record for record in provenance["entries"] if record["key"] == item["key"])
+              assert item_provenance == {
+                  "key": item["key"],
+                  "origin": "new_ai",
+                  "status": "translated",
+                  "translation": "Prekė",
+              }
+              segment_id = next(
+                  segment_id
+                  for segment_id, (_record, manifest) in manifests.items()
+                  if any(selected["key"] == item["key"] for selected in manifest["keys"])
+              )
+              manifest_record = manifests[segment_id][0]
+              candidate_entry = {
+                  "flags": [],
+                  "key": item["key"],
+                  "provenance": {
+                      "origin": "new_ai",
+                      "review": {
+                          "agent": "ci-integration",
+                          "explanation": None,
+                          "model": "test/model",
+                          "reason": "new_translation",
+                          "run_id": "",
+                          "status": "reviewed",
+                      },
+                  },
+                  "source_digest": item["source_digest"],
+                  "translation": item_provenance["translation"],
+              }
+              candidate_entry["provenance"]["review"]["run_id"] = review_run_id(candidate_entry)
+              candidate = {
+                  "entries": [candidate_entry],
+                  "inventory_digest": compatibility["inventory_digest"],
+                  "manifest_sha256": manifest_record["manifest_sha256"],
+                  "review_evidence_schema_version": 1,
+                  "schema_version": 1,
+                  "segment_id": segment_id,
+              }
+
+              trusted_root = output / "trusted"
+              for name in {
+                  *compatibility["artifact_sha256"],
+                  *compatibility["quality_gate"]["artifact_sha256"],
+                  *(record["manifest"] for record in partition["segments"]),
+              }:
+                  target = trusted_root / name
+                  target.parent.mkdir(parents=True, exist_ok=True)
+                  shutil.copyfile(root / name, target)
+              candidate_path = trusted_root / "catalog_candidates/ci-integration.json"
+              candidate_path.parent.mkdir(parents=True, exist_ok=True)
+              candidate_bytes = canonical_json(candidate)
+              candidate_path.write_bytes(candidate_bytes)
+              registry = {
+                  "candidate_directory": "catalog_candidates",
+                  "candidates": [
+                      {
+                          "candidate": "catalog_candidates/ci-integration.json",
+                          "candidate_sha256": hashlib.sha256(candidate_bytes).hexdigest(),
+                          "manifest": manifest_record["manifest"],
+                          "manifest_sha256": manifest_record["manifest_sha256"],
+                          "name": "ci-integration",
+                          "segment_id": segment_id,
+                      }
+                  ],
+                  "inventory_digest": compatibility["inventory_digest"],
+                  "schema_version": 1,
+              }
+              registry_bytes = canonical_json(registry)
+              trusted_root.joinpath("catalog_segments.json").write_bytes(registry_bytes)
+              compatibility["quality_gate"]["artifact_sha256"]["catalog_segments.json"] = hashlib.sha256(
+                  registry_bytes
+              ).hexdigest()
+              compatibility_path = trusted_root / "compatibility.json"
+              compatibility_path.write_bytes(canonical_json(compatibility))
+
+              candidate_po = output / "temporary-candidate.po"
+              first_report = output / "first-report.json"
+              second_report = output / "second-report.json"
+              first = run(
+                  "ci-integration",
+                  candidate_po,
+                  first_report,
+                  compatibility_path=compatibility_path,
+                  fail_fast=True,
+              )
+              second = run(
+                  "ci-integration",
+                  candidate_po,
+                  second_report,
+                  compatibility_path=compatibility_path,
+                  fail_fast=True,
+              )
+              assert first["exit_code"] == 1
+              assert first["errors"][0]["code"] == "MISSING_TRANSLATION_KEY"
+              assert first["schema_version"] == 2
+              assert "duration_seconds" not in first
+              assert first == second
+              assert first_report.read_bytes() == second_report.read_bytes()
+              assert not candidate_po.exists()
+              assert sentinel == {
+                  path: state(path)
+                  for path in sentinel
+              }
+              candidate_checks += 1
+          assert candidate_checks >= 1
           PY
 
       - name: Run integrated verification

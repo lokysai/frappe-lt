@@ -9,9 +9,11 @@ from unittest import TestCase
 from unittest.mock import patch
 
 from frappe_lt import catalog_quality
+from frappe_lt.catalog_partition import build_partition_artifacts
 from frappe_lt.catalog_quality import _LiteralIndex, _tokens, run
-from frappe_lt.inventory import canonical_json, load_compatibility
+from frappe_lt.inventory import canonical_json
 from frappe_lt.po import compile_po
+from frappe_lt.review_evidence import review_run_id
 
 
 def _write_json(path, value):
@@ -35,64 +37,112 @@ class CatalogQualityGateTest(TestCase):
 		compatibility["quality_gate"]["artifact_sha256"][name] = digest
 		_write_json(compatibility_path, compatibility)
 
+	def _replace_owned_artifact(self, compatibility_path, name, value):
+		compatibility_path = Path(compatibility_path)
+		compatibility = json.loads(compatibility_path.read_text(encoding="utf-8"))
+		compatibility["artifact_sha256"][name] = _write_json(compatibility_path.parent / name, value)
+		_write_json(compatibility_path, compatibility)
+
 	def _fixture(self, root, entries, candidate_entries, *, segment_keys=None):
 		root = Path(root)
-		inventory = {"schema_version": 1, "entries": entries}
+		selected = (
+			{(item["key"]["source"], item["key"]["context"]) for item in segment_keys}
+			if segment_keys is not None
+			else {(entry["key"]["source"], entry["key"]["context"]) for entry in entries}
+		)
+		inventory_entries = []
+		for entry in entries:
+			entry = json.loads(json.dumps(entry))
+			key = (entry["key"]["source"], entry["key"]["context"])
+			app = "erpnext" if key in selected else "frappe"
+			entry["apps"] = [app]
+			entry["source_locations"] = [
+				{
+					"app": app,
+					"extractor": "extract_babel_python",
+					"line": 1,
+					"origin": "source",
+					"path": f"{app}/{'stock' if app == 'erpnext' else 'core'}/fixture.py",
+				}
+			]
+			inventory_entries.append(entry)
+		inventory = {"schema_version": 1, "entries": inventory_entries}
 		owned_artifacts = {
 			"inventory_report.json": canonical_json({"schema_version": 1}),
 			"inventory_report.md": b"# Test report\n",
-			"provenance.json": canonical_json({"schema_version": 1, "entries": []}),
+			"provenance.json": canonical_json(
+				{
+					"schema_version": 1,
+					"entries": [{"key": entry["key"], "status": "missing"} for entry in inventory_entries],
+				}
+			),
 			"release_inventory.json": canonical_json(inventory),
 		}
 		for name, content in owned_artifacts.items():
 			(root / name).write_bytes(content)
 		inventory_digest = hashlib.sha256(owned_artifacts["release_inventory.json"]).hexdigest()
+		prepared_entries = []
+		for entry in candidate_entries:
+			entry = json.loads(json.dumps(entry))
+			entry["provenance"] = {
+				"origin": "new_ai",
+				"review": {
+					"agent": "test-agent",
+					"explanation": None,
+					"model": "test/model",
+					"reason": "new_translation",
+					"run_id": "",
+					"status": "reviewed",
+				},
+			}
+			entry["provenance"]["review"]["run_id"] = review_run_id(entry)
+			prepared_entries.append(entry)
+		ownership_overrides = {
+			"classifier_schema_version": 1,
+			"entries": [],
+			"inventory_digest": inventory_digest,
+			"schema_version": 1,
+		}
+		partition_artifacts = build_partition_artifacts(inventory, inventory_digest, ownership_overrides)
+		for name, content in partition_artifacts.items():
+			path = root / name
+			path.parent.mkdir(parents=True, exist_ok=True)
+			path.write_bytes(content)
+		manifest_name = "catalog_segments/erpnext-operations.json"
+		manifest_digest = hashlib.sha256(partition_artifacts[manifest_name]).hexdigest()
 		candidate = {
 			"schema_version": 1,
-			"provenance_schema_version": 1,
+			"review_evidence_schema_version": 1,
 			"inventory_digest": inventory_digest,
-			"entries": [
-				{
-					**entry,
-					"provenance": entry.get(
-						"provenance",
-						{
-							"origin": "new_ai",
-							"review_status": "reviewed",
-							"review": "test-review",
-						},
-					),
-				}
-				for entry in candidate_entries
-			],
+			"manifest_sha256": manifest_digest,
+			"segment_id": "erpnext-operations",
+			"entries": prepared_entries,
 		}
-		candidate_digest = _write_json(root / "candidate.json", candidate)
-		manifest_name = None
-		manifest_digest = None
-		if segment_keys is not None:
-			manifest_name = "segment.json"
-			manifest_digest = _write_json(
-				root / manifest_name,
-				{
-					"schema_version": 1,
-					"inventory_digest": inventory_digest,
-					"keys": segment_keys,
-				},
-			)
+		candidate_path = root / "catalog_candidates" / "test.json"
+		candidate_path.parent.mkdir(parents=True, exist_ok=True)
+		candidate_digest = _write_json(candidate_path, candidate)
 		registry = {
 			"schema_version": 1,
 			"inventory_digest": inventory_digest,
+			"candidate_directory": "catalog_candidates",
 			"candidates": [
 				{
 					"name": "test",
-					"candidate": "candidate.json",
+					"candidate": "catalog_candidates/test.json",
 					"candidate_sha256": candidate_digest,
 					"manifest": manifest_name,
 					"manifest_sha256": manifest_digest,
+					"segment_id": "erpnext-operations",
 				}
 			],
 		}
 		quality_artifacts = {
+			"catalog_partition.json": hashlib.sha256(
+				partition_artifacts["catalog_partition.json"]
+			).hexdigest(),
+			"catalog_segment_ownership_overrides.json": hashlib.sha256(
+				partition_artifacts["catalog_segment_ownership_overrides.json"]
+			).hexdigest(),
 			"catalog_segments.json": _write_json(root / "catalog_segments.json", registry),
 			"translation_exceptions.json": _write_json(
 				root / "translation_exceptions.json",
@@ -107,7 +157,9 @@ class CatalogQualityGateTest(TestCase):
 				{"schema_version": 1, "inventory_digest": inventory_digest, "entries": []},
 			),
 		}
-		compatibility = load_compatibility()
+		compatibility = json.loads(
+			Path(__file__).parents[1].joinpath("compatibility.json").read_text(encoding="utf-8")
+		)
 		compatibility["inventory_digest"] = inventory_digest
 		compatibility["artifact_sha256"] = {
 			name: hashlib.sha256(content).hexdigest() for name, content in owned_artifacts.items()
@@ -173,11 +225,16 @@ class CatalogQualityGateTest(TestCase):
 					report,
 					compatibility_path=compatibility,
 					compile_candidate=compile_candidate,
-					clock=lambda: 10.0,
 				)
 
 			self.assertEqual(result["exit_code"], 0)
-			self.assertEqual(result["summary"], {"errors": 0, "keys": 1, "notices": 0})
+			self.assertEqual(result["schema_version"], 2)
+			self.assertNotIn("duration_seconds", result)
+			self.assertEqual(
+				result["summary"]["translation_coverage"],
+				{"covered": 1, "total": 1},
+			)
+			self.assertEqual(result["summary"]["reason_counts"]["new_translation"], 1)
 			adapter.assert_called_once()
 			self.assertEqual(len(compiled), 1)
 			self.assertNotEqual(compiled[0][0], b"")
@@ -185,6 +242,119 @@ class CatalogQualityGateTest(TestCase):
 			self.assertEqual(report.read_bytes(), canonical_json(result))
 			self.assertIn('msgid "Item {0}"', output.read_text(encoding="utf-8"))
 			self.assertIn('msgstr "Prekė {0}"', output.read_text(encoding="utf-8"))
+
+	def test_candidate_review_evidence_must_match_authenticated_release_provenance(self):
+		entry = {
+			"key": {"context": None, "source": "Item"},
+			"source_digest": "a" * 64,
+			"source_locations": [],
+			"stable_locators": [],
+		}
+		cases = (
+			(
+				"accepted_as_is",
+				"inherited_v15",
+				"Prekė",
+				{"key": entry["key"], "origin": "new_ai", "status": "translated", "translation": "Prekė"},
+				None,
+			),
+			(
+				"new_translation",
+				"new_ai",
+				"Prekė",
+				{
+					"key": entry["key"],
+					"origin": "inherited_v15",
+					"status": "translated",
+					"translation": "Prekė",
+				},
+				None,
+			),
+			(
+				"grammar_correction",
+				"corrected_inherited",
+				"Prekė",
+				{
+					"key": entry["key"],
+					"origin": "inherited_v15",
+					"status": "translated",
+					"translation": "Prekė",
+				},
+				"Corrected grammar.",
+			),
+			(
+				"approved_translation_exception",
+				"approved_exception",
+				"Item",
+				{"key": entry["key"], "status": "missing"},
+				"Reviewed technical identifier.",
+			),
+		)
+		for reason, origin, translation, release_record, explanation in cases:
+			with self.subTest(reason=reason), TemporaryDirectory() as directory:
+				root = Path(directory)
+				compatibility = self._fixture(
+					root,
+					[entry],
+					[
+						{
+							"flags": [],
+							"key": entry["key"],
+							"source_digest": entry["source_digest"],
+							"translation": translation,
+						}
+					],
+				)
+				candidate_path = root / "catalog_candidates" / "test.json"
+				candidate = json.loads(candidate_path.read_bytes())
+				candidate_entry = candidate["entries"][0]
+				candidate_entry["provenance"] = {
+					"origin": origin,
+					"review": {
+						"agent": "test-agent",
+						"explanation": explanation,
+						"model": "test/model",
+						"reason": reason,
+						"run_id": "",
+						"status": "reviewed",
+					},
+				}
+				candidate_entry["provenance"]["review"]["run_id"] = review_run_id(candidate_entry)
+				registry = json.loads(root.joinpath("catalog_segments.json").read_bytes())
+				registry["candidates"][0]["candidate_sha256"] = _write_json(candidate_path, candidate)
+				self._replace_quality_artifact(compatibility, "catalog_segments.json", registry)
+				self._replace_owned_artifact(
+					compatibility,
+					"provenance.json",
+					{"entries": [release_record], "schema_version": 1},
+				)
+				if reason == "approved_translation_exception":
+					self._replace_quality_artifact(
+						compatibility,
+						"translation_exceptions.json",
+						{
+							"entries": [
+								{
+									"key": entry["key"],
+									"review": explanation,
+									"reviewed": True,
+									"source_digest": entry["source_digest"],
+								}
+							],
+							"schema_version": 1,
+						},
+					)
+
+				result = run(
+					"test",
+					root / "candidate.po",
+					root / "report.json",
+					compatibility_path=compatibility,
+					compile_candidate=lambda *_args: self.fail("must fail at trust boundary"),
+				)
+
+				self.assertEqual(result["exit_code"], 2)
+				self.assertIn("authenticated release provenance", result["errors"][0]["detail"])
 
 	def test_registered_segment_checks_exact_selected_coverage(self):
 		entries = [
@@ -217,11 +387,114 @@ class CatalogQualityGateTest(TestCase):
 				root / "report.json",
 				compatibility_path=compatibility,
 				compile_candidate=self._compile_candidate,
-				clock=lambda: 1.0,
 			)
 
 			self.assertEqual(result["exit_code"], 0)
 			self.assertEqual(result["summary"]["keys"], 1)
+
+	def test_validated_review_evidence_drives_coverage_reason_correction_and_exception_totals(self):
+		entries = [
+			{
+				"key": {"context": None, "source": source},
+				"source_digest": digest * 64,
+				"source_locations": [],
+				"stable_locators": [],
+			}
+			for source, digest in (("Accepted", "a"), ("Grammar", "b"), ("API", "c"))
+		]
+		candidates = [
+			{
+				"flags": [],
+				"key": entry["key"],
+				"source_digest": entry["source_digest"],
+				"translation": translation,
+			}
+			for entry, translation in zip(entries, ("Priimta", "Gramatika", "API"), strict=True)
+		]
+		with TemporaryDirectory() as directory:
+			root = Path(directory)
+			compatibility = self._fixture(root, entries, candidates)
+			candidate_path = root / "catalog_candidates" / "test.json"
+			candidate = json.loads(candidate_path.read_text(encoding="utf-8"))
+			for record, origin, reason, explanation in zip(
+				candidate["entries"],
+				("inherited_v15", "corrected_inherited", "approved_exception"),
+				("accepted_as_is", "grammar_correction", "approved_translation_exception"),
+				(None, "Corrected grammar.", "Reviewed technical identifier."),
+				strict=True,
+			):
+				record["provenance"] = {
+					"origin": origin,
+					"review": {
+						"agent": "test-agent",
+						"explanation": explanation,
+						"model": "test/model",
+						"reason": reason,
+						"run_id": "",
+						"status": "reviewed",
+					},
+				}
+				record["provenance"]["review"]["run_id"] = review_run_id(record)
+			registry = json.loads((root / "catalog_segments.json").read_text(encoding="utf-8"))
+			registry["candidates"][0]["candidate_sha256"] = _write_json(candidate_path, candidate)
+			self._replace_quality_artifact(compatibility, "catalog_segments.json", registry)
+			self._replace_quality_artifact(
+				compatibility,
+				"translation_exceptions.json",
+				{
+					"schema_version": 1,
+					"entries": [
+						{
+							"key": entries[2]["key"],
+							"review": "Reviewed technical identifier.",
+							"reviewed": True,
+							"source_digest": entries[2]["source_digest"],
+						}
+					],
+				},
+			)
+			self._replace_owned_artifact(
+				compatibility,
+				"provenance.json",
+				{
+					"entries": [
+						{
+							"key": entries[0]["key"],
+							"origin": "inherited_v15",
+							"status": "translated",
+							"translation": candidates[0]["translation"],
+						},
+						{
+							"key": entries[1]["key"],
+							"origin": "inherited_v15",
+							"status": "translated",
+							"translation": "Sena gramatika",
+						},
+						{
+							"exception": "Reviewed technical identifier.",
+							"key": entries[2]["key"],
+							"origin": "approved_exception",
+							"status": "excepted",
+						},
+					],
+					"schema_version": 1,
+				},
+			)
+
+			result = run(
+				"test",
+				root / "candidate.po",
+				root / "report.json",
+				compatibility_path=compatibility,
+				compile_candidate=self._compile_candidate,
+			)
+
+			self.assertEqual(result["exit_code"], 0)
+			self.assertEqual(result["summary"]["translation_coverage"], {"covered": 3, "total": 3})
+			self.assertEqual(sum(result["summary"]["reason_counts"].values()), 3)
+			self.assertEqual(result["summary"]["corrected_inherited"], 1)
+			self.assertEqual(result["summary"]["translation_exceptions"], 1)
+			self.assertEqual(root.joinpath("report.json").read_bytes(), canonical_json(result))
 
 	def test_quality_errors_are_complete_sorted_and_do_not_replace_candidate(self):
 		entries = [
@@ -266,7 +539,6 @@ class CatalogQualityGateTest(TestCase):
 					root / f"report-{index}.json",
 					compatibility_path=compatibility,
 					compile_candidate=lambda _po, _workspace: self.fail("must not compile"),
-					clock=lambda: 4.0,
 				)
 				results.append(result)
 
@@ -283,6 +555,11 @@ class CatalogQualityGateTest(TestCase):
 				],
 			)
 			self.assertEqual(output.read_bytes(), b"last-approved")
+			self.assertEqual(
+				results[0]["summary"]["translation_coverage"],
+				{"covered": 1, "total": 2},
+			)
+			self.assertEqual(sum(results[0]["summary"]["reason_counts"].values()), 3)
 
 	def test_repeated_identical_key_has_duplicate_status_distinct_from_conflict(self):
 		entry = {
@@ -307,10 +584,11 @@ class CatalogQualityGateTest(TestCase):
 				root / "report.json",
 				compatibility_path=compatibility,
 				compile_candidate=self._compile_candidate,
-				clock=lambda: 1.0,
 			)
 
 			self.assertEqual([error["code"] for error in result["errors"]], ["DUPLICATE_TRANSLATION_KEY"])
+			self.assertEqual(result["summary"]["translation_coverage"], {"covered": 1, "total": 1})
+			self.assertEqual(sum(result["summary"]["reason_counts"].values()), 2)
 
 	def test_preserved_token_families_precedence_escaping_and_unknown_syntax(self):
 		source = (
@@ -370,7 +648,6 @@ class CatalogQualityGateTest(TestCase):
 					case / "report.json",
 					compatibility_path=compatibility,
 					compile_candidate=self._compile_candidate,
-					clock=lambda: 1.0,
 				)
 				if name == "valid":
 					self.assertEqual(result["exit_code"], 0)
@@ -548,7 +825,6 @@ class CatalogQualityGateTest(TestCase):
 					case / "report.json",
 					compatibility_path=compatibility,
 					compile_candidate=self._compile_candidate,
-					clock=lambda: 1.0,
 				)
 				if error_code is None:
 					self.assertEqual(result["exit_code"], 0, name)
@@ -604,6 +880,39 @@ class CatalogQualityGateTest(TestCase):
 		with TemporaryDirectory() as directory:
 			root = Path(directory)
 			compatibility = self._fixture(root, [entry], [candidate])
+			candidate_path = root / "catalog_candidates" / "test.json"
+			candidate_data = json.loads(candidate_path.read_text(encoding="utf-8"))
+			candidate_record = candidate_data["entries"][0]
+			candidate_record["provenance"] = {
+				"origin": "approved_exception",
+				"review": {
+					"agent": "test-agent",
+					"explanation": "Reviewed technical identifier.",
+					"model": "test/model",
+					"reason": "approved_translation_exception",
+					"run_id": "",
+					"status": "reviewed",
+				},
+			}
+			candidate_record["provenance"]["review"]["run_id"] = review_run_id(candidate_record)
+			registry = json.loads((root / "catalog_segments.json").read_text(encoding="utf-8"))
+			registry["candidates"][0]["candidate_sha256"] = _write_json(candidate_path, candidate_data)
+			self._replace_quality_artifact(compatibility, "catalog_segments.json", registry)
+			self._replace_owned_artifact(
+				compatibility,
+				"provenance.json",
+				{
+					"entries": [
+						{
+							"exception": "Reviewed technical identifier.",
+							"key": entry["key"],
+							"origin": "approved_exception",
+							"status": "excepted",
+						}
+					],
+					"schema_version": 1,
+				},
+			)
 			for name, exception, expected_exit, expected in (
 				("missing", [], 1, "IDENTICAL_TRANSLATION_WITHOUT_EXCEPTION"),
 				(
@@ -644,11 +953,15 @@ class CatalogQualityGateTest(TestCase):
 					root / f"{name}.json",
 					compatibility_path=compatibility,
 					compile_candidate=self._compile_candidate,
-					clock=lambda: 1.0,
 				)
 				self.assertEqual(result["exit_code"], expected_exit)
 				if expected is not None:
 					self.assertIn(expected, [error["code"] for error in result["errors"]])
+				if name == "missing":
+					self.assertIn(
+						"TRANSLATION_EXCEPTION_EVIDENCE_MISMATCH",
+						[error["code"] for error in result["errors"]],
+					)
 
 	def test_contextless_collision_requires_exact_reviewed_resolution(self):
 		entry = {
@@ -695,7 +1008,6 @@ class CatalogQualityGateTest(TestCase):
 					root / f"{name}.json",
 					compatibility_path=compatibility,
 					compile_candidate=self._compile_candidate,
-					clock=lambda: 1.0,
 				)
 				self.assertEqual(result["exit_code"], expected_exit, name)
 				if expected_exit == 1:
@@ -767,7 +1079,6 @@ class CatalogQualityGateTest(TestCase):
 					case / "report.json",
 					compatibility_path=compatibility,
 					compile_candidate=self._compile_candidate,
-					clock=lambda: 1.0,
 				)
 				self.assertEqual(result["exit_code"], expected_exit, name)
 				if expected_exit:
@@ -835,7 +1146,6 @@ class CatalogQualityGateTest(TestCase):
 					root / "report.json",
 					compatibility_path=compatibility,
 					compile_candidate=self._compile_candidate,
-					clock=lambda: 1.0,
 				)
 			self.assertEqual(result["exit_code"], 2)
 			self.assertIn("glossary matches exceed 2", result["errors"][0]["detail"])
@@ -903,7 +1213,6 @@ class CatalogQualityGateTest(TestCase):
 						output,
 						case / "report.json",
 						compatibility_path=compatibility,
-						clock=lambda: 2.0,
 						**kwargs,
 					)
 
@@ -933,12 +1242,85 @@ class CatalogQualityGateTest(TestCase):
 				root / "report.json",
 				compatibility_path=compatibility,
 				compile_candidate=lambda _po, _workspace: self.fail("semantic phase must not run"),
-				clock=lambda: 3.0,
 			)
 
 			self.assertEqual(result["exit_code"], 2)
 			self.assertEqual(result["errors"][0]["code"], "UNTRUSTED_INPUT_OR_TOOL_FAILURE")
 			self.assertFalse((root / "candidate.po").exists())
+
+	def test_authenticated_inventory_and_provenance_bytes_are_each_read_once_and_strictly_parsed(self):
+		entry = {
+			"key": {"source": "Item", "context": None},
+			"source_digest": "5" * 64,
+			"source_locations": [],
+			"stable_locators": [],
+		}
+		candidate = {
+			"flags": [],
+			"key": entry["key"],
+			"source_digest": entry["source_digest"],
+			"translation": "Prekė",
+		}
+		with TemporaryDirectory() as directory:
+			root = Path(directory)
+			compatibility = self._fixture(root, [entry], [candidate])
+			read_bytes = catalog_quality._read_bytes
+			reads = []
+
+			def counted_read(path, budget=None):
+				reads.append(Path(path).name)
+				return read_bytes(path, budget)
+
+			with patch("frappe_lt.catalog_quality._read_bytes", side_effect=counted_read):
+				result = run(
+					"test",
+					root / "candidate.po",
+					root / "report.json",
+					compatibility_path=compatibility,
+					compile_candidate=self._compile_candidate,
+				)
+
+			self.assertEqual(result["exit_code"], 0)
+			self.assertEqual(reads.count("release_inventory.json"), 1)
+			self.assertEqual(reads.count("provenance.json"), 1)
+
+		with TemporaryDirectory() as directory:
+			root = Path(directory)
+			compatibility = self._fixture(root, [entry], [candidate])
+			content = b'{"entries":[],"entries":[],"schema_version":1}\n'
+			root.joinpath("provenance.json").write_bytes(content)
+			compatibility_data = json.loads(compatibility.read_bytes())
+			compatibility_data["artifact_sha256"]["provenance.json"] = hashlib.sha256(content).hexdigest()
+			_write_json(compatibility, compatibility_data)
+
+			result = run(
+				"test",
+				root / "candidate.po",
+				root / "report.json",
+				compatibility_path=compatibility,
+			)
+
+			self.assertEqual(result["exit_code"], 2)
+			self.assertIn("duplicate JSON object member", result["errors"][0]["detail"])
+
+		with TemporaryDirectory() as directory:
+			root = Path(directory)
+			compatibility = self._fixture(root, [entry], [candidate])
+			self._replace_owned_artifact(
+				compatibility,
+				"provenance.json",
+				{"entries": [], "schema_version": 1},
+			)
+
+			result = run(
+				"test",
+				root / "candidate.po",
+				root / "report.json",
+				compatibility_path=compatibility,
+			)
+
+			self.assertEqual(result["exit_code"], 2)
+			self.assertIn("provenance is missing 1 active", result["errors"][0]["detail"])
 
 	def test_documented_input_limits_are_enforced_before_semantic_checks(self):
 		entry = {
@@ -963,7 +1345,6 @@ class CatalogQualityGateTest(TestCase):
 					root / "report.json",
 					compatibility_path=compatibility,
 					compile_candidate=lambda _po, _workspace: self.fail("must fail at trust boundary"),
-					clock=lambda: 3.0,
 				)
 
 			self.assertEqual(result["exit_code"], 2)
@@ -988,7 +1369,6 @@ class CatalogQualityGateTest(TestCase):
 				root / "report.json",
 				compatibility_path=compatibility,
 				compile_candidate=lambda _po, _workspace: self.fail("must not compile"),
-				clock=lambda: 1.0,
 				fail_fast=True,
 			)
 
@@ -1017,13 +1397,12 @@ class CatalogQualityGateTest(TestCase):
 				root / "candidate.po",
 				root / "report.json",
 				compatibility_path=compatibility,
-				clock=lambda: 1.0,
 			)
 
 			self.assertEqual(result["exit_code"], 2)
 			self.assertIn("unsupported schema", result["errors"][0]["detail"])
 
-	def test_unknown_inventory_candidate_provenance_extension_and_segment_schemas_are_exit_two(self):
+	def test_unknown_inventory_candidate_review_evidence_and_segment_schemas_are_exit_two(self):
 		entry = {
 			"key": {"source": "Item", "context": None},
 			"source_digest": "c" * 64,
@@ -1039,8 +1418,8 @@ class CatalogQualityGateTest(TestCase):
 		for schema, expected in (
 			("inventory", "Release Inventory schema"),
 			("candidate", "candidate schema"),
-			("provenance-extension", "candidate provenance schema"),
-			("segment", "segment manifest schema"),
+			("review-evidence", "candidate review evidence schema"),
+			("segment", "manifest schema"),
 		):
 			with self.subTest(schema=schema), TemporaryDirectory() as directory:
 				root = Path(directory)
@@ -1058,30 +1437,36 @@ class CatalogQualityGateTest(TestCase):
 					compatibility_data["inventory_digest"] = inventory_digest
 					compatibility_data["artifact_sha256"]["release_inventory.json"] = inventory_digest
 					_write_json(compatibility, compatibility_data)
-				elif schema in {"candidate", "provenance-extension"}:
-					candidate_data = json.loads((root / "candidate.json").read_text(encoding="utf-8"))
-					field = "schema_version" if schema == "candidate" else "provenance_schema_version"
+				elif schema in {"candidate", "review-evidence"}:
+					candidate_path = root / "catalog_candidates" / "test.json"
+					candidate_data = json.loads(candidate_path.read_text(encoding="utf-8"))
+					field = "schema_version" if schema == "candidate" else "review_evidence_schema_version"
 					candidate_data[field] = 999
 					registry = json.loads((root / "catalog_segments.json").read_text(encoding="utf-8"))
 					registry["candidates"][0]["candidate_sha256"] = _write_json(
-						root / "candidate.json", candidate_data
+						candidate_path, candidate_data
 					)
 					self._replace_quality_artifact(compatibility, "catalog_segments.json", registry)
 				else:
-					manifest = json.loads((root / "segment.json").read_text(encoding="utf-8"))
+					manifest_path = root / "catalog_segments" / "erpnext-operations.json"
+					manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
 					manifest["schema_version"] = 999
-					registry = json.loads((root / "catalog_segments.json").read_text(encoding="utf-8"))
-					registry["candidates"][0]["manifest_sha256"] = _write_json(
-						root / "segment.json", manifest
+					manifest_digest = _write_json(manifest_path, manifest)
+					partition = json.loads((root / "catalog_partition.json").read_text(encoding="utf-8"))
+					next(record for record in partition["segments"] if record["id"] == "erpnext-operations")[
+						"manifest_sha256"
+					] = manifest_digest
+					self._replace_quality_artifact(
+						compatibility,
+						"catalog_partition.json",
+						partition,
 					)
-					self._replace_quality_artifact(compatibility, "catalog_segments.json", registry)
 
 				result = run(
 					"test",
 					root / "candidate.po",
 					root / "report.json",
 					compatibility_path=compatibility,
-					clock=lambda: 1.0,
 				)
 				self.assertEqual(result["exit_code"], 2)
 				self.assertIn(expected, result["errors"][0]["detail"])
@@ -1113,58 +1498,40 @@ class CatalogQualityGateTest(TestCase):
 				)
 				registry = json.loads((root / "catalog_segments.json").read_text(encoding="utf-8"))
 				if failure in {"stale", "duplicate"}:
-					manifest = json.loads((root / "segment.json").read_text(encoding="utf-8"))
+					manifest_path = root / "catalog_segments" / "erpnext-operations.json"
+					manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
 					if failure == "stale":
 						manifest["inventory_digest"] = "0" * 64
 					else:
 						manifest["keys"].append(manifest["keys"][0])
-					registry["candidates"][0]["manifest_sha256"] = _write_json(
-						root / "segment.json", manifest
+					manifest_digest = _write_json(manifest_path, manifest)
+					partition = json.loads((root / "catalog_partition.json").read_text(encoding="utf-8"))
+					next(record for record in partition["segments"] if record["id"] == "erpnext-operations")[
+						"manifest_sha256"
+					] = manifest_digest
+					self._replace_quality_artifact(
+						compatibility,
+						"catalog_partition.json",
+						partition,
 					)
 				elif failure == "overlap":
-					second_candidate = root / "second-candidate.json"
-					second_candidate_digest = _write_json(
-						second_candidate,
-						{
-							"schema_version": 1,
-							"provenance_schema_version": 1,
-							"inventory_digest": registry["inventory_digest"],
-							"entries": [
-								{
-									**candidate,
-									"provenance": {
-										"origin": "new_ai",
-										"review_status": "reviewed",
-										"review": "test-review",
-									},
-								}
-							],
-						},
-					)
-					second_manifest_digest = _write_json(
-						root / "second-segment.json",
-						json.loads((root / "segment.json").read_text(encoding="utf-8")),
-					)
+					first_candidate = root / registry["candidates"][0]["candidate"]
+					second_candidate = first_candidate.with_name("second.json")
+					second_candidate.write_bytes(first_candidate.read_bytes())
 					registry["candidates"].append(
 						{
+							**registry["candidates"][0],
 							"name": "second",
-							"candidate": second_candidate.name,
-							"candidate_sha256": second_candidate_digest,
-							"manifest": "second-segment.json",
-							"manifest_sha256": second_manifest_digest,
+							"candidate": "catalog_candidates/second.json",
 						}
 					)
 				elif failure == "missing":
-					(root / "candidate.json").unlink()
+					(root / "catalog_candidates" / "test.json").unlink()
 				else:
-					candidate_directory = root / "candidates"
-					candidate_directory.mkdir()
-					(root / "candidate.json").replace(candidate_directory / "candidate.json")
+					candidate_directory = root / "catalog_candidates"
 					(candidate_directory / "nested").mkdir()
 					(candidate_directory / "nested" / "stray.json").write_text("{}", encoding="utf-8")
-					registry["candidate_directory"] = "candidates"
-					registry["candidates"][0]["candidate"] = "candidates/candidate.json"
-				if failure != "missing":
+				if failure not in {"missing", "stale", "duplicate"}:
 					self._replace_quality_artifact(
 						compatibility,
 						"catalog_segments.json",
@@ -1177,7 +1544,6 @@ class CatalogQualityGateTest(TestCase):
 					root / "report.json",
 					compatibility_path=compatibility,
 					compile_candidate=lambda _po, _workspace: self.fail("must fail at trust boundary"),
-					clock=lambda: 1.0,
 				)
 
 				self.assertEqual(result["exit_code"], 2)
@@ -1221,7 +1587,6 @@ class CatalogQualityGateTest(TestCase):
 						report,
 						compatibility_path=compatibility,
 						compile_candidate=lambda *_args: self.fail("must reject before validation"),
-						clock=lambda: 1.0,
 					)
 					self.assertEqual(result["exit_code"], 2)
 					self.assertEqual(report.exists(), writes_report)
@@ -1256,7 +1621,6 @@ class CatalogQualityGateTest(TestCase):
 				root / "report.json",
 				compatibility_path=compatibility,
 				compile_candidate=self._compile_candidate,
-				clock=lambda: 1.0,
 			)
 			self.assertEqual(
 				[error["code"] for error in result["errors"]],
@@ -1293,7 +1657,6 @@ class CatalogQualityGateTest(TestCase):
 				root / "report.json",
 				compatibility_path=compatibility,
 				compile_candidate=self._compile_candidate,
-				clock=lambda: 1.0,
 			)
 			self.assertIn("SOURCE_DIGEST_MISMATCH", [error["code"] for error in result["errors"]])
 
@@ -1345,7 +1708,6 @@ class CatalogQualityGateTest(TestCase):
 					root / "report.json",
 					compatibility_path=compatibility,
 					compile_candidate=self._compile_candidate,
-					clock=lambda: 1.0,
 				)
 			self.assertEqual(result["exit_code"], 0)
 			self.assertEqual(tokens.call_count, 2)
@@ -1518,7 +1880,6 @@ class CatalogQualityGateTest(TestCase):
 				compile_candidate=self._compile_candidate,
 				fsync=fsync,
 				replace=replace,
-				clock=lambda: 1.0,
 			)
 			self.assertEqual(result["exit_code"], 2)
 			self.assertIn("publication rollback failed", result["errors"][0]["detail"])
@@ -1560,7 +1921,6 @@ class CatalogQualityGateTest(TestCase):
 				compile_candidate=self._compile_candidate,
 				fsync=fsync,
 				remove=remove,
-				clock=lambda: 1.0,
 			)
 			self.assertEqual(result["exit_code"], 2)
 			self.assertEqual(removed, [output])

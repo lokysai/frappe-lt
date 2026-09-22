@@ -20,6 +20,8 @@ class CIWorkflowTest(TestCase):
 		verify = self.workflow["jobs"]["verify"]
 		commands = "\n".join(step.get("run", "") for step in verify["steps"])
 		for required in (
+			"frappe_lt.tests.test_catalog_partition",
+			"frappe_lt.tests.test_review_evidence",
 			"frappe_lt.tests.test_runtime_validation",
 			"frappe_lt.tests.test_ci_workflow",
 			"node --test",
@@ -108,6 +110,28 @@ class CIWorkflowTest(TestCase):
 		self.assertTrue(
 			any(step.get("if") == "always()" and "Stop runtime web process" in step["name"] for step in steps)
 		)
+
+	def test_catalog_candidate_integration_cannot_be_vacuous(self):
+		steps = self.workflow["jobs"]["verify"]["steps"]
+		gate = next(
+			step
+			for step in steps
+			if step["name"] == "Authenticate the production partition and run every registered candidate"
+		)
+		commands = gate["run"]
+		for required in (
+			"from frappe_lt.catalog_quality import registered_candidates, run",
+			"candidate_checks = 0",
+			"candidate_checks += 1",
+			"catalog_candidates/ci-integration.json",
+			'assert first["errors"][0]["code"] == "MISSING_TRANSLATION_KEY"',
+			'assert first["schema_version"] == 2',
+			'assert "duration_seconds" not in first',
+			"assert first_report.read_bytes() == second_report.read_bytes()",
+			"assert not candidate_po.exists()",
+			"assert candidate_checks >= 1",
+		):
+			self.assertIn(required, commands)
 
 	def test_runtime_browser_dependencies_are_fully_locked(self):
 		package = json.loads(UI_RUNNER_PACKAGE_PATH.read_text(encoding="utf-8"))

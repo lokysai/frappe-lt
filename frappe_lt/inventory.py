@@ -20,6 +20,8 @@ AUTHENTICATED_ARTIFACTS = (
 	"release_inventory.json",
 )
 QUALITY_GATE_ARTIFACTS = (
+	"catalog_partition.json",
+	"catalog_segment_ownership_overrides.json",
 	"catalog_segments.json",
 	"collision_resolutions.json",
 	"glossary_selectors.json",
@@ -149,6 +151,7 @@ def verify_owned_artifacts(path: Path = COMPATIBILITY_PATH) -> dict:
 			raise ValueError(f"artifact digest mismatch for {name}: expected {expected}; computed {actual}")
 	if manifest["artifact_sha256"]["release_inventory.json"] != manifest.get("inventory_digest"):
 		raise ValueError("inventory_digest must equal the authenticated release_inventory.json digest")
+	_quality_artifacts_for_inventory(manifest, manifest["inventory_digest"], path.parent)
 	return manifest
 
 
@@ -781,6 +784,40 @@ def _quality_artifacts_for_inventory(
 			if name in artifacts and artifacts[name] != content:
 				raise ValueError(f"registered artifact path collision: {name}")
 			artifacts[name] = content
+	partition = quality_objects["catalog_partition.json"]
+	segments = partition.get("segments")
+	if not isinstance(segments, list) or not all(isinstance(record, dict) for record in segments):
+		raise ValueError("Catalog Segment partition segments must be a list of objects")
+	for record in segments:
+		name = record.get("manifest")
+		expected = record.get("manifest_sha256")
+		relative = PurePosixPath(name) if isinstance(name, str) else None
+		if (
+			relative is None
+			or not name
+			or "\\" in name
+			or relative.is_absolute()
+			or str(relative) != name
+			or any(part in {"", ".", ".."} for part in relative.parts)
+		):
+			raise ValueError(f"invalid production segment manifest path {name!r}")
+		if not isinstance(expected, str) or not re.fullmatch("[0-9a-f]{64}", expected):
+			raise ValueError("production segment manifest digest must be a SHA-256 digest")
+		path = root.joinpath(*relative.parts)
+		for component in (path, *path.parents):
+			if component == root.parent:
+				break
+			if component.is_symlink():
+				raise ValueError(f"production segment manifest path uses a symlink: {name}")
+		resolved = path.resolve()
+		if resolved.parent != root and root not in resolved.parents:
+			raise ValueError(f"production segment manifest path escapes the inventory root: {name}")
+		content = path.read_bytes()
+		if hashlib.sha256(content).hexdigest() != expected:
+			raise ValueError(f"production segment manifest digest mismatch for {record.get('id')!r}")
+		if name in artifacts and artifacts[name] != content:
+			raise ValueError(f"registered artifact path collision: {name}")
+		artifacts[name] = content
 	return artifacts
 
 

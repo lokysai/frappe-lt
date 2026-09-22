@@ -4,7 +4,6 @@ import math
 import os
 import re
 import tempfile
-import time
 import unicodedata
 from collections import Counter, deque
 from pathlib import Path
@@ -12,10 +11,22 @@ from pathlib import Path
 import html5lib
 from html5lib.constants import tokenTypes
 
-from frappe_lt.inventory import QUALITY_GATE_ARTIFACTS, canonical_json, validate_compatibility
+from frappe_lt.catalog_partition import SEGMENT_IDS, validate_partition_artifacts
+from frappe_lt.inventory import (
+	QUALITY_GATE_ARTIFACTS,
+	canonical_json,
+	validate_compatibility,
+	validate_provenance,
+)
 from frappe_lt.po import build_po, compile_po, parse_po
+from frappe_lt.review_evidence import (
+	REVIEW_EVIDENCE_SCHEMA_VERSION,
+	evidence_summary,
+	validate_review_evidence,
+)
 
 SCHEMA_VERSION = 1
+REPORT_SCHEMA_VERSION = 2
 MAX_ARTIFACT_BYTES = 32 * 1024 * 1024
 MAX_TOTAL_ARTIFACT_BYTES = 64 * 1024 * 1024
 MAX_ENTRIES = 100_000
@@ -28,6 +39,23 @@ MAX_ERRORS = 500_000
 MAX_REPORT_BYTES = 32 * 1024 * 1024
 MAX_STRING_BYTES = 256 * 1024
 QUALITY_ARTIFACTS = QUALITY_GATE_ARTIFACTS
+CANDIDATE_FIELDS = {
+	"entries",
+	"inventory_digest",
+	"manifest_sha256",
+	"review_evidence_schema_version",
+	"schema_version",
+	"segment_id",
+}
+CANDIDATE_ENTRY_FIELDS = {"flags", "key", "provenance", "source_digest", "translation"}
+CANDIDATE_REGISTRATION_FIELDS = {
+	"candidate",
+	"candidate_sha256",
+	"manifest",
+	"manifest_sha256",
+	"name",
+	"segment_id",
+}
 TOKEN_PATTERNS = (
 	("javascript", re.compile(r"\$\{[A-Za-z_$][\w.$]*(?:\[[^\]\r\n{}]+\])?}")),
 	("python", re.compile(r"%\([A-Za-z_]\w*\)[#0+ \-]*\d*(?:\.\d+)?[diouxXeEfFgGcrsa](?!\w)")),
@@ -122,16 +150,21 @@ def _object(pairs):
 	return value
 
 
-def _read_json(path: Path, budget: list[int] | None = None) -> tuple[dict, bytes]:
-	content = _read_bytes(path, budget)
+def _parse_json(content: bytes, label: str) -> dict:
 	value = json.loads(
 		content,
 		object_pairs_hook=_object,
 		parse_constant=lambda value: (_ for _ in ()).throw(ValueError(f"non-finite JSON number {value}")),
 	)
 	if not isinstance(value, dict):
-		raise ValueError(f"{path.name} must contain a JSON object")
-	_validate_input_limits(value, path.name)
+		raise ValueError(f"{label} must contain a JSON object")
+	_validate_input_limits(value, label)
+	return value
+
+
+def _read_json(path: Path, budget: list[int] | None = None) -> tuple[dict, bytes]:
+	content = _read_bytes(path, budget)
+	value = _parse_json(content, path.name)
 	return value, content
 
 
@@ -262,6 +295,32 @@ def _validate_inventory(inventory: dict) -> dict[tuple[str, str | None], dict]:
 	return entries
 
 
+def _validate_candidate_release_provenance(candidate_entry: dict, release_record: dict) -> None:
+	reason = candidate_entry["provenance"]["review"]["reason"]
+	status = release_record.get("status")
+	origin = release_record.get("origin")
+	translation = candidate_entry["translation"]
+	release_translation = release_record.get("translation")
+	if reason == "accepted_as_is":
+		valid = status == "translated" and origin == "inherited_v15" and translation == release_translation
+	elif reason == "new_translation":
+		valid = status == "missing" or (
+			status == "translated" and origin == "new_ai" and translation == release_translation
+		)
+	elif reason == "approved_translation_exception":
+		valid = status == "excepted" and origin == "approved_exception"
+	else:
+		valid = status == "translated" and (
+			(origin == "inherited_v15" and translation != release_translation)
+			or (origin == "corrected_inherited" and translation == release_translation)
+		)
+	if not valid:
+		key = _key_tuple(candidate_entry["key"])
+		raise ValueError(
+			f"candidate review reason {reason!r} contradicts authenticated release provenance for {key!r}"
+		)
+
+
 def _validate_destination(path: Path, label: str, suffix: str) -> Path:
 	path = Path(path)
 	if path.suffix.lower() != suffix:
@@ -298,11 +357,13 @@ def _load_trusted(
 	compatibility, _ = _read_json(compatibility_path, budget)
 	validate_compatibility(compatibility)
 	owned_digests = compatibility.get("artifact_sha256")
+	owned_contents = {}
 	for name, expected in owned_digests.items():
 		_require_digest(expected, f"authenticated artifact digest for {name!r}")
 		content = _read_bytes(_safe_path(root, name), budget)
 		if _digest(content) != expected:
 			raise ValueError(f"artifact digest mismatch for {name}")
+		owned_contents[name] = content
 	quality = compatibility.get("quality_gate")
 	if not isinstance(quality, dict) or quality.get("schema_version") != SCHEMA_VERSION:
 		raise ValueError("unsupported Catalog Quality Gate schema")
@@ -310,6 +371,7 @@ def _load_trusted(
 	if not isinstance(digests, dict) or set(digests) != set(QUALITY_ARTIFACTS):
 		raise ValueError("Catalog Quality Gate artifacts are not fully authenticated")
 	artifacts = {}
+	artifact_contents = {}
 	for name, expected in digests.items():
 		_require_digest(expected, f"Catalog Quality Gate digest for {name!r}")
 		artifact, content = _read_json(_safe_path(root, name), budget)
@@ -318,16 +380,32 @@ def _load_trusted(
 		if artifact.get("schema_version") != SCHEMA_VERSION:
 			raise ValueError(f"unsupported schema for {name}")
 		artifacts[name] = artifact
+		artifact_contents[name] = content
 
-	inventory, inventory_bytes = _read_json(root / "release_inventory.json", budget)
+	inventory_bytes = owned_contents["release_inventory.json"]
+	inventory = _parse_json(inventory_bytes, "release_inventory.json")
 	inventory_digest = _digest(inventory_bytes)
 	inventory_entries = _validate_inventory(inventory)
+	provenance = _parse_json(owned_contents["provenance.json"], "provenance.json")
+	release_provenance = validate_provenance(inventory, provenance)
 	if compatibility.get("inventory_digest") != inventory_digest:
 		raise ValueError("Release Inventory digest mismatch")
 	for name, artifact in artifacts.items():
 		if artifact.get("inventory_digest") != inventory_digest:
 			raise ValueError(f"{name} is stale for the authenticated Release Inventory")
+	partition_bundle = {
+		"catalog_partition.json": artifact_contents["catalog_partition.json"],
+		"catalog_segment_ownership_overrides.json": artifact_contents[
+			"catalog_segment_ownership_overrides.json"
+		],
+	}
+	for segment_id in SEGMENT_IDS:
+		path = f"catalog_segments/{segment_id}.json"
+		partition_bundle[path] = _read_bytes(_safe_path(root, path), budget)
+	production_manifests = validate_partition_artifacts(inventory, inventory_digest, partition_bundle)
 	registry = artifacts["catalog_segments.json"]
+	if set(registry) != {"candidate_directory", "candidates", "inventory_digest", "schema_version"}:
+		raise ValueError("Catalog Segment candidate registry fields are invalid")
 	records = registry.get("candidates")
 	if not isinstance(records, list):
 		raise ValueError("Catalog Segment registry candidates must be a list")
@@ -335,6 +413,8 @@ def _load_trusted(
 		raise ValueError(f"Catalog Segment registry exceeds {MAX_CANDIDATES} candidates")
 	if not all(isinstance(record, dict) for record in records):
 		raise ValueError("Catalog Segment registry candidates must be objects")
+	if any(set(record) != CANDIDATE_REGISTRATION_FIELDS for record in records):
+		raise ValueError("Catalog Segment candidate registration fields are invalid")
 	if any(
 		not isinstance(record.get("name"), str) or not SAFE_SLUG.fullmatch(record["name"])
 		for record in records
@@ -345,95 +425,74 @@ def _load_trusted(
 	candidate_paths = [_safe_path(root, record.get("candidate")) for record in records]
 	if len(set(candidate_paths)) != len(candidate_paths):
 		raise ValueError("Catalog Segment registry contains duplicate or aliased candidate paths")
+	manifest_paths = [record["manifest"] for record in records]
+	if len(set(manifest_paths)) != len(manifest_paths):
+		raise ValueError("Catalog Segment candidates must reference distinct frozen manifests")
 	manifests = {}
-	claimed_keys = {}
 	registered_candidates_by_name = {}
 	candidate_directory = registry.get("candidate_directory")
-	directory = _safe_path(root, candidate_directory) if candidate_directory is not None else None
-	if directory is not None and any(path.parent != directory for path in candidate_paths):
+	directory = _safe_path(root, candidate_directory)
+	if any(path.parent != directory for path in candidate_paths):
 		raise ValueError("registered candidate paths must be directly inside candidate_directory")
 	for registered, candidate_path in zip(records, candidate_paths, strict=True):
+		segment_id = registered["segment_id"]
+		if segment_id not in production_manifests:
+			raise ValueError(f"candidate references unknown production segment {segment_id!r}")
+		manifest = production_manifests[segment_id]
+		partition_record = next(
+			record for record in artifacts["catalog_partition.json"]["segments"] if record["id"] == segment_id
+		)
+		if (
+			registered["manifest"] != partition_record["manifest"]
+			or registered["manifest_sha256"] != partition_record["manifest_sha256"]
+		):
+			raise ValueError(f"candidate {registered['name']!r} does not bind the frozen manifest")
 		registered_candidate, registered_bytes = _read_json(candidate_path, budget)
 		_require_digest(registered.get("candidate_sha256"), "registered candidate digest")
 		if _digest(registered_bytes) != registered["candidate_sha256"]:
 			raise ValueError(f"candidate digest mismatch for {registered.get('name')!r}")
-		if registered_candidate.get("schema_version") != SCHEMA_VERSION:
+		if registered_bytes != canonical_json(registered_candidate):
+			raise ValueError(f"candidate {registered.get('name')!r} is not canonical repository JSON")
+		if (
+			set(registered_candidate) != CANDIDATE_FIELDS
+			or registered_candidate.get("schema_version") != SCHEMA_VERSION
+		):
 			raise ValueError(f"unsupported candidate schema for {registered.get('name')!r}")
-		if registered_candidate.get("provenance_schema_version") != SCHEMA_VERSION:
-			raise ValueError(f"unsupported candidate provenance schema for {registered.get('name')!r}")
+		if registered_candidate.get("review_evidence_schema_version") != REVIEW_EVIDENCE_SCHEMA_VERSION:
+			raise ValueError(f"unsupported candidate review evidence schema for {registered.get('name')!r}")
+		if (
+			registered_candidate["segment_id"] != segment_id
+			or registered_candidate["manifest_sha256"] != registered["manifest_sha256"]
+		):
+			raise ValueError(f"candidate {registered['name']!r} changed its frozen manifest binding")
 		candidate_entries = registered_candidate.get("entries")
 		if not isinstance(candidate_entries, list):
 			raise ValueError(f"candidate entries must be a list for {registered.get('name')!r}")
 		for candidate_entry in candidate_entries:
-			if not isinstance(candidate_entry, dict):
-				raise ValueError("candidate entries must be objects")
+			if not isinstance(candidate_entry, dict) or set(candidate_entry) != CANDIDATE_ENTRY_FIELDS:
+				raise ValueError("candidate entry fields must be exact")
 			_key_tuple(candidate_entry.get("key"))
 			_require_digest(candidate_entry.get("source_digest"), "candidate source digest")
 			if not isinstance(candidate_entry.get("translation"), str) or not isinstance(
 				candidate_entry.get("flags"), list
 			):
 				raise ValueError("candidate translation and flags have invalid types")
-			provenance = candidate_entry.get("provenance")
-			if (
-				not isinstance(provenance, dict)
-				or provenance.get("origin")
-				not in {"inherited_v15", "new_ai", "corrected_inherited", "approved_unchanged_exception"}
-				or provenance.get("review_status") != "reviewed"
-				or not isinstance(provenance.get("review"), str)
-				or not provenance["review"].strip()
-				or provenance["review"] != provenance["review"].strip()
-			):
-				raise ValueError(
-					f"candidate contains unauthenticated provenance for {registered.get('name')!r}"
-				)
+			validate_review_evidence(candidate_entry)
+			key = _key_tuple(candidate_entry["key"])
+			if key in inventory_entries:
+				_validate_candidate_release_provenance(candidate_entry, release_provenance[key])
 		if registered_candidate.get("inventory_digest") != inventory_digest:
 			raise ValueError(f"candidate {registered.get('name')!r} is stale")
 		registered_candidates_by_name[registered["name"]] = registered_candidate
-		manifest_name = registered.get("manifest")
-		if manifest_name is None:
-			if registered.get("manifest_sha256") is not None:
-				raise ValueError("whole-catalog candidate must not have a manifest digest")
-			manifests[registered["name"]] = None
-			continue
-		manifest, manifest_bytes = _read_json(_safe_path(root, manifest_name), budget)
-		_require_digest(registered.get("manifest_sha256"), "segment manifest digest")
-		if _digest(manifest_bytes) != registered["manifest_sha256"]:
-			raise ValueError(f"segment manifest digest mismatch for {registered.get('name')!r}")
-		if manifest.get("schema_version") != SCHEMA_VERSION:
-			raise ValueError(f"unsupported segment manifest schema for {registered.get('name')!r}")
-		if manifest.get("inventory_digest") != inventory_digest:
-			raise ValueError(f"segment manifest {registered.get('name')!r} is stale")
-		keys = manifest.get("keys")
-		if not isinstance(keys, list):
-			raise ValueError("segment manifest keys must be a list")
-		seen = set()
-		for selected in keys:
-			if not isinstance(selected, dict):
-				raise ValueError("segment selectors must be objects")
-			key = _key_tuple(selected.get("key", {}))
-			if key in seen:
-				raise ValueError(f"segment {registered.get('name')!r} contains duplicate keys")
-			seen.add(key)
-			if key not in inventory_entries:
-				raise ValueError(f"segment contains a key outside the Release Inventory: {key!r}")
-			_require_digest(selected.get("source_digest"), "segment source digest")
-			if selected["source_digest"] != inventory_entries[key]["source_digest"]:
-				raise ValueError(f"segment source digest mismatch for {key!r}")
-			if key in claimed_keys:
-				raise ValueError(
-					f"Catalog Segments {claimed_keys[key]!r} and {registered.get('name')!r} overlap"
-				)
-			claimed_keys[key] = registered.get("name")
 		manifests[registered["name"]] = manifest
-	if directory is not None:
-		registered_paths = set(candidate_paths)
-		unregistered = sorted(
-			path.relative_to(directory).as_posix()
-			for path in directory.rglob("*.json")
-			if path not in registered_paths
-		)
-		if unregistered:
-			raise ValueError(f"unregistered candidates: {', '.join(unregistered)}")
+	registered_paths = set(candidate_paths)
+	unregistered = sorted(
+		path.relative_to(directory).as_posix()
+		for path in directory.rglob("*.json")
+		if path not in registered_paths
+	)
+	if unregistered:
+		raise ValueError(f"unregistered candidates: {', '.join(unregistered)}")
 	if candidate_name is None:
 		_validate_quality_records(artifacts, inventory_entries)
 		return inventory, {}, None, artifacts
@@ -913,11 +972,10 @@ def _error(
 
 def _result(
 	candidate_name: str,
-	started: float,
-	clock,
 	key_count: int,
 	errors: list[dict],
 	notices: list[dict] | None = None,
+	review_summary: dict | None = None,
 ) -> dict:
 	notices = notices or []
 	if len(errors) + len(notices) > MAX_ERRORS and not (
@@ -926,14 +984,16 @@ def _result(
 		raise ValueError(f"quality findings exceed {MAX_ERRORS}")
 	errors.sort(key=lambda item: item["sort_key"])
 	notices.sort(key=lambda item: item["sort_key"])
+	summary = {"errors": len(errors), "keys": key_count, "notices": len(notices)}
+	if review_summary is not None:
+		summary.update(review_summary)
 	return {
 		"candidate": candidate_name,
-		"duration_seconds": clock() - started,
 		"errors": errors,
 		"exit_code": 1 if errors else 0,
 		"notices": notices,
-		"schema_version": SCHEMA_VERSION,
-		"summary": {"errors": len(errors), "keys": key_count, "notices": len(notices)},
+		"schema_version": REPORT_SCHEMA_VERSION,
+		"summary": summary,
 	}
 
 
@@ -1014,7 +1074,6 @@ def _run(
 	*,
 	compatibility_path: Path | None = None,
 	compile_candidate=None,
-	clock=time.monotonic,
 	fail_fast=False,
 	po_parser=parse_po,
 	write=lambda stream, value: stream.write(value),
@@ -1023,7 +1082,6 @@ def _run(
 	remove=lambda path: path.unlink(missing_ok=True),
 ) -> dict:
 	"""Validate, compile, and atomically publish one registered candidate."""
-	started = clock()
 	compatibility_path = compatibility_path or Path(__file__).with_name("compatibility.json")
 	inventory, candidate, segment, artifacts = _load_trusted(candidate_name, Path(compatibility_path))
 	inventory_entries = _validate_inventory(inventory)
@@ -1039,6 +1097,7 @@ def _run(
 			if selected.get("source_digest") != entry.get("source_digest"):
 				raise ValueError(f"segment source digest mismatch for {key!r}")
 			expected[key] = entry
+	review_summary = evidence_summary(candidate["entries"], expected)
 	grouped = {}
 	for entry in candidate["entries"]:
 		grouped.setdefault(_key_tuple(entry["key"]), []).append(entry)
@@ -1092,14 +1151,14 @@ def _run(
 
 	for key in actual.keys() & expected.keys():
 		entry = actual[key]
-		if (
-			entry.get("translation") == key[0]
-			and (
-				key,
-				expected[key].get("source_digest"),
-			)
-			not in approved_exceptions
-		):
+		has_reviewed_exception = (
+			key,
+			expected[key].get("source_digest"),
+		) in approved_exceptions
+		evidence_is_exception = entry["provenance"]["review"]["reason"] == "approved_translation_exception"
+		if evidence_is_exception != (has_reviewed_exception and entry.get("translation") == key[0]):
+			errors.append(_error("TRANSLATION_EXCEPTION_EVIDENCE_MISMATCH", key, expected[key]))
+		if entry.get("translation") == key[0] and not has_reviewed_exception:
 			errors.append(_error("IDENTICAL_TRANSLATION_WITHOUT_EXCEPTION", key, expected[key]))
 		if expected[key].get("context_decision"):
 			resolution = resolutions.get(key)
@@ -1167,7 +1226,13 @@ def _run(
 	if errors:
 		errors.sort(key=lambda item: item["sort_key"])
 		quality_errors = errors[:1] if fail_fast else errors
-		result = _result(candidate_name, started, clock, len(expected), quality_errors, notices)
+		result = _result(
+			candidate_name,
+			len(expected),
+			quality_errors,
+			notices,
+			review_summary,
+		)
 		_validate_destinations(output_path, report_path)
 		_replace_bytes(report_path, _report_bytes(result))
 		return result
@@ -1179,7 +1244,7 @@ def _run(
 		po_path.write_bytes(po_bytes)
 		po_parser(po_path)
 		compile_po(po_path, workspace, compiler=compile_candidate)
-	result = _result(candidate_name, started, clock, len(expected), [], notices)
+	result = _result(candidate_name, len(expected), [], notices, review_summary)
 	_validate_destinations(output_path, report_path)
 	_replace_bytes(report_path, _report_bytes(result))
 	_validate_destinations(output_path, report_path)
@@ -1201,7 +1266,6 @@ def run(
 	*,
 	compatibility_path: Path | None = None,
 	compile_candidate=None,
-	clock=time.monotonic,
 	fail_fast=False,
 	po_parser=parse_po,
 	write=lambda stream, value: stream.write(value),
@@ -1210,7 +1274,6 @@ def run(
 	remove=lambda path: path.unlink(missing_ok=True),
 ) -> dict:
 	"""Run the public gate and convert trust/tool failures to canonical exit-2 reports."""
-	started = clock()
 	output_path = Path(output_path)
 	report_path = Path(report_path)
 	try:
@@ -1218,7 +1281,7 @@ def run(
 	except Exception as error:
 		failure = _error("UNTRUSTED_INPUT_OR_TOOL_FAILURE")
 		failure["detail"] = f"{type(error).__name__}: {error}"
-		result = _result(candidate_name, started, clock, 0, [failure])
+		result = _result(candidate_name, 0, [failure])
 		result["exit_code"] = 2
 		return result
 	try:
@@ -1226,7 +1289,7 @@ def run(
 	except Exception as error:
 		failure = _error("UNTRUSTED_INPUT_OR_TOOL_FAILURE")
 		failure["detail"] = f"{type(error).__name__}: {error}"
-		result = _result(candidate_name, started, clock, 0, [failure])
+		result = _result(candidate_name, 0, [failure])
 		result["exit_code"] = 2
 		try:
 			_replace_bytes(report_path, _report_bytes(result))
@@ -1240,7 +1303,6 @@ def run(
 			Path(report_path),
 			compatibility_path=compatibility_path,
 			compile_candidate=compile_candidate,
-			clock=clock,
 			fail_fast=fail_fast,
 			po_parser=po_parser,
 			write=write,
@@ -1251,7 +1313,7 @@ def run(
 	except Exception as error:
 		failure = _error("UNTRUSTED_INPUT_OR_TOOL_FAILURE")
 		failure["detail"] = f"{type(error).__name__}: {error}"
-		result = _result(candidate_name, started, clock, 0, [failure])
+		result = _result(candidate_name, 0, [failure])
 		result["exit_code"] = 2
 		try:
 			_validate_destination(report_path, "report", ".json")
