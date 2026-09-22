@@ -1,7 +1,8 @@
-const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 const { defineConfig } = require("cypress");
+const { EvidencePublisher, redactJson } = require("./cypress/support/runtime_evidence");
+const { browserFromRunResults } = require("./cypress/support/runtime_toolchain");
 
 const planPath = process.env.FRAPPE_LT_RUNTIME_PLAN;
 const resultPath = process.env.FRAPPE_LT_RUNTIME_RESULT;
@@ -10,6 +11,24 @@ if (!planPath || !resultPath || !runRoot) {
 	throw new Error("runtime Cypress paths were not supplied by validate-lithuanian-runtime");
 }
 const plan = JSON.parse(fs.readFileSync(planPath, "utf8"));
+const planFields = [
+	"credentials",
+	"diagnostic_sampling",
+	"fixtures",
+	"run_id",
+	"schema_version",
+	"scenarios",
+	"token",
+].sort();
+if (
+	!plan ||
+	Array.isArray(plan) ||
+	Object.keys(plan).sort().join("\0") !== planFields.join("\0") ||
+	plan.schema_version !== 2 ||
+	typeof plan.diagnostic_sampling !== "boolean"
+) {
+	throw new Error("unsupported or malformed runtime browser plan");
+}
 const results = new Map();
 
 function canonical(value) {
@@ -36,27 +55,38 @@ module.exports = defineConfig({
 		testIsolation: false,
 		setupNodeEvents(on, config) {
 			config.env.runtimePlan = plan;
+			const secrets = [plan.token];
+			for (const credential of Object.values(plan.credentials)) {
+				for (const value of Object.values(credential)) secrets.push(value);
+			}
+			const evidence = new EvidencePublisher(runRoot, {
+				diagnosticSampling: plan.diagnostic_sampling,
+				secrets,
+			});
 			on("task", {
 				"runtime:record"(result) {
-					results.set(result.id, result);
+					const safeResult = redactJson(result, secrets);
+					results.set(safeResult.id, safeResult);
 					return null;
 				},
-				"runtime:digest"(relativePath) {
-					const absolute = path.resolve(runRoot, relativePath);
-					if (!absolute.startsWith(path.resolve(runRoot) + path.sep)) {
-						throw new Error("evidence path escaped the runtime root");
-					}
-					const content = fs.readFileSync(absolute);
-					return {
-						bytes: content.length,
-						sha256: crypto.createHash("sha256").update(content).digest("hex"),
-					};
+				"runtime:publishEvidence"(request) {
+					return evidence.publish(request);
 				},
 			});
-			on("after:run", () => {
+			on("after:run", (runResults) => {
+				const toolchain = canonical({
+					browser: browserFromRunResults(runResults),
+					cypress: { version: require("cypress/package.json").version },
+					node: { version: process.version },
+					plugins: {},
+					schema_version: 1,
+				});
 				const output = canonical({
-					schema_version: 2,
-					scenarios: [...results.values()].sort((left, right) => left.id.localeCompare(right.id)),
+				schema_version: 5,
+					scenarios: [...results.values()].sort((left, right) =>
+						left.id < right.id ? -1 : left.id > right.id ? 1 : 0
+					),
+					toolchain,
 				});
 				fs.writeFileSync(resultPath, JSON.stringify(output) + "\n", { mode: 0o600 });
 			});

@@ -1,5 +1,14 @@
 const plan = Cypress.env("runtimePlan");
 const scenarioResults = new Map();
+const {
+	correlateOutput,
+	exactOutputExclusion,
+	isBlockingFallback,
+	isBlockingInventoryLookup,
+	isClippedByAncestor,
+	isVisuallyHidden,
+	meaningfulTarget,
+} = require("../support/runtime_validation_helpers");
 
 function redactError(value) {
 	return String(value)
@@ -10,9 +19,41 @@ function redactError(value) {
 		.slice(0, 2048);
 }
 
+function canonical(value) {
+	if (Array.isArray(value)) return value.map(canonical);
+	if (value && typeof value === "object") {
+		return Object.fromEntries(Object.keys(value).sort().map((key) => [key, canonical(value[key])]));
+	}
+	return value;
+}
+
+function publishScenario(scenario, result, artifacts) {
+	const browserEvidence = canonical({ ...result, evidence: [] });
+	const publishable = result.fallbacks.some((finding) => !finding.active)
+		? []
+		: [
+				{ content: JSON.stringify(browserEvidence) + "\n", kind: "browser", mime: "application/json" },
+				...artifacts,
+			];
+	return cy
+		.task(
+			"runtime:publishEvidence",
+			{
+				artifacts: publishable,
+				scenarioId: scenario.id,
+				status: result.status,
+			},
+			{ log: false }
+		)
+		.then((evidence) => {
+			result.evidence = evidence;
+			return cy.task("runtime:record", result, { log: false });
+		});
+}
+
 function emptyResult(scenario) {
 	return {
-		attempts: [{ kind: "initial", number: 1 }],
+		attempts: [{ duration_ms: 0, error: null, kind: "initial", number: 1, outcome: "pass" }],
 		blocked_reason: null,
 		duration_ms: 0,
 		evidence: [],
@@ -27,15 +68,44 @@ function emptyResult(scenario) {
 
 function finishScenario(scenario, result, started) {
 	result.duration_ms = Date.now() - started;
-	if (result.fallbacks.length === 0 && result.status === "pass") {
+	if (!result.ready && result.status === "pass") {
 		result.status = "blocked";
-		result.blocked_reason = "scenario produced no effective translation lookup evidence";
+		result.blocked_reason = "scenario did not prove readiness";
 	}
 	if (result.duration_ms > scenario.scenario_timeout_ms && result.status === "pass") {
 		result.status = "blocked";
 		result.blocked_reason = `scenario exceeded ${scenario.scenario_timeout_ms} ms`;
 	}
-	return cy.task("runtime:record", result);
+	const blockingFallback = result.fallbacks.some(isBlockingFallback);
+	const blockingInventoryLookup = result.fallbacks.some(isBlockingInventoryLookup);
+	const blockingLayout = result.layouts.some((finding) => finding.severity === "functional");
+	if (result.status === "pass" && (blockingFallback || blockingInventoryLookup || blockingLayout)) {
+		result.status = "fail";
+		result.error = "scenario produced blocking runtime findings";
+	}
+	if (!result.fallbacks.some((finding) => finding.active) && result.status === "pass") {
+		result.status = "blocked";
+		result.blocked_reason = "scenario produced no active effective translation lookup evidence";
+	}
+	const attempt = result.attempts[result.attempts.length - 1];
+	attempt.duration_ms = result.duration_ms;
+	attempt.outcome = result.status === "fail" ? "assertion_failure" : result.status;
+	attempt.error = result.status === "pass" ? null : result.blocked_reason || result.error;
+	const artifacts = result.fallbacks.some((finding) => !finding.active)
+		? []
+		: scenarioResults.get(scenario.id)?.artifacts || [];
+	return publishScenario(scenario, result, artifacts);
+}
+
+function checkDeadline(scenario, started) {
+	if (Date.now() - started > scenario.scenario_timeout_ms) {
+		throw new Error(`scenario exceeded ${scenario.scenario_timeout_ms} ms during execution`);
+	}
+}
+
+function uniqueTarget(document, element) {
+	const target = meaningfulTarget(element);
+	return target && document.querySelectorAll(target).length === 1 ? target : null;
 }
 
 function armLookupRecorder(window) {
@@ -57,12 +127,14 @@ function armLookupRecorder(window) {
 						? function (source, replace, context) {
 								const lookupEffective = original.call(this, source, null, context);
 								const rendered = original.apply(this, arguments);
-								window.__frappeLtLookups.push({
-									context: context || null,
-									effective: lookupEffective,
-									rendered,
-									source: String(source).trim(),
-								});
+								if (typeof source === "string" && source) {
+									window.__frappeLtLookups.push({
+										context: context || null,
+										effective: lookupEffective,
+										raw_source: source,
+										rendered,
+									});
+								}
 								return rendered;
 							}
 						: value;
@@ -90,15 +162,16 @@ function armLookupRecorder(window) {
 function recordLayout(result) {
 	return cy.document().then((document) => {
 		const root = document.documentElement;
-		const targetFor = (element) => {
-			if (element.dataset.fieldname) return `[data-fieldname="${CSS.escape(element.dataset.fieldname)}"]`;
-			if (element.getAttribute("role")) return `[role="${CSS.escape(element.getAttribute("role"))}"]`;
-			return element.tagName.toLowerCase();
-		};
 		const isVisible = (element) => {
 			const style = document.defaultView.getComputedStyle(element);
 			const bounds = element.getBoundingClientRect();
-			return style.display !== "none" && style.visibility !== "hidden" && bounds.width > 0 && bounds.height > 0;
+			return (
+				style.display !== "none" &&
+				style.visibility !== "hidden" &&
+				bounds.width > 0 &&
+				bounds.height > 0 &&
+				!isVisuallyHidden(element, document.defaultView.getComputedStyle.bind(document.defaultView))
+			);
 		};
 		if (root.scrollWidth > root.clientWidth + 1) {
 			result.layouts.push({
@@ -112,27 +185,27 @@ function recordLayout(result) {
 		for (const element of document.querySelectorAll("button, input, select, [role='button']")) {
 			if (!isVisible(element)) continue;
 			const bounds = element.getBoundingClientRect();
-			const target = targetFor(element);
-			if (
-				bounds.left < 0 ||
-				bounds.right > root.clientWidth + 1 ||
-				bounds.top < 0 ||
-				bounds.bottom > root.clientHeight + 1
-			) {
+			const target = uniqueTarget(document, element);
+			if (!target) continue;
+			if (isClippedByAncestor(element, document.defaultView.getComputedStyle.bind(document.defaultView))) {
 				result.layouts.push({
-					detail: "interactive control is clipped outside the viewport",
+					detail: "interactive control is clipped by a clipping ancestor",
 					kind: "clipped",
 					scenario_id: result.id,
 					severity: "functional",
 					target,
 				});
 			}
-			const x = Math.min(Math.max(bounds.left + bounds.width / 2, 0), root.clientWidth - 1);
-			const y = Math.min(Math.max(bounds.top + bounds.height / 2, 0), root.clientHeight - 1);
-			const covering = document.elementFromPoint(x, y);
+			const x = bounds.left + bounds.width / 2;
+			const y = bounds.top + bounds.height / 2;
+			const covering =
+				x >= 0 && x < root.clientWidth && y >= 0 && y < root.clientHeight
+					? document.elementFromPoint(x, y)
+					: null;
 			if (covering && covering !== element && !element.contains(covering)) {
+				const coveringTarget = meaningfulTarget(covering) || covering.tagName.toLowerCase();
 				result.layouts.push({
-					detail: `interactive control is covered by ${targetFor(covering)}`,
+					detail: `interactive control is covered by ${coveringTarget}`,
 					kind: "covered",
 					scenario_id: result.id,
 					severity: "functional",
@@ -151,6 +224,8 @@ function recordLayout(result) {
 		}
 		for (const element of document.querySelectorAll(".control-label, .page-title, button")) {
 			if (!isVisible(element)) continue;
+			const target = uniqueTarget(document, element);
+			if (!target) continue;
 			const style = document.defaultView.getComputedStyle(element);
 			const horizontallyClipped =
 				element.scrollWidth > element.clientWidth + 1 && ["hidden", "clip"].includes(style.overflowX);
@@ -162,7 +237,7 @@ function recordLayout(result) {
 					kind: "clipped",
 					scenario_id: result.id,
 					severity: "functional",
-					target: targetFor(element),
+					target,
 				});
 			} else if (element.classList.contains("control-label")) {
 				const lineHeight = Number.parseFloat(style.lineHeight);
@@ -172,7 +247,7 @@ function recordLayout(result) {
 						kind: "wrapping",
 						scenario_id: result.id,
 						severity: "cosmetic",
-						target: targetFor(element),
+						target,
 					});
 				}
 			}
@@ -190,8 +265,11 @@ function installLookupRecorder() {
 }
 
 function locateRenderedLookup(document, rendered, scenario) {
-	if (typeof rendered !== "string" || !rendered) return null;
+	if (typeof rendered !== "string" || !rendered) {
+		return { excluded: false, exclusionId: null, renderStatus: "unrendered", target: "body[data-route]" };
+	}
 	const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+	const matches = new Set();
 	while (walker.nextNode()) {
 		const node = walker.currentNode;
 		if (!node.nodeValue.includes(rendered) || !node.parentElement) continue;
@@ -200,128 +278,221 @@ function locateRenderedLookup(document, rendered, scenario) {
 		if (style.display === "none" || style.visibility === "hidden" || element.getClientRects().length === 0) {
 			continue;
 		}
-		for (const exclusion of scenario.expected_exclusions) {
-			if (element.closest(exclusion.target)) {
-				return { excluded: true, exclusionId: exclusion.id, target: exclusion.target };
-			}
-		}
-		if (element.closest("[data-fieldname]")) {
-			const field = element.closest("[data-fieldname]").dataset.fieldname;
-			return { excluded: false, exclusionId: null, target: `[data-fieldname="${CSS.escape(field)}"]` };
-		}
-		if (element.closest("[role]")) {
-			const role = element.closest("[role]").getAttribute("role");
-			return { excluded: false, exclusionId: null, target: `[role="${CSS.escape(role)}"]` };
-		}
-		return { excluded: false, exclusionId: null, target: element.tagName.toLowerCase() };
+		matches.add(element);
 	}
-	return null;
+	if (matches.size !== 1) {
+		return {
+			excluded: false,
+			exclusionId: null,
+			renderStatus: matches.size ? "ambiguous" : "unrendered",
+			target: matches.size ? `body[data-route]:ambiguous:${matches.size}` : "body[data-route]",
+		};
+	}
+	const [element] = matches;
+	for (const exclusion of scenario.expected_exclusions) {
+		if (element.closest(exclusion.target)) {
+			return {
+				excluded: true,
+				exclusionId: exclusion.id,
+				renderStatus: "unique",
+				target: exclusion.target,
+			};
+		}
+	}
+	const target = uniqueTarget(document, element);
+	if (!target) {
+		return {
+			excluded: false,
+			exclusionId: null,
+			renderStatus: "ambiguous",
+			target: "body[data-route]:ambiguous-locator",
+		};
+	}
+	return {
+		excluded: false,
+		exclusionId: null,
+		renderStatus: "unique",
+		target,
+	};
 }
 
 function collectLookups(scenario, result) {
 	return cy.window().then((window) => {
 		const unique = new Map();
 		for (const lookup of window.__frappeLtLookups || []) {
-			unique.set(`${lookup.source}\u0000${lookup.context || ""}\u0000${lookup.rendered}`, lookup);
+			unique.set(`${lookup.raw_source}\u0000${lookup.context || ""}\u0000${lookup.rendered}`, lookup);
 		}
 		return cy.wrap([...unique.values()], { log: false }).each((lookup) => {
+			scenarioResults.get(scenario.id).resolvingLookup = true;
 			cy.runtimeCall("frappe_lt.runtime_control.resolve_translation", {
 				context: lookup.context,
+				lookup_path: "client",
 				run_id: plan.run_id,
 				scenario_id: scenario.id,
-				source: lookup.source,
+				source: lookup.raw_source,
 				token: plan.token,
 			}).then((response) => {
+				scenarioResults.get(scenario.id).resolvingLookup = false;
 				const resolved = response.body.message;
 				const location = locateRenderedLookup(window.document, lookup.rendered, scenario);
+				if (!resolved.active) scenarioResults.get(scenario.id).artifacts = [];
 				if (resolved.effective !== lookup.effective) {
-					throw new Error(`loaded dictionary disagrees with effective lookup for ${lookup.source}`);
+					throw new Error("loaded dictionary disagrees with effective translation lookup");
 				}
+				const evidence = lookupEvidence(resolved);
 				result.fallbacks.push({
-					effective: resolved.effective,
+					active: resolved.active,
+					effective: evidence.effective,
 					excluded: location?.excluded || false,
 					exclusion_id: location?.exclusionId || null,
-					key: resolved.key,
+					key: evidence.key,
+					raw_source: evidence.raw_source,
+					render_status: location.renderStatus,
 					scenario_id: scenario.id,
-					source: resolved.source,
-					target: { type: "locator", value: location?.target || "body[data-route]" },
-					visible: location !== null,
+					source: evidence.source,
+					target: {
+						type: "locator",
+						value:
+							!resolved.active && !location.excluded
+								? `diagnostic:${resolved.diagnostic_id}`
+								: location.target,
+					},
+					visible: location.renderStatus !== "unrendered",
 				});
 			});
 		});
 	});
 }
 
+function lookupEvidence(resolved) {
+	if (resolved.active) return resolved;
+	if (!/^hmac-sha256:[0-9a-f]{32}:[0-9a-f]{64}$/.test(resolved.diagnostic_id)) {
+		throw new Error("inactive translation lookup is missing its trusted diagnostic identifier");
+	}
+	return {
+		effective: resolved.diagnostic_id,
+		key: { context: null, source: resolved.diagnostic_id },
+		raw_source: resolved.diagnostic_id,
+		source: "missing",
+	};
+}
+
 function collectServerLookups(scenario, result, lookups, targetType, output) {
 	const unique = new Map();
+	const fixture = plan.fixtures[scenario.fixture_id] || {};
+	const outputValues = Array.isArray(fixture.output_values) ? fixture.output_values : [];
+	const approvedValues = {
+		"output:fixture-values": [...outputValues, ...Object.values(fixture)].filter(
+			(value) =>
+				typeof value === "string" &&
+				(outputValues.includes(value) || value.startsWith(`frappe-lt-runtime-${plan.run_id}`))
+		),
+		"output:recipient": typeof fixture.user === "string" ? [fixture.user] : [],
+	};
 	for (const lookup of lookups) {
-		unique.set(`${lookup.key.source}\u0000${lookup.key.context || ""}`, lookup);
+		unique.set(`${lookup.raw_source}\u0000${lookup.key.context || ""}\u0000${lookup.effective}`, lookup);
 	}
 	return cy.wrap([...unique.values()], { log: false }).each((lookup) => {
+		scenarioResults.get(scenario.id).resolvingLookup = true;
 		cy.runtimeCall("frappe_lt.runtime_control.resolve_translation", {
 			context: lookup.key.context,
+			lookup_path: "server",
 			run_id: plan.run_id,
 			scenario_id: scenario.id,
-			source: lookup.key.source,
+			source: lookup.raw_source,
 			token: plan.token,
 		}).then((response) => {
+			scenarioResults.get(scenario.id).resolvingLookup = false;
 			const resolved = response.body.message;
-			const interval = renderedInterval(output, resolved.effective);
+			const correlation = correlateOutput(output, resolved.effective);
+			const exclusion = exactOutputExclusion(
+				output,
+				correlation,
+				scenario.expected_exclusions,
+				approvedValues
+			);
+			if (!resolved.active) scenarioResults.get(scenario.id).artifacts = [];
 			if (resolved.effective !== lookup.effective) {
-				throw new Error(`server output lookup disagrees with effective translation for ${lookup.key.source}`);
+				throw new Error("server output disagrees with effective translation lookup");
 			}
+			const evidence = lookupEvidence(resolved);
 			result.fallbacks.push({
-				effective: resolved.effective,
-				excluded: false,
-				exclusion_id: null,
-				key: resolved.key,
+				active: resolved.active,
+				effective: evidence.effective,
+				excluded: Boolean(exclusion),
+				exclusion_id: exclusion?.id || null,
+				key: evidence.key,
+				raw_source: evidence.raw_source,
+				render_status: correlation.renderStatus,
 				scenario_id: scenario.id,
-				source: resolved.source,
+				source: evidence.source,
 				target: {
 					type: "output_interval",
 					value:
-						interval === null
-							? `${targetType}:not-rendered`
-							: `${targetType}:${interval.start}-${interval.end}`,
+						correlation.renderStatus === "unique"
+							? `${targetType}:${correlation.interval.start}-${correlation.interval.end}`
+							: `${targetType}:${correlation.renderStatus}`,
 				},
-				visible: interval !== null,
+				visible: correlation.renderStatus !== "unrendered",
 			});
 		});
 	});
 }
 
-function renderedInterval(output, effective) {
-	const exact = output.indexOf(effective);
-	if (exact >= 0) return { start: exact, end: exact + effective.length };
-	const marker = "__FRAPPE_LT_RENDERED_VALUE__";
-	const template = effective
-		.replace(/\{[^{}]+\}/g, marker)
-		.replace(/%\([^)]+\)[#0 +\-]?\d*(?:\.\d+)?[a-zA-Z]/g, marker)
-		.replace(/%[sdif]/g, marker);
-	if (!template.includes(marker)) return null;
-	const pattern = template
-		.split(marker)
-		.map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-		.join("[\\s\\S]+?");
-	const match = new RegExp(pattern).exec(output);
-	return match ? { start: match.index, end: match.index + match[0].length } : null;
-}
-
 function loginFor(scenario) {
 	const credential = plan.credentials[scenario.role_profile_id];
 	if (!credential) throw new Error(`missing credentials for ${scenario.role_profile_id}`);
-	const bootstrap = scenario.kind === "portal" || scenario.kind === "email" ? "/me" : "/app";
+	const bootstrap = scenario.kind === "portal" || scenario.kind === "email" ? "/me" : "/desk";
 	cy.runtimeLogin(scenario);
 	return cy.visit(bootstrap);
 }
 
+function verifyReadiness(scenario, result, proof = {}) {
+	if (scenario.readiness.type === "route") {
+		const command =
+			scenario.kind === "desk"
+				? cy.get("body").should(($body) => {
+						expect($body.attr("data-route")).to.include(scenario.readiness.value);
+					})
+				: cy.location("pathname").should("eq", scenario.readiness.value);
+		return command.then(() => {
+			result.ready = true;
+		});
+	}
+	if (scenario.readiness.type === "output") {
+		return cy.then(() => {
+			if (typeof proof.output !== "string" || !proof.output) {
+				throw new Error(`output readiness ${scenario.readiness.value} was not proven`);
+			}
+			result.ready = true;
+		});
+	}
+	if (scenario.readiness.type === "api") {
+		return cy.runtimeCall(scenario.readiness.value, {
+			run_id: plan.run_id,
+			scenario_id: scenario.id,
+			token: plan.token,
+		}).then((response) => {
+			expect(response.status).to.be.within(200, 299);
+			result.ready = true;
+		});
+	}
+	throw new Error(`unsupported readiness type ${scenario.readiness.type}`);
+}
+
 for (const scenario of plan.scenarios) {
-	it(scenario.id, { defaultCommandTimeout: scenario.step_timeout_ms }, function () {
+	it(scenario.id, {
+		defaultCommandTimeout: scenario.step_timeout_ms,
+		pageLoadTimeout: scenario.step_timeout_ms,
+		requestTimeout: scenario.step_timeout_ms,
+		responseTimeout: scenario.step_timeout_ms,
+	}, function () {
 		const started = Date.now();
 		const result = emptyResult(scenario);
-		scenarioResults.set(scenario.id, { result, started });
+		scenarioResults.set(scenario.id, { artifacts: [], resolvingLookup: false, result, started });
 		cy.viewport(scenario.viewport.width, scenario.viewport.height);
 		loginFor(scenario);
+		cy.then(() => checkDeadline(scenario, started));
 
 		if (scenario.kind === "email") {
 			const user = plan.fixtures[scenario.fixture_id].user;
@@ -331,8 +502,13 @@ for (const scenario of plan.scenarios) {
 				token: plan.token,
 				user,
 			}).then((response) => {
-				expect(response.body.message.output).to.include("MIME-Version");
-				result.ready = true;
+				if (!response.body.message.output.includes("MIME-Version")) {
+					throw new Error("captured email is not a MIME message");
+				}
+				if (typeof response.body.message.subject !== "string" || !response.body.message.subject) {
+					throw new Error("captured email subject is unavailable");
+				}
+				verifyReadiness(scenario, result, { output: response.body.message.visible_output });
 				collectServerLookups(
 					scenario,
 					result,
@@ -341,6 +517,12 @@ for (const scenario of plan.scenarios) {
 					response.body.message.visible_output
 				);
 				cy.then(() => {
+					checkDeadline(scenario, started);
+					if (!result.fallbacks.some((finding) => !finding.active)) {
+						scenarioResults.get(scenario.id).artifacts = [
+							{ content: response.body.message.output, kind: "email", mime: "text/plain" },
+						];
+					}
 					finishScenario(scenario, result, started);
 				});
 			});
@@ -349,46 +531,46 @@ for (const scenario of plan.scenarios) {
 
 		if (scenario.kind === "print") {
 			const fixture = plan.fixtures[scenario.fixture_id];
-			const route = `/printview?doctype=Sales%20Invoice&name=${encodeURIComponent(fixture.name)}`;
 			let printCapture;
 			cy.runtimeCall("frappe_lt.runtime_control.capture_print", {
-				doctype: "Sales Invoice",
+				doctype: fixture.doctype,
 				name: fixture.name,
 				run_id: plan.run_id,
 				scenario_id: scenario.id,
 				token: plan.token,
 			}).then((capture) => {
 				printCapture = capture.body.message;
-			});
-			cy.request({ failOnStatusCode: false, url: route }).then((response) => {
-				if (response.status >= 400) {
-					result.status = "blocked";
-					result.blocked_reason = `print route returned HTTP ${response.status}`;
-					finishScenario(scenario, result, started);
-					return;
-				}
-				cy.visit(route);
-				cy.get("body").should("be.visible");
-				cy.then(() => {
-					result.ready = true;
-				});
+				expect(printCapture.status).to.eq(200);
+				expect(printCapture.suppressed_access_logs).to.eq(1);
 				cy.document().then((document) => {
-					collectServerLookups(
-						scenario,
-						result,
-						printCapture.lookups,
-						"print:visible-text",
-						document.body.innerText
-					);
+					document.open();
+					document.write(printCapture.html);
+					document.close();
 				});
+				cy.get("body").should("be.visible");
+				verifyReadiness(scenario, result, { output: printCapture.html });
+				collectServerLookups(
+					scenario,
+					result,
+					printCapture.lookups,
+					"print:http-body",
+					printCapture.html
+				);
 				recordLayout(result);
 				cy.then(() => {
+					checkDeadline(scenario, started);
+					if (!result.fallbacks.some((finding) => !finding.active)) {
+						scenarioResults.get(scenario.id).artifacts = [
+							{ content: printCapture.html, kind: "print", mime: "text/html" },
+						];
+					}
 					finishScenario(scenario, result, started);
 				});
 			});
 			return;
 		}
 
+		let portalArtifact = null;
 		const route = scenario.target.route.replace(
 			"{fixture.item_name}",
 			plan.fixtures[scenario.fixture_id]?.item_name || ""
@@ -401,47 +583,43 @@ for (const scenario of plan.scenarios) {
 				return;
 			}
 			if (scenario.kind === "desk") {
-				cy.visit("/app", { onBeforeLoad: armLookupRecorder });
+				cy.visit("/desk", { onBeforeLoad: armLookupRecorder });
 			} else {
 				cy.visit(route);
 			}
 			if (scenario.kind === "desk") {
 				cy.get("body").should("have.attr", "data-ajax-state", "complete");
 				installLookupRecorder();
-				cy.window().then((window) => window.frappe.set_route(route.replace(/^\/app\/?/, "")));
+				cy.window().then((window) => window.frappe.set_route(route.replace(/^\/desk\/?/, "")));
 				cy.get("body").should("have.attr", "data-ajax-state", "complete");
-				cy.get("body").should(($body) => {
-					expect($body.attr("data-route")).to.include(scenario.readiness.value);
-				});
-				cy.then(() => {
-					result.ready = true;
-				});
+				verifyReadiness(scenario, result);
 				collectLookups(scenario, result);
 			} else {
 				cy.get("body").should("be.visible");
-				cy.location("pathname").should("eq", scenario.readiness.value);
-				cy.then(() => {
-					result.ready = true;
-				});
+				verifyReadiness(scenario, result);
 				cy.runtimeCall("frappe_lt.runtime_control.capture_portal", {
 					route,
 					run_id: plan.run_id,
 					scenario_id: scenario.id,
 					token: plan.token,
 				}).then((response) => {
-					cy.document().then((document) => {
-						collectServerLookups(
-							scenario,
-							result,
-							response.body.message.lookups,
-							"portal:visible-text",
-							document.body.innerText
-						);
-					});
+					expect(response.body.message.status).to.eq(200);
+					portalArtifact = { content: response.body.message.html, kind: "portal", mime: "text/html" };
+					collectServerLookups(
+						scenario,
+						result,
+						response.body.message.lookups,
+						"portal:http-body",
+						response.body.message.html
+					);
 				});
 			}
 			recordLayout(result);
 			cy.then(() => {
+				checkDeadline(scenario, started);
+				if (portalArtifact && !result.fallbacks.some((finding) => !finding.active)) {
+					scenarioResults.get(scenario.id).artifacts = [portalArtifact];
+				}
 				finishScenario(scenario, result, started);
 			});
 		});
@@ -456,10 +634,21 @@ afterEach(function () {
 			const recorded = scenarioResults.get(scenario.id);
 			const result = recorded?.result || emptyResult(scenario);
 			result.duration_ms = recorded ? Date.now() - recorded.started : 0;
-			result.blocked_reason = null;
-			result.error = redactError(this.currentTest.err?.message || "Cypress assertion failed");
-			result.status = "fail";
-			cy.task("runtime:record", result);
+			const error = recorded?.resolvingLookup
+				? "runtime translation lookup request failed"
+				: redactError(this.currentTest.err?.message || "Cypress assertion failed");
+			const blocked = !result.ready || error.includes("scenario exceeded");
+			result.blocked_reason = blocked ? error : null;
+			result.error = blocked ? null : error;
+			result.status = blocked ? "blocked" : "fail";
+			const attempt = result.attempts[result.attempts.length - 1];
+			attempt.duration_ms = result.duration_ms;
+			attempt.error = error;
+			attempt.outcome = blocked ? "blocked" : "assertion_failure";
+			const artifacts = result.fallbacks.some((finding) => !finding.active)
+				? []
+				: recorded?.artifacts || [];
+			return publishScenario(scenario, result, artifacts);
 		}
 	}
 });

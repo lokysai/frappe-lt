@@ -1,5 +1,6 @@
 import fcntl
 import hashlib
+import hmac
 import json
 import os
 import re
@@ -7,20 +8,38 @@ import secrets
 import threading
 import time
 from contextlib import contextmanager
+from datetime import date, datetime
+from datetime import time as datetime_time
+from functools import lru_cache
 from pathlib import Path
 
-from frappe_lt.inventory import _json_object, canonical_json
+from frappe_lt.inventory import COMPATIBILITY_PATH, _json_object, canonical_json, load_compatibility
 
 JOURNAL_SCHEMA_VERSION = 2
 RUN_MARKER_PREFIX = "frappe-lt-runtime-"
+RUNTIME_DISPLAY_NAME = "Frappe LT Runtime"
 MAX_CAPTURE_BYTES = 8 * 1024 * 1024
 MAX_CAPTURE_LOOKUPS = 5000
 LOGIN_USER_FIELDS = ("last_active", "last_ip", "last_login")
 _EMAIL_CAPTURE_LOCK = threading.Lock()
 _LOGIN_LOCK = threading.Lock()
+_PRINT_CAPTURE_LOCK = threading.Lock()
 
 
-def redact_sensitive(value: object) -> str:
+def _runtime_default_value_name(marker: str, user: str, key: str) -> str:
+	digest = hashlib.sha256(f"{user}\0{key}".encode()).hexdigest()
+	return f"{marker}-default-{digest}"
+
+
+def _login_user_state(frappe, user: str) -> dict:
+	values = dict(frappe.db.get_value("User", user, LOGIN_USER_FIELDS, as_dict=True))
+	return {
+		key: str(value) if isinstance(value, date | datetime | datetime_time) else value
+		for key, value in values.items()
+	}
+
+
+def redact_sensitive(value: object, *, max_chars: int = 2048) -> str:
 	text = str(value)
 	text = re.sub(
 		r"(?i)\b(authorization\s*:\s*)(?:bearer\s+)?[^\s,;}]+",
@@ -29,15 +48,34 @@ def redact_sensitive(value: object) -> str:
 	)
 	text = re.sub(r"(?i)\b((?:set-)?cookie\s*:\s*)[^\r\n]+", r"\1[REDACTED]", text)
 	text = re.sub(
-		r"""(?ix)(["']?(?:password|pwd|token)["']?\s*[:=]\s*)(["'])(.*?)\2""",
+		r"""(?ix)(["']?(?:password|pwd|token|csrf_token|api_key|api_secret|access_token|reset_token)["']?\s*[:=]\s*)(["'])(.*?)\2""",
 		r"\1\2[REDACTED]\2",
 		text,
 	)
-	return re.sub(
-		r"(?i)\b(password|pwd|token)\b\s*[:=]\s*[^\s,;}]+",
+	text = re.sub(
+		r"(?i)\b(password|pwd|token|csrf_token|api_key|api_secret|access_token|reset_token|key|sid)\b\s*[:=]\s*[^\s,;}<>&\"']+",
 		r"\1=[REDACTED]",
 		text,
-	)[:2048]
+	)
+	text = re.sub(
+		r"(?i)([?&](?:key|token|csrf_token|api_key|api_secret|access_token|reset_token)=)[^&\s<>\"']+",
+		r"\1[REDACTED]",
+		text,
+	)
+	text = re.sub(
+		r"(?i)((?:%3f|%26)(?:key|token|csrf_token|api_key|api_secret|access_token|reset_token)%3d)[^%\s<>\"']+",
+		r"\1[REDACTED]",
+		text,
+	)
+	text = re.sub(
+		r"""(?ix)((?:data-)?(?:csrf[-_]token|api[-_]key|api[-_]secret|access[-_]token|reset[-_]token)=["'])[^"']*""",
+		r"\1[REDACTED]",
+		text,
+	)
+	text = re.sub(r"(?i)\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b", "[REDACTED]", text)
+	text = re.sub(r"(?i)\b[A-Z0-9._+-]+%40[A-Z0-9.-]+(?:\.|%2e)[A-Z]{2,}\b", "[REDACTED]", text)
+	text = re.sub(r"(?i)frappe-lt-runtime-[0-9a-f]{32}[A-Za-z0-9@._:-]*", "[REDACTED]", text)
+	return text[:max_chars]
 
 
 def _write_durable(path: Path, value: dict) -> None:
@@ -159,6 +197,7 @@ class SiteControl:
 		self.lock_path = self.root / "mutable.lock"
 		self.operation_lock_path = self.root / "operation.lock"
 		self.secret_path = self.root / f"{run_id}.browser.json"
+		self.evidence_secret_path = self.root / f"{run_id}.evidence.json"
 		self.journal = None
 		self.recoveries = []
 
@@ -197,16 +236,42 @@ class SiteControl:
 
 	@contextmanager
 	def suppress_process_effects(self):
-		effects = {"enqueue": [], "mail": []}
+		effects = {"enqueue": [], "mail": [], "share": []}
 		original_enqueue = self.frappe.enqueue
 		original_sendmail = self.frappe.sendmail
+		share = getattr(self.frappe, "share", None)
+		original_add_docshare = getattr(share, "add_docshare", None)
 		self.frappe.enqueue = lambda *args, **kwargs: effects["enqueue"].append((args, kwargs))
 		self.frappe.sendmail = lambda *args, **kwargs: effects["mail"].append((args, kwargs))
+		if original_add_docshare is not None:
+			share.add_docshare = lambda *args, **kwargs: effects["share"].append((args, kwargs))
 		try:
 			yield effects
 		finally:
 			self.frappe.enqueue = original_enqueue
 			self.frappe.sendmail = original_sendmail
+			if original_add_docshare is not None:
+				share.add_docshare = original_add_docshare
+
+	@contextmanager
+	def journal_default_writes(self, user: str):
+		writes = {"add": [], "clear": []}
+		original_add_default = self.frappe.defaults.add_default
+		original_clear_default = self.frappe.defaults.clear_default
+
+		def add_default(key, value, parent, parenttype=None):
+			if parent != user:
+				raise RuntimeError("test identity creation attempted a default write for another owner")
+			writes["add"].append((key, value, parent, parenttype))
+			self._create_role_profile_defaults(parent, {key: value})
+
+		self.frappe.defaults.add_default = add_default
+		self.frappe.defaults.clear_default = lambda *args, **kwargs: writes["clear"].append((args, kwargs))
+		try:
+			yield writes
+		finally:
+			self.frappe.defaults.add_default = original_add_default
+			self.frappe.defaults.clear_default = original_clear_default
 
 	def recover_stale(self) -> list[dict]:
 		with self.operation(exclusive=True):
@@ -227,24 +292,32 @@ class SiteControl:
 				]
 			journal["state"] = "cleaning"
 			_write_durable(self.journal_path, journal)
-		stale_secret = self.root / f"{journal['run_id']}.browser.json"
-		try:
-			stale_secret.unlink(missing_ok=True)
-		except OSError as error:
-			with self.journal_lock():
-				journal = _load_journal(self.journal_path)
-				journal["state"] = "failed"
-				_write_durable(self.journal_path, journal)
-			return [
-				{
-					"error": f"could not revoke stale browser capability: {error}"[:2048],
-					"mutation_id": 0,
-					"target": {"doctype": "Runtime Browser Plan", "name": stale_secret.name},
-				}
-			]
-		failures = self._cleanup_login_effects(journal)
+		failures = []
+		stale_secrets = []
+		for suffix, doctype in (
+			("browser.json", "Runtime Browser Plan"),
+			("evidence.json", "Runtime Evidence Key"),
+		):
+			stale_secrets.append((self.root / f"{journal['run_id']}.{suffix}", doctype))
+			stale_secrets.extend(
+				(path, doctype) for path in sorted(self.root.glob(f".{journal['run_id']}.{suffix}.*.tmp"))
+			)
+		for stale_secret, doctype in stale_secrets:
+			try:
+				stale_secret.unlink(missing_ok=True)
+			except OSError as error:
+				failures.append(
+					{
+						"error": f"could not revoke stale runtime secret: {error}"[:2048],
+						"mutation_id": 0,
+						"target": {"doctype": doctype, "name": stale_secret.name},
+					}
+				)
+		failures.extend(self._cleanup_login_effects(journal))
 		failures.extend(self._restore(journal))
-		failures.extend(self.residue_scan(marker=f"{RUN_MARKER_PREFIX}{journal['run_id']}"))
+		failures.extend(
+			self._residue_failures(journal["run_id"], marker=f"{RUN_MARKER_PREFIX}{journal['run_id']}")
+		)
 		self.recoveries.append(
 			{
 				"cleanup_failures": failures,
@@ -342,10 +415,31 @@ class SiteControl:
 			values = self.journal["login_baseline"]["user_values"].get(user)
 			if values is None:
 				raise RuntimeError("runtime login user is not authorized by the journal")
-			values["after"] = dict(self.frappe.db.get_value("User", user, LOGIN_USER_FIELDS, as_dict=True))
+			values["after"] = _login_user_state(self.frappe, user)
 			_write_durable(self.journal_path, self.journal)
 
-	def prepare(self, profiles: dict, scenarios: dict) -> dict:
+	def _create_role_profile_defaults(self, user: str, defaults: dict) -> None:
+		for key, value in sorted(defaults.items()):
+			name = _runtime_default_value_name(self.marker, user, key)
+			self.before_document_mutation("DefaultValue", name)
+			document = self.frappe.get_doc(
+				{
+					"defkey": key,
+					"defvalue": value,
+					"doctype": "DefaultValue",
+					"parent": user,
+					"parentfield": "defaults",
+					"parenttype": "User",
+				}
+			)
+			document.name = name
+			document.flags.name_set = True
+			document.insert(ignore_permissions=True)
+		self.frappe.clear_cache(user=user)
+
+	def prepare(self, profiles: dict, scenarios: dict, *, diagnostic_sampling: bool = False) -> dict:
+		if not isinstance(diagnostic_sampling, bool):
+			raise ValueError("diagnostic_sampling must be boolean")
 		credentials = {}
 		fixtures = {}
 		fixture_ids = {
@@ -357,58 +451,161 @@ class SiteControl:
 					raise RuntimeError(
 						f"Runtime Role Profile {profile['id']!r} requires missing role {role!r}"
 					)
-		invoice = []
-		if "sales-invoice-existing" in fixture_ids:
-			invoice = self.frappe.get_all(
-				"Sales Invoice",
-				filters={"docstatus": 1},
-				pluck="name",
-				order_by="modified desc",
-				limit=1,
-			)
-			if not invoice:
-				raise RuntimeError("fixture sales-invoice-existing is unavailable")
-		customer = []
+		customer = None
+		customer_group = f"{self.marker}-customer-group"
+		territory = f"{self.marker}-territory"
 		if "portal-contact" in fixture_ids:
-			customer = self.frappe.get_all("Customer", pluck="name", order_by="modified desc", limit=1)
-			if not customer:
-				raise RuntimeError("fixture portal-contact requires an existing Customer")
+			for doctype, name, label_field, parent_field, parent in (
+				(
+					"Customer Group",
+					customer_group,
+					"customer_group_name",
+					"parent_customer_group",
+					"All Customer Groups",
+				),
+				(
+					"Territory",
+					territory,
+					"territory_name",
+					"parent_territory",
+					"All Territories",
+				),
+			):
+				if not self.frappe.db.exists(doctype, parent):
+					self.before_document_mutation(doctype, parent)
+					root = self.frappe.get_doc(
+						{
+							"doctype": doctype,
+							"is_group": 1,
+							label_field: parent,
+						}
+					)
+					root.name = parent
+					root.flags.name_set = True
+					with self.suppress_process_effects() as effects:
+						root.insert(ignore_permissions=True)
+					if any(effects.values()):
+						raise RuntimeError(f"fixture root {doctype} attempted an external side effect")
+				if not self.frappe.db.get_value(doctype, parent, "is_group"):
+					raise RuntimeError(f"fixture portal-contact requires root {doctype} {parent!r}")
+				self.before_document_mutation(doctype, name)
+				document = self.frappe.get_doc(
+					{
+						"doctype": doctype,
+						"is_group": 0,
+						label_field: name,
+						parent_field: parent,
+					}
+				)
+				document.name = name
+				document.flags.name_set = True
+				with self.suppress_process_effects() as effects:
+					document.insert(ignore_permissions=True)
+				if any(effects.values()):
+					raise RuntimeError(f"fixture {doctype} attempted an external side effect")
+				actual = self.frappe.get_doc(doctype, name)
+				if actual.is_group or actual.get(parent_field) != parent:
+					raise RuntimeError(f"fixture portal-contact {doctype} does not match postconditions")
+			customer = f"{self.marker}-customer"
+			self.before_document_mutation("Customer", customer)
+			document = self.frappe.get_doc(
+				{
+					"customer_group": customer_group,
+					"customer_name": customer,
+					"customer_type": "Company",
+					"doctype": "Customer",
+					"territory": territory,
+				}
+			)
+			document.name = customer
+			document.flags.name_set = True
+			with self.suppress_process_effects() as effects:
+				document.insert(ignore_permissions=True)
+			if any(effects.values()):
+				raise RuntimeError("fixture Customer attempted an external side effect")
+			actual_customer = self.frappe.get_doc("Customer", customer)
+			if (
+				actual_customer.customer_name != customer
+				or actual_customer.customer_group != customer_group
+				or actual_customer.territory != territory
+			):
+				raise RuntimeError("fixture portal Customer does not match its exact postconditions")
 		if "item-draft" in fixture_ids:
-			for doctype, name in (("Item Group", "All Item Groups"), ("UOM", "Nos")):
-				if not self.frappe.db.exists(doctype, name):
-					raise RuntimeError(f"fixture item-draft requires {doctype} {name!r}")
+			if not self.frappe.db.exists("Item Group", "All Item Groups"):
+				self.before_document_mutation("Item Group", "All Item Groups")
+				root = self.frappe.get_doc(
+					{
+						"doctype": "Item Group",
+						"is_group": 1,
+						"item_group_name": "All Item Groups",
+					}
+				)
+				root.name = "All Item Groups"
+				root.flags.name_set = True
+				with self.suppress_process_effects() as effects:
+					root.insert(ignore_permissions=True)
+				if any(effects.values()):
+					raise RuntimeError("fixture root Item Group attempted an external side effect")
+			if not self.frappe.db.get_value("Item Group", "All Item Groups", "is_group"):
+				raise RuntimeError("fixture item-draft requires root Item Group 'All Item Groups'")
+			if not self.frappe.db.exists("UOM", "Nos"):
+				self.before_document_mutation("UOM", "Nos")
+				uom = self.frappe.get_doc(
+					{
+						"doctype": "UOM",
+						"enabled": 1,
+						"must_be_whole_number": 1,
+						"uom_name": "Nos",
+					}
+				)
+				uom.name = "Nos"
+				uom.flags.name_set = True
+				with self.suppress_process_effects() as effects:
+					uom.insert(ignore_permissions=True)
+				if any(effects.values()):
+					raise RuntimeError("fixture UOM attempted an external side effect")
+			uom_state = self.frappe.db.get_value(
+				"UOM", "Nos", ["enabled", "must_be_whole_number"], as_dict=True
+			)
+			if not uom_state or not uom_state.enabled or not uom_state.must_be_whole_number:
+				raise RuntimeError("fixture item-draft requires enabled whole-number UOM 'Nos'")
 
 		for profile in profiles["profiles"]:
 			if profile["administrator"]:
 				administrator = self.frappe.get_doc("User", "Administrator")
 				effective = self.frappe.defaults.get_defaults_for("Administrator")
+				expected_defaults = {**profile["defaults"], "time_zone": profile["time_zone"]}
 				if (
-					administrator.language != profile["language"]
+					administrator.default_app != profile["default_app"]
+					or administrator.time_zone != profile["time_zone"]
+					or administrator.language != profile["language"]
 					or administrator.module_profile != profile["module_profile"]
 					or administrator.user_type != profile["user_type"]
-					or {key: effective.get(key) for key in profile["defaults"]} != profile["defaults"]
+					or {key: effective.get(key) for key in expected_defaults} != expected_defaults
 				):
 					raise RuntimeError("Administrator does not match its Runtime Role Profile")
 				credentials[profile["id"]] = {"user": "Administrator"}
 				continue
 			user = f"{self.marker}-{profile['id']}@invalid.example"
 			password = secrets.token_urlsafe(24)
+			self.before_document_mutation("Notification Settings", user)
 			self.before_document_mutation("User", user)
-			with self.suppress_process_effects() as effects:
+			with (
+				self.suppress_process_effects() as effects,
+				self.journal_default_writes(user) as default_writes,
+			):
 				self.frappe.get_doc(
 					{
+						"default_app": profile["default_app"],
 						"doctype": "User",
 						"email": user,
-						"first_name": self.marker,
+						"first_name": RUNTIME_DISPLAY_NAME,
 						"language": profile["language"],
 						"module_profile": profile["module_profile"],
 						"new_password": password,
-						"defaults": [
-							{"defkey": key, "defvalue": value}
-							for key, value in sorted(profile["defaults"].items())
-						],
 						"roles": [{"role": role} for role in profile["roles"]],
 						"send_welcome_email": 0,
+						"time_zone": profile["time_zone"],
 						"user_type": profile["user_type"],
 					}
 				).insert(ignore_permissions=True)
@@ -419,59 +616,133 @@ class SiteControl:
 				raise RuntimeError("test identity creation attempted an unexpected queued effect")
 			if effects["mail"]:
 				raise RuntimeError("test identity creation attempted outbound mail")
+			if len(effects["share"]) != 1:
+				raise RuntimeError("test identity creation did not emit exactly one suppressible self-share")
+			expected_defaults = {**profile["defaults"], "time_zone": profile["time_zone"]}
+			expected_default_writes = {(key, value, user, None) for key, value in expected_defaults.items()}
+			if (
+				default_writes["clear"]
+				or len(set(default_writes["add"])) != len(default_writes["add"])
+				or set(default_writes["add"]) != expected_default_writes
+			):
+				raise RuntimeError("test identity creation attempted unexpected implicit default writes")
 			actual = self.frappe.get_doc("User", user)
 			effective = self.frappe.defaults.get_defaults_for(user)
 			if (
-				actual.language != profile["language"]
+				actual.default_app != profile["default_app"]
+				or actual.time_zone != profile["time_zone"]
+				or actual.language != profile["language"]
 				or actual.module_profile != profile["module_profile"]
 				or actual.user_type != profile["user_type"]
 				or sorted(role.role for role in actual.roles) != profile["roles"]
-				or {key: effective.get(key) for key in profile["defaults"]} != profile["defaults"]
+				or {key: effective.get(key) for key in expected_defaults} != expected_defaults
 			):
 				raise RuntimeError(f"test identity does not match Runtime Role Profile {profile['id']!r}")
 			if profile["portal_link"] is not None:
+				if customer is None:
+					raise RuntimeError("portal Runtime Role Profile requires portal-contact fixture")
+				contact_name = f"{self.marker}-contact"
 				contact = self.frappe.get_doc(
 					{
 						"doctype": profile["portal_link"]["doctype"],
 						"email_ids": [{"email_id": user, "is_primary": 1}],
-						"first_name": self.marker,
+						"first_name": RUNTIME_DISPLAY_NAME,
 						"links": [
 							{
 								"link_doctype": profile["portal_link"]["dynamic_link_doctype"],
-								"link_name": customer[0],
+								"link_name": customer,
 							}
 						],
 						"user": user,
 					}
 				)
-				contact.set_new_name()
+				contact.name = contact_name
+				contact.flags.name_set = True
 				self.before_document_mutation(contact.doctype, contact.name)
 				with self.suppress_process_effects() as effects:
 					contact.insert(ignore_permissions=True)
-				if effects["enqueue"] or effects["mail"]:
+				if any(effects.values()):
 					raise RuntimeError("portal identity creation attempted an external side effect")
+				actual_contact = self.frappe.get_doc("Contact", contact_name)
+				if (
+					actual_contact.user != user
+					or [(row.email_id, row.is_primary) for row in actual_contact.email_ids] != [(user, 1)]
+					or [(row.link_doctype, row.link_name) for row in actual_contact.links]
+					!= [(profile["portal_link"]["dynamic_link_doctype"], customer)]
+				):
+					raise RuntimeError("portal identity does not have its exact Contact and dynamic link")
+				fixtures["portal-contact"] = {
+					"contact": contact_name,
+					"customer": customer,
+					"customer_group": customer_group,
+					"territory": territory,
+					"user": user,
+				}
 			credentials[profile["id"]] = {"user": user}
 
 		if "item-draft" in fixture_ids:
 			name = self.marker
 			self.before_document_mutation("Item", name)
+			document = self.frappe.get_doc(
+				{
+					"doctype": "Item",
+					"item_code": name,
+					"item_name": name,
+					"item_group": "All Item Groups",
+					"stock_uom": "Nos",
+				}
+			)
+			document.name = name
+			document.flags.name_set = True
 			with self.suppress_process_effects() as effects:
-				self.frappe.get_doc(
-					{
-						"doctype": "Item",
-						"item_code": name,
-						"item_name": name,
-						"item_group": "All Item Groups",
-						"stock_uom": "Nos",
-					}
-				).insert(ignore_permissions=True)
-			if effects["enqueue"] or effects["mail"]:
+				document.insert(ignore_permissions=True)
+			if any(effects.values()):
 				raise RuntimeError("fixture item-draft attempted an external side effect")
+			actual = self.frappe.get_doc("Item", name)
+			if (
+				actual.docstatus != 0
+				or actual.item_code != name
+				or actual.item_name != name
+				or actual.item_group != "All Item Groups"
+				or actual.stock_uom != "Nos"
+			):
+				raise RuntimeError("fixture item-draft does not match its exact postconditions")
 			fixtures["item-draft"] = {"item_name": name}
-		if "sales-invoice-existing" in fixture_ids:
-			fixtures["sales-invoice-existing"] = {"name": invoice[0]}
-		if "portal-contact" in fixture_ids:
-			fixtures["portal-contact"] = {"customer": customer[0]}
+		if "todo-draft" in fixture_ids:
+			name = f"{self.marker}-todo"
+			due_date = date(2099, 12, 31)
+			self.before_document_mutation("ToDo", name)
+			document = self.frappe.get_doc(
+				{
+					"description": self.marker,
+					"doctype": "ToDo",
+					"date": due_date,
+					"priority": "Medium",
+					"status": "Open",
+				}
+			)
+			document.name = name
+			document.flags.name_set = True
+			with self.suppress_process_effects() as effects:
+				document.insert(ignore_permissions=True)
+			if any(effects.values()):
+				raise RuntimeError("fixture todo-draft attempted an external side effect")
+			actual = self.frappe.get_doc("ToDo", name)
+			if (
+				actual.docstatus != 0
+				or actual.description != self.marker
+				or actual.date != due_date
+				or actual.status != "Open"
+			):
+				raise RuntimeError("fixture todo-draft does not match its exact postconditions")
+			fixtures["todo-draft"] = {
+				"doctype": "ToDo",
+				"name": name,
+				"output_values": [
+					f"<div class='ql-snow'>{self.marker}</div>\n\t",
+					f"{due_date}\n\t",
+				],
+			}
 		fixtures["runtime-user"] = {"marker": self.marker}
 		if "portal-customer" in credentials:
 			fixtures["runtime-user"]["user"] = credentials["portal-customer"]["user"]
@@ -484,9 +755,7 @@ class SiteControl:
 				"user_values": {
 					user: {
 						"after": None,
-						"before": dict(
-							self.frappe.db.get_value("User", user, LOGIN_USER_FIELDS, as_dict=True)
-						),
+						"before": _login_user_state(self.frappe, user),
 					}
 					for user in login_users
 				},
@@ -494,16 +763,26 @@ class SiteControl:
 			}
 			_write_durable(self.journal_path, self.journal)
 		self.frappe.db.commit()
+		evidence_key = secrets.token_hex(32)
 		browser = {
 			"credentials": credentials,
+			"diagnostic_sampling": diagnostic_sampling,
 			"fixtures": fixtures,
 			"run_id": self.run_id,
-			"schema_version": 1,
+			"schema_version": 2,
 			"scenarios": scenarios["scenarios"],
 			"token": secrets.token_urlsafe(32),
 		}
+		_write_durable(
+			self.evidence_secret_path,
+			{"key": evidence_key, "run_id": self.run_id, "schema_version": 1},
+		)
 		_write_durable(self.secret_path, browser)
-		return {"browser_plan": str(self.secret_path), "fixtures": sorted(fixtures)}
+		return {
+			"browser_plan": str(self.secret_path),
+			"evidence_key": evidence_key,
+			"fixtures": sorted(fixtures),
+		}
 
 	def cleanup(self) -> list[dict]:
 		with self.operation(exclusive=True):
@@ -526,17 +805,29 @@ class SiteControl:
 			_write_durable(self.journal_path, self.journal)
 		failures = self._cleanup_login_effects(self.journal)
 		failures.extend(self._restore(self.journal))
-		try:
-			self.secret_path.unlink(missing_ok=True)
-		except OSError as error:
-			failures.append(
-				{
-					"error": f"could not revoke browser capability: {error}"[:2048],
-					"mutation_id": 0,
-					"target": {"doctype": "Runtime Browser Plan", "name": self.secret_path.name},
-				}
+		runtime_secrets = [
+			(self.secret_path, "Runtime Browser Plan"),
+			(self.evidence_secret_path, "Runtime Evidence Key"),
+		]
+		for suffix, doctype in (
+			("browser.json", "Runtime Browser Plan"),
+			("evidence.json", "Runtime Evidence Key"),
+		):
+			runtime_secrets.extend(
+				(path, doctype) for path in sorted(self.root.glob(f".{self.run_id}.{suffix}.*.tmp"))
 			)
-		failures.extend(self.residue_scan())
+		for path, doctype in runtime_secrets:
+			try:
+				path.unlink(missing_ok=True)
+			except OSError as error:
+				failures.append(
+					{
+						"error": f"could not revoke runtime secret: {error}"[:2048],
+						"mutation_id": 0,
+						"target": {"doctype": doctype, "name": path.name},
+					}
+				)
+		failures.extend(self._residue_failures(self.run_id))
 		if failures:
 			with self.journal_lock():
 				if self.journal_path.exists():
@@ -573,7 +864,7 @@ class SiteControl:
 				if values["after"] is None:
 					self.frappe.db.set_value("User", user, values["before"], update_modified=False)
 					continue
-				current = dict(self.frappe.db.get_value("User", user, LOGIN_USER_FIELDS, as_dict=True))
+				current = _login_user_state(self.frappe, user)
 				if current == values["before"]:
 					continue
 				if current != values["after"]:
@@ -620,8 +911,11 @@ class SiteControl:
 			target = mutation["target"]
 			queued = []
 			mailed = []
+			shared = []
 			original_enqueue = getattr(self.frappe, "enqueue", None)
 			original_sendmail = getattr(self.frappe, "sendmail", None)
+			share = getattr(self.frappe, "share", None)
+			original_add_docshare = getattr(share, "add_docshare", None)
 
 			def suppress_enqueue(*args, _queued=queued, **kwargs):
 				_queued.append((args, kwargs))
@@ -631,9 +925,14 @@ class SiteControl:
 
 			self.frappe.enqueue = suppress_enqueue
 			self.frappe.sendmail = suppress_sendmail
+			if original_add_docshare is not None:
+				share.add_docshare = lambda *args, _shared=shared, **kwargs: _shared.append((args, kwargs))
 			try:
+				default_parent = mutation["before"].get("parent") if mutation["before"] else None
 				if mutation["before"] is None:
 					if self.frappe.db.exists(target["doctype"], target["name"]):
+						if target["doctype"] == "DefaultValue":
+							default_parent = self.frappe.get_doc(target["doctype"], target["name"]).parent
 						self.frappe.delete_doc(
 							target["doctype"],
 							target["name"],
@@ -649,7 +948,10 @@ class SiteControl:
 					before = mutation["before"]
 					if self.frappe.db.exists(target["doctype"], target["name"]):
 						current = self.frappe.get_doc(target["doctype"], target["name"])
+						current_modified = getattr(current, "modified", None)
 						current.update(before)
+						if current_modified is not None:
+							current.modified = current_modified
 						current.save(ignore_permissions=True)
 					else:
 						self.frappe.get_doc(before).insert(ignore_permissions=True)
@@ -668,6 +970,8 @@ class SiteControl:
 							delete_dynamic_links(kwargs["doctype"], kwargs["name"])
 				if mailed:
 					raise RuntimeError("cleanup attempted outbound mail")
+				if default_parent is not None:
+					self.frappe.clear_cache(user=default_parent)
 				self.frappe.db.commit()
 			except Exception as error:
 				self.frappe.db.rollback()
@@ -687,12 +991,35 @@ class SiteControl:
 					del self.frappe.sendmail
 				else:
 					self.frappe.sendmail = original_sendmail
+				if original_add_docshare is not None:
+					share.add_docshare = original_add_docshare
 		return sorted(failures, key=lambda failure: failure["mutation_id"])
+
+	def _residue_failures(self, run_id: str, *, marker: str | None = None) -> list[dict]:
+		try:
+			return self.residue_scan(marker=marker)
+		except Exception as error:
+			return [
+				{
+					"error": str(error)[:2048],
+					"mutation_id": 0,
+					"target": {"doctype": "Runtime Residue Scan", "name": run_id},
+				}
+			]
 
 	def residue_scan(self, *, marker: str | None = None) -> list[dict]:
 		residue = []
 		marker = marker or self.marker
-		for doctype in ("Contact", "Item", "Notification Settings", "User"):
+		for doctype in (
+			"Contact",
+			"Customer",
+			"Customer Group",
+			"Item",
+			"Notification Settings",
+			"Territory",
+			"ToDo",
+			"User",
+		):
 			field = "name"
 			for name in self.frappe.get_all(
 				doctype, filters={field: ("like", f"{marker}%")}, pluck="name", order_by="name asc"
@@ -702,6 +1029,56 @@ class SiteControl:
 						"error": "run-marked record remains after cleanup",
 						"mutation_id": 0,
 						"target": {"doctype": doctype, "name": name},
+					}
+				)
+		for doctype, field in (
+			("Access Log", "reference_document"),
+			("Activity Log", "user"),
+			("Allowed To Transact With", "parent"),
+			("Block Module", "parent"),
+			("Communication", "reference_name"),
+			("Contact Email", "parent"),
+			("Contact Phone", "parent"),
+			("Customer Credit Limit", "parent"),
+			("DefaultValue", "parent"),
+			("DocShare", "user"),
+			("Dynamic Link", "parent"),
+			("Dynamic Link", "link_name"),
+			("Email Queue", "reference_name"),
+			("Email Queue Recipient", "recipient"),
+			("Has Role", "parent"),
+			("Item Barcode", "parent"),
+			("Item Customer Detail", "parent"),
+			("Item Default", "parent"),
+			("Item Reorder", "parent"),
+			("Item Supplier", "parent"),
+			("Item Tax", "parent"),
+			("Item Variant Attribute", "parent"),
+			("Notification Subscribed Document", "parent"),
+			("Notification Type Preference", "parent"),
+			("Party Account", "parent"),
+			("Portal User", "parent"),
+			("Sales Team", "parent"),
+			("Supplier Number At Customer", "parent"),
+			("UOM Conversion Detail", "parent"),
+			("User Email", "parent"),
+			("User Role Profile", "parent"),
+			("User Social Login", "parent"),
+		):
+			for row in self.frappe.get_all(
+				doctype,
+				filters={field: ("like", f"{marker}%")},
+				fields=["name", field],
+				order_by="name asc",
+			):
+				residue.append(
+					{
+						"error": "run-marked side effect remains after cleanup",
+						"mutation_id": 0,
+						"target": {
+							"doctype": doctype,
+							"name": row["name"] if isinstance(row, dict) else row,
+						},
 					}
 				)
 		for doctype, field in (("Deleted Document", "deleted_name"),):
@@ -725,7 +1102,47 @@ class SiteControl:
 					"target": {"doctype": "Sessions", "name": user},
 				}
 			)
-		return residue
+		for doctype, name in self.frappe.db.sql(
+			"select doctype, name from `__Auth` where name like %s order by doctype, name",
+			(f"{marker}%",),
+		):
+			residue.append(
+				{
+					"error": "run-marked authentication secret remains after cleanup",
+					"mutation_id": 0,
+					"target": {"doctype": f"__Auth/{doctype}", "name": name},
+				}
+			)
+		for pattern in (
+			"*.browser.json",
+			"*.evidence.json",
+			".*.browser.json.*.tmp",
+			".*.evidence.json.*.tmp",
+		):
+			for path in sorted(self.root.glob(pattern)):
+				residue.append(
+					{
+						"error": "runtime secret remains after cleanup",
+						"mutation_id": 0,
+						"target": {"doctype": "Runtime Secret", "name": path.name},
+					}
+				)
+		unique = {
+			(finding["error"], finding["target"]["doctype"], finding["target"]["name"]): finding
+			for finding in residue
+		}
+		return [unique[key] for key in sorted(unique)]
+
+
+def assert_no_runtime_residue() -> list:
+	"""Fail CI when any run-marked record, setting, session, or secret remains."""
+	import frappe
+
+	control = SiteControl(frappe, frappe.local.site, "0" * 32)
+	findings = control.residue_scan(marker=RUN_MARKER_PREFIX)
+	if findings:
+		raise RuntimeError(f"runtime cleanup residue remains: {findings}")
+	return []
 
 
 def _authorized_browser_plan(frappe, run_id: str, token: str) -> dict:
@@ -746,6 +1163,7 @@ def _authorized_browser_plan(frappe, run_id: str, token: str) -> dict:
 		raise frappe.PermissionError from error
 	if not isinstance(plan, dict) or set(plan) != {
 		"credentials",
+		"diagnostic_sampling",
 		"fixtures",
 		"run_id",
 		"schema_version",
@@ -759,7 +1177,8 @@ def _authorized_browser_plan(frappe, run_id: str, token: str) -> dict:
 	except ValueError as error:
 		raise frappe.PermissionError from error
 	if (
-		plan.get("schema_version") != 1
+		plan.get("schema_version") != 2
+		or not isinstance(plan.get("diagnostic_sampling"), bool)
 		or plan.get("run_id") != run_id
 		or journal["run_id"] != run_id
 		or journal["state"] != "active"
@@ -767,6 +1186,31 @@ def _authorized_browser_plan(frappe, run_id: str, token: str) -> dict:
 	):
 		raise frappe.PermissionError
 	return plan
+
+
+def _runtime_evidence_key(control: SiteControl) -> bytes:
+	try:
+		value = json.loads(control.evidence_secret_path.read_bytes(), object_pairs_hook=_json_object)
+	except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+		raise ValueError("runtime evidence key is unavailable") from error
+	if (
+		not isinstance(value, dict)
+		or set(value) != {"key", "run_id", "schema_version"}
+		or value["schema_version"] != 1
+		or value["run_id"] != control.run_id
+		or not isinstance(value["key"], str)
+		or not re.fullmatch(r"[0-9a-f]{64}", value["key"])
+	):
+		raise ValueError("runtime evidence key is invalid")
+	return bytes.fromhex(value["key"])
+
+
+def _diagnostic_id(key: bytes, scenario_id: str, *, nonce: str | None = None) -> str:
+	nonce = nonce or secrets.token_hex(16)
+	if len(key) != 32 or not re.fullmatch(r"[0-9a-f]{32}", nonce):
+		raise ValueError("runtime diagnostic inputs are invalid")
+	payload = f"{scenario_id}\0{nonce}".encode()
+	return f"hmac-sha256:{nonce}:" + hmac.new(key, payload, hashlib.sha256).hexdigest()
 
 
 def _authorized_scenario(
@@ -810,37 +1254,101 @@ def _validate_capture(lookups: list[dict], **outputs: str) -> None:
 		raise ValueError("captured runtime output exceeds its aggregate limit")
 
 
-def _resolve_effective(frappe, source: str, context: str | None) -> dict:
-	from frappe.translate import get_translations_from_apps, get_user_translations
+@lru_cache(maxsize=4)
+def _load_active_translation_keys(inventory_digest: str) -> frozenset[tuple[str, str | None]]:
+	path = COMPATIBILITY_PATH.with_name("release_inventory.json")
+	content = path.read_bytes()
+	if hashlib.sha256(content).hexdigest() != inventory_digest:
+		raise ValueError("Release Inventory digest mismatch")
+	inventory = json.loads(content, object_pairs_hook=_json_object)
+	if inventory.get("schema_version") != 1 or not isinstance(inventory.get("entries"), list):
+		raise ValueError("Release Inventory schema is invalid")
+	keys = []
+	for entry in inventory["entries"]:
+		key = entry.get("key") if isinstance(entry, dict) else None
+		if (
+			not isinstance(key, dict)
+			or set(key) != {"context", "source"}
+			or not isinstance(key["source"], str)
+			or not key["source"]
+			or key["source"] != key["source"].strip()
+			or (key["context"] is not None and not isinstance(key["context"], str))
+			or key["context"] == ""
+		):
+			raise ValueError("Release Inventory contains an invalid Translation Key")
+		keys.append((key["source"], key["context"]))
+	if len(keys) != len(set(keys)):
+		raise ValueError("Release Inventory contains duplicate Translation Keys")
+	return frozenset(keys)
 
-	source = frappe.as_unicode(source).strip()
-	if not source or context == "":
+
+def _active_translation_keys() -> frozenset[tuple[str, str | None]]:
+	manifest = load_compatibility()
+	return _load_active_translation_keys(manifest["inventory_digest"])
+
+
+def _active_translation_key(
+	source: str,
+	context: str | None,
+	active_keys: frozenset[tuple[str, str | None]],
+) -> tuple[str, str | None] | None:
+	contextual = (source, context)
+	if context is not None and contextual in active_keys:
+		return contextual
+	contextless = (source, None)
+	return contextless if contextless in active_keys else None
+
+
+def _resolve_effective(
+	frappe,
+	raw_source: str,
+	context: str | None,
+	*,
+	lookup_path: str = "server",
+	active_keys: frozenset[tuple[str, str | None]] | None = None,
+) -> dict:
+	from frappe.translate import get_all_translations, get_translations_from_apps, get_user_translations
+
+	raw_source = frappe.as_unicode(raw_source)
+	normalized_source = raw_source.strip()
+	if not normalized_source or context == "" or lookup_path not in {"client", "server"}:
 		raise ValueError("source must be nonempty and context must be nonempty or null")
-	lookup_key = f"{source}:{context}" if context else source
-	contextual = None
-	contextless = None
+	lookup_source = raw_source if lookup_path == "client" else normalized_source
+	contextual_key = f"{lookup_source}:{context}" if context else None
+	merged = get_all_translations("lt")
+	selected_key = contextual_key if contextual_key and merged.get(contextual_key) else None
+	if selected_key is None and merged.get(lookup_source):
+		selected_key = lookup_source
+	effective = merged[selected_key] if selected_key is not None else raw_source
+	origin = "merged" if selected_key is not None else "missing"
 	for app in ("frappe", "erpnext", "frappe_lt"):
 		dictionary = get_translations_from_apps("lt", apps=[app])
-		if dictionary.get(source):
-			contextless = (dictionary[source], app)
-		if context and dictionary.get(lookup_key):
-			contextual = (dictionary[lookup_key], app)
+		if selected_key is not None and dictionary.get(selected_key) == effective:
+			origin = app
 	database = get_user_translations("lt")
-	if database.get(source):
-		contextless = (database[source], "database")
-	if context and database.get(lookup_key):
-		contextual = (database[lookup_key], "database")
-	selected = contextual or contextless
-	effective, origin = selected if selected else (source, "missing")
+	if selected_key is not None and database.get(selected_key) == effective:
+		origin = "database"
+	active_key = _active_translation_key(
+		normalized_source,
+		context,
+		_active_translation_keys() if active_keys is None else active_keys,
+	)
 	return {
+		"active": active_key is not None,
 		"effective": effective,
-		"key": {"context": context, "source": source},
+		"key": {"context": context, "source": normalized_source},
+		"raw_source": raw_source,
 		"source": origin,
 	}
 
 
 def resolve_translation(
-	run_id: str, token: str, scenario_id: str, source: str, context: str | None = None
+	run_id: str,
+	token: str,
+	scenario_id: str,
+	source: str,
+	context: str | None = None,
+	lookup_path: str = "server",
 ) -> dict:
 	"""Resolve one effective Lithuanian lookup and identify its highest-precedence source."""
 	import frappe
@@ -854,11 +1362,15 @@ def resolve_translation(
 			not isinstance(context, str) or not context or len(context.encode()) > 4096
 		):
 			raise ValueError("translation context exceeds its input limit")
+		if lookup_path not in {"client", "server"}:
+			raise ValueError("translation lookup_path is invalid")
 		if scenario_id not in {scenario["id"] for scenario in plan["scenarios"]}:
 			raise frappe.PermissionError
 		scenario = next(scenario for scenario in plan["scenarios"] if scenario["id"] == scenario_id)
 		_authorized_scenario(frappe, plan, scenario_id, scenario["kind"])
-		result = _resolve_effective(frappe, source, context)
+		result = _resolve_effective(frappe, source, context, lookup_path=lookup_path)
+		if not result["active"]:
+			result["diagnostic_id"] = _diagnostic_id(_runtime_evidence_key(control), scenario_id)
 		_validate_capture([result])
 		return result
 
@@ -962,11 +1474,12 @@ def _capture_server_lookups(frappe):
 			previous(frame, event, value)
 		if event != "return" or frame.f_code is not translator_code or not isinstance(value, str):
 			return
-		source = frappe.as_unicode(
+		raw_source = frappe.as_unicode(
 			frame.f_locals.get("non_translated_string", frame.f_locals.get("msg", ""))
-		).strip()
+		)
+		source = raw_source.strip()
 		context = frame.f_locals.get("context")
-		lookup_bytes = len(source.encode()) + len(value.encode())
+		lookup_bytes = len(raw_source.encode()) + len(value.encode())
 		if context is not None:
 			lookup_bytes += len(frappe.as_unicode(context).encode())
 		budget["bytes"] += lookup_bytes
@@ -978,6 +1491,7 @@ def _capture_server_lookups(frappe):
 				{
 					"effective": value,
 					"key": {"context": context, "source": source},
+					"raw_source": raw_source,
 				}
 			)
 
@@ -990,10 +1504,62 @@ def _capture_server_lookups(frappe):
 		raise ValueError("server output translation lookups exceed their capture limit")
 
 
+def _capture_http_response(
+	frappe,
+	route: str,
+	*,
+	form_dict=None,
+	get_response=None,
+	access_log_module=None,
+) -> dict:
+	if get_response is None:
+		from frappe.website.serve import get_response
+
+	request_state = getattr(frappe, "local", frappe)
+	previous_form_dict = request_state.form_dict
+	suppressed_access_logs = []
+	if form_dict is not None:
+		request_state.form_dict = form_dict
+	try:
+		if access_log_module is None:
+			with _capture_server_lookups(frappe) as lookups:
+				response = get_response(route)
+		else:
+			with _PRINT_CAPTURE_LOCK:
+				original_access_log = access_log_module.make_access_log
+				capture_marker = object()
+				previous_capture_marker = getattr(request_state, "frappe_lt_runtime_print_capture", None)
+
+				def scoped_access_log(*args, **kwargs):
+					if getattr(request_state, "frappe_lt_runtime_print_capture", None) is capture_marker:
+						suppressed_access_logs.append((args, kwargs))
+						return None
+					return original_access_log(*args, **kwargs)
+
+				request_state.frappe_lt_runtime_print_capture = capture_marker
+				access_log_module.make_access_log = scoped_access_log
+				try:
+					with _capture_server_lookups(frappe) as lookups:
+						response = get_response(route)
+				finally:
+					access_log_module.make_access_log = original_access_log
+					request_state.frappe_lt_runtime_print_capture = previous_capture_marker
+	finally:
+		request_state.form_dict = previous_form_dict
+	body = response.get_data(as_text=True)
+	_validate_capture(lookups, body=body)
+	return {
+		"body": body,
+		"content_type": response.content_type or "",
+		"lookups": lookups,
+		"status": response.status_code,
+		"suppressed_access_logs": len(suppressed_access_logs),
+	}
+
+
 def capture_portal(run_id: str, token: str, scenario_id: str, route: str) -> dict:
 	"""Render one authorized portal route while recording its effective translation calls."""
 	import frappe
-	from frappe.website.serve import get_response_content
 
 	control = SiteControl(frappe, frappe.local.site, run_id)
 	with control.operation():
@@ -1001,10 +1567,9 @@ def capture_portal(run_id: str, token: str, scenario_id: str, route: str) -> dic
 		scenario = _authorized_scenario(frappe, plan, scenario_id, "portal")
 		if not isinstance(route, str) or route != scenario["target"]["route"]:
 			raise frappe.PermissionError
-		with _capture_server_lookups(frappe) as lookups:
-			html = get_response_content(route)
-		_validate_capture(lookups, html=html)
-		return {"html": html, "lookups": lookups}
+		captured = _capture_http_response(frappe, route, form_dict=frappe._dict())
+		captured["html"] = captured.pop("body")
+		return captured
 
 
 def capture_welcome_email(run_id: str, token: str, scenario_id: str, user: str) -> dict:
@@ -1016,51 +1581,38 @@ def capture_welcome_email(run_id: str, token: str, scenario_id: str, user: str) 
 		return _capture_welcome_email_locked(frappe, control, run_id, token, scenario_id, user)
 
 
-def _capture_welcome_email_locked(
-	frappe, control: SiteControl, run_id: str, token: str, scenario_id: str, user: str
-) -> dict:
-	plan = _authorized_browser_plan(frappe, run_id, token)
-	scenario = _authorized_scenario(frappe, plan, scenario_id, "email")
-	expected_user = plan["fixtures"].get(scenario["fixture_id"], {}).get("user")
-	if user != expected_user or user == "Administrator":
-		raise frappe.PermissionError
-	captured = []
-	lookups = []
-	from frappe.email.doctype.email_queue.email_queue import QueueBuilder
-
-	def intercept_process(builder, send_now=False):
-		captured.append(builder.as_dict())
-		return None
-
-	control.journal = _load_journal(control.journal_path)
-	control.before_document_mutation("User", user)
-	with _EMAIL_CAPTURE_LOCK:
-		original_process = QueueBuilder.process
-
-		def scoped_process(builder, send_now=False):
-			if getattr(frappe.local, "frappe_lt_runtime_email_capture", None) == run_id:
-				return intercept_process(builder, send_now)
-			return original_process(builder, send_now)
-
-		frappe.local.frappe_lt_runtime_email_capture = run_id
-		QueueBuilder.process = scoped_process
-		try:
-			with _capture_server_lookups(frappe) as lookups:
-				frappe.get_doc("User", user).send_welcome_mail_to_user()
-		finally:
-			QueueBuilder.process = original_process
-			frappe.local.frappe_lt_runtime_email_capture = None
-	if len(captured) != 1:
-		raise RuntimeError(f"welcome action emitted {len(captured)} outbound messages instead of one")
-	message = captured[0]
-	output = message.get("message") or ""
-	subject = message.get("subject") or ""
+def _redact_email_output(output: str) -> str:
 	from email import policy
 	from email.parser import Parser
 
-	from frappe.utils import strip_html
+	def redact(value: str) -> str:
+		return re.sub(
+			r"(?i)(/update-password\?key=)[^&\s<>\"']+",
+			r"\1[REDACTED]",
+			value,
+		)
 
 	parsed = Parser(policy=policy.default).parsestr(output)
+	if parsed["Subject"] is not None:
+		parsed.replace_header("Subject", redact(str(parsed["Subject"])))
+	parts = list(parsed.walk()) if parsed.is_multipart() else [parsed]
+	for part in parts:
+		if part.get_content_disposition() == "attachment" or part.get_content_maintype() != "text":
+			continue
+		try:
+			content = part.get_content()
+		except (LookupError, UnicodeError) as error:
+			raise ValueError("captured email contains undecodable text") from error
+		part.set_content(redact(content), subtype=part.get_content_subtype(), charset="utf-8")
+	return parsed.as_string(policy=policy.SMTP)
+
+
+def _email_visible_output(output: str) -> tuple[str, str]:
+	from email import policy
+	from email.parser import Parser
+
+	parsed = Parser(policy=policy.default).parsestr(output)
+	subject = str(parsed["Subject"] or "")
 	parts = list(parsed.walk()) if parsed.is_multipart() else [parsed]
 	visible_parts = []
 	for part in parts:
@@ -1070,12 +1622,109 @@ def _capture_welcome_email_locked(
 		}:
 			continue
 		content = part.get_content()
-		visible_parts.append(strip_html(content) if part.get_content_type() == "text/html" else content)
-	visible_output = "\n".join([subject, *visible_parts])
+		if part.get_content_type() == "text/html":
+			from frappe.utils import strip_html
+
+			content = strip_html(content)
+		visible_parts.append(content)
+	return subject, "\n".join([subject, *visible_parts])
+
+
+def _finalize_recipient_message(frappe, builder, recipient: str, send_mail_context) -> dict:
+	message = builder.as_dict()
+	if message is None:
+		raise RuntimeError("welcome action did not build an outbound message")
+	recipients = message.get("recipients") or []
+	if recipients != [recipient]:
+		raise RuntimeError("welcome action did not target exactly its run-owned recipient")
+	if json.loads(message.get("attachments") or "[]"):
+		raise RuntimeError("welcome action unexpectedly included attachments")
+	queue = frappe.new_doc("Email Queue")
+	queue.update({key: value for key, value in message.items() if key != "recipients"})
+	queue.set_recipients(recipients)
+	final = send_mail_context(queue).build_message(recipient)
+	message["message"] = frappe.safe_decode(final)
+	return message
+
+
+def _capture_welcome_email_locked(
+	frappe, control: SiteControl, run_id: str, token: str, scenario_id: str, user: str
+) -> dict:
+	plan = _authorized_browser_plan(frappe, run_id, token)
+	scenario = _authorized_scenario(frappe, plan, scenario_id, "email")
+	expected_user = plan["fixtures"].get(scenario["fixture_id"], {}).get("user")
+	if user != expected_user or user == "Administrator":
+		raise frappe.PermissionError
+	queue_before = set(
+		frappe.get_all(
+			"Email Queue Recipient",
+			filters={"recipient": user},
+			pluck="parent",
+			order_by="parent asc",
+		)
+	)
+	captured = []
+	lookups = []
+	enqueued = []
+	from frappe.email.doctype.email_queue.email_queue import QueueBuilder, SendMailContext
+
+	def intercept_process(builder, send_now=False):
+		captured.append(_finalize_recipient_message(frappe, builder, user, SendMailContext))
+		return None
+
+	control.journal = _load_journal(control.journal_path)
+	control.before_document_mutation("User", user)
+	with _EMAIL_CAPTURE_LOCK:
+		original_process = QueueBuilder.process
+		original_enqueue = frappe.enqueue
+		previous_mute = frappe.flags.mute_emails
+		previous_capture_marker = getattr(frappe.local, "frappe_lt_runtime_email_capture", None)
+
+		def scoped_process(builder, send_now=False):
+			if getattr(frappe.local, "frappe_lt_runtime_email_capture", None) == run_id:
+				return intercept_process(builder, send_now)
+			return original_process(builder, send_now)
+
+		def scoped_enqueue(*args, **kwargs):
+			if getattr(frappe.local, "frappe_lt_runtime_email_capture", None) == run_id:
+				enqueued.append((args, kwargs))
+				return None
+			return original_enqueue(*args, **kwargs)
+
+		frappe.local.frappe_lt_runtime_email_capture = run_id
+		frappe.flags.mute_emails = True
+		frappe.enqueue = scoped_enqueue
+		QueueBuilder.process = scoped_process
+		try:
+			with _capture_server_lookups(frappe) as lookups:
+				frappe.get_doc("User", user).send_welcome_mail_to_user()
+		finally:
+			QueueBuilder.process = original_process
+			frappe.enqueue = original_enqueue
+			frappe.flags.mute_emails = previous_mute
+			frappe.local.frappe_lt_runtime_email_capture = previous_capture_marker
+	if len(captured) != 1:
+		raise RuntimeError(f"welcome action emitted {len(captured)} outbound messages instead of one")
+	if enqueued:
+		raise RuntimeError(f"welcome action attempted {len(enqueued)} queued effects")
+	queue_after = set(
+		frappe.get_all(
+			"Email Queue Recipient",
+			filters={"recipient": user},
+			pluck="parent",
+			order_by="parent asc",
+		)
+	)
+	if queue_after != queue_before:
+		raise RuntimeError("welcome action left a durable Email Queue effect")
+	message = captured[0]
+	output = _redact_email_output(message.get("message") or "")
+	subject, visible_output = _email_visible_output(output)
 	result = {
 		"lookups": lookups,
 		"output": output,
 		"subject": subject,
+		"suppressed": {"email_queue": 0, "enqueue": 0, "outbound": 1},
 		"visible_output": visible_output,
 	}
 	_validate_capture(result["lookups"], output=output, subject=subject)
@@ -1088,22 +1737,39 @@ def _capture_welcome_email_locked(
 def capture_print(run_id: str, token: str, scenario_id: str, doctype: str, name: str) -> dict:
 	"""Run Frappe's final print action while recording request-process lookups."""
 	import frappe
+	import frappe.www.printview as printview
 
 	control = SiteControl(frappe, frappe.local.site, run_id)
 	with control.operation():
 		plan = _authorized_browser_plan(frappe, run_id, token)
 		_authorized_scenario(frappe, plan, scenario_id, "print")
 		allowed = {
-			("Sales Invoice", fixture["name"])
+			(fixture["doctype"], fixture["name"])
 			for fixture_id, fixture in plan["fixtures"].items()
-			if fixture_id == "sales-invoice-existing"
+			if fixture_id == "todo-draft"
 		}
 		if (doctype, name) not in allowed:
 			raise frappe.PermissionError
-		with _capture_server_lookups(frappe) as lookups:
-			html = frappe.get_print(doctype, name)
-		_validate_capture(lookups, html=html)
-		return {"html": html, "lookups": lookups}
+		captured = _capture_http_response(
+			frappe,
+			"/printview",
+			form_dict=frappe._dict(
+				{
+					"doctype": doctype,
+					"format": "Standard",
+					"name": name,
+					"no_letterhead": 1,
+					"settings": None,
+				}
+			),
+			access_log_module=printview,
+		)
+		if captured["suppressed_access_logs"] != 1:
+			raise RuntimeError(
+				"standard print action did not emit exactly one suppressible Access Log side effect"
+			)
+		captured["html"] = captured.pop("body")
+		return captured
 
 
 try:

@@ -1,10 +1,11 @@
 import json
 import re
 from pathlib import Path, PurePosixPath
+from urllib.parse import unquote
 
 from frappe_lt.inventory import _json_object
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 ROOT = Path(__file__).parent
 SCENARIOS_PATH = ROOT / "runtime_scenarios.json"
 ROLE_PROFILES_PATH = ROOT / "runtime_role_profiles.json"
@@ -12,6 +13,13 @@ CLASSIFICATIONS_PATH = ROOT / "runtime_candidate_classifications.json"
 MAX_CONTRACT_BYTES = 2 * 1024 * 1024
 SAFE_ID = re.compile(r"[a-z0-9][a-z0-9._:-]{0,159}")
 SAFE_CANDIDATE_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:%-]{0,239}")
+ROLE_DEFAULT_KEYS = {"date_format", "first_day_of_the_week", "number_format", "time_format"}
+EXCLUSION_TARGETS = {
+	"[data-frappe-lt-fixture]",
+	"[data-frappe-lt-identity]",
+	"output:fixture-values",
+	"output:recipient",
+}
 
 
 def _exact(value: object, fields: set[str], label: str) -> dict:
@@ -56,12 +64,14 @@ def _validate_profile(profile: object) -> dict:
 		profile,
 		{
 			"administrator",
+			"default_app",
 			"defaults",
 			"id",
 			"language",
 			"module_profile",
 			"portal_link",
 			"roles",
+			"time_zone",
 			"user_type",
 		},
 		"Runtime Role Profile",
@@ -71,11 +81,19 @@ def _validate_profile(profile: object) -> dict:
 		raise ValueError("Runtime Role Profile administrator must be boolean")
 	if profile["language"] != "lt":
 		raise ValueError("Runtime Role Profile language must be lt")
+	if profile["time_zone"] != "Europe/Vilnius":
+		raise ValueError("Runtime Role Profile time_zone must be Europe/Vilnius")
+	if profile["default_app"] is not None and profile["default_app"] not in {"erpnext", "frappe"}:
+		raise ValueError("Runtime Role Profile default_app is invalid")
 	if profile["user_type"] not in {"System User", "Website User"}:
 		raise ValueError("Runtime Role Profile user_type is invalid")
 	if profile["module_profile"] is not None and not isinstance(profile["module_profile"], str):
 		raise ValueError("Runtime Role Profile module_profile must be text or null")
-	if not isinstance(profile["defaults"], dict) or any(
+	if not isinstance(profile["defaults"], dict) or set(profile["defaults"]) != ROLE_DEFAULT_KEYS:
+		raise ValueError(
+			f"Runtime Role Profile defaults must contain exactly approved keys {sorted(ROLE_DEFAULT_KEYS)}"
+		)
+	if any(
 		not isinstance(key, str) or not isinstance(value, str) for key, value in profile["defaults"].items()
 	):
 		raise ValueError("Runtime Role Profile defaults must be a text map")
@@ -104,7 +122,9 @@ def validate_role_profiles(value: object) -> dict:
 	ids = [profile["id"] for profile in profiles]
 	if len(ids) != len(set(ids)):
 		raise ValueError("Runtime Role Profiles must have unique ids")
-	value["profiles"] = sorted(profiles, key=lambda profile: profile["id"])
+	if ids != sorted(ids):
+		raise ValueError("Runtime Role Profiles must use canonical order by id")
+	value["profiles"] = profiles
 	return value
 
 
@@ -131,12 +151,39 @@ def _validate_scenario(scenario: object, profile_ids: set[str]) -> dict:
 	_text(scenario["candidate_id"], "Runtime candidate id", pattern=SAFE_CANDIDATE_ID)
 	if scenario["kind"] not in {"desk", "email", "portal", "print"}:
 		raise ValueError("Runtime Scenario kind is invalid")
+	candidate_kind = scenario["candidate_id"].split(":", 1)[0]
+	expected_candidate_kinds = {
+		"desk": {"doctype", "page", "report"},
+		"email": {"output"},
+		"portal": {"portal"},
+		"print": {"output"},
+	}
+	if candidate_kind not in expected_candidate_kinds[scenario["kind"]]:
+		raise ValueError("Runtime Scenario kind and candidate_id are incompatible")
+	if scenario["kind"] == "email" and not scenario["candidate_id"].startswith("output:email:"):
+		raise ValueError("email Runtime Scenario candidate_id is invalid")
+	if scenario["kind"] == "print" and not scenario["candidate_id"].startswith(
+		("output:print:", "output:print-format:")
+	):
+		raise ValueError("print Runtime Scenario candidate_id is invalid")
+	if scenario["kind"] == "portal" and not scenario["candidate_id"].startswith("portal:route:"):
+		raise ValueError("portal Runtime Scenario candidate_id is invalid")
 	if scenario["mutability"] not in {"mutable", "read_only"}:
 		raise ValueError("Runtime Scenario mutability is invalid")
 	if scenario["role_profile_id"] not in profile_ids:
 		raise ValueError(f"unknown Runtime Role Profile {scenario['role_profile_id']!r}")
 	if scenario["fixture_id"] is not None:
 		_text(scenario["fixture_id"], "fixture_id")
+	fixture_candidates = {
+		"item-draft": {"doctype:form:Item", "doctype:list:Item"},
+		"portal-contact": {"portal:route:me"},
+		"runtime-user": {"output:email:new_user"},
+		"todo-draft": {"output:print:ToDo"},
+	}
+	if scenario["fixture_id"] is not None and scenario["candidate_id"] not in fixture_candidates.get(
+		scenario["fixture_id"], set()
+	):
+		raise ValueError("Runtime Scenario fixture is incompatible with its candidate")
 	target = scenario["target"]
 	if not isinstance(target, dict) or set(target) not in ({"route"}, {"output"}):
 		raise ValueError("Runtime Scenario target must contain exactly route or output")
@@ -146,10 +193,56 @@ def _validate_scenario(scenario: object, profile_ids: set[str]) -> dict:
 		raise ValueError("Runtime Output Scenario must specify output")
 	if scenario["kind"] in {"desk", "portal"} and target_field != "route":
 		raise ValueError("browser Runtime Scenario must specify route")
+	if scenario["kind"] == "desk" and not target["route"].startswith("/desk/"):
+		raise ValueError("desk Runtime Scenario route must use canonical /desk routing")
+	if scenario["kind"] == "desk":
+		identity = unquote(scenario["candidate_id"].rsplit(":", 1)[1])
+		slug = re.sub(r"[ _]+", "-", identity).lower()
+		if scenario["candidate_id"].startswith("report:"):
+			expected_route = f"/desk/query-report/{identity}"
+		elif scenario["candidate_id"].startswith("doctype:form:"):
+			expected_route = f"/desk/{slug}"
+			if scenario["fixture_id"]:
+				expected_route += "/{fixture.item_name}"
+		else:
+			expected_route = f"/desk/{slug}"
+		if target["route"] != expected_route:
+			raise ValueError("desk Runtime Scenario target route does not match its candidate")
+	if scenario["kind"] == "portal":
+		identity = unquote(scenario["candidate_id"].removeprefix("portal:route:"))
+		if target["route"] != f"/{identity}":
+			raise ValueError("portal Runtime Scenario target route does not match its candidate")
 	readiness = _exact(scenario["readiness"], {"type", "value"}, "readiness")
 	if readiness["type"] not in {"api", "output", "route"}:
 		raise ValueError("Runtime Scenario readiness type is invalid")
 	_text(readiness["value"], "Runtime Scenario readiness value", pattern=None)
+	readiness_by_kind = {
+		"desk": {"api", "route"},
+		"email": {"api", "output"},
+		"portal": {"api", "route"},
+		"print": {"api", "output"},
+	}
+	if readiness["type"] not in readiness_by_kind[scenario["kind"]]:
+		raise ValueError("Runtime Scenario readiness type is incompatible with its kind")
+	if readiness["type"] == "route":
+		if scenario["kind"] == "portal":
+			expected_readiness = target["route"]
+		else:
+			identity = unquote(scenario["candidate_id"].rsplit(":", 1)[1])
+			if scenario["candidate_id"].startswith("doctype:list:"):
+				expected_readiness = f"List/{identity}/List"
+			elif scenario["candidate_id"].startswith("doctype:form:"):
+				expected_readiness = f"Form/{identity}"
+			elif scenario["candidate_id"].startswith("doctype:settings:"):
+				expected_readiness = f"Form/{identity}/{identity}"
+			elif scenario["candidate_id"].startswith("report:"):
+				expected_readiness = f"query-report/{identity}"
+			else:
+				expected_readiness = identity
+		if readiness["value"] != expected_readiness:
+			raise ValueError("Runtime Scenario readiness value does not match its candidate")
+	if readiness["type"] == "output" and readiness["value"] != f"captured-final-{scenario['kind']}":
+		raise ValueError("Runtime Output Scenario readiness value does not match its kind")
 	viewport = _exact(scenario["viewport"], {"height", "width"}, "viewport")
 	_integer(viewport["width"], "viewport width", 320, 3840)
 	_integer(viewport["height"], "viewport height", 480, 2160)
@@ -165,6 +258,8 @@ def _validate_scenario(scenario: object, profile_ids: set[str]) -> dict:
 		exclusion_ids.append(_text(exclusion["id"], "Expected Runtime Exclusion id"))
 		_text(exclusion["reason"], "Expected Runtime Exclusion reason", pattern=None)
 		_text(exclusion["target"], "Expected Runtime Exclusion target", pattern=None)
+		if exclusion["target"] not in EXCLUSION_TARGETS:
+			raise ValueError("expected exclusion target is not a narrow reviewed data scope")
 	if exclusion_ids != sorted(exclusion_ids) or len(exclusion_ids) != len(set(exclusion_ids)):
 		raise ValueError("Expected Runtime Exclusions must have unique sorted ids")
 	return scenario
@@ -178,7 +273,9 @@ def validate_scenarios(value: object, profile_ids: set[str]) -> dict:
 	ids = [scenario["id"] for scenario in scenarios]
 	if len(ids) != len(set(ids)):
 		raise ValueError("Runtime Scenarios must have unique ids")
-	value["scenarios"] = sorted(scenarios, key=lambda scenario: scenario["id"])
+	if ids != sorted(ids):
+		raise ValueError("Runtime Scenarios must use canonical order by id")
+	value["scenarios"] = scenarios
 	return value
 
 
@@ -188,13 +285,20 @@ def validate_classifications(value: object) -> dict:
 		raise ValueError("unsupported candidate classifier schema")
 	ids = []
 	for record in value["classifications"]:
-		record = _exact(record, {"candidate_id", "reason", "reviewed_by"}, "candidate classification")
+		record = _exact(
+			record,
+			{"candidate_id", "disposition", "reason", "reviewed_by"},
+			"candidate classification",
+		)
 		ids.append(_text(record["candidate_id"], "classified candidate id", pattern=SAFE_CANDIDATE_ID))
+		if record["disposition"] not in {"non_executable", "unsafe"}:
+			raise ValueError("candidate classification disposition must be unsafe or non_executable")
 		_text(record["reason"], "candidate classification reason", pattern=None)
 		_text(record["reviewed_by"], "candidate classification reviewer", pattern=None)
 	if len(ids) != len(set(ids)):
 		raise ValueError("candidate classifications must have unique ids")
-	value["classifications"] = sorted(value["classifications"], key=lambda record: record["candidate_id"])
+	if ids != sorted(ids):
+		raise ValueError("candidate classifications must use canonical order by candidate_id")
 	return value
 
 
