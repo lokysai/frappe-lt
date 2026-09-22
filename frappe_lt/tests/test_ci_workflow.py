@@ -80,16 +80,31 @@ class CIWorkflowTest(TestCase):
 		for required in (
 			"assert runtime_exit == 1",
 			'assert report["status"] == "fail"',
+			'assert report["schema_version"] == 5',
+			'assert summary["total"] == len(expected_ids)',
 			'assert summary["blocked"] == 0',
 			'assert summary["cleanup_failures"] == 0',
 			'assert summary["coverage_gaps"] > 0',
 			'assert summary["english_fallbacks"] > 0',
 			'assert summary["functional_layout_defects"] == 0',
-			'{cause["type"] for cause in report["blocking_causes"]}',
+			"validate_machine_report(report, scenario_contract)",
+			'blocker_types = {cause["type"] for cause in report["blocking_causes"]}',
 			'"runtime_coverage_gap"',
 			'"scenario_fail"',
 		):
 			self.assertIn(required, commands)
+		gate = next(
+			step
+			for step in steps
+			if step["name"] == "Assert harness detects expected catalog and coverage blockers"
+		)
+		gate_commands = [line.strip() for line in gate["run"].splitlines() if line.strip()]
+		self.assertEqual(gate_commands[0], "runtime_exit=0")
+		self.assertIn("|| runtime_exit=$?", gate_commands[1])
+		self.assertNotIn('summary["total"] == 10', commands)
+		self.assertIn(
+			'assert blocker_types == {"runtime_coverage_gap", "scenario_fail"}', commands
+		)
 		self.assertIn("*.evidence.json", commands)
 		self.assertIn(".*.evidence.json.*.tmp", commands)
 		self.assertTrue(

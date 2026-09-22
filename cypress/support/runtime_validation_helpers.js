@@ -76,6 +76,32 @@ function isClippedByAncestor(element, getComputedStyle) {
 	return false;
 }
 
+function isDisabledControl(element) {
+	return Boolean(element.disabled) || element.getAttribute?.("aria-disabled") === "true";
+}
+
+function isUnusableControl(element, style, viewportWidth) {
+	const bounds = element.getBoundingClientRect();
+	if (isDisabledControl(element)) return false;
+	const outsideHorizontally = bounds.left < 0 || bounds.right > viewportWidth;
+	const minimumHitArea = viewportWidth <= 480 ? 24 : 8;
+	const type = element.getAttribute?.("type")?.toLowerCase();
+	const associatedLabels = ["checkbox", "radio"].includes(type) ? [...(element.labels || [])] : [];
+	const hitBounds = associatedLabels.reduce(
+		(largest, label) => {
+			const candidate = label.getBoundingClientRect();
+			return candidate.width * candidate.height > largest.width * largest.height ? candidate : largest;
+		},
+		bounds
+	);
+	return (
+		outsideHorizontally ||
+		style.pointerEvents === "none" ||
+		hitBounds.width < minimumHitArea ||
+		hitBounds.height < minimumHitArea
+	);
+}
+
 function renderedIntervals(output, effective) {
 	if (typeof effective !== "string" || !effective) return [];
 	const exact = [];
@@ -89,10 +115,14 @@ function renderedIntervals(output, effective) {
 		.replace(/%\([^)]+\)[#0 +\-]?\d*(?:\.\d+)?[a-zA-Z]/g, marker)
 		.replace(/%[sdif]/g, marker);
 	if (!template.includes(marker)) return [];
-	const pattern = template
-		.split(marker)
-		.map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-		.join("[\\s\\S]+?");
+	const parts = template.split(marker);
+	let pattern = "";
+	for (let index = 0; index < parts.length; index += 1) {
+		pattern += parts[index].replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+		if (index < parts.length - 1) {
+			pattern += index === parts.length - 2 && parts[index + 1] === "" ? "[^<\\r\\n]+" : "[\\s\\S]+?";
+		}
+	}
 	return [...output.matchAll(new RegExp(pattern, "g"))].map((match) => ({
 		start: match.index,
 		end: match.index + match[0].length,
@@ -122,7 +152,7 @@ function isBlockingFallback(finding) {
 		finding.render_status !== "unrendered" &&
 		finding.visible &&
 		!finding.excluded &&
-		(finding.source === "missing" || finding.effective === finding.key.source)
+		(finding.source === "missing" || finding.effective.trim() === finding.key.source)
 	);
 }
 
@@ -130,12 +160,45 @@ function isBlockingInventoryLookup(finding) {
 	return !finding.active && finding.render_status !== "unrendered" && finding.visible && !finding.excluded;
 }
 
+function finalizeScenarioResult(scenario, result, durationMs) {
+	result.duration_ms = durationMs;
+	if (!result.ready && result.status === "pass") {
+		result.status = "blocked";
+		result.blocked_reason = "scenario did not prove readiness";
+	}
+	if (durationMs > scenario.scenario_timeout_ms && result.status === "pass") {
+		result.status = "blocked";
+		result.blocked_reason = `scenario exceeded ${scenario.scenario_timeout_ms} ms`;
+	}
+	if (result.status === "pass") {
+		const blockingFallback = result.fallbacks.some(isBlockingFallback);
+		const blockingInventoryLookup = result.fallbacks.some(isBlockingInventoryLookup);
+		const blockingLayout = result.layouts.some((finding) => finding.severity === "functional");
+		if (blockingFallback || blockingInventoryLookup || blockingLayout) {
+			result.status = "fail";
+			result.error = "scenario produced blocking runtime findings";
+		}
+		if (!result.fallbacks.some((finding) => finding.active) && result.status === "pass") {
+			result.status = "blocked";
+			result.blocked_reason = "scenario produced no active effective translation lookup evidence";
+		}
+	}
+	const attempt = result.attempts[result.attempts.length - 1];
+	attempt.duration_ms = result.duration_ms;
+	attempt.outcome = result.status === "fail" ? "assertion_failure" : result.status;
+	attempt.error = result.status === "pass" ? null : result.blocked_reason || result.error;
+	return result;
+}
+
 module.exports = {
 	correlateOutput,
 	exactOutputExclusion,
+	finalizeScenarioResult,
 	isBlockingFallback,
 	isBlockingInventoryLookup,
 	isClippedByAncestor,
+	isDisabledControl,
+	isUnusableControl,
 	isVisuallyHidden,
 	meaningfulTarget,
 	renderedIntervals,

@@ -304,6 +304,8 @@ def export_candidate_snapshot(
 		site=site,
 		require_clean_upstream=True,
 		required_apps=("frappe", "erpnext", "frappe_lt"),
+		require_exact_apps=True,
+		require_runtime_metadata=True,
 	)
 	discovery_result = discover(frappe)
 	coverage_result = coverage(discovery_result, contracts["scenarios"], contracts["classifications"])

@@ -20,6 +20,7 @@ RUN_MARKER_PREFIX = "frappe-lt-runtime-"
 RUNTIME_DISPLAY_NAME = "Frappe LT Runtime"
 MAX_CAPTURE_BYTES = 8 * 1024 * 1024
 MAX_CAPTURE_LOOKUPS = 5000
+MAX_JOURNAL_BYTES = 32 * 1024 * 1024
 LOGIN_USER_FIELDS = ("last_active", "last_ip", "last_login")
 _EMAIL_CAPTURE_LOCK = threading.Lock()
 _LOGIN_LOCK = threading.Lock()
@@ -81,9 +82,12 @@ def redact_sensitive(value: object, *, max_chars: int = 2048) -> str:
 def _write_durable(path: Path, value: dict) -> None:
 	path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
 	temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+	content = canonical_json(value)
+	if path.name == "journal.json" and len(content) > MAX_JOURNAL_BYTES:
+		raise ValueError(f"durable runtime journal exceeds {MAX_JOURNAL_BYTES} bytes")
 	try:
 		with temporary.open("wb") as stream:
-			stream.write(canonical_json(value))
+			stream.write(content)
 			stream.flush()
 			os.fsync(stream.fileno())
 		os.chmod(temporary, 0o600)
@@ -99,6 +103,8 @@ def _write_durable(path: Path, value: dict) -> None:
 
 def _load_journal(path: Path) -> dict:
 	try:
+		if path.stat().st_size > MAX_JOURNAL_BYTES:
+			raise ValueError(f"durable runtime journal exceeds {MAX_JOURNAL_BYTES} bytes")
 		journal = json.loads(path.read_bytes(), object_pairs_hook=_json_object)
 	except (OSError, json.JSONDecodeError, UnicodeDecodeError) as error:
 		raise ValueError(f"could not read durable runtime journal: {error}") from error
@@ -861,12 +867,13 @@ class SiteControl:
 			for user, values in sorted(baseline["user_values"].items()):
 				if not self.frappe.db.exists("User", user):
 					continue
-				if values["after"] is None:
-					self.frappe.db.set_value("User", user, values["before"], update_modified=False)
-					continue
 				current = _login_user_state(self.frappe, user)
 				if current == values["before"]:
 					continue
+				if values["after"] is None:
+					raise RuntimeError(
+						f"login metadata for {user!r} changed before its post-login state was recorded"
+					)
 				if current != values["after"]:
 					raise RuntimeError(f"login metadata for {user!r} changed concurrently")
 				self.frappe.db.set_value("User", user, values["before"], update_modified=False)
@@ -1380,7 +1387,7 @@ def runtime_login(run_id: str, token: str, scenario_id: str) -> dict:
 	import frappe
 
 	control = SiteControl(frappe, frappe.local.site, run_id)
-	with control.operation():
+	with control.operation(exclusive=True):
 		return _runtime_login_locked(frappe, control, run_id, token, scenario_id)
 
 
@@ -1577,7 +1584,7 @@ def capture_welcome_email(run_id: str, token: str, scenario_id: str, user: str) 
 	import frappe
 
 	control = SiteControl(frappe, frappe.local.site, run_id)
-	with control.operation():
+	with control.operation(exclusive=True):
 		return _capture_welcome_email_locked(frappe, control, run_id, token, scenario_id, user)
 
 

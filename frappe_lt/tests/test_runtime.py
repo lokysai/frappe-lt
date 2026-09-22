@@ -5,6 +5,7 @@ import frappe
 import frappe.translate
 from frappe.tests import IntegrationTestCase
 
+from frappe_lt.inventory import load_compatibility, verify_environment
 from frappe_lt.runtime_contracts import load_contracts
 from frappe_lt.runtime_control import (
 	SiteControl,
@@ -54,6 +55,32 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 		cleanup = control.cleanup()
 		residue = control.residue_scan()
 		self.assertEqual({"cleanup": cleanup, "residue": residue}, {"cleanup": [], "residue": []})
+
+	def _assert_captured_output_interval(self, output, lookups, target):
+		intervals = []
+		for lookup in lookups:
+			effective = lookup["effective"]
+			start = output.find(effective)
+			if effective and start >= 0 and output.find(effective, start + 1) < 0:
+				intervals.append((lookup, f"{target}:{start}-{start + len(effective)}"))
+		self.assertTrue(intervals, f"{target} has no uniquely rendered captured lookup")
+		for lookup, interval in intervals:
+			start, end = map(int, interval.rsplit(":", 1)[1].split("-"))
+			self.assertEqual(output[start:end], lookup["effective"])
+		return intervals
+
+	def test_runtime_preflight_authenticates_exact_apps_catalog_and_metadata(self):
+		environment = verify_environment(
+			frappe,
+			site=frappe.local.site,
+			require_clean_upstream=True,
+			required_apps=("frappe", "erpnext", "frappe_lt"),
+			require_exact_apps=True,
+			require_active_catalog=True,
+			require_runtime_metadata=True,
+		)
+		self.assertEqual(environment["installed_apps"], ["frappe", "erpnext", "frappe_lt"])
+		self.assertEqual(environment["mo_sha256"], load_compatibility()["mo_sha256"])
 
 	def test_prepare_owns_exact_portal_and_draft_print_fixtures_without_ledger_entries(self):
 		run_id = "b" * 32
@@ -276,6 +303,10 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 					portal = capture_portal(run_id, token, "portal-account-desktop", "/me")
 				self.assertEqual(portal["status"], 200)
 				self.assertIn(control.marker, portal["html"])
+				self.assertTrue(portal["lookups"])
+				self._assert_captured_output_interval(
+					portal["html"], portal["lookups"], "portal:http-body"
+				)
 
 				frappe.set_user("Administrator")
 				print_fixture = plan["fixtures"]["todo-draft"]
@@ -290,6 +321,10 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 				self.assertEqual(printed["status"], 200)
 				self.assertEqual(printed["suppressed_access_logs"], 1)
 				self.assertIn(control.marker, printed["html"])
+				self.assertTrue(printed["lookups"])
+				self._assert_captured_output_interval(
+					printed["html"], printed["lookups"], "print:http-body"
+				)
 				self.assertFalse(
 					frappe.db.exists("Access Log", {"reference_document": print_fixture["name"]})
 				)
@@ -303,6 +338,10 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 					)
 				self.assertEqual(email["suppressed"], {"email_queue": 0, "enqueue": 0, "outbound": 1})
 				self.assertIn("MIME-Version", email["output"])
+				self.assertTrue(email["lookups"])
+				self._assert_captured_output_interval(
+					email["visible_output"], email["lookups"], "email:subject-body"
+				)
 				self.assertIn("key=[REDACTED]", email["visible_output"])
 				self.assertNotIn("/update-password?key=" + control.marker, email["output"])
 				self.assertFalse(
@@ -369,9 +408,40 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 			self.assertEqual(greeting["source"], "database")
 			self.assertEqual(greeting["raw_source"], " Runtime Hello {0} ")
 			self.assertEqual(greeting["key"]["source"], "Runtime Hello {0}")
+			self.assertEqual(greeting["key"]["context"], "Greeting")
 			self.assertEqual(greeting["effective"].format("Jonai"), "Sveiki, Jonai")
+			self.assertEqual(heading["key"]["context"], "Heading")
 			self.assertEqual(heading["effective"].format("Jonai"), "Pasisveikinimas Jonai")
 			self.assertNotEqual(greeting["effective"], heading["effective"])
+
+			loaded_dictionary = frappe.translate.get_all_translations("lt")
+			self.assertEqual(loaded_dictionary["Item"], "Prekė")
+			translated = frappe._("Item", lang="lt")
+			fallback = frappe._("Runtime Hello {0}", lang="lt")
+			self.assertEqual(translated, "Prekė")
+			self.assertEqual(fallback, "Runtime Hello {0}")
+			rendered = (
+				f"<h1>{translated}</h1>"
+				f"<p>{greeting['effective'].format('Jonai')}</p>"
+				f"<p>{fallback.format('Jonai')}</p>"
+			)
+			translated_interval = self._assert_captured_output_interval(
+				rendered,
+				[{"effective": translated}],
+				"integration:rendered",
+			)
+			interpolated_interval = self._assert_captured_output_interval(
+				rendered,
+				[{"effective": greeting["effective"].format("Jonai")}],
+				"integration:rendered",
+			)
+			fallback_interval = self._assert_captured_output_interval(
+				rendered,
+				[{"effective": fallback.format("Jonai")}],
+				"integration:rendered",
+			)
+			self.assertTrue(translated_interval and interpolated_interval and fallback_interval)
+			self.assertNotIn(heading["effective"].format("Jonai"), rendered)
 		finally:
 			for document in reversed(documents):
 				document.delete(ignore_permissions=True)

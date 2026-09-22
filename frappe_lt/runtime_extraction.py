@@ -153,6 +153,13 @@ def _validate_metadata_signatures(metadata: dict[str, dict[str, list[dict]]], ex
 		raise ValueError(f"runtime metadata differs from the pinned clean-install source: {details}")
 
 
+def verify_standard_metadata(frappe, expected_sha256: dict) -> dict[str, dict[str, list[dict]]]:
+	"""Collect and authenticate the pinned standard metadata boundary without mutation."""
+	metadata = collect_standard_metadata(frappe)
+	_validate_metadata_signatures(metadata, expected_sha256)
+	return metadata
+
+
 def _system_custom_field_app(field: dict) -> str:
 	if field["dt"] in {"Custom DocPerm", "DocPerm", "DocShare"}:
 		return "frappe"
@@ -326,8 +333,7 @@ def extract_runtime(frappe, metadata_sha256: dict) -> RuntimeExtraction:
 		if frappe.get_all(doctype, filters=filters, fields=["name"], limit=1):
 			raise ValueError(f"runtime site contains local/custom metadata in {doctype}")
 
-	metadata = collect_standard_metadata(frappe)
-	_validate_metadata_signatures(metadata, metadata_sha256)
+	metadata = verify_standard_metadata(frappe, metadata_sha256)
 	doctypes = metadata["doctype"]["DocType"]
 	fields = metadata["doctype"]["DocField"]
 	permissions = metadata["doctype"]["DocPerm"]

@@ -5,15 +5,19 @@ import os
 import re
 import shutil
 import signal
+import stat
 import subprocess
 import tempfile
 import threading
 import time
 import uuid
+from contextlib import ExitStack
+from itertools import pairwise
 from pathlib import Path
 from urllib.parse import quote, quote_plus
 
 from frappe_lt.inventory import _json_object, canonical_json, verify_environment
+from frappe_lt.runtime_contracts import SCHEMA_VERSION as RUNTIME_CONTRACT_SCHEMA_VERSION
 from frappe_lt.runtime_contracts import load_contracts, safe_relative_path
 from frappe_lt.runtime_control import (
 	SiteControl,
@@ -23,8 +27,8 @@ from frappe_lt.runtime_control import (
 )
 from frappe_lt.runtime_discovery import coverage, discover
 
-REPORT_SCHEMA_VERSION = 4
-BROWSER_SCHEMA_VERSION = 5
+REPORT_SCHEMA_VERSION = 5
+BROWSER_SCHEMA_VERSION = 6
 MAX_REPORT_BYTES = 32 * 1024 * 1024
 MAX_EVIDENCE_PER_ARTIFACT = 2 * 1024 * 1024
 MAX_EVIDENCE_PER_SCENARIO = 8 * 1024 * 1024
@@ -37,6 +41,10 @@ EVIDENCE_MIME = {
 	"email": {"text/plain": "email.txt"},
 	"portal": {"text/html": "portal.html"},
 	"print": {"text/html": "print.html"},
+}
+HARNESS_CONTRACT = {
+	"blocked-readiness-contract": ("scenario did not prove readiness", False),
+	"blocked-timeout-contract": ("scenario exceeded 100 ms", True),
 }
 
 
@@ -92,6 +100,106 @@ def _read_json(path: Path) -> dict:
 		raise ValueError(f"could not read browser result: {error}") from error
 
 
+def _validate_attempts(value: object, status: str) -> list[dict]:
+	if not isinstance(value, list) or not value:
+		raise ValueError("scenario must record every attempt")
+	for number, attempt in enumerate(value, start=1):
+		attempt = _exact(
+			attempt,
+			{"duration_ms", "error", "kind", "number", "outcome"},
+			"scenario attempt",
+		)
+		if attempt["number"] != number or attempt["kind"] not in {"initial", "setup", "transport"}:
+			raise ValueError("scenario attempts are malformed")
+		if number == 1 and attempt["kind"] != "initial":
+			raise ValueError("first scenario attempt must be initial")
+		if (
+			isinstance(attempt["duration_ms"], bool)
+			or not isinstance(attempt["duration_ms"], int)
+			or not 0 <= attempt["duration_ms"] <= 600_000
+		):
+			raise ValueError("scenario attempt duration is invalid")
+		if attempt["outcome"] not in {
+			"assertion_failure",
+			"blocked",
+			"pass",
+			"setup_failure",
+			"transport_failure",
+		}:
+			raise ValueError("scenario attempt outcome is invalid")
+		failed = attempt["outcome"] != "pass"
+		if (failed and not (isinstance(attempt["error"], str) and attempt["error"])) or (
+			not failed and attempt["error"] is not None
+		):
+			raise ValueError("scenario attempt error must describe every non-pass outcome")
+	for previous, retried in pairwise(value):
+		if previous["outcome"] == "assertion_failure":
+			raise ValueError("assertion failures must not be retried")
+		expected_retry = {
+			"setup_failure": "setup",
+			"transport_failure": "transport",
+		}.get(previous["outcome"])
+		if retried["kind"] != expected_retry:
+			raise ValueError("only setup or transport failures may be retried")
+	expected_outcome = {"blocked": "blocked", "fail": "assertion_failure", "pass": "pass"}[status]
+	if value[-1]["outcome"] != expected_outcome:
+		raise ValueError("final scenario attempt outcome does not match scenario status")
+	return value
+
+
+def _validate_harness_contract(value: object) -> list[dict]:
+	if not isinstance(value, list):
+		raise ValueError("browser harness contract must be a list")
+	seen = set()
+	ids = []
+	for result in value:
+		result = _exact(
+			result,
+			{
+				"attempts",
+				"blocked_reason",
+				"duration_ms",
+				"error",
+				"evidence",
+				"fallbacks",
+				"id",
+				"layouts",
+				"ready",
+				"status",
+			},
+			"browser harness result",
+		)
+		scenario_id = result["id"]
+		if scenario_id not in HARNESS_CONTRACT or scenario_id in seen:
+			raise ValueError(f"unknown or duplicate browser harness result {scenario_id!r}")
+		seen.add(scenario_id)
+		ids.append(scenario_id)
+		expected_reason, expected_ready = HARNESS_CONTRACT[scenario_id]
+		if (
+			result["status"] != "blocked"
+			or result["blocked_reason"] != expected_reason
+			or result["ready"] is not expected_ready
+			or result["error"] is not None
+			or result["evidence"] != []
+			or result["fallbacks"] != []
+			or result["layouts"] != []
+			or isinstance(result["duration_ms"], bool)
+			or not isinstance(result["duration_ms"], int)
+			or not 0 <= result["duration_ms"] <= 600_000
+		):
+			raise ValueError(f"browser harness result {scenario_id!r} is malformed")
+		_validate_attempts(result["attempts"], result["status"])
+		if (
+			len(result["attempts"]) != 1
+			or result["attempts"][0]["duration_ms"] != result["duration_ms"]
+			or result["attempts"][0]["error"] != expected_reason
+		):
+			raise ValueError(f"browser harness attempt {scenario_id!r} is malformed")
+	if ids != list(HARNESS_CONTRACT):
+		raise ValueError("browser harness contract must contain exactly the canonical synthetic records")
+	return value
+
+
 def _validate_fallback(
 	value: object,
 	scenario: dict,
@@ -109,6 +217,7 @@ def _validate_fallback(
 			"key",
 			"raw_source",
 			"render_status",
+			"schema_version",
 			"scenario_id",
 			"source",
 			"target",
@@ -116,6 +225,8 @@ def _validate_fallback(
 		},
 		"lookup evidence",
 	)
+	if value["schema_version"] != 1:
+		raise ValueError("unsupported lookup evidence schema")
 	if value["scenario_id"] != scenario_id:
 		raise ValueError("lookup evidence scenario_id does not match its scenario")
 	if not isinstance(value["active"], bool):
@@ -204,6 +315,29 @@ def _validate_fallback(
 	return value
 
 
+def _is_blocking_fallback(finding: dict) -> bool:
+	return (
+		finding["active"]
+		and finding["render_status"] != "unrendered"
+		and finding["visible"]
+		and not finding["excluded"]
+		and (finding["source"] == "missing" or finding["effective"].strip() == finding["key"]["source"])
+	)
+
+
+def _is_inactive_inventory_lookup(finding: dict) -> bool:
+	return (
+		not finding["active"]
+		and finding["render_status"] != "unrendered"
+		and finding["visible"]
+		and not finding["excluded"]
+	)
+
+
+def _is_functional_layout(finding: dict) -> bool:
+	return finding["severity"] == "functional"
+
+
 def _validate_layout(value: object, scenario_id: str) -> dict:
 	value = _exact(value, {"detail", "kind", "scenario_id", "severity", "target"}, "layout finding")
 	if value["scenario_id"] != scenario_id or value["severity"] not in {"cosmetic", "functional"}:
@@ -248,12 +382,16 @@ def _validate_toolchain(value: object) -> dict:
 	return value
 
 
-def _validate_evidence(value: object, run_root: Path, scenario_id: str) -> dict:
+def _validate_evidence_structure(value: object, scenario_id: str) -> dict:
 	value = _exact(value, {"bytes", "kind", "mime", "path", "sha256"}, "evidence artifact")
 	if value["kind"] not in EVIDENCE_MIME:
 		raise ValueError("evidence artifact kind is invalid")
-	if not isinstance(value["bytes"], int) or value["bytes"] < 0:
-		raise ValueError("evidence artifact bytes must be a nonnegative integer")
+	if (
+		isinstance(value["bytes"], bool)
+		or not isinstance(value["bytes"], int)
+		or not 0 <= value["bytes"] <= MAX_EVIDENCE_PER_ARTIFACT
+	):
+		raise ValueError("evidence artifact byte count or limit is invalid")
 	if value["mime"] not in EVIDENCE_MIME[value["kind"]]:
 		raise ValueError("evidence artifact mime is not allowed for its kind")
 	if not isinstance(value["sha256"], str) or not SHA256.fullmatch(value["sha256"]):
@@ -262,22 +400,50 @@ def _validate_evidence(value: object, run_root: Path, scenario_id: str) -> dict:
 	expected = ("evidence", scenario_id, EVIDENCE_MIME[value["kind"]][value["mime"]])
 	if relative.parts != expected:
 		raise ValueError("evidence artifact must be inside its scenario evidence directory")
-	path = run_root.joinpath(*relative.parts)
-	for component in (path, *path.parents):
-		if component == run_root.parent:
-			break
-		if component.is_symlink():
-			raise ValueError(f"evidence path uses a symlink: {value['path']}")
+	return value
+
+
+def _validate_evidence(value: object, run_root: Path, scenario_id: str) -> dict:
+	value = _validate_evidence_structure(value, scenario_id)
+	relative = safe_relative_path(value["path"])
 	try:
-		actual_bytes = path.stat().st_size
-	except OSError as error:
-		raise ValueError(f"could not read evidence artifact {value['path']}: {error}") from error
-	if value["bytes"] > MAX_EVIDENCE_PER_ARTIFACT or actual_bytes != value["bytes"]:
-		raise ValueError(f"evidence artifact size mismatch or limit exceeded: {value['path']}")
-	try:
-		content = path.read_bytes()
+		with ExitStack() as descriptors:
+			directory_flags = (
+				os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
+			)
+			directory_descriptor = os.open(run_root, directory_flags)
+			descriptors.callback(os.close, directory_descriptor)
+			for component in relative.parts[:-1]:
+				directory_descriptor = os.open(
+					component, directory_flags, dir_fd=directory_descriptor
+				)
+				descriptors.callback(os.close, directory_descriptor)
+			descriptor = os.open(
+				relative.parts[-1],
+				os.O_RDONLY
+				| getattr(os, "O_NOFOLLOW", 0)
+				| getattr(os, "O_NONBLOCK", 0),
+				dir_fd=directory_descriptor,
+			)
+			descriptors.callback(os.close, descriptor)
+			before = os.fstat(descriptor)
+			if not stat.S_ISREG(before.st_mode) or before.st_size != value["bytes"]:
+				raise ValueError(f"evidence artifact size or identity mismatch: {value['path']}")
+			content = bytearray()
+			while len(content) <= MAX_EVIDENCE_PER_ARTIFACT:
+				chunk = os.read(
+					descriptor, min(64 * 1024, MAX_EVIDENCE_PER_ARTIFACT + 1 - len(content))
+				)
+				if not chunk:
+					break
+				content.extend(chunk)
+			after = os.fstat(descriptor)
+			identity = (before.st_dev, before.st_ino, before.st_size)
+			if identity != (after.st_dev, after.st_ino, after.st_size) or len(content) != value["bytes"]:
+				raise ValueError(f"evidence artifact changed while being read: {value['path']}")
 	except OSError as error:
 		raise ValueError(f"could not hash evidence artifact {value['path']}: {error}") from error
+	content = bytes(content)
 	if hashlib.sha256(content).hexdigest() != value["sha256"]:
 		raise ValueError(f"evidence artifact size or digest mismatch: {value['path']}")
 	try:
@@ -311,17 +477,6 @@ def _validate_evidence(value: object, run_root: Path, scenario_id: str) -> dict:
 		or re.search(r"(?i)frappe-lt-runtime-[0-9a-f]{32}[A-Za-z0-9@._:-]*", text)
 	)
 	if unsafe:
-		try:
-			path.unlink()
-			directory_fd = os.open(path.parent, os.O_RDONLY)
-			try:
-				os.fsync(directory_fd)
-			finally:
-				os.close(directory_fd)
-		except OSError as error:
-			raise ValueError(
-				f"could not remove sensitive evidence artifact {value['path']}: {error}"
-			) from error
 		raise ValueError(f"evidence artifact contains disallowed sensitive material: {value['path']}")
 	return value
 
@@ -334,14 +489,14 @@ def _contains_inactive(item: object) -> bool:
 	return False
 
 
-def _remove_inactive_evidence(path: Path) -> None:
+def _remove_evidence_tree(path: Path) -> None:
 	try:
 		if path.is_symlink() or path.is_file():
 			path.unlink()
 		elif path.is_dir():
 			shutil.rmtree(path)
 	except OSError as error:
-		raise ValueError(f"could not remove inactive lookup evidence: {error}") from error
+		raise ValueError(f"could not remove runtime evidence: {error}") from error
 
 
 def _validate_browser_results(
@@ -354,9 +509,12 @@ def _validate_browser_results(
 ) -> list[dict]:
 	if not isinstance(diagnostic_sampling, bool):
 		raise ValueError("diagnostic_sampling must be boolean")
-	value = _exact(value, {"scenarios", "schema_version", "toolchain"}, "browser result")
+	value = _exact(
+		value, {"harness_contract", "scenarios", "schema_version", "toolchain"}, "browser result"
+	)
 	if value["schema_version"] != BROWSER_SCHEMA_VERSION or not isinstance(value["scenarios"], list):
 		raise ValueError("unsupported browser result schema")
+	_validate_harness_contract(value["harness_contract"])
 	_validate_toolchain(value["toolchain"])
 	if diagnostic_key is not None and (
 		not isinstance(diagnostic_key, str) or not re.fullmatch(r"[0-9a-f]{64}", diagnostic_key)
@@ -408,49 +566,10 @@ def _validate_browser_results(
 			result["blocked_reason"] = _redact(result["blocked_reason"])
 		if not isinstance(result["duration_ms"], int) or not 0 <= result["duration_ms"] <= 600_000:
 			raise ValueError("browser scenario duration is invalid")
-		if not isinstance(result["attempts"], list) or not result["attempts"]:
-			raise ValueError("browser scenario must record every attempt")
-		for number, attempt in enumerate(result["attempts"], start=1):
-			attempt = _exact(
-				attempt,
-				{"duration_ms", "error", "kind", "number", "outcome"},
-				"browser attempt",
-			)
-			if attempt["number"] != number or attempt["kind"] not in {"initial", "setup", "transport"}:
-				raise ValueError("browser attempts are malformed")
-			if number == 1 and attempt["kind"] != "initial":
-				raise ValueError("first browser attempt must be initial")
-			if not isinstance(attempt["duration_ms"], int) or not 0 <= attempt["duration_ms"] <= 600_000:
-				raise ValueError("browser attempt duration is invalid")
-			if attempt["outcome"] not in {
-				"assertion_failure",
-				"blocked",
-				"pass",
-				"setup_failure",
-				"transport_failure",
-			}:
-				raise ValueError("browser attempt outcome is invalid")
-			failed = attempt["outcome"] != "pass"
-			if (failed and not (isinstance(attempt["error"], str) and attempt["error"])) or (
-				not failed and attempt["error"] is not None
-			):
-				raise ValueError("browser attempt error must describe every non-pass outcome")
+		_validate_attempts(result["attempts"], result["status"])
+		for attempt in result["attempts"]:
 			if attempt["error"] is not None:
 				attempt["error"] = _redact(attempt["error"])
-		for previous, retried in zip(result["attempts"], result["attempts"][1:], strict=False):
-			if previous["outcome"] == "assertion_failure":
-				raise ValueError("assertion failures must not be retried")
-			expected_retry = {
-				"setup_failure": "setup",
-				"transport_failure": "transport",
-			}.get(previous["outcome"])
-			if retried["kind"] != expected_retry:
-				raise ValueError("only setup or transport failures may be retried")
-		expected_outcome = {"blocked": "blocked", "fail": "assertion_failure", "pass": "pass"}[
-			result["status"]
-		]
-		if result["attempts"][-1]["outcome"] != expected_outcome:
-			raise ValueError("final browser attempt outcome does not match scenario status")
 		if (
 			result["status"] == "pass"
 			and result["duration_ms"] > manifest[scenario_id]["scenario_timeout_ms"]
@@ -501,22 +620,9 @@ def _validate_browser_results(
 			raise ValueError(f"scenario {scenario_id!r} exceeds its evidence byte limit")
 		total_evidence += scenario_evidence
 		has_active_lookup = any(item["active"] for item in result["fallbacks"])
-		blocking_fallback = any(
-			item["active"]
-			and item["render_status"] != "unrendered"
-			and item["visible"]
-			and not item["excluded"]
-			and (item["source"] == "missing" or item["effective"] == item["key"]["source"])
-			for item in result["fallbacks"]
-		)
-		blocking_inventory_lookup = any(
-			not item["active"]
-			and item["render_status"] != "unrendered"
-			and item["visible"]
-			and not item["excluded"]
-			for item in result["fallbacks"]
-		)
-		blocking_layout = any(item["severity"] == "functional" for item in result["layouts"])
+		blocking_fallback = any(_is_blocking_fallback(item) for item in result["fallbacks"])
+		blocking_inventory_lookup = any(_is_inactive_inventory_lookup(item) for item in result["fallbacks"])
+		blocking_layout = any(_is_functional_layout(item) for item in result["layouts"])
 		if result["status"] == "pass" and not result["ready"]:
 			result["status"] = "blocked"
 			result["blocked_reason"] = "scenario did not prove readiness"
@@ -554,8 +660,9 @@ def validate_browser_results(
 	diagnostic_sampling: bool = False,
 	diagnostic_key: str | None = None,
 ) -> list[dict]:
-	declares_inactive = _contains_inactive(value)
+	evidence_root = run_root / "evidence"
 	try:
+		declares_inactive = _contains_inactive(value)
 		results = _validate_browser_results(
 			value,
 			scenarios,
@@ -564,20 +671,18 @@ def validate_browser_results(
 			diagnostic_key=diagnostic_key,
 		)
 	except Exception:
-		if declares_inactive:
-			_remove_inactive_evidence(run_root / "evidence")
+		_remove_evidence_tree(evidence_root)
 		raise
 	if declares_inactive:
-		evidence_root = run_root / "evidence"
 		try:
 			if evidence_root.is_symlink() or evidence_root.is_file():
-				_remove_inactive_evidence(evidence_root)
+				_remove_evidence_tree(evidence_root)
 			else:
 				for result in results:
 					if any(not finding["active"] for finding in result["fallbacks"]):
-						_remove_inactive_evidence(evidence_root / result["id"])
+						_remove_evidence_tree(evidence_root / result["id"])
 		except Exception:
-			_remove_inactive_evidence(evidence_root)
+			_remove_evidence_tree(evidence_root)
 			raise
 	return results
 
@@ -683,6 +788,390 @@ def _default_browser_runner(site: str, run_root: Path, plan_path: Path) -> tuple
 	finally:
 		result_path.unlink(missing_ok=True)
 	return value, process.returncode, diagnostic
+
+
+def _validate_cleanup_failure(value: object, label: str = "report cleanup failure") -> dict:
+	value = _exact(value, {"error", "mutation_id", "target"}, label)
+	target = _exact(value["target"], {"doctype", "name"}, f"{label} target")
+	if (
+		not isinstance(value["error"], str)
+		or not value["error"]
+		or isinstance(value["mutation_id"], bool)
+		or not isinstance(value["mutation_id"], int)
+		or value["mutation_id"] < 0
+		or not all(isinstance(target[field], str) and target[field] for field in target)
+	):
+		raise ValueError(f"{label} is malformed")
+	return value
+
+
+def _report_summary(results: list[dict], coverage_result: dict, cleanup_failures: list[dict]) -> dict:
+	return {
+		"blocked": sum(result["status"] == "blocked" for result in results),
+		"cleanup_failures": len(cleanup_failures),
+		"coverage_gaps": len(coverage_result["gaps"]),
+		"english_fallbacks": sum(
+			_is_blocking_fallback(finding) for result in results for finding in result["fallbacks"]
+		),
+		"fail": sum(result["status"] == "fail" for result in results),
+		"functional_layout_defects": sum(
+			_is_functional_layout(finding) for result in results for finding in result["layouts"]
+		),
+		"pass": sum(result["status"] == "pass" for result in results),
+		"runtime_inventory_gaps": sum(
+			_is_inactive_inventory_lookup(finding) for result in results for finding in result["fallbacks"]
+		),
+		"total": len(results),
+	}
+
+
+def _fact_blocking_causes(
+	coverage_result: dict, results: list[dict], cleanup_failures: list[dict]
+) -> list[dict]:
+	causes = [
+		*({"detail": gap, "type": "runtime_coverage_gap"} for gap in coverage_result["gaps"]),
+		*(
+			{
+				"detail": f"{result['id']}: {result['error'] or result['blocked_reason'] or result['id']}"[
+					:2048
+				],
+				"type": f"scenario_{result['status']}",
+			}
+			for result in results
+			if result["status"] in {"blocked", "fail"}
+		),
+		*(
+			{
+				"detail": f"{failure['target']['doctype']}:{failure['target']['name']}",
+				"type": "cleanup_failure",
+			}
+			for failure in cleanup_failures
+		),
+	]
+	return sorted(causes, key=lambda cause: (cause["type"], cause["detail"]))
+
+
+def validate_machine_report(value: object, scenario_contract: dict) -> dict:
+	"""Validate the complete public runtime report before it is published."""
+	scenario_contract = _exact(
+		scenario_contract, {"scenarios", "schema_version"}, "Runtime Scenario Manifest"
+	)
+	manifest_scenario_ids = (
+		[
+			scenario["id"] if isinstance(scenario, dict) and isinstance(scenario.get("id"), str) else None
+			for scenario in scenario_contract["scenarios"]
+		]
+		if isinstance(scenario_contract["scenarios"], list)
+		else []
+	)
+	if (
+		scenario_contract["schema_version"] != RUNTIME_CONTRACT_SCHEMA_VERSION
+		or not manifest_scenario_ids
+		or any(scenario_id is None or not scenario_id for scenario_id in manifest_scenario_ids)
+		or manifest_scenario_ids != sorted(set(manifest_scenario_ids))
+	):
+		raise ValueError("Runtime Scenario Manifest denominator is invalid")
+	value = _exact(
+		value,
+		{
+			"blocking_causes",
+			"cleanup_failures",
+			"coverage",
+			"cypress_diagnostic_log",
+			"diagnostic_sampling",
+			"discovery",
+			"durations_ms",
+			"environment",
+			"run_id",
+			"scenario_results",
+			"schema_version",
+			"site",
+			"stale_recoveries",
+			"status",
+			"summary",
+			"toolchain",
+		},
+		"machine report",
+	)
+	if value["schema_version"] != REPORT_SCHEMA_VERSION:
+		raise ValueError("unsupported machine report schema")
+	if not isinstance(value["run_id"], str) or not re.fullmatch(r"[0-9a-f]{32}", value["run_id"]):
+		raise ValueError("machine report run_id is invalid")
+	if value["site"] != "development.localhost" or value["status"] not in {"fail", "pass"}:
+		raise ValueError("machine report site or status is invalid")
+	if not isinstance(value["diagnostic_sampling"], bool):
+		raise ValueError("machine report diagnostic_sampling must be boolean")
+	if value["cypress_diagnostic_log"] is not None and not isinstance(value["cypress_diagnostic_log"], str):
+		raise ValueError("machine report Cypress diagnostic must be text or null")
+	if value["toolchain"] is not None:
+		_validate_toolchain(value["toolchain"])
+	environment = value["environment"]
+	if environment is not None:
+		environment = _exact(
+			environment,
+			{"babel", "installed_apps", "inventory_digest", "mo_sha256", "python", "upstream"},
+			"machine report environment",
+		)
+		if environment["installed_apps"] != ["frappe", "erpnext", "frappe_lt"]:
+			raise ValueError("machine report environment installed apps are invalid")
+		if not isinstance(environment["inventory_digest"], str) or not SHA256.fullmatch(
+			environment["inventory_digest"]
+		):
+			raise ValueError("machine report environment inventory digest is invalid")
+		if not isinstance(environment["mo_sha256"], str) or not SHA256.fullmatch(environment["mo_sha256"]):
+			raise ValueError("machine report environment MO digest is invalid")
+		if not all(
+			isinstance(environment[field], str) and environment[field] for field in ("babel", "python")
+		):
+			raise ValueError("machine report environment tool versions are invalid")
+		if not isinstance(environment["upstream"], dict) or list(environment["upstream"]) != [
+			"erpnext",
+			"frappe",
+		]:
+			raise ValueError("machine report environment upstream apps are invalid")
+		for app, pin in environment["upstream"].items():
+			pin = _exact(pin, {"commit", "version"}, f"machine report environment {app}")
+			if (
+				not isinstance(pin["commit"], str)
+				or not re.fullmatch(r"[0-9a-f]{40}", pin["commit"])
+				or not isinstance(pin["version"], str)
+				or not pin["version"]
+			):
+				raise ValueError("machine report environment upstream pin is invalid")
+	if value["status"] == "pass" and (environment is None or value["toolchain"] is None):
+		raise ValueError("machine report pass requires verified environment and toolchain facts")
+
+	discovery = _exact(value["discovery"], {"candidates", "collector_counts"}, "report discovery")
+	if not isinstance(discovery["candidates"], list) or not isinstance(discovery["collector_counts"], dict):
+		raise ValueError("machine report discovery is malformed")
+	collector_names = set(discovery["collector_counts"])
+	if collector_names not in (set(), {"email", "metadata", "portal", "print"}):
+		raise ValueError("machine report collector count fields are malformed")
+	if value["status"] == "pass" and collector_names != {"email", "metadata", "portal", "print"}:
+		raise ValueError("machine report pass requires every discovery collector")
+	candidate_ids = []
+	for candidate in discovery["candidates"]:
+		candidate = _exact(candidate, {"app", "id", "identity", "type"}, "report candidate")
+		if (
+			candidate["app"] not in {"erpnext", "frappe"}
+			or not all(isinstance(candidate[field], str) and candidate[field] for field in candidate)
+			or candidate["id"] != f"{candidate['type']}:{quote(candidate['identity'], safe='._-')}"
+		):
+			raise ValueError("machine report candidate is malformed")
+		candidate_ids.append(candidate["id"])
+	if candidate_ids != sorted(set(candidate_ids)):
+		raise ValueError("machine report candidates must have unique canonical ids")
+	if list(discovery["collector_counts"]) != sorted(discovery["collector_counts"]) or any(
+		isinstance(count, bool) or not isinstance(count, int) or count < 1
+		for count in discovery["collector_counts"].values()
+	):
+		raise ValueError("machine report collector counts are malformed")
+
+	coverage_result = _exact(value["coverage"], {"covered", "gaps", "reviewed_exclusions"}, "report coverage")
+	for field in ("covered", "gaps", "reviewed_exclusions"):
+		items = coverage_result[field]
+		if (
+			not isinstance(items, list)
+			or items != sorted(set(items))
+			or any(not isinstance(item, str) or not item for item in items)
+		):
+			raise ValueError(f"machine report coverage {field} is malformed")
+	coverage_groups = [set(coverage_result[field]) for field in coverage_result]
+	coverage_partition_invalid = any(
+		left & right for index, left in enumerate(coverage_groups) for right in coverage_groups[index + 1 :]
+	) or set().union(*coverage_groups) != set(candidate_ids)
+
+	results = value["scenario_results"]
+	if not isinstance(results, list):
+		raise ValueError("machine report scenario results must be a list")
+	result_ids = []
+	total_evidence = 0
+	for result in results:
+		result = _exact(
+			result,
+			{
+				"attempts",
+				"blocked_reason",
+				"duration_ms",
+				"error",
+				"evidence",
+				"fallbacks",
+				"id",
+				"layouts",
+				"ready",
+				"status",
+			},
+			"machine report scenario result",
+		)
+		if not isinstance(result["id"], str) or not result["id"]:
+			raise ValueError("machine report scenario result id is invalid")
+		if result["status"] not in {"blocked", "fail", "pass"} or not isinstance(result["ready"], bool):
+			raise ValueError("machine report scenario result status is invalid")
+		if (
+			not isinstance(result["duration_ms"], int)
+			or isinstance(result["duration_ms"], bool)
+			or result["duration_ms"] < 0
+			or (result["error"] is not None and not isinstance(result["error"], str))
+			or (result["blocked_reason"] is not None and not isinstance(result["blocked_reason"], str))
+		):
+			raise ValueError("machine report scenario result duration is invalid")
+		if not all(
+			isinstance(result[field], list) for field in ("attempts", "evidence", "fallbacks", "layouts")
+		):
+			raise ValueError("machine report scenario result lists are malformed")
+		_validate_attempts(result["attempts"], result["status"])
+		for fallback in result["fallbacks"]:
+			fallback = _exact(
+				fallback,
+				{
+					"active",
+					"effective",
+					"excluded",
+					"exclusion_id",
+					"key",
+					"raw_source",
+					"render_status",
+					"schema_version",
+					"scenario_id",
+					"source",
+					"target",
+					"visible",
+				},
+				"machine report lookup evidence",
+			)
+			if fallback["schema_version"] != 1:
+				raise ValueError("machine report lookup evidence schema is invalid")
+			key = _exact(fallback["key"], {"context", "source"}, "machine report Translation Key")
+			target = _exact(fallback["target"], {"type", "value"}, "machine report render target")
+			if (
+				fallback["scenario_id"] != result["id"]
+				or not all(isinstance(fallback[field], bool) for field in ("active", "excluded", "visible"))
+				or not all(
+					isinstance(fallback[field], str) for field in ("effective", "raw_source", "scenario_id")
+				)
+				or fallback["render_status"] not in {"ambiguous", "unique", "unrendered"}
+				or fallback["source"]
+				not in {"database", "erpnext", "frappe", "frappe_lt", "merged", "missing"}
+				or not isinstance(key["source"], str)
+				or not key["source"]
+				or key["source"] != key["source"].strip()
+				or fallback["raw_source"].strip() != key["source"]
+				or (key["context"] is not None and not isinstance(key["context"], str))
+				or fallback["visible"] != (fallback["render_status"] != "unrendered")
+				or fallback["excluded"] != (fallback["exclusion_id"] is not None)
+				or (fallback["exclusion_id"] is not None and not isinstance(fallback["exclusion_id"], str))
+				or target["type"] not in {"locator", "output_interval"}
+				or not isinstance(target["value"], str)
+				or not target["value"]
+			):
+				raise ValueError("machine report lookup evidence is malformed")
+		for layout in result["layouts"]:
+			_validate_layout(layout, result["id"])
+		for evidence in result["evidence"]:
+			_validate_evidence_structure(evidence, result["id"])
+		if len({evidence["path"] for evidence in result["evidence"]}) != len(result["evidence"]):
+			raise ValueError(f"scenario {result['id']!r} contains duplicate evidence paths")
+		scenario_evidence = sum(evidence["bytes"] for evidence in result["evidence"])
+		if scenario_evidence > MAX_EVIDENCE_PER_SCENARIO:
+			raise ValueError(f"scenario {result['id']!r} exceeds its evidence byte limit")
+		total_evidence += scenario_evidence
+		if result["status"] == "pass" and (
+			not result["ready"]
+			or result["error"] is not None
+			or result["blocked_reason"] is not None
+			or not any(finding["active"] for finding in result["fallbacks"])
+			or any(_is_blocking_fallback(finding) for finding in result["fallbacks"])
+			or any(_is_inactive_inventory_lookup(finding) for finding in result["fallbacks"])
+			or any(_is_functional_layout(finding) for finding in result["layouts"])
+		):
+			raise ValueError("machine report pass result contains blocking facts")
+		result_ids.append(result["id"])
+	if result_ids != manifest_scenario_ids:
+		raise ValueError("machine report scenario results must exactly match the Runtime Scenario Manifest")
+	if total_evidence > MAX_EVIDENCE_PER_RUN:
+		raise ValueError("runtime run exceeds its evidence byte limit")
+
+	failures = value["cleanup_failures"]
+	if not isinstance(failures, list):
+		raise ValueError("machine report cleanup failures must be a list")
+	for failure in failures:
+		_validate_cleanup_failure(failure)
+
+	if not isinstance(value["stale_recoveries"], list):
+		raise ValueError("machine report stale recoveries must be a list")
+	for recovery in value["stale_recoveries"]:
+		recovery = _exact(
+			recovery,
+			{"cleanup_failures", "mutation_count", "original_error", "run_id"},
+			"report stale recovery",
+		)
+		if not isinstance(recovery["cleanup_failures"], list):
+			raise ValueError("machine report stale recovery is malformed")
+		if (
+			not isinstance(recovery["run_id"], str)
+			or not re.fullmatch(r"[0-9a-f]{32}", recovery["run_id"])
+			or isinstance(recovery["mutation_count"], bool)
+			or not isinstance(recovery["mutation_count"], int)
+			or recovery["mutation_count"] < 0
+			or (recovery["original_error"] is not None and not isinstance(recovery["original_error"], str))
+		):
+			raise ValueError("machine report stale recovery is malformed")
+		for failure in recovery["cleanup_failures"]:
+			_validate_cleanup_failure(failure, "report stale cleanup failure")
+
+	durations = _exact(
+		value["durations_ms"], {"cleanup", "discovery", "preflight", "scenarios", "total"}, "report durations"
+	)
+	if any(
+		isinstance(duration, bool) or not isinstance(duration, int) or duration < 0
+		for duration in durations.values()
+	):
+		raise ValueError("machine report durations are malformed")
+
+	summary = _exact(
+		value["summary"],
+		{
+			"blocked",
+			"cleanup_failures",
+			"coverage_gaps",
+			"english_fallbacks",
+			"fail",
+			"functional_layout_defects",
+			"pass",
+			"runtime_inventory_gaps",
+			"total",
+		},
+		"machine report summary",
+	)
+	if any(isinstance(count, bool) or not isinstance(count, int) or count < 0 for count in summary.values()):
+		raise ValueError("machine report summary counts are malformed")
+	expected = _report_summary(results, coverage_result, failures)
+	if any(summary[field] != count for field, count in expected.items()):
+		raise ValueError("machine report summary does not match report facts")
+
+	causes = value["blocking_causes"]
+	if not isinstance(causes, list):
+		raise ValueError("machine report blocking causes must be a list")
+	for cause in causes:
+		cause = _exact(cause, {"detail", "type"}, "report blocking cause")
+		if cause["type"] not in {
+			"cleanup_failure",
+			"runtime_coverage_gap",
+			"scenario_blocked",
+			"scenario_fail",
+			"tool_error",
+		} or not all(isinstance(cause[field], str) and cause[field] for field in cause):
+			raise ValueError("machine report blocking cause is malformed")
+	if causes != sorted(causes, key=lambda cause: (cause["type"], cause["detail"])):
+		raise ValueError("machine report blocking causes are not canonical")
+	non_tool_causes = [cause for cause in causes if cause["type"] != "tool_error"]
+	if non_tool_causes != _fact_blocking_causes(coverage_result, results, failures):
+		raise ValueError("machine report blocking causes do not match report facts")
+	if coverage_partition_invalid and not any(cause["type"] == "tool_error" for cause in causes):
+		raise ValueError("machine report coverage must partition every discovered candidate")
+	if (value["status"] == "fail") != bool(causes):
+		raise ValueError("machine report status does not match blocking causes")
+	return value
 
 
 def _human_report(report: dict) -> str:
@@ -835,63 +1324,18 @@ def _build_report(
 		}
 		for recovery in stale_recoveries
 	]
-	blocking_causes = []
-	for error in tool_errors:
-		blocking_causes.append({"detail": _redact(error), "type": "tool_error"})
-	for gap in coverage_result["gaps"]:
-		blocking_causes.append({"detail": gap, "type": "runtime_coverage_gap"})
-	for result in results:
-		if result["status"] in {"blocked", "fail"}:
-			detail = result["error"] or result["blocked_reason"] or result["id"]
-			blocking_causes.append(
-				{"detail": f"{result['id']}: {detail}"[:2048], "type": f"scenario_{result['status']}"}
-			)
-	for failure in cleanup_failures:
-		blocking_causes.append(
-			{
-				"detail": f"{failure['target']['doctype']}:{failure['target']['name']}",
-				"type": "cleanup_failure",
-			}
-		)
-	fallback_count = sum(
-		1
-		for result in results
-		for finding in result["fallbacks"]
-		if finding["active"]
-		and finding["visible"]
-		and finding["render_status"] != "unrendered"
-		and not finding["excluded"]
-		and (finding["source"] == "missing" or finding["effective"] == finding["key"]["source"])
-	)
-	inventory_gap_count = sum(
-		1
-		for result in results
-		for finding in result["fallbacks"]
-		if not finding["active"]
-		and finding["visible"]
-		and finding["render_status"] != "unrendered"
-		and not finding["excluded"]
-	)
-	layout_count = sum(
-		1 for result in results for finding in result["layouts"] if finding["severity"] == "functional"
-	)
-	summary = {
-		"blocked": sum(result["status"] == "blocked" for result in results),
-		"cleanup_failures": len(cleanup_failures),
-		"coverage_gaps": len(coverage_result["gaps"]),
-		"english_fallbacks": fallback_count,
-		"fail": sum(result["status"] == "fail" for result in results),
-		"functional_layout_defects": layout_count,
-		"pass": sum(result["status"] == "pass" for result in results),
-		"runtime_inventory_gaps": inventory_gap_count,
-		"total": len(results),
-	}
+	blocking_causes = [
+		*({"detail": _redact(error), "type": "tool_error"} for error in tool_errors),
+		*_fact_blocking_causes(coverage_result, results, cleanup_failures),
+	]
+	summary = _report_summary(results, coverage_result, cleanup_failures)
 	report_environment = None
 	if environment:
 		report_environment = {
 			"babel": environment["babel"],
 			"installed_apps": environment["installed_apps"],
 			"inventory_digest": environment["inventory_digest"],
+			"mo_sha256": environment["mo_sha256"],
 			"python": environment["python"],
 			"upstream": {
 				app: {"commit": value["commit"], "version": value["version"]}
@@ -967,7 +1411,11 @@ def run(
 		environment = verify_environment(
 			frappe,
 			site=site,
+			require_clean_upstream=True,
 			required_apps=("frappe", "erpnext", "frappe_lt"),
+			require_exact_apps=True,
+			require_active_catalog=True,
+			require_runtime_metadata=True,
 		)
 		durations["preflight"] = int((clock() - preflight_started) * 1000)
 		discovery_started = clock()
@@ -1071,6 +1519,9 @@ def run(
 		diagnostic_sampling=diagnostic_sampling,
 		cypress_diagnostic_log=cypress_diagnostic_log,
 	)
+	if contracts is None:
+		raise ValueError("Runtime Scenario Manifest was not loaded")
+	validate_machine_report(report, contracts["scenarios"])
 	machine = canonical_json(report)
 	if len(machine) > MAX_REPORT_BYTES:
 		raise ValueError(f"runtime machine report exceeds {MAX_REPORT_BYTES} bytes")

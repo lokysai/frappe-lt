@@ -608,7 +608,9 @@ jobs:
           done
           curl --fail --silent --show-error http://development.localhost:8000/api/method/ping > /dev/null
 
-      - name: Validate expected incomplete Lithuanian runtime result
+      # This passes only when the harness detects the known open product-data blockers.
+      # It is not a release-candidate pass; issue #16 owns the final release validation.
+      - name: Assert harness detects expected catalog and coverage blockers
         working-directory: /home/runner/frappe-bench
         run: |
           runtime_exit=0
@@ -618,15 +620,22 @@ jobs:
           import os
           from pathlib import Path
 
+          from frappe_lt.runtime_contracts import load_contracts
+          from frappe_lt.runtime_validation import validate_machine_report
+
           runtime_exit = int(os.environ["RUNTIME_EXIT"])
           report = json.loads(Path(os.environ["RUNTIME_ARTIFACT_DIR"], "run", "runtime-report.json").read_text())
+          scenario_contract = load_contracts()["scenarios"]
+          expected_ids = [scenario["id"] for scenario in scenario_contract["scenarios"]]
+          validate_machine_report(report, scenario_contract)
           summary = report["summary"]
           scenario_results = report["scenario_results"]
 
           assert runtime_exit == 1, runtime_exit
           assert report["status"] == "fail", report["status"]
-          assert summary["total"] == 10, summary
-          assert len(scenario_results) == summary["total"], summary
+          assert report["schema_version"] == 5, report["schema_version"]
+          assert summary["total"] == len(expected_ids), summary
+          assert [result["id"] for result in scenario_results] == expected_ids, scenario_results
           assert summary["pass"] + summary["fail"] + summary["blocked"] == summary["total"], summary
           assert summary["blocked"] == 0, summary
           assert summary["cleanup_failures"] == 0, summary
@@ -634,10 +643,8 @@ jobs:
           assert summary["english_fallbacks"] > 0, summary
           assert summary["fail"] > 0, summary
           assert summary["functional_layout_defects"] == 0, summary
-          assert {cause["type"] for cause in report["blocking_causes"]} <= {
-              "runtime_coverage_gap",
-              "scenario_fail",
-          }, report["blocking_causes"]
+          blocker_types = {cause["type"] for cause in report["blocking_causes"]}
+          assert blocker_types == {"runtime_coverage_gap", "scenario_fail"}, report["blocking_causes"]
           assert all(
               result["status"] in {"pass", "fail"}
               and (result["status"] == "pass" or result["error"] == "scenario produced blocking runtime findings")

@@ -2,6 +2,7 @@ import hashlib
 import importlib
 import json
 import random
+from copy import deepcopy
 from io import BytesIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -30,6 +31,7 @@ from frappe_lt.runtime_extraction import (
 	_navbar_owners,
 	_validate_metadata_signatures,
 	extract_runtime,
+	verify_standard_metadata,
 )
 from frappe_lt.source_extraction import (
 	_source_locator,
@@ -935,10 +937,17 @@ class RuntimeExtractionTest(TestCase):
 		expected = {
 			category: _metadata_digest(metadata[category]) for category in METADATA_SIGNATURE_CATEGORIES
 		}
-		metadata["page"]["page"].append({"name": "spoofed", "title": "Spoofed", "module": "Core"})
+		with patch("frappe_lt.runtime_extraction.collect_standard_metadata", return_value=metadata):
+			self.assertIs(verify_standard_metadata(object(), expected), metadata)
 
-		with self.assertRaisesRegex(ValueError, "page.*computed"):
-			_validate_metadata_signatures(metadata, expected)
+		spoofed = deepcopy(metadata)
+		spoofed["page"]["page"].append({"name": "spoofed", "title": "Spoofed", "module": "Core"})
+
+		with (
+			patch("frappe_lt.runtime_extraction.collect_standard_metadata", return_value=spoofed),
+			self.assertRaisesRegex(ValueError, "page.*computed"),
+		):
+			verify_standard_metadata(object(), expected)
 
 	def test_fresh_post_install_navbar_signature_is_required(self):
 		fresh_labels = [
