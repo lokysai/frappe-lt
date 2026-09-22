@@ -53,6 +53,10 @@ _Vengti_: Atskiras PO tikrintuvas, neautentifikuotas generatorius
 Versijuotame registre įvardytas nesikertantis **Release Inventory** **Translation Key** poaibis, susietas su tiksliu inventoriaus digestu ir vienu registruotu kandidatu.
 _Vengti_: Neužregistruotas vertimų paketas, savavališkas raktų poaibis
 
+**Catalog Segment Ownership Override**:
+Peržiūrėtas **Translation Key** ir jo source digest susiejimas su vienu **Catalog Segment**, naudojamas tik kai iš išsaugotų **Source Locations** negalima patikimai nustatyti ERPNext modulio; įrašas nurodo pasirinktą segmentą ir sprendimo priežastį.
+_Vengti_: Teksto spėjimu paremtas automatinis priskyrimas, nuo source digest neapsaugota išimtis
+
 <a id="html-equivalence"></a>
 
 **HTML Equivalence**:
@@ -120,6 +124,10 @@ A Lithuanian translation carried forward from the Frappe or ERPNext v15 catalogs
 
 **AI Translation**:
 A new or corrected Lithuanian translation produced by an OpenCode agent under the project's glossary and quality rules.
+
+**Translation Review Evidence**:
+Struktūruotas vieno **Translation Key** peržiūros rezultatas, kuriame yra būsena, kontroliuojamas sprendimo priežasties kodas, tikslūs agento ir modelio identifikatoriai bei iš peržiūros turinio deterministiškai apskaičiuotas run ID. Pataisytas vertimas ir patvirtinta išimtis papildomai turi trumpą sprendimo paaiškinimą; nepakeistas paveldėtas vertimas gali naudoti `accepted_as_is` kodą.
+_Vengti_: Atsitiktinis run ID, laiko žyma deterministiniame kandidate, vien laisvos formos review tekstas, origin reikšmė vietoje peržiūros priežasties
 
 **Suspicious Translation**:
 An **Inherited Translation** flagged for a foreign-language fragment, broken grammar, literal wording, inconsistent terminology, damaged punctuation, or changed meaning.
@@ -377,6 +385,7 @@ _Vengti_: Nekaitomas žodyno termino įterpimas
 
 - A **Translation Catalog** contains exactly one active entry for each **Active Translation Key**
 - A **Release Inventory** freezes the **Active Translation Keys** for one released compatibility manifest
+- **Catalog Segment** ownership follows one precedence order: the Frappe segment owns every key found in Frappe; among ERPNext-only keys, the finance and commerce segment owns every key with at least one classifiable **Source Location** in Accounts, Assets, CRM, Selling, or Buying; a reviewed **Catalog Segment Ownership Override** assigns an otherwise unclassifiable key; the operations segment owns the remainder
 - A **Translation Key** consists of one **Source Phrase** and zero or one **Frappe Context** value
 - A **Source Phrase** can have many **Source Locations**
 - An approved **Translation Exception** counts toward **Translation Coverage** but is not an **English Fallback**
@@ -391,6 +400,7 @@ _Vengti_: Nekaitomas žodyno termino įterpimas
 - A **Runtime Output Scenario** must exercise the standard product flow; direct template rendering alone does not satisfy runtime coverage
 - Runtime validation authenticates the target site's exact Frappe and ERPNext versions and commits before any mutable scenario
 - A **Suspicious Translation** remains inherited until an **AI Translation** replaces it
+- Every entry in a registered **Catalog Segment** candidate carries **Translation Review Evidence**, including preserved inherited text, corrected or new translations, and approved exceptions
 - **Prekės kodas** identifies exactly one **Prekė** within an ERPNext site
 - A **Klientas** can buy one or more **Prekės**
 - A **Naudotojas** can be linked to a **Darbuotojas**, but they remain separate records
