@@ -619,12 +619,29 @@ def _verify_upstream(frappe, manifest: dict) -> None:
 	verify_environment(frappe, site=frappe.local.site, require_clean_upstream=True)
 
 
+def _active_catalog_sha256() -> str:
+	from frappe.gettext.translate import get_mo_path
+
+	path = Path(get_mo_path("frappe_lt", "lt"))
+	digest = hashlib.sha256()
+	try:
+		with path.open("rb") as stream:
+			for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+				digest.update(chunk)
+	except OSError as error:
+		raise ValueError(f"could not read active frappe_lt.mo catalog {path}: {error}") from error
+	return digest.hexdigest()
+
+
 def verify_environment(
 	frappe,
 	*,
 	site: str,
 	require_clean_upstream: bool = False,
 	required_apps: tuple[str, ...] = ("frappe", "erpnext"),
+	require_exact_apps: bool = False,
+	require_active_catalog: bool = False,
+	require_runtime_metadata: bool = False,
 ) -> dict:
 	"""Read-only verification of the site and pinned Compatibility environment."""
 	import erpnext
@@ -634,6 +651,8 @@ def verify_environment(
 	manifest = verify_owned_artifacts()
 	tools = validate_tool_versions(manifest)
 	installed_apps = frappe.get_installed_apps()
+	if require_exact_apps and installed_apps != list(required_apps):
+		raise ValueError(f"site must contain exactly {list(required_apps)}; found {installed_apps}")
 	positions = []
 	for app in required_apps:
 		if app not in installed_apps:
@@ -667,12 +686,25 @@ def verify_environment(
 		raise ValueError(
 			f"active directory must be bench sites directory {active_directory}; found {Path.cwd().resolve()}"
 		)
+	mo_sha256 = None
+	if require_active_catalog:
+		expected_mo_sha256 = manifest.get("mo_sha256")
+		if expected_mo_sha256 is None:
+			raise ValueError("Compatibility must authenticate the active frappe_lt.mo catalog")
+		mo_sha256 = _active_catalog_sha256()
+		if mo_sha256 != expected_mo_sha256:
+			raise ValueError(f"active frappe_lt.mo digest must be {expected_mo_sha256}; found {mo_sha256}")
+	if require_runtime_metadata:
+		from frappe_lt.runtime_extraction import verify_standard_metadata
+
+		verify_standard_metadata(frappe, manifest["runtime_metadata_sha256"])
 
 	return {
 		"active_directory": active_directory.as_posix(),
 		"babel": tools["babel"],
 		"installed_apps": installed_apps,
 		"inventory_digest": manifest["inventory_digest"],
+		"mo_sha256": mo_sha256,
 		"python": platform.python_version(),
 		"site": site,
 		"upstream": upstream,

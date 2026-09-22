@@ -28,7 +28,7 @@ def _literal_string(node: ast.expr | None) -> str | None:
 		return None
 	try:
 		value = ast.literal_eval(node)
-	except ValueError, TypeError:
+	except (ValueError, TypeError):
 		return None
 	return value if isinstance(value, str) else None
 

@@ -4,18 +4,26 @@ const assert = require("node:assert/strict");
 const {
 	correlateOutput,
 	exactOutputExclusion,
+	finalizeScenarioResult,
 	isBlockingFallback,
 	isBlockingInventoryLookup,
 	isClippedByAncestor,
+	isDisabledControl,
+	isUnusableControl,
 	isVisuallyHidden,
 	meaningfulTarget,
 } = require("./runtime_validation_helpers");
 
-function element(bounds, { attributes = {}, classes = [], dataset = {}, focused = false, parentElement = null } = {}) {
+function element(
+	bounds,
+	{ attributes = {}, classes = [], dataset = {}, disabled = false, focused = false, labels = [], parentElement = null } = {}
+) {
 	return {
 		classList: { contains: (name) => classes.includes(name) },
 		dataset,
+		disabled,
 		id: attributes.id || "",
+		labels,
 		parentElement,
 		tagName: "BUTTON",
 		getAttribute: (name) => attributes[name] || null,
@@ -40,6 +48,89 @@ test("below-fold controls are not clipped unless a clipping ancestor cuts them",
 		overflowY: candidate === clipper ? "hidden" : "visible",
 	});
 	assert.equal(isClippedByAncestor(belowFold, hiddenOverflow), true);
+});
+
+test("mobile controls are unusable when outside the viewport, pointer-disabled, or too small", () => {
+	const mobileWidth = 390;
+	assert.equal(
+		isUnusableControl(
+			element({ bottom: 60, height: 40, left: 400, right: 440, top: 20, width: 40 }),
+			{ pointerEvents: "auto" },
+			mobileWidth
+		),
+		true
+	);
+	assert.equal(
+		isUnusableControl(
+			element({ bottom: 60, height: 40, left: 20, right: 60, top: 20, width: 40 }),
+			{ pointerEvents: "none" },
+			mobileWidth
+		),
+		true
+	);
+	assert.equal(
+		isUnusableControl(
+			element({ bottom: 30, height: 10, left: 20, right: 30, top: 20, width: 10 }),
+			{ pointerEvents: "auto" },
+			mobileWidth
+		),
+		true
+	);
+	assert.equal(
+		isUnusableControl(
+			element({ bottom: 60, height: 40, left: 20, right: 60, top: 20, width: 40 }),
+			{ pointerEvents: "auto" },
+			mobileWidth
+		),
+		false
+	);
+});
+
+test("disabled mobile controls are ignored and checkbox or radio labels provide the hit target", () => {
+	const mobileWidth = 390;
+	const tiny = { bottom: 24, height: 10, left: 14, right: 24, top: 14, width: 10 };
+	assert.equal(isDisabledControl(element(tiny, { disabled: true })), true);
+	assert.equal(isDisabledControl(element(tiny, { attributes: { "aria-disabled": "true" } })), true);
+	assert.equal(isDisabledControl(element(tiny)), false);
+	assert.equal(
+		isUnusableControl(element(tiny, { disabled: true }), { pointerEvents: "none" }, mobileWidth),
+		false
+	);
+	assert.equal(
+		isUnusableControl(
+			element(tiny, { attributes: { type: "checkbox" }, labels: [element({ height: 32, width: 80 })] }),
+			{ pointerEvents: "auto" },
+			mobileWidth
+		),
+		false
+	);
+	assert.equal(
+		isUnusableControl(
+			element(tiny, { attributes: { type: "radio" }, labels: [element({ height: 12, width: 80 })] }),
+			{ pointerEvents: "auto" },
+			mobileWidth
+		),
+		true
+	);
+	assert.equal(
+		isUnusableControl(
+			element(
+				{ bottom: 24, height: 10, left: 400, right: 410, top: 14, width: 10 },
+				{ attributes: { type: "checkbox" }, labels: [element({ height: 32, width: 80 })] }
+			),
+			{ pointerEvents: "auto" },
+			mobileWidth
+		),
+		true
+	);
+	assert.equal(
+		isUnusableControl(
+			element(tiny, { attributes: { type: "checkbox" }, labels: [element({ height: 32, width: 80 })] }),
+			{ pointerEvents: "none" },
+			mobileWidth
+		),
+		true
+	);
 });
 
 test("layout findings require a stable meaningful target", () => {
@@ -125,6 +216,10 @@ test("output correlation distinguishes unique, ambiguous, and unrendered text", 
 	});
 	assert.equal(correlateOutput("Save then Save", "Save").renderStatus, "ambiguous");
 	assert.equal(correlateOutput("Nothing", "Save").renderStatus, "unrendered");
+	assert.deepEqual(correlateOutput("Sveiki, Jonai", "Sveiki, {0}"), {
+		interval: { start: 0, end: 13 },
+		renderStatus: "unique",
+	});
 });
 
 test("output exclusions apply only to exact approved values at the captured interval", () => {
@@ -170,6 +265,7 @@ test("rendered missing translations block even when their target is ambiguous", 
 	assert.equal(isBlockingFallback({ ...finding, render_status: "unrendered", visible: false }), false);
 	assert.equal(isBlockingFallback({ ...finding, excluded: true }), false);
 	assert.equal(isBlockingFallback({ ...finding, effective: "Išsaugoti", source: "frappe_lt" }), false);
+	assert.equal(isBlockingFallback({ ...finding, effective: " Save ", source: "database" }), true);
 	assert.equal(isBlockingFallback({ ...finding, active: false }), false);
 });
 
@@ -184,4 +280,40 @@ test("rendered inactive lookups fail closed as inventory gaps", () => {
 	assert.equal(isBlockingInventoryLookup({ ...finding, active: true }), false);
 	assert.equal(isBlockingInventoryLookup({ ...finding, excluded: true }), false);
 	assert.equal(isBlockingInventoryLookup({ ...finding, render_status: "unrendered", visible: false }), false);
+});
+
+test("scenario outcome contract blocks missing readiness and elapsed scenario timeout", () => {
+	const scenario = { scenario_timeout_ms: 100 };
+	const base = {
+		attempts: [{ duration_ms: 0, error: null, kind: "initial", number: 1, outcome: "pass" }],
+		blocked_reason: null,
+		error: null,
+		fallbacks: [{ active: true, excluded: false, render_status: "unrendered", visible: false }],
+		layouts: [],
+		ready: true,
+		status: "pass",
+	};
+	const unavailable = finalizeScenarioResult(scenario, { ...base, attempts: base.attempts.map((item) => ({ ...item })), ready: false }, 20);
+	assert.equal(unavailable.status, "blocked");
+	assert.match(unavailable.blocked_reason, /readiness/);
+	assert.equal(unavailable.attempts[0].outcome, "blocked");
+
+	const timedOut = finalizeScenarioResult(scenario, { ...base, attempts: base.attempts.map((item) => ({ ...item })) }, 101);
+	assert.equal(timedOut.status, "blocked");
+	assert.match(timedOut.blocked_reason, /exceeded 100 ms/);
+	assert.equal(timedOut.attempts[0].error, timedOut.blocked_reason);
+
+	const failed = finalizeScenarioResult(
+		scenario,
+		{
+			...base,
+			attempts: base.attempts.map((item) => ({ ...item })),
+			error: "Cypress assertion failed",
+			status: "fail",
+		},
+		30
+	);
+	assert.equal(failed.status, "fail");
+	assert.equal(failed.attempts[0].outcome, "assertion_failure");
+	assert.equal(failed.attempts[0].error, failed.error);
 });

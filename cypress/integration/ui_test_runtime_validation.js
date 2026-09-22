@@ -3,9 +3,10 @@ const scenarioResults = new Map();
 const {
 	correlateOutput,
 	exactOutputExclusion,
-	isBlockingFallback,
-	isBlockingInventoryLookup,
+	finalizeScenarioResult,
 	isClippedByAncestor,
+	isDisabledControl,
+	isUnusableControl,
 	isVisuallyHidden,
 	meaningfulTarget,
 } = require("../support/runtime_validation_helpers");
@@ -67,30 +68,7 @@ function emptyResult(scenario) {
 }
 
 function finishScenario(scenario, result, started) {
-	result.duration_ms = Date.now() - started;
-	if (!result.ready && result.status === "pass") {
-		result.status = "blocked";
-		result.blocked_reason = "scenario did not prove readiness";
-	}
-	if (result.duration_ms > scenario.scenario_timeout_ms && result.status === "pass") {
-		result.status = "blocked";
-		result.blocked_reason = `scenario exceeded ${scenario.scenario_timeout_ms} ms`;
-	}
-	const blockingFallback = result.fallbacks.some(isBlockingFallback);
-	const blockingInventoryLookup = result.fallbacks.some(isBlockingInventoryLookup);
-	const blockingLayout = result.layouts.some((finding) => finding.severity === "functional");
-	if (result.status === "pass" && (blockingFallback || blockingInventoryLookup || blockingLayout)) {
-		result.status = "fail";
-		result.error = "scenario produced blocking runtime findings";
-	}
-	if (!result.fallbacks.some((finding) => finding.active) && result.status === "pass") {
-		result.status = "blocked";
-		result.blocked_reason = "scenario produced no active effective translation lookup evidence";
-	}
-	const attempt = result.attempts[result.attempts.length - 1];
-	attempt.duration_ms = result.duration_ms;
-	attempt.outcome = result.status === "fail" ? "assertion_failure" : result.status;
-	attempt.error = result.status === "pass" ? null : result.blocked_reason || result.error;
+	finalizeScenarioResult(scenario, result, Date.now() - started);
 	const artifacts = result.fallbacks.some((finding) => !finding.active)
 		? []
 		: scenarioResults.get(scenario.id)?.artifacts || [];
@@ -182,9 +160,13 @@ function recordLayout(result) {
 				target: "document",
 			});
 		}
-		for (const element of document.querySelectorAll("button, input, select, [role='button']")) {
+		for (const element of document.querySelectorAll(
+			"a[href], button, input, select, summary, textarea, [role='button'], [tabindex]:not([tabindex='-1'])"
+		)) {
 			if (!isVisible(element)) continue;
+			if (isDisabledControl(element)) continue;
 			const bounds = element.getBoundingClientRect();
+			const style = document.defaultView.getComputedStyle(element);
 			const target = uniqueTarget(document, element);
 			if (!target) continue;
 			if (isClippedByAncestor(element, document.defaultView.getComputedStyle.bind(document.defaultView))) {
@@ -212,9 +194,9 @@ function recordLayout(result) {
 					target,
 				});
 			}
-			if (element.matches("button, [role='button']") && (bounds.width < 8 || bounds.height < 8)) {
+			if (isUnusableControl(element, style, root.clientWidth)) {
 				result.layouts.push({
-					detail: "interactive control has no usable hit area",
+					detail: "interactive control is outside the horizontal viewport, pointer-disabled, or has no usable hit area",
 					kind: "unusable",
 					scenario_id: result.id,
 					severity: "functional",
@@ -222,7 +204,9 @@ function recordLayout(result) {
 				});
 			}
 		}
-		for (const element of document.querySelectorAll(".control-label, .page-title, button")) {
+		for (const element of document.querySelectorAll(
+			"a[href], button, label, legend, th, td, .control-label, .list-row, .page-title, [data-fieldname]"
+		)) {
 			if (!isVisible(element)) continue;
 			const target = uniqueTarget(document, element);
 			if (!target) continue;
@@ -348,6 +332,7 @@ function collectLookups(scenario, result) {
 					key: evidence.key,
 					raw_source: evidence.raw_source,
 					render_status: location.renderStatus,
+					schema_version: 1,
 					scenario_id: scenario.id,
 					source: evidence.source,
 					target: {
@@ -424,6 +409,7 @@ function collectServerLookups(scenario, result, lookups, targetType, output) {
 				key: evidence.key,
 				raw_source: evidence.raw_source,
 				render_status: correlation.renderStatus,
+				schema_version: 1,
 				scenario_id: scenario.id,
 				source: evidence.source,
 				target: {
@@ -479,6 +465,29 @@ function verifyReadiness(scenario, result, proof = {}) {
 	}
 	throw new Error(`unsupported readiness type ${scenario.readiness.type}`);
 }
+
+describe("runtime harness outcome contract", () => {
+	it("records unavailable scenarios as blocked", () => {
+		const scenario = { id: "blocked-readiness-contract", scenario_timeout_ms: 100 };
+		const result = emptyResult(scenario);
+		finalizeScenarioResult(scenario, result, 10);
+		expect(result.status).to.equal("blocked");
+		expect(result.blocked_reason).to.include("readiness");
+		expect(result.evidence).to.deep.equal([]);
+		return cy.task("runtime:recordHarness", canonical(result), { log: false });
+	});
+
+	it("records elapsed scenario deadlines as blocked", () => {
+		const scenario = { id: "blocked-timeout-contract", scenario_timeout_ms: 100 };
+		const result = emptyResult(scenario);
+		result.ready = true;
+		finalizeScenarioResult(scenario, result, scenario.scenario_timeout_ms + 1);
+		expect(result.status).to.equal("blocked");
+		expect(result.blocked_reason).to.include(`exceeded ${scenario.scenario_timeout_ms} ms`);
+		expect(result.evidence).to.deep.equal([]);
+		return cy.task("runtime:recordHarness", canonical(result), { log: false });
+	});
+});
 
 for (const scenario of plan.scenarios) {
 	it(scenario.id, {
@@ -633,7 +642,7 @@ afterEach(function () {
 		if (scenario) {
 			const recorded = scenarioResults.get(scenario.id);
 			const result = recorded?.result || emptyResult(scenario);
-			result.duration_ms = recorded ? Date.now() - recorded.started : 0;
+			const durationMs = recorded ? Date.now() - recorded.started : 0;
 			const error = recorded?.resolvingLookup
 				? "runtime translation lookup request failed"
 				: redactError(this.currentTest.err?.message || "Cypress assertion failed");
@@ -641,10 +650,7 @@ afterEach(function () {
 			result.blocked_reason = blocked ? error : null;
 			result.error = blocked ? null : error;
 			result.status = blocked ? "blocked" : "fail";
-			const attempt = result.attempts[result.attempts.length - 1];
-			attempt.duration_ms = result.duration_ms;
-			attempt.error = error;
-			attempt.outcome = blocked ? "blocked" : "assertion_failure";
+			finalizeScenarioResult(scenario, result, durationMs);
 			const artifacts = result.fallbacks.some((finding) => !finding.active)
 				? []
 				: recorded?.artifacts || [];

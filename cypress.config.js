@@ -30,6 +30,7 @@ if (
 	throw new Error("unsupported or malformed runtime browser plan");
 }
 const results = new Map();
+const harnessResults = new Map();
 
 function canonical(value) {
 	if (Array.isArray(value)) return value.map(canonical);
@@ -64,6 +65,11 @@ module.exports = defineConfig({
 				secrets,
 			});
 			on("task", {
+				"runtime:recordHarness"(result) {
+					const safeResult = redactJson(result, secrets);
+					harnessResults.set(safeResult.id, safeResult);
+					return null;
+				},
 				"runtime:record"(result) {
 					const safeResult = redactJson(result, secrets);
 					results.set(safeResult.id, safeResult);
@@ -82,7 +88,10 @@ module.exports = defineConfig({
 					schema_version: 1,
 				});
 				const output = canonical({
-				schema_version: 5,
+					harness_contract: [...harnessResults.values()].sort((left, right) =>
+						left.id < right.id ? -1 : left.id > right.id ? 1 : 0
+					),
+					schema_version: 6,
 					scenarios: [...results.values()].sort((left, right) =>
 						left.id < right.id ? -1 : left.id > right.id ? 1 : 0
 					),
