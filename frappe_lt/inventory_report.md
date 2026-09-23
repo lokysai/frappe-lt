@@ -11,9 +11,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 
 ## Coverage
 
-- Missing: 16534
+- Missing: 16476
 - Translated: 1
-- Excepted: 0
+- Excepted: 58
 
 ## Active Translation Keys
 
@@ -143,7 +143,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>1-10</code> |  | new | missing |
 | <code>1000+</code> |  | new | missing |
 | <code>11-50</code> |  | new | missing |
-| <code>1{0}</code> |  | new | missing |
+| <code>1{0}</code> |  | new | excepted |
 | <code>2 Yearly</code> |  | new | missing |
 | <code>2 hours ago</code> |  | new | missing |
 | <code>2 months ago</code> |  | new | missing |
@@ -182,10 +182,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>&lt;div class=&quot;ql-editor read-mode&quot;&gt;&lt;p&gt;Request a file containing your personally identifiable information (PII) that is saved on our system. The file will be in JSON format and is sent to you by email. If you would like to have your PII deleted from our system, please make a &lt;a href=&quot;/request-to-delete-data&quot; rel=&quot;noopener noreferrer&quot;&gt;request to delete data&lt;/a&gt;.&lt;/p&gt;&lt;/div&gt;</code> |  | new | missing |
 | <code>&lt;div class=&quot;ql-editor read-mode&quot;&gt;&lt;p&gt;Send a request to delete your account and personally identifiable information (PII) that is stored on our system. You will receive an email to verify your request. Once the request is verified we will take care of deleting your PII. If you just want to check what PII we have stored, you can &lt;a href=&quot;/request-data&quot; rel=&quot;noopener noreferrer&quot;&gt;request your data&lt;/a&gt;.&lt;/p&gt;&lt;/div&gt;</code> |  | new | missing |
 | <code>&lt;div class=&quot;text-muted text-center&quot;&gt;No Matching Bank Transactions Found&lt;/div&gt;</code> |  | new | missing |
-| <code>&lt;div class=&quot;text-muted text-center&quot;&gt;{0}&lt;/div&gt;</code> |  | new | missing |
+| <code>&lt;div class=&quot;text-muted text-center&quot;&gt;{0}&lt;/div&gt;</code> |  | new | excepted |
 | <code>&lt;div class=&quot;well&quot;&gt;<br>    Edit list of Series in the box. Rules:<br>    &lt;ul&gt;<br>        &lt;li&gt;Each Series Prefix on a new line.&lt;/li&gt;<br>        &lt;li&gt;Allowed special characters are &quot;/&quot; and &quot;-&quot;&lt;/li&gt;<br>        &lt;li&gt;<br>            Optionally, set the number of digits in the series using dot (.)<br>            followed by hashes (#). For example, &quot;.####&quot; means that the series<br>            will have four digits. Default is five digits.<br>        &lt;/li&gt;<br>        &lt;li&gt;<br>            You can also use variables in the series name by putting them<br>            between (.) dots<br>            &lt;br&gt;<br>            Supported Variables:<br>            &lt;ul&gt;<br>                &lt;li&gt;&lt;code&gt;.YYYY.&lt;/code&gt; - Year in 4 digits&lt;/li&gt;<br>                &lt;li&gt;&lt;code&gt;.YY.&lt;/code&gt; - Year in 2 digits&lt;/li&gt;<br>                &lt;li&gt;&lt;code&gt;.MM.&lt;/code&gt; - Month&lt;/li&gt;<br>                &lt;li&gt;&lt;code&gt;.DD.&lt;/code&gt; - Day of month&lt;/li&gt;<br>                &lt;li&gt;&lt;code&gt;.WW.&lt;/code&gt; - Week of the year&lt;/li&gt;<br>                &lt;li&gt;<br>                    &lt;code&gt;.{fieldname}.&lt;/code&gt; - fieldname on the document e.g.<br>                    &lt;code&gt;branch&lt;/code&gt;<br>                &lt;/li&gt;<br>                &lt;li&gt;&lt;code&gt;.FY.&lt;/code&gt; - Fiscal Year (requires ERPNext to be installed)&lt;/li&gt;<br>                &lt;li&gt;&lt;code&gt;.ABBR.&lt;/code&gt; - Company Abbreviation (requires ERPNext to be installed)&lt;/li&gt;<br>            &lt;/ul&gt;<br>        &lt;/li&gt;<br>    &lt;/ul&gt;<br>    Examples:<br>    &lt;ul&gt;<br>        &lt;li&gt;INV-&lt;/li&gt;<br>        &lt;li&gt;INV-10-&lt;/li&gt;<br>        &lt;li&gt;INVK-&lt;/li&gt;<br>        &lt;li&gt;INV-.YYYY.-.{branch}.-.MM.-.####&lt;/li&gt;<br>    &lt;/ul&gt;<br>&lt;/div&gt;<br>&lt;br&gt;</code> |  | new | missing |
-| <code>&lt;div id=&quot;stock-levels-placeholder&quot;&gt;&lt;/div&gt;</code> |  | new | missing |
-| <code>&lt;div id=\&quot;item-prices-container\&quot;&gt;&lt;/div&gt;</code> |  | new | missing |
+| <code>&lt;div id=&quot;stock-levels-placeholder&quot;&gt;&lt;/div&gt;</code> |  | new | excepted |
+| <code>&lt;div id=\&quot;item-prices-container\&quot;&gt;&lt;/div&gt;</code> |  | new | excepted |
 | <code>&lt;div style=&quot;margin-bottom:10px; color: var(--gray-500) !important;&quot;&gt;Define alternate units for this item. Eg: 1 Box = 12 Nos, set conversion factor as 12. (Will also apply for variants) &lt;a href=&quot;https://docs.frappe.io/erpnext/uom&quot; target=&quot;_blank&quot;&gt;Learn more &amp;#8594;&lt;/a&gt;&lt;/div&gt;</code> |  | new | missing |
 | <code>&lt;div&gt;<br>&lt;h3&gt; All dimensions in centimeter only &lt;/h3&gt;<br>&lt;/div&gt;</code> |  | new | missing |
 | <code>&lt;h3&gt;About Product Bundle&lt;/h3&gt;<br><br>&lt;p&gt;Aggregate group of &lt;b&gt;Items&lt;/b&gt; into another &lt;b&gt;Item&lt;/b&gt;. This is useful if you are bundling a certain &lt;b&gt;Items&lt;/b&gt; into a package and you maintain stock of the packed &lt;b&gt;Items&lt;/b&gt; and not the aggregate &lt;b&gt;Item&lt;/b&gt;.&lt;/p&gt;<br>&lt;p&gt;The package &lt;b&gt;Item&lt;/b&gt; will have &lt;code&gt;Is Stock Item&lt;/code&gt; as &lt;b&gt;No&lt;/b&gt; and &lt;code&gt;Is Sales Item&lt;/code&gt; as &lt;b&gt;Yes&lt;/b&gt;.&lt;/p&gt;<br>&lt;h4&gt;Example:&lt;/h4&gt;<br>&lt;p&gt;If you are selling Laptops and Backpacks separately and have a special price if the customer buys both, then the Laptop + Backpack will be a new Product Bundle Item.&lt;/p&gt;</code> |  | new | missing |
@@ -238,8 +238,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>=</code> |  | new | missing |
 | <code>&gt;</code> |  | new | missing |
 | <code>&gt;=</code> |  | new | missing |
-| <code>A - B</code> |  | new | missing |
-| <code>A - C</code> |  | new | missing |
+| <code>A - B</code> |  | new | excepted |
+| <code>A - C</code> |  | new | excepted |
 | <code>A Customer Group exists with same name please change the Customer name or rename the Customer Group</code> |  | new | missing |
 | <code>A DocType&#x27;s name should start with a letter and can only consist of letters, numbers, spaces, underscores and hyphens</code> |  | new | missing |
 | <code>A Frappe Framework instance can function as an OAuth Client, Resource, or Authorization server. This DocType contains settings related to all three.</code> |  | new | missing |
@@ -278,8 +278,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>A verified appointment cannot be moved back to &#x27;Unverified&#x27; status.</code> |  | new | missing |
 | <code>A version identifier string for the client software.<br>&lt;br&gt;<br>The value of the should change on any update of the client software with the same Software ID.</code> |  | new | missing |
 | <code>A word by itself is easy to guess.</code> |  | new | missing |
-| <code>A+</code> |  | new | missing |
-| <code>A-</code> |  | new | missing |
+| <code>A+</code> |  | new | excepted |
+| <code>A-</code> |  | new | excepted |
 | <code>A0</code> |  | new | missing |
 | <code>A1</code> |  | new | missing |
 | <code>A2</code> |  | new | missing |
@@ -290,9 +290,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>A7</code> |  | new | missing |
 | <code>A8</code> |  | new | missing |
 | <code>A9</code> |  | new | missing |
-| <code>AB+</code> |  | new | missing |
-| <code>AB-</code> |  | new | missing |
-| <code>ACC-PINV-.YYYY.-</code> |  | new | missing |
+| <code>AB+</code> |  | new | excepted |
+| <code>AB-</code> |  | new | excepted |
+| <code>ACC-PINV-.YYYY.-</code> |  | new | excepted |
 | <code>ALL</code> |  | new | missing |
 | <code>ALL records will be deleted (entire DocType cleared)</code> |  | new | missing |
 | <code>AMC Expiry (Serial)</code> |  | new | missing |
@@ -1660,8 +1660,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Awesome Work</code> |  | new | missing |
 | <code>Awesome, now try making an entry yourself</code> |  | new | missing |
 | <code>B</code> | Number system | new | missing |
-| <code>B+</code> |  | new | missing |
-| <code>B-</code> |  | new | missing |
+| <code>B+</code> |  | new | excepted |
+| <code>B-</code> |  | new | excepted |
 | <code>B0</code> |  | new | missing |
 | <code>B1</code> |  | new | missing |
 | <code>B10</code> |  | new | missing |
@@ -1678,9 +1678,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>BFS</code> |  | new | missing |
 | <code>BIN Qty</code> |  | new | missing |
 | <code>BOM</code> |  | new | missing |
-| <code>BOM 1</code> |  | new | missing |
+| <code>BOM 1</code> |  | new | excepted |
 | <code>BOM 1 {0} and BOM 2 {1} should not be same</code> |  | new | missing |
-| <code>BOM 2</code> |  | new | missing |
+| <code>BOM 2</code> |  | new | excepted |
 | <code>BOM Comparison Tool</code> |  | new | missing |
 | <code>BOM Component</code> |  | new | missing |
 | <code>BOM Configuration</code> |  | new | missing |
@@ -2060,7 +2060,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Brute Force Security</code> |  | new | missing |
 | <code>Btu (It)</code> |  | new | missing |
 | <code>Btu (Mean)</code> |  | new | missing |
-| <code>Btu (Th)</code> |  | new | missing |
+| <code>Btu (Th)</code> |  | new | excepted |
 | <code>Btu/Hour</code> |  | new | missing |
 | <code>Btu/Minutes</code> |  | new | missing |
 | <code>Btu/Seconds</code> |  | new | missing |
@@ -2155,7 +2155,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>CC To</code> |  | new | missing |
 | <code>CMD</code> |  | new | missing |
 | <code>COA Importer</code> |  | new | missing |
-| <code>CODE-39</code> |  | new | missing |
+| <code>CODE-39</code> |  | new | excepted |
 | <code>COGS By Item Group</code> |  | new | missing |
 | <code>COGS Debit</code> |  | new | missing |
 | <code>COLOR PICKER</code> |  | new | missing |
@@ -2167,7 +2167,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>CSS selector for the element you want to highlight.</code> |  | new | missing |
 | <code>CSV</code> |  | new | missing |
 | <code>CWIP Account</code> |  | new | missing |
-| <code>Caballeria</code> |  | new | missing |
+| <code>Caballeria</code> |  | new | excepted |
 | <code>Cable Length</code> |  | new | missing |
 | <code>Cable Length (UK)</code> |  | new | missing |
 | <code>Cable Length (US)</code> |  | new | missing |
@@ -3531,7 +3531,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Cut</code> |  | new | missing |
 | <code>Cyan</code> |  | new | missing |
 | <code>Cycle/Second</code> |  | new | missing |
-| <code>D - E</code> |  | new | missing |
+| <code>D - E</code> |  | new | excepted |
 | <code>DB Tables</code> |  | new | missing |
 | <code>DELAY</code> |  | new | missing |
 | <code>DELETE</code> |  | new | missing |
@@ -4412,13 +4412,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Dynamic Template</code> |  | new | missing |
 | <code>Dyne</code> |  | new | missing |
 | <code>E-Invoicing Information Missing</code> |  | new | missing |
-| <code>EAN</code> |  | new | missing |
-| <code>EAN-13</code> |  | new | missing |
-| <code>EAN-8</code> |  | new | missing |
-| <code>EDI</code> |  | new | missing |
+| <code>EAN</code> |  | new | excepted |
+| <code>EAN-13</code> |  | new | excepted |
+| <code>EAN-8</code> |  | new | excepted |
+| <code>EDI</code> |  | new | excepted |
 | <code>EMU Of Charge</code> |  | new | missing |
 | <code>EMU of current</code> |  | new | missing |
-| <code>ERPNext</code> |  | new | missing |
+| <code>ERPNext</code> |  | new | excepted |
 | <code>ERPNext Integrations</code> |  | new | missing |
 | <code>ERPNext Settings</code> |  | new | missing |
 | <code>ERPNext User ID</code> |  | new | missing |
@@ -5006,7 +5006,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>FAILURE</code> |  | new | missing |
 | <code>FG / Semi FG Item</code> |  | new | missing |
 | <code>FG Items to Make</code> |  | new | missing |
-| <code>FIFO</code> |  | new | missing |
+| <code>FIFO</code> |  | new | excepted |
 | <code>FIFO Queue</code> |  | new | missing |
 | <code>FIFO Queue vs Qty After Transaction Comparison</code> |  | new | missing |
 | <code>FIFO Stock Queue (qty, rate)</code> |  | new | missing |
@@ -5481,7 +5481,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Frappe Mail</code> |  | new | missing |
 | <code>Frappe Mail OAuth Error</code> |  | new | missing |
 | <code>Frappe Mail Site</code> |  | new | missing |
-| <code>Frappe School</code> |  | new | missing |
+| <code>Frappe School</code> |  | new | excepted |
 | <code>Frappe Support</code> |  | new | missing |
 | <code>Frappe no longer uses Gravatar because it can disclose hashed email addresses to a third-party service. To fully stop this behavior, existing Gravatar image URLs must be deleted.</code> |  | new | missing |
 | <code>Frappe page builder using components</code> |  | new | missing |
@@ -5597,7 +5597,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Future Payments</code> |  | new | missing |
 | <code>Future date is not allowed</code> |  | new | missing |
 | <code>Fw: {0}</code> |  | new | missing |
-| <code>G - D</code> |  | new | missing |
+| <code>G - D</code> |  | new | excepted |
 | <code>GET</code> |  | new | missing |
 | <code>GL Account</code> |  | new | missing |
 | <code>GL Balance</code> |  | new | missing |
@@ -5607,9 +5607,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>GMail</code> |  | new | missing |
 | <code>GNU Affero General Public License</code> |  | new | missing |
 | <code>GNU General Public License</code> |  | new | missing |
-| <code>GS1</code> |  | new | missing |
-| <code>GTIN</code> |  | new | missing |
-| <code>GTIN-14</code> |  | new | missing |
+| <code>GS1</code> |  | new | excepted |
+| <code>GTIN</code> |  | new | excepted |
+| <code>GTIN-14</code> |  | new | excepted |
 | <code>Gain/Loss</code> |  | new | missing |
 | <code>Gain/Loss Account on Asset Disposal</code> |  | new | missing |
 | <code>Gain/Loss accumulated in foreign currency account. Accounts with &#x27;0&#x27; balance in either Base or Account currency</code> |  | new | missing |
@@ -5852,7 +5852,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Growth View</code> |  | new | missing |
 | <code>Guests are not allowed to upload files for {0} Doctype</code> |  | new | missing |
 | <code>Guidelines and policies on vulnerability reporting. Defaults to `https://frappe.io/security`</code> |  | new | missing |
-| <code>H - F</code> |  | new | missing |
+| <code>H - F</code> |  | new | excepted |
 | <code>HEAD</code> |  | new | missing |
 | <code>HERE</code> |  | new | missing |
 | <code>HH:mm</code> |  | new | missing |
@@ -6034,8 +6034,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Human-readable name intended for display to the end user.</code> |  | new | missing |
 | <code>Hundredweight (UK)</code> |  | new | missing |
 | <code>Hundredweight (US)</code> |  | new | missing |
-| <code>I - J</code> |  | new | missing |
-| <code>I - K</code> |  | new | missing |
+| <code>I - J</code> |  | new | excepted |
+| <code>I - K</code> |  | new | excepted |
 | <code>I guess you don&#x27;t have access to any workspace yet, but you can create one just for yourself. Click on the &lt;b&gt;Create Workspace&lt;/b&gt; button to create one.&lt;br&gt;</code> |  | new | missing |
 | <code>IBAN</code> |  | new | missing |
 | <code>ID</code> |  | new | missing |
@@ -6050,11 +6050,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>IMAP Folder name cannot be empty.</code> |  | new | missing |
 | <code>IMPORTANT: Create a backup before proceeding!</code> |  | new | missing |
 | <code>IP Address</code> |  | new | missing |
-| <code>IRS 1099</code> |  | new | missing |
-| <code>ISBN</code> |  | new | missing |
-| <code>ISBN-10</code> |  | new | missing |
-| <code>ISBN-13</code> |  | new | missing |
-| <code>ISSN</code> |  | new | missing |
+| <code>IRS 1099</code> |  | new | excepted |
+| <code>ISBN</code> |  | new | excepted |
+| <code>ISBN-10</code> |  | new | excepted |
+| <code>ISBN-13</code> |  | new | excepted |
+| <code>ISSN</code> |  | new | excepted |
 | <code>Iches Of Water</code> |  | new | missing |
 | <code>Icon</code> |  | new | missing |
 | <code>Icon Image</code> |  | new | missing |
@@ -7111,7 +7111,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Items {0} do not exist in the Item master.</code> |  | new | missing |
 | <code>Itemwise Discount</code> |  | new | missing |
 | <code>Itemwise Recommended Reorder Level</code> |  | new | missing |
-| <code>JAN</code> |  | new | missing |
+| <code>JAN</code> |  | new | excepted |
 | <code>JS</code> |  | new | missing |
 | <code>JS Message</code> |  | new | missing |
 | <code>JSON</code> |  | new | missing |
@@ -7197,7 +7197,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Key required</code> |  | new | missing |
 | <code>Keyboard Shortcuts</code> |  | new | missing |
 | <code>Keycloak</code> |  | new | missing |
-| <code>Kg</code> |  | new | missing |
+| <code>Kg</code> |  | new | excepted |
 | <code>Kh</code> | Number system | new | missing |
 | <code>Kiloampere</code> |  | new | missing |
 | <code>Kilocalorie</code> |  | new | missing |
@@ -7249,7 +7249,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>LDAP search path for Groups</code> |  | new | missing |
 | <code>LDAP search path for Users</code> |  | new | missing |
 | <code>LDAP settings incorrect. validation response was: {0}</code> |  | new | missing |
-| <code>LIFO</code> |  | new | missing |
+| <code>LIFO</code> |  | new | excepted |
 | <code>Label</code> |  | new | missing |
 | <code>Label Help</code> |  | new | missing |
 | <code>Label and Type</code> |  | new | missing |
@@ -8714,8 +8714,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Numeric Inspection</code> |  | new | missing |
 | <code>Numeric Values</code> |  | new | missing |
 | <code>Numero has not set in the XML file</code> |  | new | missing |
-| <code>O+</code> |  | new | missing |
-| <code>O-</code> |  | new | missing |
+| <code>O+</code> |  | new | excepted |
+| <code>O-</code> |  | new | excepted |
 | <code>OAuth</code> |  | new | missing |
 | <code>OAuth Authorization Code</code> |  | new | missing |
 | <code>OAuth Bearer Token</code> |  | new | missing |
@@ -9131,10 +9131,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>PDF printing via &quot;Raw Print&quot; is not supported.</code> |  | new | missing |
 | <code>PDF statement support requires the &#x27;pdfplumber&#x27; library to be installed.</code> |  | new | missing |
 | <code>PID</code> |  | new | missing |
-| <code>PIN</code> |  | new | missing |
+| <code>PIN</code> |  | new | excepted |
 | <code>PO Supplied Item</code> |  | new | missing |
 | <code>POP3 OAuth authentication failed for Email Account {0}</code> |  | new | missing |
-| <code>POS</code> |  | new | missing |
+| <code>POS</code> |  | new | excepted |
 | <code>POS Additional Fields</code> |  | new | missing |
 | <code>POS Closed</code> |  | new | missing |
 | <code>POS Closing Entry</code> |  | new | missing |
@@ -9192,7 +9192,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>PSOA Cost Center</code> |  | new | missing |
 | <code>PSOA Project</code> |  | new | missing |
 | <code>PUT</code> |  | new | missing |
-| <code>PZN</code> |  | new | missing |
+| <code>PZN</code> |  | new | excepted |
 | <code>Package</code> |  | new | missing |
 | <code>Package Import</code> |  | new | missing |
 | <code>Package Name</code> |  | new | missing |
@@ -13725,7 +13725,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Territory Target Variance Based On Item Group</code> |  | new | missing |
 | <code>Territory Targets</code> |  | new | missing |
 | <code>Territory-wise Sales</code> |  | new | missing |
-| <code>Tesla</code> |  | new | missing |
+| <code>Tesla</code> |  | new | excepted |
 | <code>Test Data</code> |  | new | missing |
 | <code>Test Job ID</code> |  | new | missing |
 | <code>Test Spanish</code> |  | new | missing |
@@ -14678,8 +14678,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>UOM Name</code> |  | new | missing |
 | <code>UOM conversion factor required for UOM: {0} in Item: {1}</code> |  | new | missing |
 | <code>UOM {0} not found in Item {1}</code> |  | new | missing |
-| <code>UPC</code> |  | new | missing |
-| <code>UPC-A</code> |  | new | missing |
+| <code>UPC</code> |  | new | excepted |
+| <code>UPC-A</code> |  | new | excepted |
 | <code>URIs for receiving authorization code once the user allows access, as well as failure responses. Typically a REST endpoint exposed by the Client App.<br>&lt;br&gt;e.g. http://hostname/api/method/frappe.integrations.oauth2_logins.login_via_facebook</code> |  | new | missing |
 | <code>URL</code> |  | new | missing |
 | <code>URL can only be a string</code> |  | new | missing |
@@ -15136,7 +15136,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Value {0} must be in the valid duration format: d h m s</code> |  | new | missing |
 | <code>Value {0} must in {1} format</code> |  | new | missing |
 | <code>Values Changed</code> |  | new | missing |
-| <code>Vara</code> |  | new | missing |
+| <code>Vara</code> |  | new | excepted |
 | <code>Variable</code> |  | new | missing |
 | <code>Variable Name</code> |  | new | missing |
 | <code>Variables</code> |  | new | missing |
@@ -15246,7 +15246,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>View {0}</code> |  | new | missing |
 | <code>Viewed By</code> |  | new | missing |
 | <code>Views</code> |  | new | missing |
-| <code>Vimeo</code> |  | new | missing |
+| <code>Vimeo</code> |  | new | excepted |
 | <code>Virtual</code> |  | new | missing |
 | <code>Virtual DocType</code> |  | new | missing |
 | <code>Virtual DocType {} requires a static method called {} found {}</code> |  | new | missing |
@@ -15844,7 +15844,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>You&#x27;ve been invited to join {0}</code> |  | new | missing |
 | <code>You&#x27;ve been invited to join {0}.</code> |  | new | missing |
 | <code>You&#x27;ve logged in as another user from another tab. Refresh this page to continue using system.</code> |  | new | missing |
-| <code>YouTube</code> |  | new | missing |
+| <code>YouTube</code> |  | new | excepted |
 | <code>YouTube Interactions</code> |  | new | missing |
 | <code>Your CSV file is being generated and will appear in the Attachments section once ready. Additionally, you will get notified when the file is available for download.</code> |  | new | missing |
 | <code>Your Country</code> |  | new | missing |
@@ -15940,7 +15940,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>delete</code> |  | new | missing |
 | <code>descending</code> |  | new | missing |
 | <code>description</code> |  | new | missing |
-| <code>development</code> |  | new | missing |
+| <code>development</code> |  | new | excepted |
 | <code>discount applied</code> |  | new | missing |
 | <code>e.g.</code> |  | new | missing |
 | <code>e.g. &quot;Summer Holiday 2019 Offer 20&quot;</code> |  | new | missing |
@@ -15987,7 +15987,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>logged in</code> |  | new | missing |
 | <code>long</code> |  | new | missing |
 | <code>m</code> | Minutes (Field: Duration) | new | missing |
-| <code>material_request_item</code> |  | new | missing |
+| <code>material_request_item</code> |  | new | excepted |
 | <code>merged {0} into {1}</code> |  | new | missing |
 | <code>mm-dd-yyyy</code> |  | new | missing |
 | <code>mm/dd/yyyy</code> |  | new | missing |
@@ -16022,7 +16022,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>print-format-builder-beta</code> |  | new | missing |
 | <code>processlist</code> |  | new | missing |
 | <code>product bundle item row&#x27;s name in sales order. Also indicates that picked item is to be used for a product bundle</code> |  | new | missing |
-| <code>production</code> |  | new | missing |
+| <code>production</code> |  | new | excepted |
 | <code>purple</code> |  | new | missing |
 | <code>queued</code> |  | new | missing |
 | <code>quotation_item</code> |  | new | missing |
@@ -16043,7 +16043,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>rows</code> |  | new | missing |
 | <code>s</code> | Seconds (Field: Duration) | new | missing |
 | <code>s256</code> |  | new | missing |
-| <code>sandbox</code> |  | new | missing |
+| <code>sandbox</code> |  | new | excepted |
 | <code>scheduled</code> |  | new | missing |
 | <code>select</code> |  | new | missing |
 | <code>set {0} to</code> |  | new | missing |
@@ -16418,7 +16418,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>{0} with the role &lt;strong&gt;{1}&lt;/strong&gt;</code> |  | new | missing |
 | <code>{0} y</code> |  | new | missing |
 | <code>{0} years ago</code> |  | new | missing |
-| <code>{0} {1}</code> |  | new | missing |
+| <code>{0} {1}</code> |  | new | excepted |
 | <code>{0} {1} Manually</code> |  | new | missing |
 | <code>{0} {1} Partially Reconciled</code> |  | new | missing |
 | <code>{0} {1} added</code> |  | new | missing |
@@ -16472,7 +16472,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>{0} {1}: Either debit or credit amount is required for {2}</code> |  | new | missing |
 | <code>{0} {1}: Submitted Record cannot be deleted. You must {2} Cancel {3} it first.</code> |  | new | missing |
 | <code>{0} {1}: Supplier is required against Payable account {2}</code> |  | new | missing |
-| <code>{0}%</code> |  | new | missing |
+| <code>{0}%</code> |  | new | excepted |
 | <code>{0}% Billed</code> |  | new | missing |
 | <code>{0}% Delivered</code> |  | new | missing |
 | <code>{0}% of total invoice value will be given as discount.</code> |  | new | missing |

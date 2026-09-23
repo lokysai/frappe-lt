@@ -663,6 +663,11 @@ class CatalogQualityGateTest(TestCase):
 					)
 
 	def test_unmatched_token_delimiters_and_backslash_escaped_tokens(self):
+		quoted_literal, quoted_literal_unknown = _tokens("Use the '{{' separator")
+		self.assertFalse(quoted_literal_unknown)
+		self.assertEqual(quoted_literal, Counter({("literal", "{{"): 1}))
+		self.assertEqual(_tokens("Naudokite „{{“ skirtuką"), (quoted_literal, False))
+
 		for prose in ("Use { words } with 50% or $ 5 in prose", "{ words }"):
 			ordinary_tokens, ordinary_unknown = _tokens(prose)
 			self.assertFalse(ordinary_unknown)
@@ -722,6 +727,23 @@ class CatalogQualityGateTest(TestCase):
 		)
 		cases = {
 			"valid": (source, valid, None),
+			"equivalent-eof-fragment": (
+				"<p>Following purchase orders:</p><ul>",
+				"<p>Šie pirkimo užsakymai:</p><ul>",
+				None,
+			),
+			"equivalent-eof-anchor": (
+				'Read <a href="https://example.test">documentation<a>.',
+				'Skaitykite <a href="https://example.test">dokumentaciją<a>.',
+				None,
+			),
+			"matching-unclosed-div": ("<div>Source", "<div>Vertimas", "HTML_SOURCE_INVALID"),
+			"matching-unclosed-em": ("<em>Source", "<em>Vertimas", "HTML_SOURCE_INVALID"),
+			"wrong-container-before-unclosed-ul": (
+				"<div>Source<ul>",
+				"<div>Vertimas<ul>",
+				"HTML_SOURCE_INVALID",
+			),
 			"structure": (source, valid.replace("strong", "em"), "HTML_EQUIVALENCE_MISMATCH"),
 			"attribute": (source, valid.replace('class="lead"', 'class="intro"'), "HTML_ATTRIBUTE_MISMATCH"),
 			"url": (source, valid.replace("example.test", "example.invalid"), "PRESERVED_TOKEN_MISMATCH"),
@@ -786,6 +808,11 @@ class CatalogQualityGateTest(TestCase):
 			),
 			"invalid-nesting": ("<p><div>Text</div></p>", "<p><div>Tekstas</div></p>", "HTML_SOURCE_INVALID"),
 			"duplicate-attribute": ('<b class="a" class="b">X</b>', "<b>X</b>", "HTML_SOURCE_INVALID"),
+			"duplicate-attribute-eof-different-url": (
+				'<a href="https://same.test" href="https://source.test">Source',
+				'<a href="https://same.test" href="https://translation.test">Vertimas',
+				"HTML_SOURCE_INVALID",
+			),
 			"void-misuse": ("<br></br>", "<br>", "HTML_SOURCE_INVALID"),
 			"unknown-entity": ("<b>&bogus;</b>", "<b>Tekstas</b>", "HTML_SOURCE_INVALID"),
 			"urls": (
@@ -865,8 +892,9 @@ class CatalogQualityGateTest(TestCase):
 		)
 
 	def test_identical_translation_requires_exact_reviewed_exception(self):
+		technical_identifier = '<div id=\\"technical-fragment\\"></div>'
 		entry = {
-			"key": {"source": "API", "context": None},
+			"key": {"source": technical_identifier, "context": None},
 			"source_digest": "e" * 64,
 			"source_locations": [],
 			"stable_locators": [],
@@ -874,7 +902,7 @@ class CatalogQualityGateTest(TestCase):
 		candidate = {
 			"key": entry["key"],
 			"source_digest": entry["source_digest"],
-			"translation": "API",
+			"translation": technical_identifier,
 			"flags": [],
 		}
 		with TemporaryDirectory() as directory:
@@ -962,6 +990,91 @@ class CatalogQualityGateTest(TestCase):
 						"TRANSLATION_EXCEPTION_EVIDENCE_MISMATCH",
 						[error["code"] for error in result["errors"]],
 					)
+
+	def test_reviewed_identical_exception_checks_tokens_and_waives_only_source_html(self):
+		cases = (
+			("unknown-token", "Broken {{ token", "Broken {{ token", "UNKNOWN_TOKEN_SYNTAX"),
+			(
+				"changed-malformed-html",
+				'<div id=\\"source\\"></div>',
+				'<div id=\\"translation\\"></div>',
+				"HTML_SOURCE_INVALID",
+			),
+		)
+		for name, source, translation, expected_error in cases:
+			with self.subTest(name=name), TemporaryDirectory() as directory:
+				root = Path(directory)
+				entry = {
+					"key": {"source": source, "context": None},
+					"source_digest": hashlib.sha256(source.encode()).hexdigest(),
+					"source_locations": [],
+					"stable_locators": [],
+				}
+				candidate = {
+					"key": entry["key"],
+					"source_digest": entry["source_digest"],
+					"translation": translation,
+					"flags": [],
+				}
+				compatibility = self._fixture(root, [entry], [candidate])
+				candidate_path = root / "catalog_candidates" / "test.json"
+				candidate_data = json.loads(candidate_path.read_text(encoding="utf-8"))
+				candidate_record = candidate_data["entries"][0]
+				candidate_record["provenance"] = {
+					"origin": "approved_exception",
+					"review": {
+						"agent": "test-agent",
+						"explanation": "Reviewed technical identifier.",
+						"model": "test/model",
+						"reason": "approved_translation_exception",
+						"run_id": "",
+						"status": "reviewed",
+					},
+				}
+				candidate_record["provenance"]["review"]["run_id"] = review_run_id(candidate_record)
+				registry = json.loads((root / "catalog_segments.json").read_text(encoding="utf-8"))
+				registry["candidates"][0]["candidate_sha256"] = _write_json(candidate_path, candidate_data)
+				self._replace_quality_artifact(compatibility, "catalog_segments.json", registry)
+				self._replace_quality_artifact(
+					compatibility,
+					"translation_exceptions.json",
+					{
+						"schema_version": 1,
+						"entries": [
+							{
+								"key": entry["key"],
+								"source_digest": entry["source_digest"],
+								"reviewed": True,
+								"review": "review-1",
+							}
+						],
+					},
+				)
+				self._replace_owned_artifact(
+					compatibility,
+					"provenance.json",
+					{
+						"entries": [
+							{
+								"exception": "Reviewed technical identifier.",
+								"key": entry["key"],
+								"origin": "approved_exception",
+								"status": "excepted",
+							}
+						],
+						"schema_version": 1,
+					},
+				)
+
+				result = run(
+					"test",
+					root / "candidate.po",
+					root / "report.json",
+					compatibility_path=compatibility,
+					compile_candidate=self._compile_candidate,
+				)
+
+				self.assertIn(expected_error, [error["code"] for error in result["errors"]])
 
 	def test_contextless_collision_requires_exact_reviewed_resolution(self):
 		entry = {

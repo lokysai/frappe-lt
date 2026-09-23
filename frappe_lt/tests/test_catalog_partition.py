@@ -36,6 +36,58 @@ def _source(app, path):
 
 
 class CatalogPartitionTest(TestCase):
+	def test_registered_operations_candidate_covers_frozen_manifest_and_preserves_active_po(self):
+		source_root = Path(__file__).parents[1]
+		manifest = json.loads(source_root.joinpath("catalog_segments/erpnext-operations.json").read_bytes())
+		candidate = json.loads(
+			source_root.joinpath("catalog_candidates/erpnext-operations.json").read_bytes()
+		)
+		entries_by_source = {entry["key"]["source"]: entry for entry in candidate["entries"]}
+		for source in (
+			"<p>Posting Date {0} cannot be before Purchase Order date for the following:</p><ul>",
+			"The stock for the item {0} in the {1} warehouse was negative on the {2}. "
+			"You should create a positive entry {3} before the date {4} and time {5} to post the "
+			"correct valuation rate. For more details, please read the "
+			"<a href='https://docs.erpnext.com/docs/user/manual/en/stock-adjustment-cogs-with-negative-stock'>"
+			"documentation<a>.",
+		):
+			entry = entries_by_source[source]
+			self.assertNotEqual(entry["translation"], entry["key"]["source"])
+			self.assertEqual(entry["provenance"]["review"]["reason"], "new_translation")
+		escaped_markup = entries_by_source['<div id=\\"item-prices-container\\"></div>']
+		self.assertEqual(escaped_markup["translation"], escaped_markup["key"]["source"])
+		self.assertEqual(
+			escaped_markup["provenance"]["review"]["reason"],
+			"approved_translation_exception",
+		)
+		active_po = source_root / "locale" / "lt.po"
+		active_before = active_po.read_bytes()
+
+		with TemporaryDirectory() as directory:
+			root = Path(directory)
+
+			def compile_candidate(po_path, workspace):
+				self.assertTrue(po_path.is_file())
+				mo_path = workspace / "sites/assets/locale/lt/LC_MESSAGES/frappe_lt.mo"
+				mo_path.parent.mkdir(parents=True)
+				mo_path.write_bytes(b"compiled")
+
+			result = run(
+				"erpnext-operations",
+				root / "erpnext-operations.po",
+				root / "report.json",
+				compile_candidate=compile_candidate,
+			)
+
+		self.assertEqual(result["exit_code"], 0)
+		self.assertEqual(result["summary"]["keys"], len(manifest["keys"]))
+		self.assertEqual(
+			result["summary"]["translation_coverage"],
+			{"covered": len(manifest["keys"]), "total": len(manifest["keys"])},
+		)
+		self.assertEqual(sum(result["summary"]["reason_counts"].values()), len(manifest["keys"]))
+		self.assertEqual(active_po.read_bytes(), active_before)
+
 	def test_frappe_first_finance_location_precedence_and_operations_remainder(self):
 		entries = [
 			_entry(

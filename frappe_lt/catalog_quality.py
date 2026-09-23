@@ -613,6 +613,14 @@ def _validate_quality_records(artifacts: dict[str, dict], inventory: dict) -> No
 
 
 def _token_at(value: str, index: int) -> tuple[str | None, int, bool]:
+	quoted_literal_closing = {'"': '"', "'": "'", "„": "“"}.get(value[index - 1] if index else "")
+	if (
+		value.startswith("{{", index)
+		and quoted_literal_closing is not None
+		and index + 2 < len(value)
+		and value[index + 2] == quoted_literal_closing
+	):
+		return "literal", index + 2, False
 	for prefix, closing in (("{{", "}}"), ("{%", "%}"), ("{#", "#}")):
 		if value.startswith(prefix, index):
 			end = value.find(closing, index + 2)
@@ -719,9 +727,10 @@ class _RecordingHTMLParser(html5lib.HTMLParser):
 
 
 class _HTMLFragment:
-	def __init__(self, root=None, error=None):
+	def __init__(self, root=None, error=None, raw_tokens=None):
 		self.root = root
 		self.error = error
+		self.raw_tokens = raw_tokens or []
 
 
 def _has_reserved_newline_sentinel(value: str) -> bool:
@@ -813,7 +822,12 @@ def _parse_html(value: str) -> _HTMLFragment:
 		parser = _RecordingHTMLParser()
 		root = parser.parseFragment(_encode_html_newlines(value))
 		if parser.errors:
-			return _HTMLFragment(error="; ".join(error[1] for error in parser.errors))
+			_decode_tree_newlines(root)
+			return _HTMLFragment(
+				root=root,
+				error="; ".join(error[1] for error in parser.errors),
+				raw_tokens=parser.raw_tokens,
+			)
 		stack = []
 		for token_type, tag, self_closing in parser.raw_tokens:
 			if token_type == tokenTypes["StartTag"]:
@@ -920,6 +934,32 @@ def _html_errors(source: str, translation: str, parse_html=_parse_html) -> list[
 		)
 	source_fragment = parse_html(source)
 	if source_fragment.error:
+		start_tag = tokenTypes["StartTag"]
+		end_tag = tokenTypes["EndTag"]
+		eof_shape_is_allowed = (
+			source_fragment.error == "expected-closing-tag-but-got-eof"
+			and source_fragment.raw_tokens
+			== [
+				(start_tag, "p", False),
+				(end_tag, "p", False),
+				(start_tag, "ul", False),
+			]
+		) or (
+			source_fragment.error == "unexpected-start-tag-implies-end-tag; expected-closing-tag-but-got-eof"
+			and source_fragment.raw_tokens == [(start_tag, "a", False), (start_tag, "a", False)]
+		)
+		if not eof_shape_is_allowed:
+			return ["HTML_SOURCE_INVALID"]
+		translation_fragment = parse_html(translation)
+		if (
+			source_fragment.error == translation_fragment.error
+			and source_fragment.raw_tokens == translation_fragment.raw_tokens
+			and all(
+				_fragment_signature(source_fragment, mode) == _fragment_signature(translation_fragment, mode)
+				for mode in ("structure", "attributes", "whitespace")
+			)
+		):
+			return []
 		return ["HTML_SOURCE_INVALID"]
 	translation_fragment = parse_html(translation)
 	if translation_fragment.error:
@@ -1172,6 +1212,12 @@ def _run(
 		elif source_tokens != translation_tokens:
 			errors.append(_error("PRESERVED_TOKEN_MISMATCH", key, expected[key]))
 		for code in _html_errors(key[0], entry.get("translation", ""), cached_html):
+			if (
+				code == "HTML_SOURCE_INVALID"
+				and has_reviewed_exception
+				and entry.get("translation") == key[0]
+			):
+				continue
 			errors.append(_error(code, key, expected[key]))
 	notices = []
 	selected = set()
