@@ -681,6 +681,148 @@ class CatalogQualityGateTest(TestCase):
 		self.assertFalse(escaped_unknown)
 		self.assertNotEqual(escaped_tokens, _tokens(escaped.replace(r"\{name}", r"\{vardas}"))[0])
 
+	def test_bare_url_prefixes_are_preserved_tokens(self):
+		source = "URL must start with http:// or https://"
+		tokens, unknown = _tokens(source)
+		self.assertFalse(unknown)
+		self.assertEqual(tokens, Counter({("url", "http://"): 1, ("url", "https://"): 1}))
+		self.assertNotEqual(_tokens("URL turi prasidėti http:// arba http://")[0], tokens)
+		self.assertEqual(
+			_tokens("Nenaudokite „http://“")[0],
+			_tokens('Do not use "http://"')[0],
+		)
+		for malformed in ("ftp://", "mailto:"):
+			with self.subTest(malformed=malformed):
+				self.assertTrue(_tokens(malformed)[1])
+
+	def test_quoted_naming_series_delimiters_are_exact_literals(self):
+		source = (
+			"Special Characters except '-', '#', '.', '/', '{{' and '}}' not allowed in naming series {0}"
+		)
+		tokens, unknown = _tokens(source)
+		self.assertFalse(unknown)
+		self.assertEqual(tokens[("literal", "{{")], 1)
+		self.assertEqual(tokens[("literal", "}}")], 1)
+		self.assertEqual(tokens[("brace", "{0}")], 1)
+		self.assertNotEqual(_tokens(source.replace("'}}'", "'{{'"))[0], tokens)
+		self.assertTrue(_tokens(source.replace("'}}'", "}}"))[1])
+
+	def test_percent_before_sentence_period_is_prose(self):
+		for source in ("Discount cannot be greater than 100%.", "Widths can be set in px or %."):
+			with self.subTest(source=source):
+				self.assertEqual(_tokens(source), (Counter(), False))
+		for malformed in ("%.*", "%.2q", "%.z"):
+			with self.subTest(malformed=malformed):
+				self.assertTrue(_tokens(malformed)[1])
+
+	def test_nested_fieldname_example_is_one_exact_preserved_literal(self):
+		source = "{{{0}}} is not a valid fieldname pattern. It should be {{field_name}}."
+		tokens, unknown = _tokens(source)
+		self.assertFalse(unknown)
+		self.assertEqual(tokens, Counter({("literal", "{{{0}}}"): 1, ("jinja", "{{field_name}}"): 1}))
+		self.assertNotEqual(_tokens(source.replace("{{{0}}}", "{{{1}}}"))[0], tokens)
+		for malformed in ("{{{0}}", "{{{0}}}}", "{{{name}}}"):
+			with self.subTest(malformed=malformed):
+				self.assertTrue(_tokens(malformed)[1])
+
+	def test_javascript_conditional_expression_preserves_exact_text(self):
+		source = '{0} ${skip_list ? "" : type}'
+		tokens, unknown = _tokens(source)
+		self.assertFalse(unknown)
+		self.assertEqual(
+			tokens, Counter({("brace", "{0}"): 1, ("javascript", '${skip_list ? "" : type}'): 1})
+		)
+		self.assertNotEqual(tokens, _tokens('{0} ${skip_list ? "" : other}')[0])
+		self.assertTrue(_tokens('{0} ${skip_list ? "" : type')[1])
+
+	def test_frozen_source_examples_pass_gate_and_changed_literals_do_not(self):
+		pairs = (
+			("URL must start with http:// or https://", "URL turi prasidėti http:// arba https://"),
+			(
+				"Naming series '{0}' for DocType '{1}' does not contain standard '.' or '{{' separator. Using fallback extraction.",
+				"Dokumento tipo '{1}' numeravimo serijoje '{0}' nėra įprasto '.' arba '{{' skirtuko. Naudojamas atsarginis būdas.",
+			),
+			(
+				"Special Characters except '-', '#', '.', '/', '{{' and '}}' not allowed in naming series {0}",
+				"Numeravimo serijoje {0} leidžiami tik '-', '#', '.', '/', '{{' ir '}}' specialieji ženklai",
+			),
+			("Discount cannot be greater than 100%.", "Nuolaida negali viršyti 100%."),
+			("Widths can be set in px or %.", "Plotį galima nurodyti px arba %."),
+			(
+				"{{{0}}} is not a valid fieldname pattern. It should be {{field_name}}.",
+				"{{{0}}} nėra tinkamas lauko pavadinimo šablonas. Turi būti {{field_name}}.",
+			),
+		)
+		entries = [
+			{
+				"key": {"source": source, "context": None},
+				"source_digest": hashlib.sha256(source.encode()).hexdigest(),
+				"source_locations": [],
+				"stable_locators": [],
+			}
+			for source, _ in pairs
+		]
+		candidates = [
+			{
+				"key": entry["key"],
+				"source_digest": entry["source_digest"],
+				"translation": translation,
+				"flags": [],
+			}
+			for entry, (_, translation) in zip(entries, pairs, strict=True)
+		]
+		with TemporaryDirectory() as directory:
+			root = Path(directory)
+			compatibility = self._fixture(root, entries, candidates)
+			result = run(
+				"test",
+				root / "candidate.po",
+				root / "report.json",
+				compatibility_path=compatibility,
+				compile_candidate=self._compile_candidate,
+			)
+			self.assertEqual(result["errors"], [])
+			self.assertEqual(result["exit_code"], 0)
+			self.assertEqual(result["summary"]["keys"], len(pairs))
+
+		for source, translation, expected_code in (
+			(
+				"URL must start with http:// or https://",
+				"URL turi prasidėti http:// arba http://",
+				"PRESERVED_TOKEN_MISMATCH",
+			),
+			(
+				"Special Characters except '-', '#', '.', '/', '{{' and '}}' not allowed in naming series {0}",
+				"Numeravimo serijoje {0} leidžiami tik '{{' ir '{{' specialieji ženklai",
+				"PRESERVED_TOKEN_MISMATCH",
+			),
+			(
+				"{{{0}}} is not a valid fieldname pattern. It should be {{field_name}}.",
+				"{{{1}}} nėra tinkamas šablonas. Turi būti {{field_name}}.",
+				"UNKNOWN_TOKEN_SYNTAX",
+			),
+		):
+			with self.subTest(source=source), TemporaryDirectory() as directory:
+				root = Path(directory)
+				entry = next(entry for entry in entries if entry["key"]["source"] == source)
+				candidate = {
+					**next(c for c in candidates if c["key"] == entry["key"]),
+					"translation": translation,
+				}
+				compatibility = self._fixture(root, [entry], [candidate])
+				result = run(
+					"test",
+					root / "candidate.po",
+					root / "report.json",
+					compatibility_path=compatibility,
+					compile_candidate=self._compile_candidate,
+				)
+				self.assertEqual(result["exit_code"], 1)
+				self.assertIn(
+					expected_code,
+					[error["code"] for error in result["errors"]],
+				)
+
 	def test_python_and_printf_tokens_preserve_space_and_dynamic_arguments(self):
 		value = "% d %*s %.*f %2$s %2$*3$s %2$.*3$f %2$*3$.*4$f %(count) d %*s"
 		tokens, unknown = _tokens(value)

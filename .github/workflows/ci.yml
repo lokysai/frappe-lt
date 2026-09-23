@@ -284,7 +284,7 @@ jobs:
           env/bin/python -m compileall -q apps/frappe_lt/frappe_lt
           ruff check apps/frappe_lt/frappe_lt
           ruff format --check apps/frappe_lt/frappe_lt
-          env/bin/python -m unittest frappe_lt.tests.test_verify frappe_lt.tests.test_inventory frappe_lt.tests.test_catalog_partition frappe_lt.tests.test_review_evidence frappe_lt.tests.test_v15_origin_import frappe_lt.tests.test_catalog_quality frappe_lt.tests.test_runtime_validation frappe_lt.tests.test_ci_workflow
+          env/bin/python -m unittest frappe_lt.tests.test_verify frappe_lt.tests.test_inventory frappe_lt.tests.test_catalog_partition frappe_lt.tests.test_review_evidence frappe_lt.tests.test_v15_origin_import frappe_lt.tests.test_catalog_quality frappe_lt.tests.test_frappe_catalog frappe_lt.tests.test_runtime_validation frappe_lt.tests.test_ci_workflow
           node --test apps/frappe_lt/cypress/support/*.test.js
           shopt -s globstar nullglob
           javascript=(apps/frappe_lt/cypress.config.js apps/frappe_lt/cypress/**/*.js)
@@ -359,6 +359,32 @@ jobs:
                   assert candidate_po.parent == output and candidate_po.is_file()
                   assert report_path.parent == output
                   assert json.loads(report_path.read_text())["exit_code"] == 0
+                  if candidate == "frappe":
+                      summary = json.loads(report_path.read_text())["summary"]
+                      assert summary["translation_coverage"] == {"covered": 6344, "total": 6344}
+                      assert summary["corrected_inherited"] == 2256
+                      assert summary["translation_exceptions"] == 168
+                      assert summary["reason_counts"] == {
+                          "accepted_as_is": 1018,
+                          "approved_translation_exception": 168,
+                          "foreign_language_correction": 72,
+                          "grammar_correction": 899,
+                          "meaning_correction": 821,
+                          "new_translation": 2902,
+                          "punctuation_correction": 50,
+                          "terminology_correction": 414,
+                      }
+                      repeat_po = output / "frappe-repeat.po"
+                      repeat_report = output / "frappe-repeat.json"
+                      subprocess.run(
+                          [
+                              "bench", "catalog-quality-gate", "--candidate", "frappe",
+                              "--output", str(repeat_po), "--report", str(repeat_report),
+                          ],
+                          check=True,
+                      )
+                      assert candidate_po.read_bytes() == repeat_po.read_bytes()
+                      assert report_path.read_bytes() == repeat_report.read_bytes()
                   assert sentinel == {
                       path: state(path)
                       for path in sentinel
