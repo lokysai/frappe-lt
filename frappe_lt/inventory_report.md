@@ -11,9 +11,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 
 ## Coverage
 
-- Missing: 13034
-- Translated: 3275
-- Excepted: 226
+- Missing: 10443
+- Translated: 5865
+- Excepted: 227
 
 ## Active Translation Keys
 
@@ -33,9 +33,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code># Req&#x27;d Items</code> |  | new | missing |
 | <code>#{0}</code> |  | new | excepted |
 | <code>${values.doctype_name} has been added to queue for optimization</code> |  | new | missing |
-| <code>%  Delivered</code> |  | new | missing |
-| <code>% Amount Billed</code> |  | new | missing |
-| <code>% Billed</code> |  | new | missing |
+| <code>%  Delivered</code> |  | new | translated |
+| <code>% Amount Billed</code> |  | new | translated |
+| <code>% Billed</code> |  | new | translated |
 | <code>% Complete Method</code> |  | new | missing |
 | <code>% Complete must be between 0 and 100</code> |  | new | missing |
 | <code>% Completed</code> |  | new | missing |
@@ -44,7 +44,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>% Finished Item Quantity</code> |  | new | missing |
 | <code>% Installed</code> |  | new | missing |
 | <code>% Occupied</code> |  | new | missing |
-| <code>% Of Grand Total</code> |  | new | missing |
+| <code>% Of Grand Total</code> |  | new | translated |
 | <code>% Ordered</code> |  | new | missing |
 | <code>% Picked</code> |  | new | missing |
 | <code>% Process Loss</code> |  | new | missing |
@@ -52,21 +52,21 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>% Progress</code> |  | new | missing |
 | <code>% Raw Material Received</code> |  | new | missing |
 | <code>% Raw Material Returned</code> |  | new | missing |
-| <code>% Received</code> |  | new | missing |
+| <code>% Received</code> |  | new | translated |
 | <code>% Returned</code> |  | new | missing |
 | <code>% of Component Cost</code> |  | new | missing |
-| <code>% of materials billed against this Sales Order</code> |  | new | missing |
+| <code>% of materials billed against this Sales Order</code> |  | new | translated |
 | <code>% of materials delivered against this Pick List</code> |  | new | missing |
-| <code>% of materials delivered against this Sales Order</code> |  | new | missing |
+| <code>% of materials delivered against this Sales Order</code> |  | new | translated |
 | <code>&amp;copy; Frappe Technologies Pvt. Ltd. and contributors</code> |  | new | missing |
 | <code>&amp;lt;head&amp;gt; HTML</code> |  | new | translated |
 | <code>&#x27;*&#x27; is only allowed in {0} SQL function(s)</code> |  | new | missing |
 | <code>&#x27;Account&#x27; in the Accounting section of Customer {0}</code> |  | new | missing |
 | <code>&#x27;Allow Multiple Sales Orders Against a Customer&#x27;s Purchase Order&#x27;</code> |  | new | missing |
 | <code>&#x27;Based On&#x27; and &#x27;Group By&#x27; can not be same</code> |  | new | missing |
-| <code>&#x27;Days Since Last Order&#x27; must be greater than or equal to zero</code> |  | new | missing |
+| <code>&#x27;Days Since Last Order&#x27; must be greater than or equal to zero</code> |  | new | translated |
 | <code>&#x27;Default {0} Account&#x27; in Company {1}</code> |  | new | missing |
-| <code>&#x27;Entries&#x27; cannot be empty</code> |  | new | missing |
+| <code>&#x27;Entries&#x27; cannot be empty</code> |  | new | translated |
 | <code>&#x27;From Date&#x27; is required</code> |  | new | missing |
 | <code>&#x27;From Date&#x27; must be after &#x27;To Date&#x27;</code> |  | new | missing |
 | <code>&#x27;Has Serial No&#x27; can not be &#x27;Yes&#x27; for non-stock item</code> |  | new | missing |
@@ -81,7 +81,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>&#x27;To Date&#x27; is required</code> |  | new | missing |
 | <code>&#x27;To Package No.&#x27; cannot be less than &#x27;From Package No.&#x27;</code> |  | new | missing |
 | <code>&#x27;Update Stock&#x27; can not be checked because items are not delivered via {0}</code> |  | new | missing |
-| <code>&#x27;Update Stock&#x27; cannot be checked for fixed asset sale</code> |  | new | missing |
+| <code>&#x27;Update Stock&#x27; cannot be checked for fixed asset sale</code> |  | new | translated |
 | <code>&#x27;Verification Link Expiry Duration&#x27; must be between 15 to 60 minutes.</code> |  | new | missing |
 | <code>&#x27;{0}&#x27; account is already used by {1}. Use another account.</code> |  | new | missing |
 | <code>&#x27;{0}&#x27; has been already added.</code> |  | new | missing |
@@ -109,8 +109,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>(Mandatory)</code> |  | new | translated |
 | <code>(Purchase Order + Material Request + Actual Expense)</code> |  | new | missing |
 | <code>(Total Workstation Time / Manufacturing Time) * 60</code> |  | new | missing |
-| <code>(including)</code> |  | new | missing |
-| <code>* Will be calculated in the transaction.</code> |  | new | missing |
+| <code>(including)</code> |  | new | translated |
+| <code>* Will be calculated in the transaction.</code> |  | new | translated |
 | <code>** Failed: {0} to {1}: {2}</code> |  | new | translated |
 | <code>+ Add / Remove Fields</code> |  | new | missing |
 | <code>+ Add Price</code> |  | new | missing |
@@ -124,7 +124,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>1 Currency = [?] Fraction<br>For e.g. 1 USD = 100 Cent</code> |  | new | missing |
 | <code>1 Day</code> |  | new | missing |
 | <code>1 Google Calendar Event synced.</code> |  | new | translated |
-| <code>1 Loyalty Points = How much base currency?</code> |  | new | missing |
+| <code>1 Loyalty Points = How much base currency?</code> |  | new | translated |
 | <code>1 Report</code> |  | new | translated |
 | <code>1 day ago</code> |  | new | missing |
 | <code>1 hour</code> |  | new | missing |
@@ -144,7 +144,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>1000+</code> |  | new | missing |
 | <code>11-50</code> |  | new | missing |
 | <code>1{0}</code> |  | new | excepted |
-| <code>2 Yearly</code> |  | new | missing |
+| <code>2 Yearly</code> |  | new | translated |
 | <code>2 hours ago</code> |  | new | missing |
 | <code>2 months ago</code> |  | new | missing |
 | <code>2 weeks ago</code> |  | new | missing |
@@ -173,7 +173,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>&lt;=</code> |  | new | excepted |
 | <code>&lt;a href=&quot;https://docs.frappe.io/framework/user/en/api/rest#1-token-based-authentication&quot; target=&quot;_blank&quot;&gt;<br>  Click here to learn about token-based authentication<br>&lt;/a&gt;</code> |  | new | missing |
 | <code>&lt;b&gt;Cannot create asset.&lt;/b&gt;&lt;br&gt;&lt;br&gt;You&#x27;re trying to create &lt;b&gt;{0} asset(s)&lt;/b&gt; from {2} {3}.&lt;br&gt;However, only &lt;b&gt;{1} item(s)&lt;/b&gt; were purchased and &lt;b&gt;{4} asset(s)&lt;/b&gt; already exist against {5}.</code> |  | new | missing |
-| <code>&lt;b&gt;From Time&lt;/b&gt; cannot be later than &lt;b&gt;To Time&lt;/b&gt; for {0}</code> |  | new | missing |
+| <code>&lt;b&gt;From Time&lt;/b&gt; cannot be later than &lt;b&gt;To Time&lt;/b&gt; for {0}</code> |  | new | translated |
 | <code>&lt;b&gt;Row #{0}:&lt;/b&gt; Bundle {1} in warehouse {2} has insufficient packed items:&lt;br&gt;&lt;div style=&#x27;margin-top: 15px;&#x27;&gt;&lt;ul style=&#x27;line-height: 0.8;&#x27;&gt;{3}&lt;/ul&gt;&lt;/div&gt;</code> |  | new | missing |
 | <code>&lt;b&gt;{0}&lt;/b&gt; is not a valid URL</code> |  | new | missing |
 | <code>&lt;br&gt;<br>&lt;h4&gt;Note&lt;/h4&gt;<br>&lt;ul&gt;<br>&lt;li&gt;<br>You can use &lt;a href=&quot;https://jinja.palletsprojects.com/en/2.11.x/&quot; target=&quot;_blank&quot;&gt;Jinja tags&lt;/a&gt; in &lt;b&gt;Subject&lt;/b&gt; and &lt;b&gt;Body&lt;/b&gt; fields for dynamic values.<br>&lt;/li&gt;&lt;li&gt;<br>    All fields in this doctype are available under the &lt;b&gt;doc&lt;/b&gt; object and all fields for the customer to whom the mail will go to is available under the  &lt;b&gt;customer&lt;/b&gt; object.<br>&lt;/li&gt;&lt;/ul&gt;<br>&lt;h4&gt; Examples&lt;/h4&gt;<br>&lt;!-- {% raw %} --&gt;<br>&lt;ul&gt;<br>    &lt;li&gt;&lt;b&gt;Subject&lt;/b&gt;:&lt;br&gt;&lt;br&gt;&lt;pre&gt;&lt;code&gt;Statement Of Accounts for {{ customer.customer_name }}&lt;/code&gt;&lt;/pre&gt;&lt;br&gt;&lt;/li&gt;<br>    &lt;li&gt;&lt;b&gt;Body&lt;/b&gt;: &lt;br&gt;&lt;br&gt;<br>&lt;pre&gt;&lt;code&gt;Hello {{ customer.customer_name }},&lt;br&gt;PFA your Statement Of Accounts from {{ doc.from_date }} to {{ doc.to_date }}.&lt;/code&gt; &lt;/pre&gt;&lt;/li&gt;<br>&lt;/ul&gt;<br>&lt;!-- {% endraw %} --&gt;</code> |  | new | missing |
@@ -240,18 +240,18 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>&gt;=</code> |  | new | excepted |
 | <code>A - B</code> |  | new | excepted |
 | <code>A - C</code> |  | new | excepted |
-| <code>A Customer Group exists with same name please change the Customer name or rename the Customer Group</code> |  | new | missing |
+| <code>A Customer Group exists with same name please change the Customer name or rename the Customer Group</code> |  | new | translated |
 | <code>A DocType&#x27;s name should start with a letter and can only consist of letters, numbers, spaces, underscores and hyphens</code> |  | new | missing |
 | <code>A Frappe Framework instance can function as an OAuth Client, Resource, or Authorization server. This DocType contains settings related to all three.</code> |  | new | missing |
 | <code>A Holiday List can be added to exclude counting these days for the Workstation.</code> |  | new | missing |
-| <code>A Lead requires either a person&#x27;s name or an organization&#x27;s name</code> |  | new | missing |
+| <code>A Lead requires either a person&#x27;s name or an organization&#x27;s name</code> |  | new | translated |
 | <code>A Packing Slip can only be created for Draft Delivery Note.</code> |  | new | missing |
 | <code>A Period Closing Voucher is already submitted and an Opening Entry can no longer be created. {0} to learn more.</code> |  | new | missing |
 | <code>A Price List is a collection of Item Prices either Selling, Buying, or both</code> |  | new | missing |
 | <code>A Product or a Service that is bought, sold or kept in stock.</code> |  | new | missing |
 | <code>A Reconciliation Job {0} is running for the same filters. Cannot reconcile now</code> |  | new | missing |
 | <code>A Reverse Journal Entry {0} already exists for this Journal Entry.</code> |  | new | missing |
-| <code>A condition for a Shipping Rule</code> |  | new | missing |
+| <code>A condition for a Shipping Rule</code> |  | new | translated |
 | <code>A customer must have primary contact email.</code> |  | new | missing |
 | <code>A disabled Product Bundle cannot be selected in transactions.</code> |  | new | missing |
 | <code>A draft reverse journal for {0} has been created: {1}</code> |  | new | missing |
@@ -329,7 +329,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>About {0} minute remaining</code> |  | new | translated |
 | <code>About {0} minutes remaining</code> |  | new | translated |
 | <code>About {0} seconds remaining</code> |  | new | translated |
-| <code>Above</code> |  | new | missing |
+| <code>Above</code> |  | new | translated |
 | <code>Above 120 Days</code> |  | new | missing |
 | <code>Academics User</code> |  | new | missing |
 | <code>Accept Invitation</code> |  | new | missing |
@@ -339,10 +339,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Acceptance Criteria Value</code> |  | new | missing |
 | <code>Accepted</code> |  | new | translated |
 | <code>Accepted At</code> |  | new | missing |
-| <code>Accepted Qty</code> |  | new | missing |
+| <code>Accepted Qty</code> |  | new | translated |
 | <code>Accepted Qty in Stock UOM</code> |  | new | missing |
 | <code>Accepted Quantity</code> |  | new | missing |
-| <code>Accepted Warehouse</code> |  | new | missing |
+| <code>Accepted Warehouse</code> |  | new | translated |
 | <code>Accepting the suggestion will reconcile both transactions.</code> |  | new | missing |
 | <code>Access Control</code> |  | new | missing |
 | <code>Access Key</code> |  | new | missing |
@@ -355,39 +355,39 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>According to the BOM {0}, the Item &#x27;{1}&#x27; is missing in the stock entry.</code> |  | new | missing |
 | <code>Account</code> |  | new | translated |
 | <code>Account / customer numbers assigned to your companies by this supplier (for reconciliation on their statements)</code> |  | new | missing |
-| <code>Account Balance</code> |  | new | missing |
+| <code>Account Balance</code> |  | new | translated |
 | <code>Account Category</code> |  | new | missing |
 | <code>Account Category Name</code> |  | new | missing |
 | <code>Account Closing Balance</code> |  | new | missing |
-| <code>Account Currency</code> |  | new | missing |
+| <code>Account Currency</code> |  | new | translated |
 | <code>Account Currency (From)</code> |  | new | missing |
 | <code>Account Currency (To)</code> |  | new | missing |
 | <code>Account Data</code> |  | new | missing |
 | <code>Account Deletion Settings</code> |  | new | missing |
 | <code>Account Detail Level</code> |  | new | missing |
-| <code>Account Details</code> |  | new | missing |
+| <code>Account Details</code> |  | new | translated |
 | <code>Account Filter</code> |  | new | missing |
-| <code>Account Head</code> |  | new | missing |
-| <code>Account Manager</code> |  | new | missing |
-| <code>Account Missing</code> |  | new | missing |
-| <code>Account Name</code> |  | new | missing |
-| <code>Account Not Found</code> |  | new | missing |
-| <code>Account Number</code> |  | new | missing |
-| <code>Account Number {0} already used in account {1}</code> |  | new | missing |
+| <code>Account Head</code> |  | new | translated |
+| <code>Account Manager</code> |  | new | translated |
+| <code>Account Missing</code> |  | new | translated |
+| <code>Account Name</code> |  | new | translated |
+| <code>Account Not Found</code> |  | new | translated |
+| <code>Account Number</code> |  | new | translated |
+| <code>Account Number {0} already used in account {1}</code> |  | new | translated |
 | <code>Account Opening Balance</code> |  | new | missing |
-| <code>Account Paid From</code> |  | new | missing |
-| <code>Account Paid To</code> |  | new | missing |
-| <code>Account Pay Only</code> |  | new | missing |
-| <code>Account Subtype</code> |  | new | missing |
-| <code>Account Type</code> |  | new | missing |
+| <code>Account Paid From</code> |  | new | translated |
+| <code>Account Paid To</code> |  | new | translated |
+| <code>Account Pay Only</code> |  | new | translated |
+| <code>Account Subtype</code> |  | new | translated |
+| <code>Account Type</code> |  | new | translated |
 | <code>Account Value</code> |  | new | missing |
-| <code>Account balance already in Credit, you are not allowed to set &#x27;Balance Must Be&#x27; as &#x27;Debit&#x27;</code> |  | new | missing |
-| <code>Account balance already in Debit, you are not allowed to set &#x27;Balance Must Be&#x27; as &#x27;Credit&#x27;</code> |  | new | missing |
+| <code>Account balance already in Credit, you are not allowed to set &#x27;Balance Must Be&#x27; as &#x27;Debit&#x27;</code> |  | new | translated |
+| <code>Account balance already in Debit, you are not allowed to set &#x27;Balance Must Be&#x27; as &#x27;Credit&#x27;</code> |  | new | translated |
 | <code>Account company does not match with the rule company.</code> |  | new | missing |
-| <code>Account for Change Amount</code> |  | new | missing |
+| <code>Account for Change Amount</code> |  | new | translated |
 | <code>Account is mandatory</code> |  | new | missing |
-| <code>Account is mandatory to get payment entries</code> |  | new | missing |
-| <code>Account is not set for the dashboard chart {0}</code> |  | new | missing |
+| <code>Account is mandatory to get payment entries</code> |  | new | translated |
+| <code>Account is not set for the dashboard chart {0}</code> |  | new | translated |
 | <code>Account is required</code> |  | new | missing |
 | <code>Account not Found</code> |  | new | missing |
 | <code>Account to record additional purchase expenses like freight or customs for this item</code> |  | new | missing |
@@ -395,93 +395,93 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Account where cost of goods sold will be posted when this item is sold</code> |  | new | missing |
 | <code>Account where revenue from selling this item will be credited</code> |  | new | missing |
 | <code>Account where the cost of this item will be debited on purchase</code> |  | new | missing |
-| <code>Account with child nodes cannot be converted to ledger</code> |  | new | missing |
-| <code>Account with child nodes cannot be set as ledger</code> |  | new | missing |
-| <code>Account with existing transaction can not be converted to group.</code> |  | new | missing |
-| <code>Account with existing transaction can not be deleted</code> |  | new | missing |
-| <code>Account with existing transaction cannot be converted to ledger</code> |  | new | missing |
+| <code>Account with child nodes cannot be converted to ledger</code> |  | new | translated |
+| <code>Account with child nodes cannot be set as ledger</code> |  | new | translated |
+| <code>Account with existing transaction can not be converted to group.</code> |  | new | translated |
+| <code>Account with existing transaction can not be deleted</code> |  | new | translated |
+| <code>Account with existing transaction cannot be converted to ledger</code> |  | new | translated |
 | <code>Account {0} added multiple times</code> |  | new | missing |
 | <code>Account {0} cannot be converted to Group as it is already set as {1} for {2}.</code> |  | new | missing |
 | <code>Account {0} cannot be disabled as it is already set as {1} for {2}.</code> |  | new | missing |
 | <code>Account {0} does not belong to company {1}</code> |  | new | missing |
 | <code>Account {0} does not belong to company: {1}</code> |  | new | missing |
-| <code>Account {0} does not exist</code> |  | new | missing |
-| <code>Account {0} does not exists</code> |  | new | missing |
-| <code>Account {0} does not exists in the dashboard chart {1}</code> |  | new | missing |
-| <code>Account {0} does not match with Company {1} in Mode of Account: {2}</code> |  | new | missing |
+| <code>Account {0} does not exist</code> |  | new | translated |
+| <code>Account {0} does not exists</code> |  | new | translated |
+| <code>Account {0} does not exists in the dashboard chart {1}</code> |  | new | translated |
+| <code>Account {0} does not match with Company {1} in Mode of Account: {2}</code> |  | new | translated |
 | <code>Account {0} doesn&#x27;t belong to Company {1}</code> |  | new | missing |
-| <code>Account {0} exists in parent company {1}.</code> |  | new | missing |
-| <code>Account {0} is added in the child company {1}</code> |  | new | missing |
+| <code>Account {0} exists in parent company {1}.</code> |  | new | translated |
+| <code>Account {0} is added in the child company {1}</code> |  | new | translated |
 | <code>Account {0} is disabled.</code> |  | new | missing |
-| <code>Account {0} is frozen</code> |  | new | missing |
+| <code>Account {0} is frozen</code> |  | new | translated |
 | <code>Account {0} is invalid. Account Currency must be {1}</code> |  | new | missing |
 | <code>Account {0} should be of type Expense</code> |  | new | missing |
-| <code>Account {0}: Parent account {1} can not be a ledger</code> |  | new | missing |
-| <code>Account {0}: Parent account {1} does not belong to company: {2}</code> |  | new | missing |
-| <code>Account {0}: Parent account {1} does not exist</code> |  | new | missing |
-| <code>Account {0}: You can not assign itself as parent account</code> |  | new | missing |
-| <code>Account: &lt;b&gt;{0}&lt;/b&gt; is capital Work in progress and can not be updated by Journal Entry</code> |  | new | missing |
-| <code>Account: {0} can only be updated via Stock Transactions</code> |  | new | missing |
-| <code>Account: {0} is not permitted under Payment Entry</code> |  | new | missing |
+| <code>Account {0}: Parent account {1} can not be a ledger</code> |  | new | translated |
+| <code>Account {0}: Parent account {1} does not belong to company: {2}</code> |  | new | translated |
+| <code>Account {0}: Parent account {1} does not exist</code> |  | new | translated |
+| <code>Account {0}: You can not assign itself as parent account</code> |  | new | translated |
+| <code>Account: &lt;b&gt;{0}&lt;/b&gt; is capital Work in progress and can not be updated by Journal Entry</code> |  | new | translated |
+| <code>Account: {0} can only be updated via Stock Transactions</code> |  | new | translated |
+| <code>Account: {0} is not permitted under Payment Entry</code> |  | new | translated |
 | <code>Account: {0} with currency: {1} can not be selected</code> |  | new | missing |
 | <code>Accountant</code> |  | new | missing |
-| <code>Accounting</code> |  | new | missing |
-| <code>Accounting Details</code> |  | new | missing |
-| <code>Accounting Dimension</code> |  | new | missing |
-| <code>Accounting Dimension &lt;b&gt;{0}&lt;/b&gt; is required for &#x27;Balance Sheet&#x27; account {1}.</code> |  | new | missing |
-| <code>Accounting Dimension &lt;b&gt;{0}&lt;/b&gt; is required for &#x27;Profit and Loss&#x27; account {1}.</code> |  | new | missing |
-| <code>Accounting Dimension Detail</code> |  | new | missing |
+| <code>Accounting</code> |  | new | translated |
+| <code>Accounting Details</code> |  | new | translated |
+| <code>Accounting Dimension</code> |  | new | translated |
+| <code>Accounting Dimension &lt;b&gt;{0}&lt;/b&gt; is required for &#x27;Balance Sheet&#x27; account {1}.</code> |  | new | translated |
+| <code>Accounting Dimension &lt;b&gt;{0}&lt;/b&gt; is required for &#x27;Profit and Loss&#x27; account {1}.</code> |  | new | translated |
+| <code>Accounting Dimension Detail</code> |  | new | translated |
 | <code>Accounting Dimension Filter</code> |  | new | missing |
-| <code>Accounting Dimensions</code> |  | new | missing |
+| <code>Accounting Dimensions</code> |  | new | translated |
 | <code>Accounting Dimensions Filter</code> |  | new | missing |
-| <code>Accounting Entries</code> |  | new | missing |
-| <code>Accounting Entry for Asset</code> |  | new | missing |
+| <code>Accounting Entries</code> |  | new | translated |
+| <code>Accounting Entry for Asset</code> |  | new | translated |
 | <code>Accounting Entry for LCV in Stock Entry {0}</code> |  | new | missing |
 | <code>Accounting Entry for Landed Cost Voucher for SCR {0}</code> |  | new | missing |
 | <code>Accounting Entry for Service</code> |  | new | missing |
-| <code>Accounting Entry for Stock</code> |  | new | missing |
+| <code>Accounting Entry for Stock</code> |  | new | translated |
 | <code>Accounting Entry for {0}</code> |  | new | missing |
 | <code>Accounting Entry for {0}: {1} can only be made in currency: {2}</code> |  | new | missing |
-| <code>Accounting Ledger</code> |  | new | missing |
-| <code>Accounting Masters</code> |  | new | missing |
+| <code>Accounting Ledger</code> |  | new | translated |
+| <code>Accounting Masters</code> |  | new | translated |
 | <code>Accounting Onboarding</code> |  | new | missing |
-| <code>Accounting Period</code> |  | new | missing |
+| <code>Accounting Period</code> |  | new | translated |
 | <code>Accounting Period cannot be created for a future date. End Date {0} is after today.</code> |  | new | missing |
-| <code>Accounting Period overlaps with {0}</code> |  | new | missing |
+| <code>Accounting Period overlaps with {0}</code> |  | new | translated |
 | <code>Accounting entries are frozen up to this date. Only users with the specified role can create or modify entries before this date.</code> |  | new | missing |
-| <code>Accounts</code> |  | new | missing |
+| <code>Accounts</code> |  | new | translated |
 | <code>Accounts Closing</code> |  | new | missing |
 | <code>Accounts Frozen Till Date</code> |  | new | missing |
 | <code>Accounts Included in Report</code> |  | new | missing |
 | <code>Accounts Manager</code> |  | new | translated |
 | <code>Accounts Missing from Report</code> |  | new | missing |
-| <code>Accounts Payable</code> |  | new | missing |
-| <code>Accounts Payable Summary</code> |  | new | missing |
-| <code>Accounts Receivable</code> |  | new | missing |
+| <code>Accounts Payable</code> |  | new | translated |
+| <code>Accounts Payable Summary</code> |  | new | translated |
+| <code>Accounts Receivable</code> |  | new | translated |
 | <code>Accounts Receivable / Payable Report</code> |  | new | missing |
 | <code>Accounts Receivable / Payable remarks length</code> |  | new | missing |
-| <code>Accounts Receivable Credit Account</code> |  | new | missing |
-| <code>Accounts Receivable Discounted Account</code> |  | new | missing |
-| <code>Accounts Receivable Summary</code> |  | new | missing |
-| <code>Accounts Receivable Unpaid Account</code> |  | new | missing |
-| <code>Accounts Settings</code> |  | new | missing |
+| <code>Accounts Receivable Credit Account</code> |  | new | translated |
+| <code>Accounts Receivable Discounted Account</code> |  | new | translated |
+| <code>Accounts Receivable Summary</code> |  | new | translated |
+| <code>Accounts Receivable Unpaid Account</code> |  | new | translated |
+| <code>Accounts Settings</code> |  | new | translated |
 | <code>Accounts Setup</code> |  | new | missing |
 | <code>Accounts User</code> |  | new | translated |
 | <code>Accounts cannot be removed, as user doesn&#x27;t have access to all the accounts of {0}</code> |  | new | missing |
-| <code>Accounts table cannot be blank.</code> |  | new | missing |
+| <code>Accounts table cannot be blank.</code> |  | new | translated |
 | <code>Accounts to Merge</code> |  | new | missing |
 | <code>Accrued Expenses</code> |  | new | missing |
-| <code>Accumulated Depreciation</code> |  | new | missing |
-| <code>Accumulated Depreciation Account</code> |  | new | missing |
-| <code>Accumulated Depreciation Amount</code> |  | new | missing |
-| <code>Accumulated Depreciation as on</code> |  | new | missing |
-| <code>Accumulated Monthly</code> |  | new | missing |
+| <code>Accumulated Depreciation</code> |  | new | translated |
+| <code>Accumulated Depreciation Account</code> |  | new | translated |
+| <code>Accumulated Depreciation Amount</code> |  | new | translated |
+| <code>Accumulated Depreciation as on</code> |  | new | translated |
+| <code>Accumulated Monthly</code> |  | new | translated |
 | <code>Accumulated Monthly Budget for Account {0} against {1} {2} is {3}. It will be collectively ({4}) exceeded by {5}</code> |  | new | missing |
 | <code>Accumulated Monthly Budget for Account {0} against {1}: {2} is {3}. It will be exceeded by {4}</code> |  | new | missing |
-| <code>Accumulated Values</code> |  | new | missing |
-| <code>Accumulated Values in Group Company</code> |  | new | missing |
+| <code>Accumulated Values</code> |  | new | translated |
+| <code>Accumulated Values in Group Company</code> |  | new | translated |
 | <code>Accurate count can not be fetched, click here to view all documents</code> |  | new | missing |
-| <code>Achieved ({})</code> |  | new | missing |
+| <code>Achieved ({})</code> |  | new | translated |
 | <code>Acquisition Date</code> |  | new | missing |
 | <code>Acre</code> |  | new | missing |
 | <code>Acre (US)</code> |  | new | missing |
@@ -494,13 +494,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Action Timeout (Seconds)</code> |  | new | translated |
 | <code>Action Type</code> |  | new | translated |
 | <code>Action for Expired Unverified Appointments</code> |  | new | missing |
-| <code>Action if Accumulated Monthly Budget Exceeded on Actual</code> |  | new | missing |
-| <code>Action if Accumulated Monthly Budget Exceeded on MR</code> |  | new | missing |
-| <code>Action if Accumulated Monthly Budget Exceeded on PO</code> |  | new | missing |
+| <code>Action if Accumulated Monthly Budget Exceeded on Actual</code> |  | new | translated |
+| <code>Action if Accumulated Monthly Budget Exceeded on MR</code> |  | new | translated |
+| <code>Action if Accumulated Monthly Budget Exceeded on PO</code> |  | new | translated |
 | <code>Action if Accumulative Monthly Budget Exceeded on Cumulative Expense</code> |  | new | missing |
-| <code>Action if Annual Budget Exceeded on Actual</code> |  | new | missing |
-| <code>Action if Annual Budget Exceeded on MR</code> |  | new | missing |
-| <code>Action if Annual Budget Exceeded on PO</code> |  | new | missing |
+| <code>Action if Annual Budget Exceeded on Actual</code> |  | new | translated |
+| <code>Action if Annual Budget Exceeded on MR</code> |  | new | translated |
+| <code>Action if Annual Budget Exceeded on PO</code> |  | new | translated |
 | <code>Action if Anual Budget Exceeded on Cumulative Expense</code> |  | new | missing |
 | <code>Action if Quality Inspection is not submitted</code> |  | new | missing |
 | <code>Action if Quality Inspection is rejected</code> |  | new | missing |
@@ -511,29 +511,29 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Action {0} completed successfully on {1} {2}. View it {3}</code> |  | new | missing |
 | <code>Action {0} failed on {1} {2}. View it {3}</code> |  | new | missing |
 | <code>Actions</code> |  | new | translated |
-| <code>Actions performed</code> |  | new | missing |
+| <code>Actions performed</code> |  | new | translated |
 | <code>Activate</code> |  | new | missing |
 | <code>Activate Serial / Batch No for Item</code> |  | new | missing |
 | <code>Active</code> |  | new | translated |
 | <code>Active Directory</code> |  | new | excepted |
 | <code>Active Domains</code> |  | new | translated |
-| <code>Active Leads</code> |  | new | missing |
+| <code>Active Leads</code> |  | new | translated |
 | <code>Active Sessions</code> |  | new | translated |
 | <code>Active Status</code> |  | new | missing |
 | <code>Active Subcontracted Items</code> |  | new | missing |
-| <code>Activities</code> |  | new | missing |
+| <code>Activities</code> |  | new | translated |
 | <code>Activity</code> |  | new | translated |
 | <code>Activity Cost</code> |  | new | missing |
 | <code>Activity Cost exists for Employee {0} against Activity Type - {1}</code> |  | new | missing |
 | <code>Activity Cost per Employee</code> |  | new | missing |
 | <code>Activity Log</code> |  | new | translated |
-| <code>Activity Type</code> |  | new | missing |
-| <code>Actual</code> |  | new | missing |
+| <code>Activity Type</code> |  | new | translated |
+| <code>Actual</code> |  | new | translated |
 | <code>Actual Balance Qty</code> |  | new | missing |
 | <code>Actual Batch Quantity</code> |  | new | missing |
-| <code>Actual Cost</code> |  | new | missing |
+| <code>Actual Cost</code> |  | new | translated |
 | <code>Actual Date</code> |  | new | missing |
-| <code>Actual Delivery Date</code> |  | new | missing |
+| <code>Actual Delivery Date</code> |  | new | translated |
 | <code>Actual Demand</code> |  | new | missing |
 | <code>Actual End Date</code> |  | new | missing |
 | <code>Actual End Date (via Timesheet)</code> |  | new | missing |
@@ -558,7 +558,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Actual Time and Cost</code> |  | new | missing |
 | <code>Actual Time in Hours (via Timesheet)</code> |  | new | missing |
 | <code>Actual quantity of the finished good that will be manufactured.</code> |  | new | missing |
-| <code>Actual type tax cannot be included in Item rate in row {0}</code> |  | new | missing |
+| <code>Actual type tax cannot be included in Item rate in row {0}</code> |  | new | translated |
 | <code>Ad-hoc Qty</code> |  | new | missing |
 | <code>Add</code> |  | new | translated |
 | <code>Add / Edit Prices</code> |  | new | missing |
@@ -587,7 +587,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Add Gray Background</code> |  | new | translated |
 | <code>Add Group</code> |  | new | translated |
 | <code>Add Indexes</code> |  | new | missing |
-| <code>Add Item</code> |  | new | missing |
+| <code>Add Item</code> |  | new | translated |
 | <code>Add Items</code> |  | new | missing |
 | <code>Add Items in the Purpose Table</code> |  | new | missing |
 | <code>Add Lead to Prospect</code> |  | new | missing |
@@ -599,7 +599,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Add New</code> |  | new | missing |
 | <code>Add New Permission Rule</code> |  | new | translated |
 | <code>Add Or Deduct</code> |  | new | missing |
-| <code>Add Order Discount</code> |  | new | missing |
+| <code>Add Order Discount</code> |  | new | translated |
 | <code>Add Participants</code> |  | new | translated |
 | <code>Add Phantom Item</code> |  | new | missing |
 | <code>Add Query Parameters</code> |  | new | missing |
@@ -622,7 +622,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Add Stock</code> |  | new | missing |
 | <code>Add Sub Assembly</code> |  | new | missing |
 | <code>Add Subscribers</code> |  | new | translated |
-| <code>Add Suppliers</code> |  | new | missing |
+| <code>Add Suppliers</code> |  | new | translated |
 | <code>Add Tags</code> |  | new | missing |
 | <code>Add Tags</code> | Button in list view actions menu | new | missing |
 | <code>Add Template</code> |  | new | missing |
@@ -658,7 +658,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Add multiple</code> |  | new | missing |
 | <code>Add new tab</code> |  | new | missing |
 | <code>Add numbers or special characters.</code> |  | new | missing |
-| <code>Add or Deduct</code> |  | new | missing |
+| <code>Add or Deduct</code> |  | new | translated |
 | <code>Add page break</code> |  | new | missing |
 | <code>Add row</code> |  | new | missing |
 | <code>Add script for Child Table</code> |  | new | translated |
@@ -677,7 +677,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Add vouchers to generate preview.</code> |  | new | missing |
 | <code>Add {0}</code> |  | new | missing |
 | <code>Add {0}</code> | Primary action in list view | new | missing |
-| <code>Add/Edit Coupon Conditions</code> |  | new | missing |
+| <code>Add/Edit Coupon Conditions</code> |  | new | translated |
 | <code>Add/Update Filter</code> |  | new | missing |
 | <code>Added</code> |  | new | translated |
 | <code>Added By</code> |  | new | missing |
@@ -696,28 +696,28 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Additional Costs (as per BOM)</code> |  | new | missing |
 | <code>Additional Data</code> |  | new | missing |
 | <code>Additional Details</code> |  | new | missing |
-| <code>Additional Discount</code> |  | new | missing |
-| <code>Additional Discount Amount</code> |  | new | missing |
-| <code>Additional Discount Amount (Company Currency)</code> |  | new | missing |
+| <code>Additional Discount</code> |  | new | translated |
+| <code>Additional Discount Amount</code> |  | new | translated |
+| <code>Additional Discount Amount (Company Currency)</code> |  | new | translated |
 | <code>Additional Discount Amount ({discount_amount}) cannot exceed the total before such discount ({total_before_discount})</code> |  | new | missing |
-| <code>Additional Discount Percentage</code> |  | new | missing |
+| <code>Additional Discount Percentage</code> |  | new | translated |
 | <code>Additional Finished Good</code> |  | new | missing |
 | <code>Additional Info</code> |  | new | missing |
-| <code>Additional Information</code> |  | new | missing |
+| <code>Additional Information</code> |  | new | translated |
 | <code>Additional Information updated successfully.</code> |  | new | missing |
 | <code>Additional Material Transfer</code> |  | new | missing |
-| <code>Additional Notes</code> |  | new | missing |
+| <code>Additional Notes</code> |  | new | translated |
 | <code>Additional Operating Cost</code> |  | new | missing |
 | <code>Additional Permissions</code> |  | new | translated |
 | <code>Additional Transferred Qty</code> |  | new | missing |
 | <code>Additional Transferred Qty {0}<br>					cannot be greater than {1}.<br>					To fix this, increase the percentage value<br>					of the field &#x27;Transfer Extra Raw Materials to WIP&#x27;<br>					in Manufacturing Settings.</code> |  | new | missing |
 | <code>Additional {0} {1} of item {2} required as per BOM to complete this transaction</code> |  | new | missing |
 | <code>Address</code> |  | new | translated |
-| <code>Address &amp; Contact</code> |  | new | missing |
-| <code>Address &amp; Contacts</code> |  | new | missing |
-| <code>Address And Contacts</code> |  | new | missing |
+| <code>Address &amp; Contact</code> |  | new | translated |
+| <code>Address &amp; Contacts</code> |  | new | translated |
+| <code>Address And Contacts</code> |  | new | translated |
 | <code>Address Desc</code> |  | new | missing |
-| <code>Address HTML</code> |  | new | missing |
+| <code>Address HTML</code> |  | new | translated |
 | <code>Address Line 1</code> |  | new | translated |
 | <code>Address Line 2</code> |  | new | translated |
 | <code>Address Name</code> |  | new | missing |
@@ -725,11 +725,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Address Title</code> |  | new | translated |
 | <code>Address Title is mandatory.</code> |  | new | translated |
 | <code>Address Type</code> |  | new | translated |
-| <code>Address and Contact</code> |  | new | missing |
-| <code>Address and Contacts</code> |  | new | missing |
+| <code>Address and Contact</code> |  | new | translated |
+| <code>Address and Contacts</code> |  | new | translated |
 | <code>Address and other legal information you may want to put in the footer.</code> |  | new | translated |
-| <code>Address needs to be linked to a Company. Please add a row for Company in the Links table.</code> |  | new | missing |
-| <code>Address used to determine Tax Category in transactions</code> |  | new | missing |
+| <code>Address needs to be linked to a Company. Please add a row for Company in the Links table.</code> |  | new | translated |
+| <code>Address used to determine Tax Category in transactions</code> |  | new | translated |
 | <code>Addresses</code> |  | new | translated |
 | <code>Addresses And Contacts</code> |  | new | translated |
 | <code>Addresses added here will be used as the Reply-To header for outgoing emails sent from this account.</code> |  | new | missing |
@@ -739,27 +739,27 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Adjustment Against</code> |  | new | missing |
 | <code>Adjustment based on Purchase Invoice rate</code> |  | new | missing |
 | <code>Administrative Assistant</code> |  | new | missing |
-| <code>Administrative Expenses</code> |  | new | missing |
+| <code>Administrative Expenses</code> |  | new | translated |
 | <code>Administrative Officer</code> |  | new | missing |
 | <code>Administrator</code> |  | new | translated |
 | <code>Administrator Logged In</code> |  | new | translated |
 | <code>Administrator accessed {0} on {1} via IP Address {2}.</code> |  | new | translated |
 | <code>Administrator can&#x27;t follow</code> |  | new | missing |
-| <code>Advance Account</code> |  | new | missing |
+| <code>Advance Account</code> |  | new | translated |
 | <code>Advance Account: {0} must be in either customer billing currency: {1} or Company default currency: {2}</code> |  | new | missing |
-| <code>Advance Amount</code> |  | new | missing |
+| <code>Advance Amount</code> |  | new | translated |
 | <code>Advance Booking Days is mandatory for Appointment Scheduling.</code> |  | new | missing |
-| <code>Advance Paid</code> |  | new | missing |
+| <code>Advance Paid</code> |  | new | translated |
 | <code>Advance Paid (Company Currency)</code> |  | new | missing |
 | <code>Advance Payment</code> |  | new | missing |
 | <code>Advance Payment Date</code> |  | new | missing |
 | <code>Advance Payment Ledger Entry</code> |  | new | missing |
 | <code>Advance Payment Status</code> |  | new | missing |
-| <code>Advance Payments</code> |  | new | missing |
+| <code>Advance Payments</code> |  | new | translated |
 | <code>Advance Taxes and Charges</code> |  | new | missing |
 | <code>Advance Voucher No</code> |  | new | missing |
 | <code>Advance Voucher Type</code> |  | new | missing |
-| <code>Advance amount</code> |  | new | missing |
+| <code>Advance amount</code> |  | new | translated |
 | <code>Advance amount cannot be greater than {0} {1}</code> |  | new | missing |
 | <code>Advance paid against {0} {1} cannot be greater than Grand Total {2}</code> |  | new | missing |
 | <code>Advance payments allocated against orders will only be fetched</code> |  | new | missing |
@@ -769,7 +769,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Advanced Filtering</code> |  | new | missing |
 | <code>Advanced Search</code> |  | new | translated |
 | <code>Advanced Settings</code> |  | new | translated |
-| <code>Advances</code> |  | new | missing |
+| <code>Advances</code> |  | new | translated |
 | <code>Advertisement</code> |  | new | missing |
 | <code>Advertising</code> |  | new | missing |
 | <code>Aerospace</code> |  | new | missing |
@@ -784,20 +784,20 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>After Submission</code> |  | new | missing |
 | <code>After Submit</code> |  | new | translated |
 | <code>After save, please refresh the page to apply the changes.</code> |  | new | missing |
-| <code>Against</code> |  | new | missing |
-| <code>Against Account</code> |  | new | missing |
-| <code>Against Blanket Order</code> |  | new | missing |
+| <code>Against</code> |  | new | translated |
+| <code>Against Account</code> |  | new | translated |
+| <code>Against Blanket Order</code> |  | new | translated |
 | <code>Against Customer Order {0}</code> |  | new | missing |
 | <code>Against Delivery Note Item</code> |  | new | missing |
-| <code>Against Docname</code> |  | new | missing |
-| <code>Against Doctype</code> |  | new | missing |
-| <code>Against Document Detail No</code> |  | new | missing |
-| <code>Against Document No</code> |  | new | missing |
-| <code>Against Expense Account</code> |  | new | missing |
+| <code>Against Docname</code> |  | new | translated |
+| <code>Against Doctype</code> |  | new | translated |
+| <code>Against Document Detail No</code> |  | new | translated |
+| <code>Against Document No</code> |  | new | translated |
+| <code>Against Expense Account</code> |  | new | translated |
 | <code>Against Finished Good</code> |  | new | missing |
-| <code>Against Income Account</code> |  | new | missing |
-| <code>Against Journal Entry {0} does not have any unmatched {1} entry</code> |  | new | missing |
-| <code>Against Journal Entry {0} is already adjusted against some other voucher</code> |  | new | missing |
+| <code>Against Income Account</code> |  | new | translated |
+| <code>Against Journal Entry {0} does not have any unmatched {1} entry</code> |  | new | translated |
+| <code>Against Journal Entry {0} is already adjusted against some other voucher</code> |  | new | translated |
 | <code>Against Pick List</code> |  | new | missing |
 | <code>Against Sales Invoice</code> |  | new | missing |
 | <code>Against Sales Invoice Item</code> |  | new | missing |
@@ -805,14 +805,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Against Sales Order Item</code> |  | new | missing |
 | <code>Against Stock Entry</code> |  | new | missing |
 | <code>Against Supplier Invoice {0}</code> |  | new | missing |
-| <code>Against Voucher</code> |  | new | missing |
+| <code>Against Voucher</code> |  | new | translated |
 | <code>Against Voucher No</code> |  | new | missing |
-| <code>Against Voucher Type</code> |  | new | missing |
-| <code>Age</code> |  | new | missing |
-| <code>Age (Days)</code> |  | new | missing |
+| <code>Against Voucher Type</code> |  | new | translated |
+| <code>Age</code> |  | new | translated |
+| <code>Age (Days)</code> |  | new | translated |
 | <code>Age ({0})</code> |  | new | missing |
 | <code>Age as on</code> |  | new | missing |
-| <code>Ageing Based On</code> |  | new | missing |
+| <code>Ageing Based On</code> |  | new | translated |
 | <code>Ageing Range</code> |  | new | missing |
 | <code>Ageing Report based on {0} up to {1}</code> |  | new | missing |
 | <code>Agenda</code> |  | new | missing |
@@ -820,7 +820,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Agent Busy Message</code> |  | new | missing |
 | <code>Agent Group</code> |  | new | missing |
 | <code>Agent Unavailable Message</code> |  | new | missing |
-| <code>Agents</code> |  | new | missing |
+| <code>Agents</code> |  | new | translated |
 | <code>Aggregate Field is required to create a number card</code> |  | new | missing |
 | <code>Aggregate Function Based On</code> |  | new | translated |
 | <code>Aggregate Function field is required to create a dashboard chart</code> |  | new | translated |
@@ -836,27 +836,27 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Align Value</code> |  | new | translated |
 | <code>Alignment</code> |  | new | missing |
 | <code>All</code> |  | new | translated |
-| <code>All Accounts</code> |  | new | missing |
+| <code>All Accounts</code> |  | new | translated |
 | <code>All Activities</code> |  | new | missing |
 | <code>All Activities HTML</code> |  | new | missing |
 | <code>All BOMs</code> |  | new | missing |
-| <code>All Contact</code> |  | new | missing |
-| <code>All Customer Contact</code> |  | new | missing |
+| <code>All Contact</code> |  | new | translated |
+| <code>All Customer Contact</code> |  | new | translated |
 | <code>All Customer Groups</code> |  | new | missing |
 | <code>All Day</code> |  | new | translated |
 | <code>All Departments</code> |  | new | missing |
-| <code>All Employee (Active)</code> |  | new | missing |
+| <code>All Employee (Active)</code> |  | new | translated |
 | <code>All Images attached to Website Slideshow should be public</code> |  | new | translated |
 | <code>All Item Groups</code> |  | new | missing |
 | <code>All Items</code> |  | new | missing |
-| <code>All Lead (Open)</code> |  | new | missing |
+| <code>All Lead (Open)</code> |  | new | translated |
 | <code>All Parties</code> |  | new | missing |
 | <code>All Records</code> |  | new | translated |
-| <code>All Sales Partner Contact</code> |  | new | missing |
-| <code>All Sales Person</code> |  | new | missing |
+| <code>All Sales Partner Contact</code> |  | new | translated |
+| <code>All Sales Person</code> |  | new | translated |
 | <code>All Sales Transactions can be tagged against multiple Sales Persons so that you can set and monitor targets.</code> |  | new | missing |
 | <code>All Submissions</code> |  | new | missing |
-| <code>All Supplier Contact</code> |  | new | missing |
+| <code>All Supplier Contact</code> |  | new | translated |
 | <code>All Supplier Groups</code> |  | new | missing |
 | <code>All Territories</code> |  | new | missing |
 | <code>All Warehouses</code> |  | new | missing |
@@ -880,26 +880,26 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>All the required items (raw materials) will be fetched from BOM and populated in this table. Here you can also change the Source Warehouse for any item. And during the production, you can track transferred raw materials from this table.</code> |  | new | missing |
 | <code>All these items have already been Invoiced/Returned</code> |  | new | missing |
 | <code>All-uppercase is almost as easy to guess as all-lowercase.</code> |  | new | translated |
-| <code>Allocate</code> |  | new | missing |
-| <code>Allocate Advances Automatically (FIFO)</code> |  | new | missing |
+| <code>Allocate</code> |  | new | translated |
+| <code>Allocate Advances Automatically (FIFO)</code> |  | new | translated |
 | <code>Allocate Full Amount to Stock Items</code> |  | new | missing |
-| <code>Allocate Payment Amount</code> |  | new | missing |
-| <code>Allocate Payment Based On Payment Terms</code> |  | new | missing |
+| <code>Allocate Payment Amount</code> |  | new | translated |
+| <code>Allocate Payment Based On Payment Terms</code> |  | new | translated |
 | <code>Allocate Payment Request</code> |  | new | missing |
-| <code>Allocated</code> |  | new | missing |
-| <code>Allocated Amount</code> |  | new | missing |
+| <code>Allocated</code> |  | new | translated |
+| <code>Allocated Amount</code> |  | new | translated |
 | <code>Allocated Entries</code> |  | new | missing |
 | <code>Allocated To</code> |  | new | translated |
 | <code>Allocated To:</code> |  | new | missing |
-| <code>Allocated amount</code> |  | new | missing |
-| <code>Allocated amount cannot be greater than unadjusted amount</code> |  | new | missing |
-| <code>Allocated amount cannot be negative</code> |  | new | missing |
-| <code>Allocation</code> |  | new | missing |
+| <code>Allocated amount</code> |  | new | translated |
+| <code>Allocated amount cannot be greater than unadjusted amount</code> |  | new | translated |
+| <code>Allocated amount cannot be negative</code> |  | new | translated |
+| <code>Allocation</code> |  | new | translated |
 | <code>Allocations</code> |  | new | missing |
 | <code>Allotted Qty</code> |  | new | missing |
 | <code>Allow</code> |  | new | translated |
 | <code>Allow API Indexing Access</code> |  | new | translated |
-| <code>Allow Account Creation Against Child Company</code> |  | new | missing |
+| <code>Allow Account Creation Against Child Company</code> |  | new | translated |
 | <code>Allow Alternative Item</code> |  | new | missing |
 | <code>Allow Alternative Item must be checked on Item {}</code> |  | new | missing |
 | <code>Allow Auto Repeat</code> |  | new | translated |
@@ -917,7 +917,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Allow Guests to Upload Files</code> |  | new | translated |
 | <code>Allow Implicit Pegged Currency Conversion</code> |  | new | missing |
 | <code>Allow Import (via Data Import Tool)</code> |  | new | translated |
-| <code>Allow In Returns</code> |  | new | missing |
+| <code>Allow In Returns</code> |  | new | translated |
 | <code>Allow Item to Be Added Multiple Times in a Transaction</code> |  | new | missing |
 | <code>Allow Item to be added multiple times in a transaction</code> |  | new | missing |
 | <code>Allow Lead Duplication based on Emails</code> |  | new | missing |
@@ -949,14 +949,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Allow Sales Order with zero quantity</code> |  | new | missing |
 | <code>Allow Self Approval</code> |  | new | translated |
 | <code>Allow Sending Usage Data for Improving Applications</code> |  | new | missing |
-| <code>Allow Stale Exchange Rates</code> |  | new | missing |
+| <code>Allow Stale Exchange Rates</code> |  | new | translated |
 | <code>Allow Supplier Quotation with Zero Quantity</code> |  | new | missing |
 | <code>Allow UOM with conversion rate defined in Item</code> |  | new | missing |
 | <code>Allow User to Edit Discount</code> |  | new | missing |
 | <code>Allow User to Edit Rate</code> |  | new | missing |
 | <code>Allow Variant UOM to be different from Template UOM</code> |  | new | missing |
 | <code>Allow Zero Rate</code> |  | new | missing |
-| <code>Allow Zero Valuation Rate</code> |  | new | missing |
+| <code>Allow Zero Valuation Rate</code> |  | new | translated |
 | <code>Allow approval for creator of the document</code> |  | new | translated |
 | <code>Allow comments</code> |  | new | missing |
 | <code>Allow delete</code> |  | new | missing |
@@ -1012,7 +1012,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Allowed Modules</code> |  | new | missing |
 | <code>Allowed Public Client Origins</code> |  | new | missing |
 | <code>Allowed Roles</code> |  | new | missing |
-| <code>Allowed To Transact With</code> |  | new | missing |
+| <code>Allowed To Transact With</code> |  | new | translated |
 | <code>Allowed Users</code> |  | new | missing |
 | <code>Allowed Users is not required as Frappe CRM is already installed on the site.</code> |  | new | missing |
 | <code>Allowed Users is required for data synchronization from remote Frappe CRM site.</code> |  | new | missing |
@@ -1049,7 +1049,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Already amended as {0}</code> |  | new | missing |
 | <code>Already in the following Users ToDo list:{0}</code> |  | new | translated |
 | <code>Already record exists for the item {0}</code> |  | new | missing |
-| <code>Already set default in pos profile {0} for user {1}, kindly disabled default</code> |  | new | missing |
+| <code>Already set default in pos profile {0} for user {1}, kindly disabled default</code> |  | new | translated |
 | <code>Also adding the dependent currency field {0}</code> |  | new | translated |
 | <code>Also adding the status dependency field {0}</code> |  | new | translated |
 | <code>Also you can&#x27;t switch back to FIFO after setting the valuation method to Moving Average for this item.</code> |  | new | missing |
@@ -1077,14 +1077,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Amendment Naming Override</code> |  | new | missing |
 | <code>Amendment Not Allowed</code> |  | new | missing |
 | <code>Amendment naming rules updated.</code> |  | new | missing |
-| <code>Amount</code> |  | new | missing |
+| <code>Amount</code> |  | new | translated |
 | <code>Amount (AED)</code> |  | new | missing |
-| <code>Amount (Company Currency)</code> |  | new | missing |
-| <code>Amount Delivered</code> |  | new | missing |
+| <code>Amount (Company Currency)</code> |  | new | translated |
+| <code>Amount Delivered</code> |  | new | translated |
 | <code>Amount Difference</code> |  | new | missing |
 | <code>Amount Difference with Purchase Invoice</code> |  | new | missing |
 | <code>Amount Eligible for Commission</code> |  | new | missing |
-| <code>Amount In Figure</code> |  | new | missing |
+| <code>Amount In Figure</code> |  | new | translated |
 | <code>Amount column has &quot;CR&quot;/&quot;DR&quot; values</code> |  | new | missing |
 | <code>Amount column has positive/negative values</code> |  | new | missing |
 | <code>Amount does not match the selected transaction</code> |  | new | missing |
@@ -1093,11 +1093,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Amount in transaction currency</code> |  | new | missing |
 | <code>Amount in {0}</code> |  | new | missing |
 | <code>Amount matches the selected transaction</code> |  | new | missing |
-| <code>Amount to Bill</code> |  | new | missing |
+| <code>Amount to Bill</code> |  | new | translated |
 | <code>Amount {0} {1} adjusted against {2} {3}</code> |  | new | missing |
 | <code>Amount {0} {1} as adjustment to {2}</code> |  | new | missing |
-| <code>Amount {0} {1} transferred from {2} to {3}</code> |  | new | missing |
-| <code>Amount {0} {1} {2} {3}</code> |  | new | missing |
+| <code>Amount {0} {1} transferred from {2} to {3}</code> |  | new | translated |
+| <code>Amount {0} {1} {2} {3}</code> |  | new | translated |
 | <code>Amounts</code> |  | new | missing |
 | <code>Ampere</code> |  | new | missing |
 | <code>Ampere-Hour</code> |  | new | missing |
@@ -1168,21 +1168,21 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Applicable To (Role)</code> |  | new | missing |
 | <code>Applicable To (User)</code> |  | new | missing |
 | <code>Applicable for Countries</code> |  | new | missing |
-| <code>Applicable for Users</code> |  | new | missing |
+| <code>Applicable for Users</code> |  | new | translated |
 | <code>Applicable for external driver</code> |  | new | missing |
 | <code>Applicable if the company is SpA, SApA or SRL</code> |  | new | missing |
 | <code>Applicable if the company is a limited liability company</code> |  | new | missing |
 | <code>Applicable if the company is an Individual or a Proprietorship</code> |  | new | missing |
 | <code>Applicable on Cumulative Expense</code> |  | new | missing |
-| <code>Applicable on Material Request</code> |  | new | missing |
+| <code>Applicable on Material Request</code> |  | new | translated |
 | <code>Applicable on POS Invoice</code> |  | new | missing |
-| <code>Applicable on Purchase Order</code> |  | new | missing |
-| <code>Applicable on booking actual expenses</code> |  | new | missing |
+| <code>Applicable on Purchase Order</code> |  | new | translated |
+| <code>Applicable on booking actual expenses</code> |  | new | translated |
 | <code>Application Logo</code> |  | new | translated |
 | <code>Application Name</code> |  | new | translated |
 | <code>Application Version</code> |  | new | translated |
 | <code>Application is not installed</code> |  | new | missing |
-| <code>Application of Funds (Assets)</code> |  | new | missing |
+| <code>Application of Funds (Assets)</code> |  | new | translated |
 | <code>Applied Coupon Code</code> |  | new | missing |
 | <code>Applied On</code> |  | new | translated |
 | <code>Applied on each reading.</code> |  | new | missing |
@@ -1193,21 +1193,21 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Applies to withdrawals</code> |  | new | missing |
 | <code>Applies to withdrawals and deposits</code> |  | new | missing |
 | <code>Apply</code> |  | new | translated |
-| <code>Apply Additional Discount On</code> |  | new | missing |
+| <code>Apply Additional Discount On</code> |  | new | translated |
 | <code>Apply Assignment Rule</code> | Button in list view actions menu | new | missing |
-| <code>Apply Discount On</code> |  | new | missing |
-| <code>Apply Discount on Discounted Rate</code> |  | new | missing |
-| <code>Apply Discount on Rate</code> |  | new | missing |
+| <code>Apply Discount On</code> |  | new | translated |
+| <code>Apply Discount on Discounted Rate</code> |  | new | translated |
+| <code>Apply Discount on Rate</code> |  | new | translated |
 | <code>Apply Filters</code> |  | new | missing |
 | <code>Apply Module Export Filter</code> |  | new | missing |
-| <code>Apply Multiple Pricing Rules</code> |  | new | missing |
-| <code>Apply On</code> |  | new | missing |
+| <code>Apply Multiple Pricing Rules</code> |  | new | translated |
+| <code>Apply On</code> |  | new | translated |
 | <code>Apply Putaway Rule</code> |  | new | missing |
 | <code>Apply Recursion Over (As Per Transaction UOM)</code> |  | new | missing |
-| <code>Apply Rule On Brand</code> |  | new | missing |
-| <code>Apply Rule On Item Code</code> |  | new | missing |
-| <code>Apply Rule On Item Group</code> |  | new | missing |
-| <code>Apply Rule On Other</code> |  | new | missing |
+| <code>Apply Rule On Brand</code> |  | new | translated |
+| <code>Apply Rule On Item Code</code> |  | new | translated |
+| <code>Apply Rule On Item Group</code> |  | new | translated |
+| <code>Apply Rule On Other</code> |  | new | translated |
 | <code>Apply SLA for Resolution Time</code> |  | new | missing |
 | <code>Apply Strict User Permissions</code> |  | new | translated |
 | <code>Apply To</code> |  | new | missing |
@@ -1222,20 +1222,20 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Apply to all Documents Types</code> |  | new | translated |
 | <code>Applying a Discount Amount? When this Sales Order is partially fulfilled through multiple Delivery Notes and Sales Invoices, the Discount Amount is allocated on a FIFO basis. The earlier transactions receive a larger share of the discount. To spread the discount proportionally across item prices, use Additional Discount Percentage instead.</code> |  | new | missing |
 | <code>Applying: {0}</code> |  | new | translated |
-| <code>Appointment</code> |  | new | missing |
+| <code>Appointment</code> |  | new | translated |
 | <code>Appointment Booking Portal Settings</code> |  | new | missing |
-| <code>Appointment Booking Settings</code> |  | new | missing |
-| <code>Appointment Booking Slots</code> |  | new | missing |
-| <code>Appointment Confirmation</code> |  | new | missing |
+| <code>Appointment Booking Settings</code> |  | new | translated |
+| <code>Appointment Booking Slots</code> |  | new | translated |
+| <code>Appointment Confirmation</code> |  | new | translated |
 | <code>Appointment Confirmed</code> |  | new | missing |
 | <code>Appointment Created Successfully</code> |  | new | missing |
-| <code>Appointment Details</code> |  | new | missing |
-| <code>Appointment Duration (In Minutes)</code> |  | new | missing |
+| <code>Appointment Details</code> |  | new | translated |
+| <code>Appointment Duration (In Minutes)</code> |  | new | translated |
 | <code>Appointment Scheduling</code> |  | new | missing |
 | <code>Appointment Scheduling Disabled</code> |  | new | missing |
 | <code>Appointment Scheduling has been disabled for this site</code> |  | new | missing |
 | <code>Appointment Scheduling needs to be enabled for Appointment Booking through portal.</code> |  | new | missing |
-| <code>Appointment With</code> |  | new | missing |
+| <code>Appointment With</code> |  | new | translated |
 | <code>Appointment can only be scheduled up to {0} day(s) in advance.</code> |  | new | missing |
 | <code>Appointment cannot be scheduled for a past time.</code> |  | new | missing |
 | <code>Appointment cannot be scheduled on a holiday.</code> |  | new | missing |
@@ -1287,8 +1287,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Are you sure you want to unreconcile this transaction?</code> |  | new | missing |
 | <code>Are you sure you want to {0}?</code> |  | new | missing |
 | <code>Are you sure?</code> |  | new | translated |
-| <code>Area</code> |  | new | missing |
-| <code>Area UOM</code> |  | new | missing |
+| <code>Area</code> |  | new | translated |
+| <code>Area UOM</code> |  | new | translated |
 | <code>Arguments</code> |  | new | missing |
 | <code>Arial</code> |  | new | excepted |
 | <code>Arrival Quantity</code> |  | new | missing |
@@ -1300,8 +1300,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>As on Date</code> |  | new | missing |
 | <code>As per Stock UOM</code> |  | new | missing |
 | <code>As per your request, your account and data on {0} associated with email {1} has been permanently deleted</code> |  | new | missing |
-| <code>As the field {0} is enabled, the field {1} is mandatory.</code> |  | new | missing |
-| <code>As the field {0} is enabled, the value of the field {1} should be more than 1.</code> |  | new | missing |
+| <code>As the field {0} is enabled, the field {1} is mandatory.</code> |  | new | translated |
+| <code>As the field {0} is enabled, the value of the field {1} should be more than 1.</code> |  | new | translated |
 | <code>As there are existing submitted transactions against item {0}, you can not change the value of {1}.</code> |  | new | missing |
 | <code>As there are reserved stock, you cannot disable {0}.</code> |  | new | missing |
 | <code>As there are sufficient Sub Assembly Items, Work Order is not required for Warehouse {0}.</code> |  | new | missing |
@@ -1309,45 +1309,45 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>As {0} is enabled, you can not enable {1}.</code> |  | new | missing |
 | <code>Ask</code> |  | new | missing |
 | <code>Assembly Items</code> |  | new | missing |
-| <code>Asset</code> |  | new | missing |
-| <code>Asset Account</code> |  | new | missing |
+| <code>Asset</code> |  | new | translated |
+| <code>Asset Account</code> |  | new | translated |
 | <code>Asset Activity</code> |  | new | missing |
 | <code>Asset Capitalization</code> |  | new | missing |
 | <code>Asset Capitalization Asset Item</code> |  | new | missing |
 | <code>Asset Capitalization Service Item</code> |  | new | missing |
 | <code>Asset Capitalization Stock Item</code> |  | new | missing |
-| <code>Asset Category</code> |  | new | missing |
-| <code>Asset Category Account</code> |  | new | missing |
-| <code>Asset Category Name</code> |  | new | missing |
+| <code>Asset Category</code> |  | new | translated |
+| <code>Asset Category Account</code> |  | new | translated |
+| <code>Asset Category Name</code> |  | new | translated |
 | <code>Asset Category is mandatory for Fixed Asset item</code> |  | new | missing |
 | <code>Asset Depreciation Cost Center</code> |  | new | missing |
-| <code>Asset Depreciation Ledger</code> |  | new | missing |
+| <code>Asset Depreciation Ledger</code> |  | new | translated |
 | <code>Asset Depreciation Schedule</code> |  | new | missing |
 | <code>Asset Depreciation Schedule for Asset {0} and Finance Book {1} is not using shift based depreciation</code> |  | new | missing |
 | <code>Asset Depreciation Schedule not found for Asset {0} and Finance Book {1}</code> |  | new | missing |
 | <code>Asset Depreciation Schedule {0} for Asset {1} already exists.</code> |  | new | missing |
 | <code>Asset Depreciation Schedule {0} for Asset {1} and Finance Book {2} already exists.</code> |  | new | missing |
 | <code>Asset Depreciation Schedules created/updated:&lt;br&gt;{0}&lt;br&gt;&lt;br&gt;Please check, edit if needed, and submit the Asset.</code> |  | new | missing |
-| <code>Asset Depreciations and Balances</code> |  | new | missing |
+| <code>Asset Depreciations and Balances</code> |  | new | translated |
 | <code>Asset Details</code> |  | new | missing |
 | <code>Asset Disposal</code> |  | new | missing |
-| <code>Asset Finance Book</code> |  | new | missing |
+| <code>Asset Finance Book</code> |  | new | translated |
 | <code>Asset ID</code> |  | new | missing |
-| <code>Asset Location</code> |  | new | missing |
-| <code>Asset Maintenance</code> |  | new | missing |
-| <code>Asset Maintenance Log</code> |  | new | missing |
-| <code>Asset Maintenance Task</code> |  | new | missing |
-| <code>Asset Maintenance Team</code> |  | new | missing |
-| <code>Asset Movement</code> |  | new | missing |
-| <code>Asset Movement Item</code> |  | new | missing |
-| <code>Asset Movement record {0} created</code> |  | new | missing |
-| <code>Asset Name</code> |  | new | missing |
+| <code>Asset Location</code> |  | new | translated |
+| <code>Asset Maintenance</code> |  | new | translated |
+| <code>Asset Maintenance Log</code> |  | new | translated |
+| <code>Asset Maintenance Task</code> |  | new | translated |
+| <code>Asset Maintenance Team</code> |  | new | translated |
+| <code>Asset Movement</code> |  | new | translated |
+| <code>Asset Movement Item</code> |  | new | translated |
+| <code>Asset Movement record {0} created</code> |  | new | translated |
+| <code>Asset Name</code> |  | new | translated |
 | <code>Asset Naming Series</code> |  | new | missing |
-| <code>Asset Owner</code> |  | new | missing |
-| <code>Asset Owner Company</code> |  | new | missing |
+| <code>Asset Owner</code> |  | new | translated |
+| <code>Asset Owner Company</code> |  | new | translated |
 | <code>Asset Quantity</code> |  | new | missing |
-| <code>Asset Received But Not Billed</code> |  | new | missing |
-| <code>Asset Repair</code> |  | new | missing |
+| <code>Asset Received But Not Billed</code> |  | new | translated |
+| <code>Asset Repair</code> |  | new | translated |
 | <code>Asset Repair Consumed Item</code> |  | new | missing |
 | <code>Asset Repair Purchase Invoice</code> |  | new | missing |
 | <code>Asset Settings</code> |  | new | missing |
@@ -1356,12 +1356,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Asset Shift Factor {0} is set as default currently. Please change it first.</code> |  | new | missing |
 | <code>Asset Status</code> |  | new | missing |
 | <code>Asset Type</code> |  | new | missing |
-| <code>Asset Value</code> |  | new | missing |
-| <code>Asset Value Adjustment</code> |  | new | missing |
-| <code>Asset Value Adjustment cannot be posted before Asset&#x27;s purchase date &lt;b&gt;{0}&lt;/b&gt;.</code> |  | new | missing |
-| <code>Asset Value Analytics</code> |  | new | missing |
+| <code>Asset Value</code> |  | new | translated |
+| <code>Asset Value Adjustment</code> |  | new | translated |
+| <code>Asset Value Adjustment cannot be posted before Asset&#x27;s purchase date &lt;b&gt;{0}&lt;/b&gt;.</code> |  | new | translated |
+| <code>Asset Value Analytics</code> |  | new | translated |
 | <code>Asset cancelled</code> |  | new | missing |
-| <code>Asset cannot be cancelled, as it is already {0}</code> |  | new | missing |
+| <code>Asset cannot be cancelled, as it is already {0}</code> |  | new | translated |
 | <code>Asset cannot be scrapped before the last depreciation entry.</code> |  | new | missing |
 | <code>Asset capitalized after Asset Capitalization {0} was submitted</code> |  | new | missing |
 | <code>Asset created</code> |  | new | missing |
@@ -1374,15 +1374,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Asset restored after Asset Capitalization {0} was cancelled</code> |  | new | missing |
 | <code>Asset returned</code> |  | new | missing |
 | <code>Asset scrapped</code> |  | new | missing |
-| <code>Asset scrapped via Journal Entry {0}</code> |  | new | missing |
+| <code>Asset scrapped via Journal Entry {0}</code> |  | new | translated |
 | <code>Asset sold</code> |  | new | missing |
 | <code>Asset submitted</code> |  | new | missing |
 | <code>Asset transferred to Location {0}</code> |  | new | missing |
 | <code>Asset updated after being split into Asset {0}</code> |  | new | missing |
 | <code>Asset updated due to Asset Repair {0} {1}.</code> |  | new | missing |
-| <code>Asset {0} cannot be scrapped, as it is already {1}</code> |  | new | missing |
+| <code>Asset {0} cannot be scrapped, as it is already {1}</code> |  | new | translated |
 | <code>Asset {0} does not belong to Item {1}</code> |  | new | missing |
-| <code>Asset {0} does not belong to company {1}</code> |  | new | missing |
+| <code>Asset {0} does not belong to company {1}</code> |  | new | translated |
 | <code>Asset {0} does not belong to the custodian {1}</code> |  | new | missing |
 | <code>Asset {0} does not belong to the location {1}</code> |  | new | missing |
 | <code>Asset {0} does not exist</code> |  | new | missing |
@@ -1390,12 +1390,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Asset {0} is in {1} status and cannot be repaired.</code> |  | new | missing |
 | <code>Asset {0} is not set to calculate depreciation.</code> |  | new | missing |
 | <code>Asset {0} is not submitted. Please submit the asset before proceeding.</code> |  | new | missing |
-| <code>Asset {0} must be submitted</code> |  | new | missing |
+| <code>Asset {0} must be submitted</code> |  | new | translated |
 | <code>Asset {assets_link} created for {item_code}</code> |  | new | missing |
 | <code>Asset&#x27;s depreciation schedule updated after Asset Shift Allocation {0}</code> |  | new | missing |
 | <code>Asset&#x27;s value adjusted after cancellation of Asset Value Adjustment {0}</code> |  | new | missing |
 | <code>Asset&#x27;s value adjusted after submission of Asset Value Adjustment {0}</code> |  | new | missing |
-| <code>Assets</code> |  | new | missing |
+| <code>Assets</code> |  | new | translated |
 | <code>Assets Setup</code> |  | new | missing |
 | <code>Assets not created for {item_code}. You will have to create asset manually.</code> |  | new | missing |
 | <code>Assets {assets_link} created for {item_code}</code> |  | new | missing |
@@ -1408,7 +1408,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Assign To Users</code> |  | new | translated |
 | <code>Assign a user</code> |  | new | missing |
 | <code>Assign one by one, in sequence</code> |  | new | translated |
-| <code>Assign to Name</code> |  | new | missing |
+| <code>Assign to Name</code> |  | new | translated |
 | <code>Assign to me</code> |  | new | translated |
 | <code>Assign to the one who has the least assignments</code> |  | new | translated |
 | <code>Assign to the user set in this field</code> |  | new | translated |
@@ -1444,7 +1444,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>At least one field of Parent Document Type is mandatory</code> |  | new | missing |
 | <code>At least one invoice has to be selected.</code> |  | new | missing |
 | <code>At least one item should be entered with negative quantity in return document</code> |  | new | missing |
-| <code>At least one mode of payment is required for POS invoice.</code> |  | new | missing |
+| <code>At least one mode of payment is required for POS invoice.</code> |  | new | translated |
 | <code>At least one of the Applicable Modules should be selected</code> |  | new | missing |
 | <code>At least one of the Selling or Buying must be selected</code> |  | new | missing |
 | <code>At least one raw material item must be present in the stock entry for the type {0}</code> |  | new | missing |
@@ -1470,7 +1470,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Attach Print</code> |  | new | translated |
 | <code>Attach a comma separated .csv file with two columns, one for the old name and one for the new name.</code> |  | new | missing |
 | <code>Attach a web link</code> |  | new | translated |
-| <code>Attach custom Chart of Accounts file</code> |  | new | missing |
+| <code>Attach custom Chart of Accounts file</code> |  | new | translated |
 | <code>Attach files / urls and add in table.</code> |  | new | translated |
 | <code>Attached File</code> |  | new | translated |
 | <code>Attached To DocType</code> |  | new | translated |
@@ -1506,7 +1506,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Attribution</code> |  | new | missing |
 | <code>Audit System Hooks</code> |  | new | missing |
 | <code>Audit Trail</code> |  | new | missing |
-| <code>Auditor</code> |  | new | missing |
+| <code>Auditor</code> |  | new | translated |
 | <code>Audits</code> |  | new | missing |
 | <code>Auth URL Data</code> |  | new | translated |
 | <code>Auth URL data should be valid JSON</code> |  | new | missing |
@@ -1516,7 +1516,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Authentication Failed</code> |  | new | missing |
 | <code>Authentication failed while receiving emails from Email Account: {0}.</code> |  | new | translated |
 | <code>Author</code> |  | new | translated |
-| <code>Authorised By</code> |  | new | missing |
+| <code>Authorised By</code> |  | new | translated |
 | <code>Authorization</code> |  | new | missing |
 | <code>Authorization Code</code> |  | new | translated |
 | <code>Authorization Control</code> |  | new | missing |
@@ -1530,13 +1530,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Authorize Google Contacts Access</code> |  | new | translated |
 | <code>Authorize URL</code> |  | new | translated |
 | <code>Authorized</code> |  | new | translated |
-| <code>Authorized Signatory</code> |  | new | missing |
+| <code>Authorized Signatory</code> |  | new | translated |
 | <code>Authorized Value</code> |  | new | missing |
 | <code>Authors</code> |  | new | missing |
 | <code>Authors / Maintainers</code> |  | new | missing |
 | <code>Auto</code> |  | new | translated |
 | <code>Auto Create Exchange Rate Revaluation</code> |  | new | missing |
-| <code>Auto Created</code> |  | new | missing |
+| <code>Auto Created</code> |  | new | translated |
 | <code>Auto Created (Reorder)</code> |  | new | missing |
 | <code>Auto Created Serial and Batch Bundle</code> |  | new | missing |
 | <code>Auto Creation of Contact</code> |  | new | missing |
@@ -1546,7 +1546,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Auto Material Request</code> |  | new | missing |
 | <code>Auto Material Requests Generated</code> |  | new | missing |
 | <code>Auto Name</code> |  | new | translated |
-| <code>Auto Opt In (For all customers)</code> |  | new | missing |
+| <code>Auto Opt In (For all customers)</code> |  | new | translated |
 | <code>Auto Reconcile</code> |  | new | missing |
 | <code>Auto Reconciliation</code> |  | new | missing |
 | <code>Auto Reconciliation has started in the background</code> |  | new | missing |
@@ -1610,38 +1610,38 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Automatically run rules on unreconciled transactions</code> |  | new | missing |
 | <code>Automation</code> |  | new | translated |
 | <code>Automotive</code> |  | new | missing |
-| <code>Availability Of Slots</code> |  | new | missing |
+| <code>Availability Of Slots</code> |  | new | translated |
 | <code>Available</code> |  | new | missing |
 | <code>Available / Future Inventory</code> |  | new | missing |
 | <code>Available Batch Qty at From Warehouse</code> |  | new | missing |
-| <code>Available Batch Qty at Warehouse</code> |  | new | missing |
+| <code>Available Batch Qty at Warehouse</code> |  | new | translated |
 | <code>Available Batch Report</code> |  | new | missing |
-| <code>Available For Use Date</code> |  | new | missing |
+| <code>Available For Use Date</code> |  | new | translated |
 | <code>Available Qty</code> |  | new | missing |
 | <code>Available Qty For Consumption</code> |  | new | missing |
 | <code>Available Qty at Company</code> |  | new | missing |
 | <code>Available Qty at Source Warehouse</code> |  | new | missing |
 | <code>Available Qty at Target Warehouse</code> |  | new | missing |
 | <code>Available Qty at WIP Warehouse</code> |  | new | missing |
-| <code>Available Qty at Warehouse</code> |  | new | missing |
+| <code>Available Qty at Warehouse</code> |  | new | translated |
 | <code>Available Qty to Reserve</code> |  | new | missing |
-| <code>Available Quantity</code> |  | new | missing |
+| <code>Available Quantity</code> |  | new | translated |
 | <code>Available Serial No</code> |  | new | missing |
-| <code>Available Stock</code> |  | new | missing |
-| <code>Available Stock for Packing Items</code> |  | new | missing |
+| <code>Available Stock</code> |  | new | translated |
+| <code>Available Stock for Packing Items</code> |  | new | translated |
 | <code>Available for Use Date</code> |  | new | missing |
-| <code>Available for use date is required</code> |  | new | missing |
+| <code>Available for use date is required</code> |  | new | translated |
 | <code>Available quantity is {0}, you need {1}</code> |  | new | missing |
 | <code>Available {0}</code> |  | new | missing |
-| <code>Available-for-use Date should be after purchase date</code> |  | new | missing |
+| <code>Available-for-use Date should be after purchase date</code> |  | new | translated |
 | <code>Average</code> |  | new | translated |
 | <code>Average Age</code> |  | new | missing |
-| <code>Average Commission Rate</code> |  | new | missing |
+| <code>Average Commission Rate</code> |  | new | translated |
 | <code>Average Completion</code> |  | new | missing |
 | <code>Average Discount</code> |  | new | missing |
 | <code>Average Order Value</code> |  | new | missing |
 | <code>Average Order Values</code> |  | new | missing |
-| <code>Average Rate</code> |  | new | missing |
+| <code>Average Rate</code> |  | new | translated |
 | <code>Average Response Time</code> |  | new | missing |
 | <code>Average of {0}</code> |  | new | translated |
 | <code>Average time taken by the supplier to deliver</code> |  | new | missing |
@@ -1650,7 +1650,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Avg Rate (Balance Stock)</code> |  | new | missing |
 | <code>Avg. Buying Price List Rate</code> |  | new | missing |
 | <code>Avg. Selling Price List Rate</code> |  | new | missing |
-| <code>Avg. Selling Rate</code> |  | new | missing |
+| <code>Avg. Selling Rate</code> |  | new | translated |
 | <code>Avoid dates and years that are associated with you.</code> |  | new | translated |
 | <code>Avoid recent years.</code> |  | new | translated |
 | <code>Avoid sequences like abc or 6543 as they are easy to guess</code> |  | new | translated |
@@ -1677,7 +1677,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>BCC</code> | Email Recipients | new | missing |
 | <code>BFS</code> |  | new | missing |
 | <code>BIN Qty</code> |  | new | missing |
-| <code>BOM</code> |  | new | missing |
+| <code>BOM</code> |  | new | translated |
 | <code>BOM 1</code> |  | new | excepted |
 | <code>BOM 1 {0} and BOM 2 {1} should not be same</code> |  | new | missing |
 | <code>BOM 2</code> |  | new | excepted |
@@ -1688,14 +1688,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>BOM Creator</code> |  | new | missing |
 | <code>BOM Creator Item</code> |  | new | missing |
 | <code>BOM Creator Item with name {0} does not exist</code> |  | new | missing |
-| <code>BOM Detail No</code> |  | new | missing |
+| <code>BOM Detail No</code> |  | new | translated |
 | <code>BOM Explorer</code> |  | new | missing |
 | <code>BOM Explosion Item</code> |  | new | missing |
 | <code>BOM ID</code> |  | new | missing |
 | <code>BOM Info</code> |  | new | missing |
 | <code>BOM Item</code> |  | new | missing |
 | <code>BOM Level</code> |  | new | missing |
-| <code>BOM No</code> |  | new | missing |
+| <code>BOM No</code> |  | new | translated |
 | <code>BOM No (For Semi-Finished Goods)</code> |  | new | missing |
 | <code>BOM No. for a Finished Good Item</code> |  | new | missing |
 | <code>BOM Operation</code> |  | new | missing |
@@ -1753,16 +1753,16 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Backups</code> |  | new | translated |
 | <code>Backups (MB)</code> |  | new | missing |
 | <code>Bad Cron Expression</code> |  | new | missing |
-| <code>Balance</code> |  | new | missing |
-| <code>Balance (Dr - Cr)</code> |  | new | missing |
-| <code>Balance ({0})</code> |  | new | missing |
-| <code>Balance In Account Currency</code> |  | new | missing |
-| <code>Balance In Base Currency</code> |  | new | missing |
+| <code>Balance</code> |  | new | translated |
+| <code>Balance (Dr - Cr)</code> |  | new | translated |
+| <code>Balance ({0})</code> |  | new | translated |
+| <code>Balance In Account Currency</code> |  | new | translated |
+| <code>Balance In Base Currency</code> |  | new | translated |
 | <code>Balance Qty</code> |  | new | missing |
 | <code>Balance Qty (Alt UOM)</code> |  | new | missing |
 | <code>Balance Qty (Stock)</code> |  | new | missing |
 | <code>Balance Serial No</code> |  | new | missing |
-| <code>Balance Sheet</code> |  | new | missing |
+| <code>Balance Sheet</code> |  | new | translated |
 | <code>Balance Sheet Closing Balance</code> |  | new | missing |
 | <code>Balance Sheet Summary</code> |  | new | missing |
 | <code>Balance Sheet requires {0} to be synced to DuckDB</code> |  | new | missing |
@@ -1771,53 +1771,53 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Balance Type</code> |  | new | missing |
 | <code>Balance Type is required for Account Data</code> |  | new | missing |
 | <code>Balance Value</code> |  | new | missing |
-| <code>Balance for Account {0} must always be {1}</code> |  | new | missing |
-| <code>Balance must be</code> |  | new | missing |
+| <code>Balance for Account {0} must always be {1}</code> |  | new | translated |
+| <code>Balance must be</code> |  | new | translated |
 | <code>Balances as per bank statement before {0}</code> | Do MMM YYYY | new | missing |
-| <code>Bank</code> |  | new | missing |
-| <code>Bank / Cash Account</code> |  | new | missing |
+| <code>Bank</code> |  | new | translated |
+| <code>Bank / Cash Account</code> |  | new | translated |
 | <code>Bank A/C No.</code> |  | new | missing |
-| <code>Bank Account</code> |  | new | missing |
+| <code>Bank Account</code> |  | new | translated |
 | <code>Bank Account Balance</code> |  | new | missing |
-| <code>Bank Account Details</code> |  | new | missing |
-| <code>Bank Account Info</code> |  | new | missing |
-| <code>Bank Account No</code> |  | new | missing |
-| <code>Bank Account Subtype</code> |  | new | missing |
-| <code>Bank Account Type</code> |  | new | missing |
+| <code>Bank Account Details</code> |  | new | translated |
+| <code>Bank Account Info</code> |  | new | translated |
+| <code>Bank Account No</code> |  | new | translated |
+| <code>Bank Account Subtype</code> |  | new | translated |
+| <code>Bank Account Type</code> |  | new | translated |
 | <code>Bank Account {} in Bank Transaction {} is not matching with Bank Account {}</code> |  | new | missing |
-| <code>Bank Accounts</code> |  | new | missing |
+| <code>Bank Accounts</code> |  | new | translated |
 | <code>Bank Balance</code> |  | new | missing |
-| <code>Bank Charges</code> |  | new | missing |
-| <code>Bank Charges Account</code> |  | new | missing |
+| <code>Bank Charges</code> |  | new | translated |
+| <code>Bank Charges Account</code> |  | new | translated |
 | <code>Bank Charges, Salary, etc.</code> |  | new | missing |
-| <code>Bank Clearance</code> |  | new | missing |
-| <code>Bank Clearance Detail</code> |  | new | missing |
-| <code>Bank Clearance Summary</code> |  | new | missing |
+| <code>Bank Clearance</code> |  | new | translated |
+| <code>Bank Clearance Detail</code> |  | new | translated |
+| <code>Bank Clearance Summary</code> |  | new | translated |
 | <code>Bank Credit Balance</code> |  | new | missing |
-| <code>Bank Details</code> |  | new | missing |
+| <code>Bank Details</code> |  | new | translated |
 | <code>Bank Draft</code> |  | new | missing |
 | <code>Bank Entries Created</code> |  | new | missing |
-| <code>Bank Entry</code> |  | new | missing |
+| <code>Bank Entry</code> |  | new | translated |
 | <code>Bank Entry Created</code> |  | new | missing |
 | <code>Bank Entry Type</code> |  | new | missing |
 | <code>Bank Fee, Salary, etc.</code> |  | new | missing |
-| <code>Bank Guarantee</code> |  | new | missing |
-| <code>Bank Guarantee Number</code> |  | new | missing |
-| <code>Bank Guarantee Type</code> |  | new | missing |
-| <code>Bank Name</code> |  | new | missing |
-| <code>Bank Overdraft Account</code> |  | new | missing |
+| <code>Bank Guarantee</code> |  | new | translated |
+| <code>Bank Guarantee Number</code> |  | new | translated |
+| <code>Bank Guarantee Type</code> |  | new | translated |
+| <code>Bank Name</code> |  | new | translated |
+| <code>Bank Overdraft Account</code> |  | new | translated |
 | <code>Bank Reconciliation</code> |  | new | missing |
-| <code>Bank Reconciliation Statement</code> |  | new | missing |
+| <code>Bank Reconciliation Statement</code> |  | new | translated |
 | <code>Bank Reconciliation Tool</code> |  | new | missing |
 | <code>Bank Statement</code> |  | new | missing |
 | <code>Bank Statement Balance as per General Ledger</code> |  | new | missing |
 | <code>Bank Statement Import</code> |  | new | missing |
 | <code>Bank Statement Import Log</code> |  | new | missing |
 | <code>Bank Statement Import Log Column Map</code> |  | new | missing |
-| <code>Bank Statement balance as per General Ledger</code> |  | new | missing |
-| <code>Bank Transaction</code> |  | new | missing |
-| <code>Bank Transaction Mapping</code> |  | new | missing |
-| <code>Bank Transaction Payments</code> |  | new | missing |
+| <code>Bank Statement balance as per General Ledger</code> |  | new | translated |
+| <code>Bank Transaction</code> |  | new | translated |
+| <code>Bank Transaction Mapping</code> |  | new | translated |
+| <code>Bank Transaction Payments</code> |  | new | translated |
 | <code>Bank Transaction Rule</code> |  | new | missing |
 | <code>Bank Transaction Rule Accounts</code> |  | new | missing |
 | <code>Bank Transaction Rule Description Conditions</code> |  | new | missing |
@@ -1837,7 +1837,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Bank/Cash Account {0} doesn&#x27;t belong to company {1}</code> |  | new | missing |
 | <code>Banker&#x27;s Rounding</code> |  | new | missing |
 | <code>Banker&#x27;s Rounding (legacy)</code> |  | new | missing |
-| <code>Banking</code> |  | new | missing |
+| <code>Banking</code> |  | new | translated |
 | <code>Banner</code> |  | new | translated |
 | <code>Banner HTML</code> |  | new | translated |
 | <code>Banner Image</code> |  | new | translated |
@@ -1852,8 +1852,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Barrel (Oil)</code> |  | new | missing |
 | <code>Barrel(Beer)</code> |  | new | missing |
 | <code>Base Amount</code> |  | new | missing |
-| <code>Base Amount (Company Currency)</code> |  | new | missing |
-| <code>Base Change Amount (Company Currency)</code> |  | new | missing |
+| <code>Base Amount (Company Currency)</code> |  | new | translated |
+| <code>Base Change Amount (Company Currency)</code> |  | new | translated |
 | <code>Base Cost (Company Currency)</code> |  | new | missing |
 | <code>Base Cost Per Unit</code> |  | new | missing |
 | <code>Base Distinguished Name (DN)</code> |  | new | translated |
@@ -1868,8 +1868,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Based On</code> |  | new | translated |
 | <code>Based On Data ( in years )</code> |  | new | missing |
 | <code>Based On Document</code> |  | new | missing |
-| <code>Based On Payment Terms</code> |  | new | missing |
-| <code>Based On Price List</code> |  | new | missing |
+| <code>Based On Payment Terms</code> |  | new | translated |
+| <code>Based On Price List</code> |  | new | translated |
 | <code>Based On Value</code> |  | new | missing |
 | <code>Based on Field</code> |  | new | translated |
 | <code>Based on Permissions For User</code> |  | new | translated |
@@ -1879,7 +1879,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Basic</code> |  | new | translated |
 | <code>Basic Amount</code> |  | new | missing |
 | <code>Basic Info</code> |  | new | missing |
-| <code>Basic Rate (Company Currency)</code> |  | new | missing |
+| <code>Basic Rate (Company Currency)</code> |  | new | translated |
 | <code>Basic Rate (as per Stock UOM)</code> |  | new | missing |
 | <code>Batch</code> |  | new | missing |
 | <code>Batch Description</code> |  | new | missing |
@@ -1889,7 +1889,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Batch ID is mandatory</code> |  | new | missing |
 | <code>Batch Item Expiry Status</code> |  | new | missing |
 | <code>Batch Item settings</code> |  | new | missing |
-| <code>Batch No</code> |  | new | missing |
+| <code>Batch No</code> |  | new | translated |
 | <code>Batch No is mandatory</code> |  | new | missing |
 | <code>Batch No {0} does not exists</code> |  | new | missing |
 | <code>Batch No {0} is linked with Item {1} which has serial no. Please scan serial no instead.</code> |  | new | missing |
@@ -1939,40 +1939,40 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Beta</code> |  | new | translated |
 | <code>Better add a few more letters or another word</code> |  | new | translated |
 | <code>Between</code> |  | new | translated |
-| <code>Bill Date</code> |  | new | missing |
-| <code>Bill No</code> |  | new | missing |
+| <code>Bill Date</code> |  | new | translated |
+| <code>Bill No</code> |  | new | translated |
 | <code>Bill for rejected quantity in Purchase Invoice</code> |  | new | missing |
 | <code>Bill of Materials</code> |  | new | missing |
 | <code>Billed</code> |  | new | missing |
-| <code>Billed Amount</code> |  | new | missing |
-| <code>Billed Amt</code> |  | new | missing |
+| <code>Billed Amount</code> |  | new | translated |
+| <code>Billed Amt</code> |  | new | translated |
 | <code>Billed Items To Be Received</code> |  | new | missing |
-| <code>Billed Qty</code> |  | new | missing |
+| <code>Billed Qty</code> |  | new | translated |
 | <code>Billed, Received &amp; Returned</code> |  | new | missing |
 | <code>Billing</code> |  | new | translated |
-| <code>Billing Address</code> |  | new | missing |
+| <code>Billing Address</code> |  | new | translated |
 | <code>Billing Address Details</code> |  | new | missing |
 | <code>Billing Address Name</code> |  | new | missing |
 | <code>Billing Address does not belong to the {0}</code> |  | new | missing |
-| <code>Billing Amount</code> |  | new | missing |
-| <code>Billing City</code> |  | new | missing |
+| <code>Billing Amount</code> |  | new | translated |
+| <code>Billing City</code> |  | new | translated |
 | <code>Billing Contact</code> |  | new | missing |
-| <code>Billing Country</code> |  | new | missing |
-| <code>Billing County</code> |  | new | missing |
-| <code>Billing Currency</code> |  | new | missing |
+| <code>Billing Country</code> |  | new | translated |
+| <code>Billing County</code> |  | new | translated |
+| <code>Billing Currency</code> |  | new | translated |
 | <code>Billing Date</code> |  | new | missing |
 | <code>Billing Details</code> |  | new | missing |
-| <code>Billing Email</code> |  | new | missing |
-| <code>Billing Hours</code> |  | new | missing |
-| <code>Billing Interval</code> |  | new | missing |
-| <code>Billing Interval Count</code> |  | new | missing |
-| <code>Billing Interval Count cannot be less than 1</code> |  | new | missing |
+| <code>Billing Email</code> |  | new | translated |
+| <code>Billing Hours</code> |  | new | translated |
+| <code>Billing Interval</code> |  | new | translated |
+| <code>Billing Interval Count</code> |  | new | translated |
+| <code>Billing Interval Count cannot be less than 1</code> |  | new | translated |
 | <code>Billing Interval in Subscription Plan must be Month to follow calendar months</code> |  | new | missing |
 | <code>Billing Rate</code> |  | new | missing |
-| <code>Billing State</code> |  | new | missing |
-| <code>Billing Status</code> |  | new | missing |
-| <code>Billing Zipcode</code> |  | new | missing |
-| <code>Billing currency must be equal to either default company&#x27;s currency or party account currency</code> |  | new | missing |
+| <code>Billing State</code> |  | new | translated |
+| <code>Billing Status</code> |  | new | translated |
+| <code>Billing Zipcode</code> |  | new | translated |
+| <code>Billing currency must be equal to either default company&#x27;s currency or party account currency</code> |  | new | translated |
 | <code>Bin</code> |  | new | missing |
 | <code>Bin Values Recalculated</code> |  | new | missing |
 | <code>Binary Logging</code> |  | new | missing |
@@ -1993,23 +1993,23 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Black</code> |  | new | missing |
 | <code>Blank Line</code> |  | new | missing |
 | <code>Blank Template</code> |  | new | translated |
-| <code>Blanket Order</code> |  | new | missing |
+| <code>Blanket Order</code> |  | new | translated |
 | <code>Blanket Order Allowance (%)</code> |  | new | missing |
 | <code>Blanket Order Item</code> |  | new | missing |
-| <code>Blanket Order Rate</code> |  | new | missing |
+| <code>Blanket Order Rate</code> |  | new | translated |
 | <code>Blanket Orders</code> |  | new | missing |
-| <code>Block Invoice</code> |  | new | missing |
+| <code>Block Invoice</code> |  | new | translated |
 | <code>Block Module</code> |  | new | translated |
 | <code>Block Modules</code> |  | new | translated |
-| <code>Block Supplier</code> |  | new | missing |
+| <code>Block Supplier</code> |  | new | translated |
 | <code>Blocks new transactions and further accounting entries on this customer&#x27;s account. Only users with the role set in Company&#x27;s &quot;Roles Allowed to Set and Edit Frozen Account Entries&quot; can transact.</code> |  | new | missing |
 | <code>Blocks this customer from being used on any new transaction.</code> |  | new | missing |
-| <code>Blog Subscriber</code> |  | new | missing |
+| <code>Blog Subscriber</code> |  | new | translated |
 | <code>Blood Group</code> |  | new | missing |
 | <code>Blue</code> |  | new | translated |
-| <code>Body</code> |  | new | missing |
-| <code>Body Text</code> |  | new | missing |
-| <code>Body and Closing Text Help</code> |  | new | missing |
+| <code>Body</code> |  | new | translated |
+| <code>Body Text</code> |  | new | translated |
+| <code>Body and Closing Text Help</code> |  | new | translated |
 | <code>Bold</code> |  | new | translated |
 | <code>Bold Text</code> |  | new | missing |
 | <code>Bold text for emphasis (totals, major headings)</code> |  | new | missing |
@@ -2023,7 +2023,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Book deferred entries via Journal Entry</code> |  | new | missing |
 | <code>Book tax loss on early payment discount</code> |  | new | missing |
 | <code>Booked</code> |  | new | missing |
-| <code>Booked Fixed Asset</code> |  | new | missing |
+| <code>Booked Fixed Asset</code> |  | new | translated |
 | <code>Books Purchase Expense and Expenses Added To Stock account pairs against stock value. On enabling this, the accounts become mandatory in Company or Item Defaults for Purchase Receipt, Purchase Invoice, Stock Entry, Stock Reconciliation and Landed Cost Voucher</code> |  | new | missing |
 | <code>Books have been closed till the period ending on {0}</code> |  | new | missing |
 | <code>Bot</code> |  | new | translated |
@@ -2031,7 +2031,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Both DocType and Name required</code> |  | new | translated |
 | <code>Both Payable Account: {0} and Advance Account: {1} must be of same currency for company: {2}</code> |  | new | missing |
 | <code>Both Receivable Account: {0} and Advance Account: {1} must be of same currency for company: {2}</code> |  | new | missing |
-| <code>Both Trial Period Start Date and Trial Period End Date must be set</code> |  | new | missing |
+| <code>Both Trial Period Start Date and Trial Period End Date must be set</code> |  | new | translated |
 | <code>Both login and password required</code> |  | new | translated |
 | <code>Both {0} Account: {1} and Advance Account: {2} must be of same currency for company: {3}</code> |  | new | missing |
 | <code>Bottom</code> |  | new | translated |
@@ -2040,14 +2040,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Bottom Right</code> |  | new | missing |
 | <code>Bounced</code> |  | new | translated |
 | <code>Box</code> |  | new | missing |
-| <code>Branch</code> |  | new | missing |
-| <code>Branch Code</code> |  | new | missing |
+| <code>Branch</code> |  | new | translated |
+| <code>Branch Code</code> |  | new | translated |
 | <code>Brand</code> |  | new | translated |
 | <code>Brand Defaults</code> |  | new | missing |
 | <code>Brand HTML</code> |  | new | translated |
 | <code>Brand Image</code> |  | new | translated |
 | <code>Brand Logo</code> |  | new | missing |
-| <code>Brand Name</code> |  | new | missing |
+| <code>Brand Name</code> |  | new | translated |
 | <code>Brand is what appears on the top-left of the toolbar. If it is an image, make sure it<br>has a transparent background and use the &amp;lt;img /&amp;gt; tag. Keep size as 200px x 30px</code> |  | new | missing |
 | <code>Breadcrumbs</code> |  | new | translated |
 | <code>Breakdown</code> |  | new | missing |
@@ -2065,10 +2065,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Btu/Minutes</code> |  | new | missing |
 | <code>Btu/Seconds</code> |  | new | missing |
 | <code>Bucket Size</code> |  | new | missing |
-| <code>Budget</code> |  | new | missing |
-| <code>Budget Account</code> |  | new | missing |
-| <code>Budget Against</code> |  | new | missing |
-| <code>Budget Amount</code> |  | new | missing |
+| <code>Budget</code> |  | new | translated |
+| <code>Budget Account</code> |  | new | translated |
+| <code>Budget Against</code> |  | new | translated |
+| <code>Budget Amount</code> |  | new | translated |
 | <code>Budget Amount can not be {0}.</code> |  | new | missing |
 | <code>Budget Detail</code> |  | new | missing |
 | <code>Budget Distribution</code> |  | new | missing |
@@ -2076,13 +2076,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Budget End Date</code> |  | new | missing |
 | <code>Budget Exceeded</code> |  | new | missing |
 | <code>Budget Limit Exceeded</code> |  | new | missing |
-| <code>Budget List</code> |  | new | missing |
+| <code>Budget List</code> |  | new | translated |
 | <code>Budget Start Date</code> |  | new | missing |
 | <code>Budget Variance</code> |  | new | missing |
-| <code>Budget Variance Report</code> |  | new | missing |
-| <code>Budget cannot be assigned against Group Account {0}</code> |  | new | missing |
+| <code>Budget Variance Report</code> |  | new | translated |
+| <code>Budget cannot be assigned against Group Account {0}</code> |  | new | translated |
 | <code>Budget cannot be assigned against {0}, as its Root Type is not of Income or Expense</code> |  | new | missing |
-| <code>Budgets</code> |  | new | missing |
+| <code>Budgets</code> |  | new | translated |
 | <code>Buffer Time</code> |  | new | missing |
 | <code>Buffered Cursor</code> |  | new | missing |
 | <code>Bufferpool Size</code> |  | new | missing |
@@ -2092,7 +2092,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Build your own reports, print formats, and dashboards. Create personalized workspaces for easier navigation</code> |  | new | missing |
 | <code>Build {0}</code> |  | new | missing |
 | <code>Buildable Qty</code> |  | new | missing |
-| <code>Buildings</code> |  | new | missing |
+| <code>Buildings</code> |  | new | translated |
 | <code>Built on {0}</code> |  | new | missing |
 | <code>Bulk Actions</code> |  | new | missing |
 | <code>Bulk Bank Entry</code> |  | new | missing |
@@ -2127,16 +2127,16 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Button Shadows</code> |  | new | translated |
 | <code>Buy</code> |  | new | missing |
 | <code>Buy &amp; Sell</code> |  | new | missing |
-| <code>Buyer of Goods and Services.</code> |  | new | missing |
-| <code>Buying</code> |  | new | missing |
+| <code>Buyer of Goods and Services.</code> |  | new | translated |
+| <code>Buying</code> |  | new | translated |
 | <code>Buying &amp; Selling Settings</code> |  | new | missing |
-| <code>Buying Amount</code> |  | new | missing |
+| <code>Buying Amount</code> |  | new | translated |
 | <code>Buying Price List</code> |  | new | missing |
 | <code>Buying Rate</code> |  | new | missing |
-| <code>Buying Settings</code> |  | new | missing |
+| <code>Buying Settings</code> |  | new | translated |
 | <code>Buying Setup</code> |  | new | missing |
 | <code>Buying and Selling</code> |  | new | missing |
-| <code>Buying must be checked, if Applicable For is selected as {0}</code> |  | new | missing |
+| <code>Buying must be checked, if Applicable For is selected as {0}</code> |  | new | translated |
 | <code>By &quot;Naming Series&quot; field</code> |  | new | missing |
 | <code>By default the title is used as meta title, adding a value here will override it.</code> |  | new | translated |
 | <code>By default, the Supplier Name is set as per the Supplier Name entered. If you want Suppliers to be named by a &lt;a href=&#x27;https://docs.erpnext.com/docs/user/manual/en/setting-up/settings/naming-series&#x27; target=&#x27;_blank&#x27;&gt;Naming Series&lt;/a&gt; choose the &#x27;Naming Series&#x27; option.</code> |  | new | missing |
@@ -2152,44 +2152,44 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>CANCELLED</code> |  | new | translated |
 | <code>CC</code> |  | new | translated |
 | <code>CC</code> | Email Recipients | new | missing |
-| <code>CC To</code> |  | new | missing |
+| <code>CC To</code> |  | new | translated |
 | <code>CMD</code> |  | new | excepted |
 | <code>COA Importer</code> |  | new | missing |
 | <code>CODE-39</code> |  | new | excepted |
 | <code>COGS By Item Group</code> |  | new | missing |
 | <code>COGS Debit</code> |  | new | missing |
 | <code>COLOR PICKER</code> |  | new | missing |
-| <code>CRM</code> |  | new | missing |
+| <code>CRM</code> |  | new | translated |
 | <code>CRM Note</code> |  | new | missing |
 | <code>CRM Settings</code> |  | new | missing |
 | <code>CSS</code> |  | new | excepted |
 | <code>CSS Class</code> |  | new | translated |
 | <code>CSS selector for the element you want to highlight.</code> |  | new | missing |
 | <code>CSV</code> |  | new | excepted |
-| <code>CWIP Account</code> |  | new | missing |
+| <code>CWIP Account</code> |  | new | translated |
 | <code>Caballeria</code> |  | new | excepted |
 | <code>Cable Length</code> |  | new | missing |
 | <code>Cable Length (UK)</code> |  | new | missing |
 | <code>Cable Length (US)</code> |  | new | missing |
 | <code>Cache</code> |  | new | missing |
 | <code>Cache Cleared</code> |  | new | translated |
-| <code>Calculate Based On</code> |  | new | missing |
-| <code>Calculate Depreciation</code> |  | new | missing |
+| <code>Calculate Based On</code> |  | new | translated |
+| <code>Calculate Depreciation</code> |  | new | translated |
 | <code>Calculate Estimated Arrival Times</code> |  | new | missing |
 | <code>Calculate Product Bundle price based on child Item&#x27;s rates</code> |  | new | missing |
 | <code>Calculate but don&#x27;t show on final report</code> |  | new | missing |
 | <code>Calculate daily depreciation using total days in depreciation period</code> |  | new | missing |
 | <code>Calculated Amount</code> |  | new | missing |
 | <code>Calculated Bank Statement Balance</code> |  | new | missing |
-| <code>Calculated Bank Statement balance</code> |  | new | missing |
+| <code>Calculated Bank Statement balance</code> |  | new | translated |
 | <code>Calculated Discount Mismatch</code> |  | new | missing |
 | <code>Calculation Formula</code> |  | new | missing |
-| <code>Calculations</code> |  | new | missing |
+| <code>Calculations</code> |  | new | translated |
 | <code>Calendar</code> |  | new | translated |
-| <code>Calendar Event</code> |  | new | missing |
+| <code>Calendar Event</code> |  | new | translated |
 | <code>Calendar Name</code> |  | new | translated |
 | <code>Calendar View</code> |  | new | translated |
-| <code>Calibration</code> |  | new | missing |
+| <code>Calibration</code> |  | new | translated |
 | <code>Calibre</code> |  | new | missing |
 | <code>Call</code> |  | new | translated |
 | <code>Call Again</code> |  | new | missing |
@@ -2220,26 +2220,26 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Camera</code> |  | new | translated |
 | <code>Campaign</code> |  | new | translated |
 | <code>Campaign Description (Optional)</code> |  | new | missing |
-| <code>Campaign Efficiency</code> |  | new | missing |
-| <code>Campaign Email Schedule</code> |  | new | missing |
+| <code>Campaign Efficiency</code> |  | new | translated |
+| <code>Campaign Email Schedule</code> |  | new | translated |
 | <code>Campaign Item</code> |  | new | missing |
-| <code>Campaign Name</code> |  | new | missing |
-| <code>Campaign Naming By</code> |  | new | missing |
-| <code>Campaign Schedules</code> |  | new | missing |
+| <code>Campaign Name</code> |  | new | translated |
+| <code>Campaign Naming By</code> |  | new | translated |
+| <code>Campaign Schedules</code> |  | new | translated |
 | <code>Campaign {0} not found</code> |  | new | missing |
 | <code>Can be approved by {0}</code> |  | new | missing |
 | <code>Can not close Work Order. Since {0} Job Cards are in Work In Progress state.</code> |  | new | missing |
-| <code>Can not filter based on Cashier, if grouped by Cashier</code> |  | new | missing |
+| <code>Can not filter based on Cashier, if grouped by Cashier</code> |  | new | translated |
 | <code>Can not filter based on Child Account, if grouped by Account</code> |  | new | missing |
-| <code>Can not filter based on Customer, if grouped by Customer</code> |  | new | missing |
-| <code>Can not filter based on POS Profile, if grouped by POS Profile</code> |  | new | missing |
-| <code>Can not filter based on Payment Method, if grouped by Payment Method</code> |  | new | missing |
-| <code>Can not filter based on Voucher No, if grouped by Voucher</code> |  | new | missing |
+| <code>Can not filter based on Customer, if grouped by Customer</code> |  | new | translated |
+| <code>Can not filter based on POS Profile, if grouped by POS Profile</code> |  | new | translated |
+| <code>Can not filter based on Payment Method, if grouped by Payment Method</code> |  | new | translated |
+| <code>Can not filter based on Voucher No, if grouped by Voucher</code> |  | new | translated |
 | <code>Can not rename as column {0} is already present on DocType.</code> |  | new | missing |
 | <code>Can only change to/from Autoincrement naming rule when there is no data in the doctype</code> |  | new | missing |
 | <code>Can only list down the document types which has been linked to the User document type.</code> |  | new | missing |
-| <code>Can only make payment against unbilled {0}</code> |  | new | missing |
-| <code>Can refer row only if the charge type is &#x27;On Previous Row Amount&#x27; or &#x27;Previous Row Total&#x27;</code> |  | new | missing |
+| <code>Can only make payment against unbilled {0}</code> |  | new | translated |
+| <code>Can refer row only if the charge type is &#x27;On Previous Row Amount&#x27; or &#x27;Previous Row Total&#x27;</code> |  | new | translated |
 | <code>Can&#x27;t change the valuation method, as there are transactions against some items which do not have its own valuation method</code> |  | new | missing |
 | <code>Can&#x27;t follow since changes are not tracked.</code> |  | new | missing |
 | <code>Can&#x27;t rename {0} to {1} because {0} doesn&#x27;t exist.</code> |  | new | missing |
@@ -2248,15 +2248,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Cancel</code> | Secondary button in warning dialog | new | missing |
 | <code>Cancel All</code> |  | new | missing |
 | <code>Cancel All Documents</code> |  | new | translated |
-| <code>Cancel At End Of Period</code> |  | new | missing |
+| <code>Cancel At End Of Period</code> |  | new | translated |
 | <code>Cancel Import</code> |  | new | missing |
 | <code>Cancel Material Visit {0} before cancelling this Warranty Claim</code> |  | new | missing |
 | <code>Cancel Material Visits {0} before cancelling this Maintenance Visit</code> |  | new | missing |
 | <code>Cancel Prepared Report</code> |  | new | missing |
-| <code>Cancel Subscription</code> |  | new | missing |
-| <code>Cancel Subscription After Grace Period</code> |  | new | missing |
+| <code>Cancel Subscription</code> |  | new | translated |
+| <code>Cancel Subscription After Grace Period</code> |  | new | translated |
 | <code>Cancel {0} documents?</code> | Title of confirmation dialog | new | missing |
-| <code>Cancelation Date</code> |  | new | missing |
+| <code>Cancelation Date</code> |  | new | translated |
 | <code>Cancelled</code> |  | new | translated |
 | <code>Cancelled Document restored as Draft</code> |  | new | translated |
 | <code>Cancelled Job Card cannot be processed.</code> |  | new | missing |
@@ -2299,7 +2299,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Cannot change Attributes after stock transaction. Make a new Item and transfer stock to the new Item</code> |  | new | missing |
 | <code>Cannot change Item {0} from serialized to non-serialized because a Serial and Batch Bundle exists for it. Please delete or cancel the Serial and Batch Bundle first.</code> |  | new | missing |
 | <code>Cannot change Reference Document Type.</code> |  | new | missing |
-| <code>Cannot change Service Stop Date for item in row {0}</code> |  | new | missing |
+| <code>Cannot change Service Stop Date for item in row {0}</code> |  | new | translated |
 | <code>Cannot change Variant properties after stock transaction. You will have to make a new Item to do this.</code> |  | new | missing |
 | <code>Cannot change company&#x27;s default currency, because there are existing transactions. Transactions must be cancelled to change the default currency.</code> |  | new | missing |
 | <code>Cannot change docstatus from 0 (Draft) to 2 (Cancelled)</code> |  | new | missing |
@@ -2310,10 +2310,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Cannot change to/from autoincrement autoname in Customize Form</code> |  | new | missing |
 | <code>Cannot complete task {0} as its dependant task {1} are not completed / cancelled.</code> |  | new | missing |
 | <code>Cannot configure Core DocTypes for Global Search.</code> |  | new | missing |
-| <code>Cannot convert Cost Center to ledger as it has child nodes</code> |  | new | missing |
+| <code>Cannot convert Cost Center to ledger as it has child nodes</code> |  | new | translated |
 | <code>Cannot convert Task to non-group because the following child Tasks exist: {0}.</code> |  | new | missing |
 | <code>Cannot convert to Group because Account Type is selected.</code> |  | new | missing |
-| <code>Cannot covert to Group because Account Type is selected.</code> |  | new | missing |
+| <code>Cannot covert to Group because Account Type is selected.</code> |  | new | translated |
 | <code>Cannot create Intercompany {0}. All items in the source {1} have already been fully invoiced. Please check the existing linked {2}s.</code> |  | new | missing |
 | <code>Cannot create Stock Reservation Entries for future dated Purchase Receipts.</code> |  | new | missing |
 | <code>Cannot create a pick list for Sales Order {0} because it has reserved stock. Please unreserve the stock in order to create a pick list.</code> |  | new | missing |
@@ -2323,7 +2323,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Cannot create return for consolidated invoice {0}.</code> |  | new | missing |
 | <code>Cannot deactivate or cancel BOM as it is linked with other BOMs</code> |  | new | missing |
 | <code>Cannot declare as Lost because an active Quotation exists.</code> |  | new | missing |
-| <code>Cannot deduct when category is for &#x27;Valuation&#x27; or &#x27;Valuation and Total&#x27;</code> |  | new | missing |
+| <code>Cannot deduct when category is for &#x27;Valuation&#x27; or &#x27;Valuation and Total&#x27;</code> |  | new | translated |
 | <code>Cannot delete Desktop Icon &#x27;{0}&#x27; as it is restricted</code> |  | new | missing |
 | <code>Cannot delete Exchange Gain/Loss row</code> |  | new | missing |
 | <code>Cannot delete Home and Attachments folders</code> |  | new | translated |
@@ -2356,7 +2356,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Cannot enable Item-wise Inventory Account, as there are existing Stock Ledger Entries for the company {0} with Warehouse-wise Inventory Account. Please cancel the stock transactions first and try again.</code> |  | new | missing |
 | <code>Cannot enable Opportunity creation from Contact Us because the Contact Us form is disabled.</code> |  | new | missing |
 | <code>Cannot enable {0} for a non-submittable doctype</code> |  | new | missing |
-| <code>Cannot ensure delivery by Serial No as Item {0} is added with and without Ensure Delivery by Serial No.</code> |  | new | missing |
+| <code>Cannot ensure delivery by Serial No as Item {0} is added with and without Ensure Delivery by Serial No.</code> |  | new | translated |
 | <code>Cannot fetch selected rows for submitted Payment Request</code> |  | new | missing |
 | <code>Cannot find Item or Warehouse with this Barcode</code> |  | new | missing |
 | <code>Cannot find Item with this Barcode</code> |  | new | missing |
@@ -2374,17 +2374,17 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Cannot produce more Item {0} than Sales Order quantity {1} {2}</code> |  | new | missing |
 | <code>Cannot receive from customer against negative outstanding</code> |  | new | missing |
 | <code>Cannot reduce quantity than ordered or purchased quantity</code> |  | new | missing |
-| <code>Cannot refer row number greater than or equal to current row number for this Charge type</code> |  | new | missing |
+| <code>Cannot refer row number greater than or equal to current row number for this Charge type</code> |  | new | translated |
 | <code>Cannot register an empty XLSX style</code> |  | new | missing |
 | <code>Cannot remove ID field</code> |  | new | translated |
 | <code>Cannot repost more than {0} vouchers at once. Split them into multiple documents.</code> |  | new | missing |
 | <code>Cannot retrieve link token for update. Check Error Log for more information</code> |  | new | missing |
 | <code>Cannot retrieve link token. Check Error Log for more information</code> |  | new | missing |
 | <code>Cannot select a Group type Customer Group. Please select a non-group Customer Group.</code> |  | new | missing |
-| <code>Cannot select charge type as &#x27;On Previous Row Amount&#x27; or &#x27;On Previous Row Total&#x27; for first row</code> |  | new | missing |
+| <code>Cannot select charge type as &#x27;On Previous Row Amount&#x27; or &#x27;On Previous Row Total&#x27; for first row</code> |  | new | translated |
 | <code>Cannot set &#x27;Report&#x27; permission if &#x27;Only If Creator&#x27; permission is set</code> |  | new | missing |
 | <code>Cannot set Notification with event {0} on Document Type {1}</code> |  | new | missing |
-| <code>Cannot set as Lost as Sales Order is made.</code> |  | new | missing |
+| <code>Cannot set as Lost as Sales Order is made.</code> |  | new | translated |
 | <code>Cannot set authorization on basis of Discount for {0}</code> |  | new | missing |
 | <code>Cannot set multiple Item Defaults for a company.</code> |  | new | missing |
 | <code>Cannot set quantity less than delivered quantity.</code> |  | new | missing |
@@ -2409,9 +2409,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Capacity in Stock UOM</code> |  | new | missing |
 | <code>Capacity must be greater than 0</code> |  | new | missing |
 | <code>Capital Equipment</code> |  | new | missing |
-| <code>Capital Stock</code> |  | new | missing |
-| <code>Capital Work In Progress Account</code> |  | new | missing |
-| <code>Capital Work in Progress</code> |  | new | missing |
+| <code>Capital Stock</code> |  | new | translated |
+| <code>Capital Work In Progress Account</code> |  | new | translated |
+| <code>Capital Work in Progress</code> |  | new | translated |
 | <code>Capitalization doesn&#x27;t help very much.</code> |  | new | translated |
 | <code>Capitalize Asset</code> |  | new | missing |
 | <code>Capitalize Repair Cost</code> |  | new | missing |
@@ -2429,19 +2429,19 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Carrier</code> |  | new | missing |
 | <code>Carrier Service</code> |  | new | missing |
 | <code>Carry Forward Communication and Comments</code> |  | new | missing |
-| <code>Cash</code> |  | new | missing |
-| <code>Cash Entry</code> |  | new | missing |
-| <code>Cash Flow</code> |  | new | missing |
+| <code>Cash</code> |  | new | translated |
+| <code>Cash Entry</code> |  | new | translated |
+| <code>Cash Flow</code> |  | new | translated |
 | <code>Cash Flow Statement</code> |  | new | missing |
-| <code>Cash Flow from Financing</code> |  | new | missing |
-| <code>Cash Flow from Investing</code> |  | new | missing |
-| <code>Cash Flow from Operations</code> |  | new | missing |
-| <code>Cash In Hand</code> |  | new | missing |
-| <code>Cash or Bank Account is mandatory for making payment entry</code> |  | new | missing |
-| <code>Cash/Bank Account</code> |  | new | missing |
-| <code>Cashier</code> |  | new | missing |
-| <code>Cashier Closing</code> |  | new | missing |
-| <code>Cashier Closing Payments</code> |  | new | missing |
+| <code>Cash Flow from Financing</code> |  | new | translated |
+| <code>Cash Flow from Investing</code> |  | new | translated |
+| <code>Cash Flow from Operations</code> |  | new | translated |
+| <code>Cash In Hand</code> |  | new | translated |
+| <code>Cash or Bank Account is mandatory for making payment entry</code> |  | new | translated |
+| <code>Cash/Bank Account</code> |  | new | translated |
+| <code>Cashier</code> |  | new | translated |
+| <code>Cashier Closing</code> |  | new | translated |
+| <code>Cashier Closing Payments</code> |  | new | translated |
 | <code>Cashier is currently assigned to another POS.</code> |  | new | missing |
 | <code>Catch All</code> |  | new | missing |
 | <code>Categorize By</code> |  | new | missing |
@@ -2457,7 +2457,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Category Details</code> |  | new | missing |
 | <code>Category Name</code> |  | new | translated |
 | <code>Category for the in-app notification. Used for filtering and per-user email preferences.</code> |  | new | missing |
-| <code>Caution</code> |  | new | missing |
+| <code>Caution</code> |  | new | translated |
 | <code>Caution: This might alter frozen accounts.</code> |  | new | missing |
 | <code>Cellphone Number</code> |  | new | missing |
 | <code>Celsius</code> |  | new | missing |
@@ -2467,25 +2467,25 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Centigram/Litre</code> |  | new | missing |
 | <code>Centilitre</code> |  | new | missing |
 | <code>Centimeter</code> |  | new | missing |
-| <code>Certificate</code> |  | new | missing |
+| <code>Certificate</code> |  | new | translated |
 | <code>Certificate Details</code> |  | new | missing |
 | <code>Certificate Limit</code> |  | new | missing |
 | <code>Certificate No</code> |  | new | missing |
-| <code>Certificate Required</code> |  | new | missing |
+| <code>Certificate Required</code> |  | new | translated |
 | <code>Chain</code> |  | new | missing |
 | <code>Change</code> |  | new | translated |
 | <code>Change</code> | Coins | new | translated |
-| <code>Change Amount</code> |  | new | missing |
+| <code>Change Amount</code> |  | new | translated |
 | <code>Change Image</code> |  | new | missing |
 | <code>Change Label (via Custom Translation)</code> |  | new | translated |
 | <code>Change Letter Head</code> |  | new | missing |
 | <code>Change Password</code> |  | new | translated |
 | <code>Change Print Format</code> |  | new | missing |
-| <code>Change Release Date</code> |  | new | missing |
+| <code>Change Release Date</code> |  | new | translated |
 | <code>Change in Stock Value</code> |  | new | missing |
-| <code>Change the account type to Receivable or select a different account.</code> |  | new | missing |
+| <code>Change the account type to Receivable or select a different account.</code> |  | new | translated |
 | <code>Change the starting / current sequence number of an existing series. &lt;br&gt;<br><br>Warning: Incorrectly updating counters can prevent documents from getting created.</code> |  | new | missing |
-| <code>Change this date manually to setup the next synchronization start date</code> |  | new | missing |
+| <code>Change this date manually to setup the next synchronization start date</code> |  | new | translated |
 | <code>Changed at</code> |  | new | missing |
 | <code>Changed by</code> |  | new | missing |
 | <code>Changed customer name to &#x27;{}&#x27; as &#x27;{}&#x27; already exists.</code> |  | new | missing |
@@ -2498,10 +2498,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Changing the account in any transaction of the DocTypes listed below will trigger a repost. To prevent reposting, remove the relevant DocType from the list.</code> |  | new | missing |
 | <code>Changing the valuation method to Moving Average will affect new transactions. If backdated entries are added, earlier FIFO-based entries will be reposted, which may change closing balances.</code> |  | new | missing |
 | <code>Channel</code> |  | new | translated |
-| <code>Channel Partner</code> |  | new | missing |
+| <code>Channel Partner</code> |  | new | translated |
 | <code>Charge of type &#x27;Actual&#x27; in row {0} cannot be included in Item Rate or Paid Amount</code> |  | new | missing |
-| <code>Chargeable</code> |  | new | missing |
-| <code>Charges Incurred</code> |  | new | missing |
+| <code>Chargeable</code> |  | new | translated |
+| <code>Charges Incurred</code> |  | new | translated |
 | <code>Charges are updated in Purchase Receipt against each item</code> |  | new | missing |
 | <code>Charges will be distributed proportionately based on item qty or amount, as per your selection</code> |  | new | missing |
 | <code>Chart</code> |  | new | translated |
@@ -2509,13 +2509,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Chart Name</code> |  | new | translated |
 | <code>Chart Of Accounts Template</code> |  | new | missing |
 | <code>Chart Options</code> |  | new | translated |
-| <code>Chart Preview</code> |  | new | missing |
+| <code>Chart Preview</code> |  | new | translated |
 | <code>Chart Source</code> |  | new | translated |
-| <code>Chart Tree</code> |  | new | missing |
+| <code>Chart Tree</code> |  | new | translated |
 | <code>Chart Type</code> |  | new | translated |
-| <code>Chart of Accounts</code> |  | new | missing |
-| <code>Chart of Accounts Importer</code> |  | new | missing |
-| <code>Chart of Cost Centers</code> |  | new | missing |
+| <code>Chart of Accounts</code> |  | new | translated |
+| <code>Chart of Accounts Importer</code> |  | new | translated |
+| <code>Chart of Cost Centers</code> |  | new | translated |
 | <code>Charts</code> |  | new | translated |
 | <code>Charts Based On</code> |  | new | missing |
 | <code>Chassis No</code> |  | new | missing |
@@ -2525,7 +2525,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Check Request URL</code> |  | new | translated |
 | <code>Check Supplier invoice number uniqueness</code> |  | new | missing |
 | <code>Check columns to select, drag to set order.</code> |  | new | translated |
-| <code>Check if it is a hydroponic unit</code> |  | new | missing |
+| <code>Check if it is a hydroponic unit</code> |  | new | translated |
 | <code>Check if material transfer entry is not required</code> |  | new | missing |
 | <code>Check if this tax is not applicable to items (distinct from 0% rate)</code> |  | new | missing |
 | <code>Check row {0} for account {1}: Party Type is only allowed for Receivable or Payable accounts</code> |  | new | missing |
@@ -2544,30 +2544,30 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Checking this will publish the page on your website and it&#x27;ll be visible to everyone.</code> |  | new | translated |
 | <code>Checking this will round off the tax amount to the nearest integer</code> |  | new | missing |
 | <code>Checking this will show a text area where you can write custom javascript that will run on this page.</code> |  | new | translated |
-| <code>Checkout</code> |  | new | missing |
-| <code>Checkout Order / Submit Order / New Order</code> |  | new | missing |
+| <code>Checkout</code> |  | new | translated |
+| <code>Checkout Order / Submit Order / New Order</code> |  | new | translated |
 | <code>Checks and Deposits incorrectly cleared</code> |  | new | missing |
 | <code>Chemical</code> |  | new | missing |
 | <code>Cheque</code> |  | new | missing |
-| <code>Cheque Date</code> |  | new | missing |
-| <code>Cheque Height</code> |  | new | missing |
-| <code>Cheque Number</code> |  | new | missing |
-| <code>Cheque Print Template</code> |  | new | missing |
-| <code>Cheque Size</code> |  | new | missing |
-| <code>Cheque Width</code> |  | new | missing |
-| <code>Cheque/Reference Date</code> |  | new | missing |
-| <code>Cheque/Reference No</code> |  | new | missing |
+| <code>Cheque Date</code> |  | new | translated |
+| <code>Cheque Height</code> |  | new | translated |
+| <code>Cheque Number</code> |  | new | translated |
+| <code>Cheque Print Template</code> |  | new | translated |
+| <code>Cheque Size</code> |  | new | translated |
+| <code>Cheque Width</code> |  | new | translated |
+| <code>Cheque/Reference Date</code> |  | new | translated |
+| <code>Cheque/Reference No</code> |  | new | translated |
 | <code>Cheque/Reference Number</code> |  | new | missing |
-| <code>Cheques Required</code> |  | new | missing |
+| <code>Cheques Required</code> |  | new | translated |
 | <code>Cheques and Deposits Incorrectly cleared</code> |  | new | missing |
-| <code>Cheques and Deposits incorrectly cleared</code> |  | new | missing |
+| <code>Cheques and Deposits incorrectly cleared</code> |  | new | translated |
 | <code>Chief Executive Officer</code> |  | new | missing |
 | <code>Chief Financial Officer</code> |  | new | missing |
 | <code>Chief Operating Officer</code> |  | new | missing |
 | <code>Chief Technology Officer</code> |  | new | missing |
 | <code>Child DocTypes</code> |  | new | missing |
 | <code>Child DocTypes are not allowed</code> |  | new | missing |
-| <code>Child Docname</code> |  | new | missing |
+| <code>Child Docname</code> |  | new | translated |
 | <code>Child Doctype</code> |  | new | missing |
 | <code>Child Item</code> |  | new | missing |
 | <code>Child Row Reference</code> |  | new | missing |
@@ -2594,7 +2594,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Classification of Customers by region</code> |  | new | missing |
 | <code>Classify As</code> |  | new | missing |
 | <code>Classify the type of market this customer belongs to, used for sales analysis and targeting.</code> |  | new | missing |
-| <code>Clauses and Conditions</code> |  | new | missing |
+| <code>Clauses and Conditions</code> |  | new | translated |
 | <code>Clear</code> |  | new | translated |
 | <code>Clear &amp; Add Template</code> |  | new | missing |
 | <code>Clear &amp; Add template</code> |  | new | missing |
@@ -2611,9 +2611,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Clear all filters</code> |  | new | missing |
 | <code>Clear cache and reload</code> |  | new | missing |
 | <code>Clear the email message and add the template</code> |  | new | missing |
-| <code>Clearance Date</code> |  | new | missing |
-| <code>Clearance Date not mentioned</code> |  | new | missing |
-| <code>Clearance Date updated</code> |  | new | missing |
+| <code>Clearance Date</code> |  | new | translated |
+| <code>Clearance Date not mentioned</code> |  | new | translated |
+| <code>Clearance Date updated</code> |  | new | translated |
 | <code>Clearance Summary</code> |  | new | missing |
 | <code>Clearance date changed from {0} to {1} via Bank Clearance Tool</code> |  | new | missing |
 | <code>Clearance date updated</code> |  | new | missing |
@@ -2664,31 +2664,31 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Close</code> |  | new | translated |
 | <code>Close Condition</code> |  | new | translated |
 | <code>Close Issue After Days</code> |  | new | missing |
-| <code>Close Loan</code> |  | new | missing |
+| <code>Close Loan</code> |  | new | translated |
 | <code>Close Replied Opportunity After Days</code> |  | new | missing |
 | <code>Close properties</code> |  | new | missing |
-| <code>Close the POS</code> |  | new | missing |
+| <code>Close the POS</code> |  | new | translated |
 | <code>Closed</code> |  | new | translated |
-| <code>Closed Document</code> |  | new | missing |
-| <code>Closed Documents</code> |  | new | missing |
+| <code>Closed Document</code> |  | new | translated |
+| <code>Closed Documents</code> |  | new | translated |
 | <code>Closed Period</code> |  | new | missing |
 | <code>Closed Work Order can not be stopped or Re-opened</code> |  | new | missing |
-| <code>Closed order cannot be cancelled. Unclose to cancel.</code> |  | new | missing |
+| <code>Closed order cannot be cancelled. Unclose to cancel.</code> |  | new | translated |
 | <code>Closing</code> |  | new | missing |
-| <code>Closing (Cr)</code> |  | new | missing |
-| <code>Closing (Dr)</code> |  | new | missing |
-| <code>Closing (Opening + Total)</code> |  | new | missing |
+| <code>Closing (Cr)</code> |  | new | translated |
+| <code>Closing (Dr)</code> |  | new | translated |
+| <code>Closing (Opening + Total)</code> |  | new | translated |
 | <code>Closing (statement)</code> |  | new | missing |
 | <code>Closing (system)</code> |  | new | missing |
-| <code>Closing Account Head</code> |  | new | missing |
-| <code>Closing Account {0} must be of type Liability / Equity</code> |  | new | missing |
-| <code>Closing Amount</code> |  | new | missing |
-| <code>Closing Balance</code> |  | new | missing |
+| <code>Closing Account Head</code> |  | new | translated |
+| <code>Closing Account {0} must be of type Liability / Equity</code> |  | new | translated |
+| <code>Closing Amount</code> |  | new | translated |
+| <code>Closing Balance</code> |  | new | translated |
 | <code>Closing Balance as of {}</code> | Do MMMM YYYY | new | missing |
 | <code>Closing Balance as per Bank Statement</code> |  | new | missing |
 | <code>Closing Balance as per ERP</code> |  | new | missing |
-| <code>Closing Date</code> |  | new | missing |
-| <code>Closing Text</code> |  | new | missing |
+| <code>Closing Date</code> |  | new | translated |
+| <code>Closing Text</code> |  | new | translated |
 | <code>Closing [Opening + Total]</code> |  | new | missing |
 | <code>Closing balance as per system</code> |  | new | missing |
 | <code>Closing balance deleted.</code> |  | new | missing |
@@ -2713,9 +2713,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Collapsible Depends On (JS)</code> |  | new | missing |
 | <code>Collect Outstanding Amount</code> |  | new | missing |
 | <code>Collect Progress</code> |  | new | missing |
-| <code>Collection Factor (=1 LP)</code> |  | new | missing |
-| <code>Collection Rules</code> |  | new | missing |
-| <code>Collection Tier</code> |  | new | missing |
+| <code>Collection Factor (=1 LP)</code> |  | new | translated |
+| <code>Collection Rules</code> |  | new | translated |
+| <code>Collection Tier</code> |  | new | translated |
 | <code>Color</code> |  | new | translated |
 | <code>Color to highlight values (e.g., red for exceptions)</code> |  | new | missing |
 | <code>Colour</code> |  | new | missing |
@@ -2729,7 +2729,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Column Name</code> |  | new | translated |
 | <code>Column Name cannot be empty</code> |  | new | translated |
 | <code>Column Width</code> |  | new | missing |
-| <code>Column in Bank File</code> |  | new | missing |
+| <code>Column in Bank File</code> |  | new | translated |
 | <code>Column width cannot be zero.</code> |  | new | missing |
 | <code>Column {0}</code> |  | new | translated |
 | <code>Columns</code> |  | new | translated |
@@ -2737,7 +2737,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Columns are not according to template. Please compare the uploaded file with standard template</code> |  | new | missing |
 | <code>Columns based on</code> |  | new | translated |
 | <code>Combination of Grant Type (&lt;code&gt;{0}&lt;/code&gt;) and Response Type (&lt;code&gt;{1}&lt;/code&gt;) not allowed</code> |  | new | translated |
-| <code>Combined invoice portion must equal 100%</code> |  | new | missing |
+| <code>Combined invoice portion must equal 100%</code> |  | new | translated |
 | <code>Comm10E</code> |  | new | excepted |
 | <code>Comment</code> |  | new | translated |
 | <code>Comment By</code> |  | new | translated |
@@ -2750,11 +2750,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Comments cannot have links or email addresses</code> |  | new | translated |
 | <code>Commercial</code> |  | new | missing |
 | <code>Commercial Rounding</code> |  | new | missing |
-| <code>Commission</code> |  | new | missing |
-| <code>Commission Rate</code> |  | new | missing |
-| <code>Commission Rate %</code> |  | new | missing |
-| <code>Commission Rate (%)</code> |  | new | missing |
-| <code>Commission on Sales</code> |  | new | missing |
+| <code>Commission</code> |  | new | translated |
+| <code>Commission Rate</code> |  | new | translated |
+| <code>Commission Rate %</code> |  | new | translated |
+| <code>Commission Rate (%)</code> |  | new | translated |
+| <code>Commission on Sales</code> |  | new | translated |
 | <code>Commission paid to the Sales Partner on transactions with this customer.</code> |  | new | missing |
 | <code>Commit</code> |  | new | translated |
 | <code>Committed</code> |  | new | missing |
@@ -2772,19 +2772,19 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Communication Type</code> |  | new | translated |
 | <code>Communication secret not set</code> |  | new | missing |
 | <code>Compact Item Print</code> |  | new | missing |
-| <code>Companies</code> |  | new | missing |
-| <code>Company</code> |  | new | missing |
+| <code>Companies</code> |  | new | translated |
+| <code>Company</code> |  | new | translated |
 | <code>Company Abbreviation</code> |  | new | missing |
 | <code>Company Abbreviation (requires ERPNext to be installed)</code> |  | new | missing |
 | <code>Company Abbreviation cannot have more than 5 characters</code> |  | new | missing |
-| <code>Company Account</code> |  | new | missing |
+| <code>Company Account</code> |  | new | translated |
 | <code>Company Account is mandatory</code> |  | new | missing |
-| <code>Company Address</code> |  | new | missing |
+| <code>Company Address</code> |  | new | translated |
 | <code>Company Address Display</code> |  | new | missing |
-| <code>Company Address Name</code> |  | new | missing |
+| <code>Company Address Name</code> |  | new | translated |
 | <code>Company Address is missing. You don&#x27;t have permission to create an Address. Please contact your System Manager.</code> |  | new | missing |
 | <code>Company Address is missing. You don&#x27;t have permission to update it. Please contact your System Manager.</code> |  | new | missing |
-| <code>Company Bank Account</code> |  | new | missing |
+| <code>Company Bank Account</code> |  | new | translated |
 | <code>Company Billing Address</code> |  | new | missing |
 | <code>Company Contact Person</code> |  | new | missing |
 | <code>Company Description</code> |  | new | missing |
@@ -2796,11 +2796,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Company Logo</code> |  | new | missing |
 | <code>Company Name</code> |  | new | translated |
 | <code>Company Name cannot be Company</code> |  | new | missing |
-| <code>Company Not Linked</code> |  | new | missing |
+| <code>Company Not Linked</code> |  | new | translated |
 | <code>Company Shipping Address</code> |  | new | missing |
 | <code>Company Tax ID</code> |  | new | missing |
 | <code>Company and Posting Date is mandatory</code> |  | new | missing |
-| <code>Company currencies of both the companies should match for Inter Company Transactions.</code> |  | new | missing |
+| <code>Company currencies of both the companies should match for Inter Company Transactions.</code> |  | new | translated |
 | <code>Company field is required</code> |  | new | missing |
 | <code>Company is mandatory</code> |  | new | missing |
 | <code>Company is mandatory for company account</code> |  | new | missing |
@@ -2810,14 +2810,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Company is required to load address, taxes, and payment terms. Set Company, then select {0} again.</code> |  | new | missing |
 | <code>Company link field name used for filtering (optional - leave empty to delete all records)</code> |  | new | missing |
 | <code>Company name not same</code> |  | new | missing |
-| <code>Company of asset {0} and purchase document {1} doesn&#x27;t matches.</code> |  | new | missing |
+| <code>Company of asset {0} and purchase document {1} doesn&#x27;t matches.</code> |  | new | translated |
 | <code>Company or Personal Email is mandatory when &#x27;Create User Automatically&#x27; is enabled</code> |  | new | missing |
 | <code>Company registration numbers for your reference. Tax numbers etc.</code> |  | new | missing |
 | <code>Company which internal customer represents</code> |  | new | missing |
 | <code>Company which internal customer represents.</code> |  | new | missing |
 | <code>Company which internal supplier represents</code> |  | new | missing |
 | <code>Company {0} added multiple times</code> |  | new | missing |
-| <code>Company {0} does not exist</code> |  | new | missing |
+| <code>Company {0} does not exist</code> |  | new | translated |
 | <code>Company {0} is added more than once</code> |  | new | missing |
 | <code>Company {0} is not in South Africa.</code> |  | new | missing |
 | <code>Company {} does not exist yet. Taxes setup aborted.</code> |  | new | missing |
@@ -2856,7 +2856,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Completed, Pending and Process Loss quantities must add up to this.</code> |  | new | missing |
 | <code>Completion</code> |  | new | missing |
 | <code>Completion By</code> |  | new | missing |
-| <code>Completion Date</code> |  | new | missing |
+| <code>Completion Date</code> |  | new | translated |
 | <code>Completion Date can not be before Failure Date. Please adjust the dates accordingly.</code> |  | new | missing |
 | <code>Completion Status</code> |  | new | missing |
 | <code>Component</code> |  | new | translated |
@@ -2866,7 +2866,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Compose Email</code> |  | new | translated |
 | <code>Composite Asset</code> |  | new | missing |
 | <code>Composite Component</code> |  | new | missing |
-| <code>Comprehensive Insurance</code> |  | new | missing |
+| <code>Comprehensive Insurance</code> |  | new | translated |
 | <code>Compressed</code> |  | new | missing |
 | <code>Computer</code> |  | new | missing |
 | <code>Condition</code> |  | new | translated |
@@ -2897,7 +2897,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Configure search settings</code> |  | new | missing |
 | <code>Configure settings for the banking module</code> |  | new | missing |
 | <code>Configure the action to stop the transaction or just warn if the same rate is not maintained.</code> |  | new | missing |
-| <code>Configure the default Price List when creating a new Purchase transaction. Item prices will be fetched from this Price List.</code> |  | new | missing |
+| <code>Configure the default Price List when creating a new Purchase transaction. Item prices will be fetched from this Price List.</code> |  | new | translated |
 | <code>Configure various aspects of how document naming works like naming series, current counter.</code> |  | new | missing |
 | <code>Confirm</code> |  | new | translated |
 | <code>Confirm</code> | Confirm gravatar deletion prompt | new | missing |
@@ -2921,12 +2921,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Connection Success</code> |  | new | translated |
 | <code>Connection lost. Some features might not work.</code> |  | new | translated |
 | <code>Connections</code> |  | new | missing |
-| <code>Consider Accounting Dimensions</code> |  | new | missing |
+| <code>Consider Accounting Dimensions</code> |  | new | translated |
 | <code>Consider Minimum Order Qty</code> |  | new | missing |
 | <code>Consider Projected Qty in Calculation</code> |  | new | missing |
 | <code>Consider Projected Qty in Calculation (RM)</code> |  | new | missing |
 | <code>Consider Rejected Warehouses</code> |  | new | missing |
-| <code>Consider Tax or Charge for</code> |  | new | missing |
+| <code>Consider Tax or Charge for</code> |  | new | translated |
 | <code>Consider for Tax Withholding</code> |  | new | missing |
 | <code>Considered In Paid Amount</code> |  | new | missing |
 | <code>Console</code> |  | new | translated |
@@ -2934,16 +2934,16 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Console Logs can not be deleted</code> |  | new | missing |
 | <code>Consolidate Sales Order Items</code> |  | new | missing |
 | <code>Consolidate Sub Assembly Items</code> |  | new | missing |
-| <code>Consolidated</code> |  | new | missing |
-| <code>Consolidated Credit Note</code> |  | new | missing |
-| <code>Consolidated Financial Statement</code> |  | new | missing |
+| <code>Consolidated</code> |  | new | translated |
+| <code>Consolidated Credit Note</code> |  | new | translated |
+| <code>Consolidated Financial Statement</code> |  | new | translated |
 | <code>Consolidated Report</code> |  | new | missing |
-| <code>Consolidated Sales Invoice</code> |  | new | missing |
+| <code>Consolidated Sales Invoice</code> |  | new | translated |
 | <code>Consolidated Trial Balance</code> |  | new | missing |
 | <code>Consolidated Trial Balance can be generated for Companies having same root Company.</code> |  | new | missing |
 | <code>Consolidated Trial balance could not be generated as Exchange Rate from {0} to {1} is not available for {2}.</code> |  | new | missing |
 | <code>Constraints</code> |  | new | missing |
-| <code>Consultant</code> |  | new | missing |
+| <code>Consultant</code> |  | new | translated |
 | <code>Consulting</code> |  | new | missing |
 | <code>Consumable</code> |  | new | missing |
 | <code>Consumables</code> |  | new | missing |
@@ -2954,7 +2954,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Consumed Assets</code> |  | new | missing |
 | <code>Consumed Items</code> |  | new | missing |
 | <code>Consumed Items Cost</code> |  | new | missing |
-| <code>Consumed Qty</code> |  | new | missing |
+| <code>Consumed Qty</code> |  | new | translated |
 | <code>Consumed Qty cannot be greater than Reserved Qty for item {0}</code> |  | new | missing |
 | <code>Consumed Quantity</code> |  | new | missing |
 | <code>Consumed Stock Items</code> |  | new | missing |
@@ -2968,16 +2968,16 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Contact Desc</code> |  | new | missing |
 | <code>Contact Details</code> |  | new | translated |
 | <code>Contact Email</code> |  | new | translated |
-| <code>Contact HTML</code> |  | new | missing |
-| <code>Contact Info</code> |  | new | missing |
+| <code>Contact HTML</code> |  | new | translated |
+| <code>Contact Info</code> |  | new | translated |
 | <code>Contact Information</code> |  | new | missing |
-| <code>Contact List</code> |  | new | missing |
+| <code>Contact List</code> |  | new | translated |
 | <code>Contact Mobile</code> |  | new | missing |
-| <code>Contact Mobile No</code> |  | new | missing |
-| <code>Contact Name</code> |  | new | missing |
-| <code>Contact No.</code> |  | new | missing |
+| <code>Contact Mobile No</code> |  | new | translated |
+| <code>Contact Name</code> |  | new | translated |
+| <code>Contact No.</code> |  | new | translated |
 | <code>Contact Numbers</code> |  | new | translated |
-| <code>Contact Person</code> |  | new | missing |
+| <code>Contact Person</code> |  | new | translated |
 | <code>Contact Person does not belong to the {0}</code> |  | new | missing |
 | <code>Contact Phone</code> |  | new | translated |
 | <code>Contact Synced with Google Contacts.</code> |  | new | translated |
@@ -2997,45 +2997,45 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Context</code> |  | new | translated |
 | <code>Context Script</code> |  | new | translated |
 | <code>Continue</code> |  | new | translated |
-| <code>Contra Entry</code> |  | new | missing |
-| <code>Contract</code> |  | new | missing |
-| <code>Contract Details</code> |  | new | missing |
+| <code>Contra Entry</code> |  | new | translated |
+| <code>Contract</code> |  | new | translated |
+| <code>Contract Details</code> |  | new | translated |
 | <code>Contract End Date</code> |  | new | missing |
-| <code>Contract Fulfilment Checklist</code> |  | new | missing |
-| <code>Contract Period</code> |  | new | missing |
-| <code>Contract Template</code> |  | new | missing |
-| <code>Contract Template Fulfilment Terms</code> |  | new | missing |
+| <code>Contract Fulfilment Checklist</code> |  | new | translated |
+| <code>Contract Period</code> |  | new | translated |
+| <code>Contract Template</code> |  | new | translated |
+| <code>Contract Template Fulfilment Terms</code> |  | new | translated |
 | <code>Contract Template Help</code> |  | new | missing |
-| <code>Contract Terms</code> |  | new | missing |
-| <code>Contract Terms and Conditions</code> |  | new | missing |
+| <code>Contract Terms</code> |  | new | translated |
+| <code>Contract Terms and Conditions</code> |  | new | translated |
 | <code>Contributed</code> |  | new | translated |
-| <code>Contribution %</code> |  | new | missing |
-| <code>Contribution (%)</code> |  | new | missing |
-| <code>Contribution Amount</code> |  | new | missing |
+| <code>Contribution %</code> |  | new | translated |
+| <code>Contribution (%)</code> |  | new | translated |
+| <code>Contribution Amount</code> |  | new | translated |
 | <code>Contribution Document Name</code> |  | new | translated |
 | <code>Contribution Qty</code> |  | new | missing |
 | <code>Contribution Status</code> |  | new | translated |
-| <code>Contribution to Net Total</code> |  | new | missing |
-| <code>Control Action</code> |  | new | missing |
+| <code>Contribution to Net Total</code> |  | new | translated |
+| <code>Control Action</code> |  | new | translated |
 | <code>Control Action for Cumulative Expense</code> |  | new | missing |
 | <code>Control Historical Stock Transactions</code> |  | new | missing |
 | <code>Controls how raw materials are consumed during the ‘Manufacture’ stock entry.</code> |  | new | missing |
 | <code>Controls whether new users can sign up using this Social Login Key. If unset, Website Settings is respected.</code> |  | new | missing |
 | <code>Controls which tax template is auto-applied when this customer is selected on a transaction.</code> |  | new | missing |
-| <code>Conversion Factor</code> |  | new | missing |
-| <code>Conversion Rate</code> |  | new | missing |
+| <code>Conversion Factor</code> |  | new | translated |
+| <code>Conversion Rate</code> |  | new | translated |
 | <code>Conversion factor for default Unit of Measure must be 1 in row {0}</code> |  | new | missing |
 | <code>Conversion factor for item {0} has been reset to 1.0 as the uom {1} is same as stock uom {2}.</code> |  | new | missing |
 | <code>Conversion rate cannot be 0</code> |  | new | missing |
 | <code>Conversion rate is 1.00, but document currency is different from company currency</code> |  | new | missing |
 | <code>Conversion rate must be 1.00 if document currency is same as company currency</code> |  | new | missing |
 | <code>Convert Item description to clean HTML in transactions</code> |  | new | missing |
-| <code>Convert to Group</code> |  | new | missing |
+| <code>Convert to Group</code> |  | new | translated |
 | <code>Convert to Group</code> | Warehouse | new | missing |
 | <code>Convert to Item Based Reposting</code> |  | new | missing |
 | <code>Convert to Ledger</code> | Warehouse | new | missing |
-| <code>Convert to Non-Group</code> |  | new | missing |
-| <code>Converted</code> |  | new | missing |
+| <code>Convert to Non-Group</code> |  | new | translated |
+| <code>Converted</code> |  | new | translated |
 | <code>Copied From</code> |  | new | missing |
 | <code>Copied to clipboard</code> |  | new | missing |
 | <code>Copied to clipboard.</code> |  | new | translated |
@@ -3061,29 +3061,29 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Corrective Operation Cost</code> |  | new | missing |
 | <code>Corrective/Preventive</code> |  | new | missing |
 | <code>Cosmetics</code> |  | new | missing |
-| <code>Cost</code> |  | new | missing |
+| <code>Cost</code> |  | new | translated |
 | <code>Cost Allocation</code> |  | new | missing |
 | <code>Cost Allocation %</code> |  | new | missing |
 | <code>Cost Allocation / Process Loss</code> |  | new | missing |
-| <code>Cost Center</code> |  | new | missing |
+| <code>Cost Center</code> |  | new | translated |
 | <code>Cost Center Allocation</code> |  | new | missing |
 | <code>Cost Center Allocation Percentage</code> |  | new | missing |
 | <code>Cost Center Allocation Percentages</code> |  | new | missing |
-| <code>Cost Center Name</code> |  | new | missing |
-| <code>Cost Center Number</code> |  | new | missing |
+| <code>Cost Center Name</code> |  | new | translated |
+| <code>Cost Center Number</code> |  | new | translated |
 | <code>Cost Center Validation Error</code> |  | new | missing |
-| <code>Cost Center and Budgeting</code> |  | new | missing |
+| <code>Cost Center and Budgeting</code> |  | new | translated |
 | <code>Cost Center for Item rows has been updated to {0}</code> |  | new | missing |
 | <code>Cost Center is a part of Cost Center Allocation, hence cannot be converted to a group</code> |  | new | missing |
 | <code>Cost Center is required</code> |  | new | missing |
-| <code>Cost Center is required in row {0} in Taxes table for type {1}</code> |  | new | missing |
+| <code>Cost Center is required in row {0} in Taxes table for type {1}</code> |  | new | translated |
 | <code>Cost Center with Allocation records can not be converted to a group</code> |  | new | missing |
-| <code>Cost Center with existing transactions can not be converted to group</code> |  | new | missing |
-| <code>Cost Center with existing transactions can not be converted to ledger</code> |  | new | missing |
+| <code>Cost Center with existing transactions can not be converted to group</code> |  | new | translated |
+| <code>Cost Center with existing transactions can not be converted to ledger</code> |  | new | translated |
 | <code>Cost Center {0} cannot be used for allocation as it is used as main cost center in other allocation record.</code> |  | new | missing |
 | <code>Cost Center {} doesn&#x27;t belong to Company {}</code> |  | new | missing |
 | <code>Cost Center {} is a group cost center and group cost centers cannot be used in transactions</code> |  | new | missing |
-| <code>Cost Center: {0} does not exist</code> |  | new | missing |
+| <code>Cost Center: {0} does not exist</code> |  | new | translated |
 | <code>Cost Centers</code> |  | new | missing |
 | <code>Cost Configuration</code> |  | new | missing |
 | <code>Cost Per Unit</code> |  | new | missing |
@@ -3092,7 +3092,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Cost center used for tracking purchase expenses for this item</code> |  | new | missing |
 | <code>Cost center used for tracking sales revenue for this item</code> |  | new | missing |
 | <code>Cost of Delivered Items</code> |  | new | missing |
-| <code>Cost of Goods Sold</code> |  | new | missing |
+| <code>Cost of Goods Sold</code> |  | new | translated |
 | <code>Cost of Goods Sold Account in Items Table</code> |  | new | missing |
 | <code>Cost of Issued Items</code> |  | new | missing |
 | <code>Cost of Poor Quality Report</code> |  | new | missing |
@@ -3107,7 +3107,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Costing and Billing</code> |  | new | missing |
 | <code>Costing and Billing fields has been updated</code> |  | new | missing |
 | <code>Could Not Delete Demo Data</code> |  | new | missing |
-| <code>Could not auto create Customer due to the following missing mandatory field(s):</code> |  | new | missing |
+| <code>Could not auto create Customer due to the following missing mandatory field(s):</code> |  | new | translated |
 | <code>Could not connect to outgoing email server</code> |  | new | translated |
 | <code>Could not create Credit Note automatically, please uncheck &#x27;Issue Credit Note&#x27; and submit again</code> |  | new | missing |
 | <code>Could not detect any tables in this PDF. It may be a scanned or image-based statement, which is not supported (no OCR).</code> |  | new | missing |
@@ -3119,11 +3119,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Could not parse field: {0}</code> |  | new | missing |
 | <code>Could not re-extract the table.</code> |  | new | missing |
 | <code>Could not reach your server: {0}</code> |  | new | missing |
-| <code>Could not retrieve information for {0}.</code> |  | new | missing |
+| <code>Could not retrieve information for {0}.</code> |  | new | translated |
 | <code>Could not save the column mapping.</code> |  | new | missing |
 | <code>Could not save the table settings.</code> |  | new | missing |
-| <code>Could not solve criteria score function for {0}. Make sure the formula is valid.</code> |  | new | missing |
-| <code>Could not solve weighted score function. Make sure the formula is valid.</code> |  | new | missing |
+| <code>Could not solve criteria score function for {0}. Make sure the formula is valid.</code> |  | new | translated |
+| <code>Could not solve weighted score function. Make sure the formula is valid.</code> |  | new | translated |
 | <code>Could not start Chromium. Check logs for details.</code> |  | new | missing |
 | <code>Could not start up:</code> |  | new | missing |
 | <code>Could not update the header row.</code> |  | new | missing |
@@ -3142,12 +3142,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Country Name</code> |  | new | translated |
 | <code>Country of Origin</code> |  | new | missing |
 | <code>County</code> |  | new | translated |
-| <code>Coupon Code</code> |  | new | missing |
-| <code>Coupon Code Based</code> |  | new | missing |
-| <code>Coupon Description</code> |  | new | missing |
-| <code>Coupon Name</code> |  | new | missing |
-| <code>Coupon Type</code> |  | new | missing |
-| <code>Cr</code> |  | new | missing |
+| <code>Coupon Code</code> |  | new | translated |
+| <code>Coupon Code Based</code> |  | new | translated |
+| <code>Coupon Description</code> |  | new | translated |
+| <code>Coupon Name</code> |  | new | translated |
+| <code>Coupon Type</code> |  | new | translated |
+| <code>Cr</code> |  | new | translated |
 | <code>Cr</code> | Number system | new | excepted |
 | <code>Create</code> |  | new | translated |
 | <code>Create &amp; Continue</code> |  | new | missing |
@@ -3163,7 +3163,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Create Chart Of Accounts Based On</code> |  | new | missing |
 | <code>Create Child Doctype</code> |  | new | missing |
 | <code>Create Contacts from Incoming Emails</code> |  | new | translated |
-| <code>Create Customer</code> |  | new | missing |
+| <code>Create Customer</code> |  | new | translated |
 | <code>Create Delivery Note</code> |  | new | missing |
 | <code>Create Delivery Trip</code> |  | new | missing |
 | <code>Create Employee</code> |  | new | missing |
@@ -3174,13 +3174,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Create Finished Good</code> |  | new | missing |
 | <code>Create Finished Goods</code> |  | new | missing |
 | <code>Create Grouped Asset</code> |  | new | missing |
-| <code>Create Inter Company Journal Entry</code> |  | new | missing |
-| <code>Create Invoices</code> |  | new | missing |
+| <code>Create Inter Company Journal Entry</code> |  | new | translated |
+| <code>Create Invoices</code> |  | new | translated |
 | <code>Create Item</code> |  | new | missing |
 | <code>Create Job Card</code> |  | new | missing |
 | <code>Create Job Card based on Batch Size</code> |  | new | missing |
 | <code>Create Journal Entries</code> |  | new | missing |
-| <code>Create Journal Entry</code> |  | new | missing |
+| <code>Create Journal Entry</code> |  | new | translated |
 | <code>Create Lead</code> |  | new | missing |
 | <code>Create Leads</code> |  | new | missing |
 | <code>Create Ledger Entries for Change Amount</code> |  | new | missing |
@@ -3188,7 +3188,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Create Link</code> |  | new | missing |
 | <code>Create Log</code> |  | new | translated |
 | <code>Create MPS</code> |  | new | missing |
-| <code>Create Missing Party</code> |  | new | missing |
+| <code>Create Missing Party</code> |  | new | translated |
 | <code>Create Multi-level BOM</code> |  | new | missing |
 | <code>Create New</code> |  | new | translated |
 | <code>Create New</code> | Create a new document from list view | new | missing |
@@ -3201,26 +3201,26 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Create Operation</code> |  | new | missing |
 | <code>Create Operations</code> |  | new | missing |
 | <code>Create Opportunity</code> |  | new | missing |
-| <code>Create POS Opening Entry</code> |  | new | missing |
-| <code>Create Payment Entry</code> |  | new | missing |
+| <code>Create POS Opening Entry</code> |  | new | translated |
+| <code>Create Payment Entry</code> |  | new | translated |
 | <code>Create Payment Entry for Consolidated POS Invoices.</code> |  | new | missing |
 | <code>Create Payment Request</code> |  | new | missing |
 | <code>Create Pick List</code> |  | new | missing |
-| <code>Create Print Format</code> |  | new | missing |
+| <code>Create Print Format</code> |  | new | translated |
 | <code>Create Project</code> |  | new | missing |
 | <code>Create Prospect</code> |  | new | missing |
 | <code>Create Purchase Invoice</code> |  | new | missing |
-| <code>Create Purchase Order</code> |  | new | missing |
+| <code>Create Purchase Order</code> |  | new | translated |
 | <code>Create Purchase Orders</code> |  | new | missing |
 | <code>Create Purchase Receipt</code> |  | new | missing |
 | <code>Create Quotation</code> |  | new | missing |
 | <code>Create Raw Material</code> |  | new | missing |
 | <code>Create Raw Materials</code> |  | new | missing |
-| <code>Create Receiver List</code> |  | new | missing |
+| <code>Create Receiver List</code> |  | new | translated |
 | <code>Create Reposting Entries</code> |  | new | missing |
 | <code>Create Reposting Entry</code> |  | new | missing |
-| <code>Create Sales Invoice</code> |  | new | missing |
-| <code>Create Sales Order</code> |  | new | missing |
+| <code>Create Sales Invoice</code> |  | new | translated |
+| <code>Create Sales Order</code> |  | new | translated |
 | <code>Create Sales Orders to help you plan your work and deliver on-time</code> |  | new | missing |
 | <code>Create Saved Filter</code> |  | new | missing |
 | <code>Create Service Item</code> |  | new | missing |
@@ -3230,7 +3230,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Create Subcontracting PO</code> |  | new | missing |
 | <code>Create Subcontracting Purchase Order</code> |  | new | missing |
 | <code>Create Supplier</code> |  | new | missing |
-| <code>Create Supplier Quotation</code> |  | new | missing |
+| <code>Create Supplier Quotation</code> |  | new | translated |
 | <code>Create Task</code> |  | new | missing |
 | <code>Create Tasks</code> |  | new | missing |
 | <code>Create Tax Template</code> |  | new | missing |
@@ -3278,14 +3278,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Creates a User account for this employee using the Preferred, Company, or Personal email.</code> |  | new | missing |
 | <code>Creates a single grouped asset instead of individual assets when purchased in bulk.</code> |  | new | missing |
 | <code>Creates an Item Price automatically when the item is saved</code> |  | new | missing |
-| <code>Creating Accounts...</code> |  | new | missing |
+| <code>Creating Accounts...</code> |  | new | translated |
 | <code>Creating Delivery Note ...</code> |  | new | missing |
 | <code>Creating Delivery Schedule...</code> |  | new | missing |
-| <code>Creating Dimensions...</code> |  | new | missing |
+| <code>Creating Dimensions...</code> |  | new | translated |
 | <code>Creating Journal Entries...</code> |  | new | missing |
 | <code>Creating Packing Slip ...</code> |  | new | missing |
 | <code>Creating Purchase Invoices ...</code> |  | new | missing |
-| <code>Creating Purchase Order ...</code> |  | new | missing |
+| <code>Creating Purchase Order ...</code> |  | new | translated |
 | <code>Creating Purchase Receipt ...</code> |  | new | missing |
 | <code>Creating Return of Components ...</code> |  | new | missing |
 | <code>Creating Sales Invoices ...</code> |  | new | missing |
@@ -3296,49 +3296,49 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Creating User...</code> |  | new | missing |
 | <code>Creating demo data</code> |  | new | missing |
 | <code>Creating {0}</code> |  | new | translated |
-| <code>Creating {} out of {} {}</code> |  | new | missing |
+| <code>Creating {} out of {} {}</code> |  | new | translated |
 | <code>Creation</code> |  | new | missing |
 | <code>Creation of &lt;b&gt;&lt;a href=&#x27;/app/{0}&#x27;&gt;{1}(s)&lt;/a&gt;&lt;/b&gt; successful</code> |  | new | missing |
 | <code>Creation of this document is only permitted in developer mode.</code> |  | new | missing |
 | <code>Creation of {0} failed.<br>				Check &lt;b&gt;&lt;a href=&quot;/app/bulk-transaction-log&quot;&gt;Bulk Transaction Log&lt;/a&gt;&lt;/b&gt;</code> |  | new | missing |
 | <code>Creation of {0} partially successful.<br>				Check &lt;b&gt;&lt;a href=&quot;/app/bulk-transaction-log&quot;&gt;Bulk Transaction Log&lt;/a&gt;&lt;/b&gt;</code> |  | new | missing |
-| <code>Credit</code> |  | new | missing |
+| <code>Credit</code> |  | new | translated |
 | <code>Credit &amp; Overdue Limits</code> |  | new | missing |
 | <code>Credit (Transaction)</code> |  | new | missing |
-| <code>Credit ({0})</code> |  | new | missing |
-| <code>Credit Account</code> |  | new | missing |
-| <code>Credit Amount</code> |  | new | missing |
-| <code>Credit Amount in Account Currency</code> |  | new | missing |
+| <code>Credit ({0})</code> |  | new | translated |
+| <code>Credit Account</code> |  | new | translated |
+| <code>Credit Amount</code> |  | new | translated |
+| <code>Credit Amount in Account Currency</code> |  | new | translated |
 | <code>Credit Amount in Reporting Currency</code> |  | new | missing |
 | <code>Credit Amount in Transaction Currency</code> |  | new | missing |
-| <code>Credit Balance</code> |  | new | missing |
+| <code>Credit Balance</code> |  | new | translated |
 | <code>Credit Card</code> |  | new | missing |
-| <code>Credit Card Entry</code> |  | new | missing |
-| <code>Credit Days</code> |  | new | missing |
-| <code>Credit Limit</code> |  | new | missing |
+| <code>Credit Card Entry</code> |  | new | translated |
+| <code>Credit Days</code> |  | new | translated |
+| <code>Credit Limit</code> |  | new | translated |
 | <code>Credit Limit Crossed</code> |  | new | missing |
 | <code>Credit Limit:</code> |  | new | missing |
-| <code>Credit Limits</code> |  | new | missing |
-| <code>Credit Months</code> |  | new | missing |
-| <code>Credit Note</code> |  | new | missing |
-| <code>Credit Note Amount</code> |  | new | missing |
-| <code>Credit Note Issued</code> |  | new | missing |
+| <code>Credit Limits</code> |  | new | translated |
+| <code>Credit Months</code> |  | new | translated |
+| <code>Credit Note</code> |  | new | translated |
+| <code>Credit Note Amount</code> |  | new | translated |
+| <code>Credit Note Issued</code> |  | new | translated |
 | <code>Credit Note will update it&#x27;s own outstanding amount, even if &#x27;Return Against&#x27; is specified.</code> |  | new | missing |
 | <code>Credit Note {0} has been created automatically</code> |  | new | missing |
-| <code>Credit To</code> |  | new | missing |
-| <code>Credit in Company Currency</code> |  | new | missing |
-| <code>Credit limit has been crossed for customer {0} ({1}/{2})</code> |  | new | missing |
-| <code>Credit limit is already defined for the Company {0}</code> |  | new | missing |
-| <code>Credit limit reached for customer {0}</code> |  | new | missing |
+| <code>Credit To</code> |  | new | translated |
+| <code>Credit in Company Currency</code> |  | new | translated |
+| <code>Credit limit has been crossed for customer {0} ({1}/{2})</code> |  | new | translated |
+| <code>Credit limit is already defined for the Company {0}</code> |  | new | translated |
+| <code>Credit limit reached for customer {0}</code> |  | new | translated |
 | <code>Creditor Turnover Ratio</code> |  | new | missing |
-| <code>Creditors</code> |  | new | missing |
+| <code>Creditors</code> |  | new | translated |
 | <code>Credits</code> |  | new | missing |
-| <code>Criteria</code> |  | new | missing |
-| <code>Criteria Formula</code> |  | new | missing |
-| <code>Criteria Name</code> |  | new | missing |
-| <code>Criteria Setup</code> |  | new | missing |
-| <code>Criteria Weight</code> |  | new | missing |
-| <code>Criteria weights must add up to 100%</code> |  | new | missing |
+| <code>Criteria</code> |  | new | translated |
+| <code>Criteria Formula</code> |  | new | translated |
+| <code>Criteria Name</code> |  | new | translated |
+| <code>Criteria Setup</code> |  | new | translated |
+| <code>Criteria Weight</code> |  | new | translated |
+| <code>Criteria weights must add up to 100%</code> |  | new | translated |
 | <code>Cron</code> |  | new | excepted |
 | <code>Cron Format</code> |  | new | translated |
 | <code>Cron Interval should be between 1 and 59 Min</code> |  | new | missing |
@@ -3358,37 +3358,37 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Cumulative Threshold</code> |  | new | missing |
 | <code>Cup</code> |  | new | missing |
 | <code>Currency</code> |  | new | translated |
-| <code>Currency Exchange</code> |  | new | missing |
-| <code>Currency Exchange Settings</code> |  | new | missing |
+| <code>Currency Exchange</code> |  | new | translated |
+| <code>Currency Exchange Settings</code> |  | new | translated |
 | <code>Currency Exchange Settings Details</code> |  | new | missing |
 | <code>Currency Exchange Settings Result</code> |  | new | missing |
 | <code>Currency Exchange must be applicable for Buying or for Selling.</code> |  | new | missing |
 | <code>Currency Name</code> |  | new | translated |
 | <code>Currency Precision</code> |  | new | translated |
-| <code>Currency and Price List</code> |  | new | missing |
-| <code>Currency can not be changed after making entries using some other currency</code> |  | new | missing |
+| <code>Currency and Price List</code> |  | new | translated |
+| <code>Currency can not be changed after making entries using some other currency</code> |  | new | translated |
 | <code>Currency filters are currently unsupported in Custom Financial Report.</code> |  | new | missing |
-| <code>Currency for {0} must be {1}</code> |  | new | missing |
+| <code>Currency for {0} must be {1}</code> |  | new | translated |
 | <code>Currency list stores the currency value, its symbol and fraction unit</code> |  | new | missing |
-| <code>Currency of the Closing Account must be {0}</code> |  | new | missing |
+| <code>Currency of the Closing Account must be {0}</code> |  | new | translated |
 | <code>Currency of the price list {0} must be {1} or {2}</code> |  | new | missing |
-| <code>Currency should be same as Price List Currency: {0}</code> |  | new | missing |
+| <code>Currency should be same as Price List Currency: {0}</code> |  | new | translated |
 | <code>Current</code> |  | new | translated |
 | <code>Current Address</code> |  | new | missing |
 | <code>Current Address Is</code> |  | new | missing |
 | <code>Current Amount</code> |  | new | missing |
 | <code>Current Asset</code> |  | new | missing |
-| <code>Current Asset Value</code> |  | new | missing |
-| <code>Current Assets</code> |  | new | missing |
+| <code>Current Asset Value</code> |  | new | translated |
+| <code>Current Assets</code> |  | new | translated |
 | <code>Current BOM</code> |  | new | missing |
 | <code>Current BOM and New BOM can not be same</code> |  | new | missing |
-| <code>Current Exchange Rate</code> |  | new | missing |
+| <code>Current Exchange Rate</code> |  | new | translated |
 | <code>Current Index</code> |  | new | missing |
-| <code>Current Invoice End Date</code> |  | new | missing |
-| <code>Current Invoice Start Date</code> |  | new | missing |
+| <code>Current Invoice End Date</code> |  | new | translated |
+| <code>Current Invoice Start Date</code> |  | new | translated |
 | <code>Current Job ID</code> |  | new | missing |
 | <code>Current Level</code> |  | new | missing |
-| <code>Current Liabilities</code> |  | new | missing |
+| <code>Current Liabilities</code> |  | new | translated |
 | <code>Current Liability</code> |  | new | missing |
 | <code>Current Node</code> |  | new | missing |
 | <code>Current Qty</code> |  | new | missing |
@@ -3396,17 +3396,17 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Current Serial / Batch Bundle</code> |  | new | missing |
 | <code>Current Serial No</code> |  | new | missing |
 | <code>Current Series</code> |  | new | missing |
-| <code>Current State</code> |  | new | missing |
-| <code>Current Status</code> |  | new | missing |
-| <code>Current Stock</code> |  | new | missing |
+| <code>Current State</code> |  | new | translated |
+| <code>Current Status</code> |  | new | translated |
+| <code>Current Stock</code> |  | new | translated |
 | <code>Current Valuation Rate</code> |  | new | missing |
 | <code>Current Value</code> |  | new | missing |
 | <code>Current status</code> |  | new | translated |
 | <code>Current tier based on accumulated points. Updated automatically on each invoice.</code> |  | new | missing |
 | <code>Currently Viewing</code> |  | new | translated |
 | <code>Curves</code> |  | new | missing |
-| <code>Custodian</code> |  | new | missing |
-| <code>Custody</code> |  | new | missing |
+| <code>Custodian</code> |  | new | translated |
+| <code>Custody</code> |  | new | translated |
 | <code>Custom</code> |  | new | translated |
 | <code>Custom API</code> |  | new | missing |
 | <code>Custom Base URL</code> |  | new | translated |
@@ -3436,7 +3436,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Custom Options</code> |  | new | translated |
 | <code>Custom Overrides</code> |  | new | translated |
 | <code>Custom Remark</code> |  | new | missing |
-| <code>Custom Remarks</code> |  | new | missing |
+| <code>Custom Remarks</code> |  | new | translated |
 | <code>Custom Report</code> |  | new | translated |
 | <code>Custom Reports</code> |  | new | translated |
 | <code>Custom Role</code> |  | new | translated |
@@ -3447,72 +3447,72 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Custom field renamed to {0} successfully.</code> |  | new | missing |
 | <code>Custom get_list method for {0} must return a QueryBuilder object or None, got {1}</code> |  | new | missing |
 | <code>Custom?</code> |  | new | translated |
-| <code>Customer</code> |  | new | missing |
+| <code>Customer</code> |  | new | translated |
 | <code>Customer / Item / Item Group</code> |  | new | missing |
-| <code>Customer / Lead Address</code> |  | new | missing |
-| <code>Customer &gt; Customer Group &gt; Territory</code> |  | new | missing |
-| <code>Customer Acquisition and Loyalty</code> |  | new | missing |
-| <code>Customer Address</code> |  | new | missing |
-| <code>Customer Addresses And Contacts</code> |  | new | missing |
+| <code>Customer / Lead Address</code> |  | new | translated |
+| <code>Customer &gt; Customer Group &gt; Territory</code> |  | new | translated |
+| <code>Customer Acquisition and Loyalty</code> |  | new | translated |
+| <code>Customer Address</code> |  | new | translated |
+| <code>Customer Addresses And Contacts</code> |  | new | translated |
 | <code>Customer Advances</code> |  | new | missing |
 | <code>Customer Code</code> |  | new | missing |
-| <code>Customer Contact</code> |  | new | missing |
-| <code>Customer Contact Email</code> |  | new | missing |
-| <code>Customer Credit Balance</code> |  | new | missing |
-| <code>Customer Credit Limit</code> |  | new | missing |
+| <code>Customer Contact</code> |  | new | translated |
+| <code>Customer Contact Email</code> |  | new | translated |
+| <code>Customer Credit Balance</code> |  | new | translated |
+| <code>Customer Credit Limit</code> |  | new | translated |
 | <code>Customer Currency</code> |  | new | missing |
 | <code>Customer Defaults</code> |  | new | missing |
-| <code>Customer Details</code> |  | new | missing |
+| <code>Customer Details</code> |  | new | translated |
 | <code>Customer Feedback</code> |  | new | missing |
-| <code>Customer Group</code> |  | new | missing |
+| <code>Customer Group</code> |  | new | translated |
 | <code>Customer Group Item</code> |  | new | missing |
 | <code>Customer Group Name</code> |  | new | missing |
-| <code>Customer Groups</code> |  | new | missing |
+| <code>Customer Groups</code> |  | new | translated |
 | <code>Customer Item</code> |  | new | missing |
 | <code>Customer Items</code> |  | new | missing |
-| <code>Customer LPO</code> |  | new | missing |
-| <code>Customer LPO No.</code> |  | new | missing |
+| <code>Customer LPO</code> |  | new | translated |
+| <code>Customer LPO No.</code> |  | new | translated |
 | <code>Customer Ledger</code> |  | new | missing |
-| <code>Customer Ledger Summary</code> |  | new | missing |
-| <code>Customer Mobile No</code> |  | new | missing |
-| <code>Customer Name</code> |  | new | missing |
+| <code>Customer Ledger Summary</code> |  | new | translated |
+| <code>Customer Mobile No</code> |  | new | translated |
+| <code>Customer Name</code> |  | new | translated |
 | <code>Customer Name:</code> |  | new | missing |
-| <code>Customer Naming By</code> |  | new | missing |
+| <code>Customer Naming By</code> |  | new | translated |
 | <code>Customer Number</code> |  | new | missing |
 | <code>Customer Number At Supplier</code> |  | new | missing |
 | <code>Customer Numbers</code> |  | new | missing |
 | <code>Customer PO</code> |  | new | missing |
-| <code>Customer PO Details</code> |  | new | missing |
+| <code>Customer PO Details</code> |  | new | translated |
 | <code>Customer POS ID</code> |  | new | missing |
 | <code>Customer Portal Users</code> |  | new | missing |
-| <code>Customer Primary Address</code> |  | new | missing |
-| <code>Customer Primary Contact</code> |  | new | missing |
+| <code>Customer Primary Address</code> |  | new | translated |
+| <code>Customer Primary Contact</code> |  | new | translated |
 | <code>Customer Provided</code> |  | new | missing |
 | <code>Customer Provided Item Cost</code> |  | new | missing |
 | <code>Customer Service</code> |  | new | missing |
 | <code>Customer Service Representative</code> |  | new | missing |
-| <code>Customer Territory</code> |  | new | missing |
-| <code>Customer Type</code> |  | new | missing |
+| <code>Customer Territory</code> |  | new | translated |
+| <code>Customer Type</code> |  | new | translated |
 | <code>Customer Warehouse</code> |  | new | missing |
-| <code>Customer Warehouse (Optional)</code> |  | new | missing |
+| <code>Customer Warehouse (Optional)</code> |  | new | translated |
 | <code>Customer Warehouse {0} does not belong to Customer {1}.</code> |  | new | missing |
-| <code>Customer contact updated successfully.</code> |  | new | missing |
+| <code>Customer contact updated successfully.</code> |  | new | translated |
 | <code>Customer is required</code> |  | new | missing |
-| <code>Customer isn&#x27;t enrolled in any Loyalty Program</code> |  | new | missing |
+| <code>Customer isn&#x27;t enrolled in any Loyalty Program</code> |  | new | translated |
 | <code>Customer or Item</code> |  | new | missing |
 | <code>Customer required for &#x27;Customerwise Discount&#x27;</code> |  | new | missing |
-| <code>Customer {0} does not belong to project {1}</code> |  | new | missing |
-| <code>Customer&#x27;s Item Code</code> |  | new | missing |
-| <code>Customer&#x27;s Purchase Order</code> |  | new | missing |
-| <code>Customer&#x27;s Purchase Order Date</code> |  | new | missing |
+| <code>Customer {0} does not belong to project {1}</code> |  | new | translated |
+| <code>Customer&#x27;s Item Code</code> |  | new | translated |
+| <code>Customer&#x27;s Purchase Order</code> |  | new | translated |
+| <code>Customer&#x27;s Purchase Order Date</code> |  | new | translated |
 | <code>Customer&#x27;s Purchase Order No</code> |  | new | missing |
 | <code>Customer&#x27;s Vendor</code> |  | new | missing |
-| <code>Customer-wise Item Price</code> |  | new | missing |
-| <code>Customer/Lead Name</code> |  | new | missing |
+| <code>Customer-wise Item Price</code> |  | new | translated |
+| <code>Customer/Lead Name</code> |  | new | translated |
 | <code>Customer:</code> |  | new | missing |
-| <code>Customers</code> |  | new | missing |
-| <code>Customers Without Any Sales Transactions</code> |  | new | missing |
-| <code>Customers not selected.</code> |  | new | missing |
+| <code>Customers</code> |  | new | translated |
+| <code>Customers Without Any Sales Transactions</code> |  | new | translated |
+| <code>Customers not selected.</code> |  | new | translated |
 | <code>Customerwise Discount</code> |  | new | missing |
 | <code>Customization</code> |  | new | translated |
 | <code>Customizations Discarded</code> |  | new | missing |
@@ -3568,7 +3568,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Data Clipped</code> |  | new | missing |
 | <code>Data Export</code> |  | new | translated |
 | <code>Data Import</code> |  | new | translated |
-| <code>Data Import Configuration</code> |  | new | missing |
+| <code>Data Import Configuration</code> |  | new | translated |
 | <code>Data Import Log</code> |  | new | missing |
 | <code>Data Import Template</code> |  | new | translated |
 | <code>Data Import and Settings</code> |  | new | missing |
@@ -3585,11 +3585,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Database Table Row Size Utilization: {0}%, this limits number of fields you can add.</code> |  | new | missing |
 | <code>Database Version</code> |  | new | missing |
 | <code>Date</code> |  | new | translated |
-| <code>Date Based On</code> |  | new | missing |
+| <code>Date Based On</code> |  | new | translated |
 | <code>Date Format</code> |  | new | translated |
 | <code>Date Of Retirement</code> |  | new | missing |
 | <code>Date Range</code> |  | new | missing |
-| <code>Date Settings</code> |  | new | missing |
+| <code>Date Settings</code> |  | new | translated |
 | <code>Date after which this security.txt should be considered stale. Expires timestamp is converted to UTC.</code> |  | new | missing |
 | <code>Date and Number Format</code> |  | new | translated |
 | <code>Date must be between {0} and {1}</code> |  | new | missing |
@@ -3601,7 +3601,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Date of Incorporation</code> |  | new | missing |
 | <code>Date of Issue</code> |  | new | missing |
 | <code>Date of Joining</code> |  | new | missing |
-| <code>Date of Transaction</code> |  | new | missing |
+| <code>Date of Transaction</code> |  | new | translated |
 | <code>Date {0} must be in format: {1}</code> |  | new | translated |
 | <code>Date: {0} to {1}</code> |  | new | missing |
 | <code>Dates</code> |  | new | missing |
@@ -3609,21 +3609,21 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Dates to Process</code> |  | new | missing |
 | <code>Datetime</code> |  | new | translated |
 | <code>Day</code> |  | new | translated |
-| <code>Day Of Week</code> |  | new | missing |
+| <code>Day Of Week</code> |  | new | translated |
 | <code>Day of Week</code> |  | new | translated |
 | <code>Day of month</code> |  | new | missing |
 | <code>Day to Send</code> |  | new | missing |
-| <code>Day(s) after invoice date</code> |  | new | missing |
-| <code>Day(s) after the end of the invoice month</code> |  | new | missing |
-| <code>Days</code> |  | new | missing |
+| <code>Day(s) after invoice date</code> |  | new | translated |
+| <code>Day(s) after the end of the invoice month</code> |  | new | translated |
+| <code>Days</code> |  | new | translated |
 | <code>Days</code> | Duration | new | missing |
 | <code>Days After</code> |  | new | translated |
 | <code>Days Before</code> |  | new | translated |
 | <code>Days Before or After</code> |  | new | translated |
 | <code>Days Remaining</code> |  | new | missing |
-| <code>Days Since Last Order</code> |  | new | missing |
-| <code>Days Since Last order</code> |  | new | missing |
-| <code>Days Until Due</code> |  | new | missing |
+| <code>Days Since Last Order</code> |  | new | translated |
+| <code>Days Since Last order</code> |  | new | translated |
+| <code>Days Until Due</code> |  | new | translated |
 | <code>Days before the current subscription period</code> |  | new | missing |
 | <code>DeLinked</code> |  | new | missing |
 | <code>Deadlock Occurred</code> |  | new | missing |
@@ -3633,24 +3633,24 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Dear System Manager,</code> |  | new | translated |
 | <code>Dear User,</code> |  | new | translated |
 | <code>Dear {0}</code> |  | new | translated |
-| <code>Debit</code> |  | new | missing |
+| <code>Debit</code> |  | new | translated |
 | <code>Debit (Transaction)</code> |  | new | missing |
-| <code>Debit ({0})</code> |  | new | missing |
+| <code>Debit ({0})</code> |  | new | translated |
 | <code>Debit / Credit Note Posting Date</code> |  | new | missing |
-| <code>Debit Account</code> |  | new | missing |
-| <code>Debit Amount</code> |  | new | missing |
-| <code>Debit Amount in Account Currency</code> |  | new | missing |
+| <code>Debit Account</code> |  | new | translated |
+| <code>Debit Amount</code> |  | new | translated |
+| <code>Debit Amount in Account Currency</code> |  | new | translated |
 | <code>Debit Amount in Reporting Currency</code> |  | new | missing |
 | <code>Debit Amount in Transaction Currency</code> |  | new | missing |
-| <code>Debit Note</code> |  | new | missing |
-| <code>Debit Note Amount</code> |  | new | missing |
-| <code>Debit Note Issued</code> |  | new | missing |
+| <code>Debit Note</code> |  | new | translated |
+| <code>Debit Note Amount</code> |  | new | translated |
+| <code>Debit Note Issued</code> |  | new | translated |
 | <code>Debit Note will update it&#x27;s own outstanding amount, even if &#x27;Return Against&#x27; is specified.</code> |  | new | missing |
-| <code>Debit To</code> |  | new | missing |
-| <code>Debit To is required</code> |  | new | missing |
-| <code>Debit and Credit not equal for {0} #{1}. Difference is {2}.</code> |  | new | missing |
-| <code>Debit in Company Currency</code> |  | new | missing |
-| <code>Debit to</code> |  | new | missing |
+| <code>Debit To</code> |  | new | translated |
+| <code>Debit To is required</code> |  | new | translated |
+| <code>Debit and Credit not equal for {0} #{1}. Difference is {2}.</code> |  | new | translated |
+| <code>Debit in Company Currency</code> |  | new | translated |
+| <code>Debit to</code> |  | new | translated |
 | <code>Debit-Credit Mismatch</code> |  | new | missing |
 | <code>Debit-Credit mismatch</code> |  | new | missing |
 | <code>Debit/Credit</code> |  | new | missing |
@@ -3659,7 +3659,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Debtor Turnover Ratio</code> |  | new | missing |
 | <code>Debtor/Creditor</code> |  | new | missing |
 | <code>Debtor/Creditor Advance</code> |  | new | missing |
-| <code>Debtors</code> |  | new | missing |
+| <code>Debtors</code> |  | new | translated |
 | <code>Debug Log</code> |  | new | missing |
 | <code>Decigram/Litre</code> |  | new | missing |
 | <code>Decilitre</code> |  | new | missing |
@@ -3667,15 +3667,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Decimal Separator must be a single character</code> |  | new | missing |
 | <code>Decimeter</code> |  | new | missing |
 | <code>Declare Lost</code> |  | new | missing |
-| <code>Deduct</code> |  | new | missing |
+| <code>Deduct</code> |  | new | translated |
 | <code>Deduct Tax On Basis</code> |  | new | missing |
 | <code>Deducted From</code> |  | new | missing |
 | <code>Deductee Details</code> |  | new | missing |
 | <code>Deduction Certificate</code> |  | new | missing |
-| <code>Deductions or Loss</code> |  | new | missing |
+| <code>Deductions or Loss</code> |  | new | translated |
 | <code>Default</code> |  | new | translated |
-| <code>Default Account</code> |  | new | missing |
-| <code>Default Accounts</code> |  | new | missing |
+| <code>Default Account</code> |  | new | translated |
+| <code>Default Accounts</code> |  | new | translated |
 | <code>Default Activity Cost exists for Activity Type - {0}</code> |  | new | missing |
 | <code>Default Address Template cannot be deleted</code> |  | new | translated |
 | <code>Default Advance Account</code> |  | new | missing |
@@ -3692,7 +3692,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Default Bank Account</code> |  | new | missing |
 | <code>Default Billing Rate</code> |  | new | missing |
 | <code>Default Buying Cost Center</code> |  | new | missing |
-| <code>Default Buying Price List</code> |  | new | missing |
+| <code>Default Buying Price List</code> |  | new | translated |
 | <code>Default Buying Terms</code> |  | new | missing |
 | <code>Default COGS Account</code> |  | new | missing |
 | <code>Default Cash Account</code> |  | new | missing |
@@ -3702,15 +3702,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Default Cost of Goods Sold Account</code> |  | new | missing |
 | <code>Default Costing Rate</code> |  | new | missing |
 | <code>Default Currency</code> |  | new | missing |
-| <code>Default Customer Group</code> |  | new | missing |
+| <code>Default Customer Group</code> |  | new | translated |
 | <code>Default Deferred Expense Account</code> |  | new | missing |
 | <code>Default Deferred Revenue Account</code> |  | new | missing |
-| <code>Default Dimension</code> |  | new | missing |
+| <code>Default Dimension</code> |  | new | translated |
 | <code>Default Discount Account</code> |  | new | missing |
 | <code>Default Distance Unit</code> |  | new | missing |
 | <code>Default Email Template</code> |  | new | missing |
 | <code>Default Expense Account</code> |  | new | missing |
-| <code>Default Finance Book</code> |  | new | missing |
+| <code>Default Finance Book</code> |  | new | translated |
 | <code>Default Finished Goods Warehouse</code> |  | new | missing |
 | <code>Default Holiday List</code> |  | new | missing |
 | <code>Default In-Transit Warehouse</code> |  | new | missing |
@@ -3728,17 +3728,17 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Default Outgoing</code> |  | new | translated |
 | <code>Default Payable Account</code> |  | new | missing |
 | <code>Default Payment Discount Account</code> |  | new | missing |
-| <code>Default Payment Request Message</code> |  | new | missing |
+| <code>Default Payment Request Message</code> |  | new | translated |
 | <code>Default Payment Terms Template</code> |  | new | missing |
 | <code>Default Portal Home</code> |  | new | translated |
-| <code>Default Price List</code> |  | new | missing |
+| <code>Default Price List</code> |  | new | translated |
 | <code>Default Print Format</code> |  | new | translated |
 | <code>Default Print Language</code> |  | new | translated |
 | <code>Default Priority</code> |  | new | missing |
 | <code>Default Provisional Account</code> |  | new | missing |
 | <code>Default Provisional Account (Service)</code> |  | new | missing |
 | <code>Default Purchase Unit of Measure</code> |  | new | missing |
-| <code>Default Quotation Validity Days</code> |  | new | missing |
+| <code>Default Quotation Validity Days</code> |  | new | translated |
 | <code>Default Receivable Account</code> |  | new | missing |
 | <code>Default Redirect URI</code> |  | new | translated |
 | <code>Default Role at Time of Signup</code> |  | new | translated |
@@ -3757,10 +3757,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Default Stock UOM</code> |  | new | missing |
 | <code>Default Stock Valuation Method</code> |  | new | missing |
 | <code>Default Supplier</code> |  | new | missing |
-| <code>Default Supplier Group</code> |  | new | missing |
+| <code>Default Supplier Group</code> |  | new | translated |
 | <code>Default Target Warehouse</code> |  | new | missing |
 | <code>Default Template For Field</code> |  | new | missing |
-| <code>Default Territory</code> |  | new | missing |
+| <code>Default Territory</code> |  | new | translated |
 | <code>Default Theme</code> |  | new | translated |
 | <code>Default Unit of Measure</code> |  | new | missing |
 | <code>Default Unit of Measure for Item {0} cannot be changed directly because you have already made some transaction(s) with another UOM. You need to either cancel the linked documents or create a new Item.</code> |  | new | missing |
@@ -3776,7 +3776,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Default Work In Progress Warehouse</code> |  | new | missing |
 | <code>Default Workspace</code> |  | new | missing |
 | <code>Default Workstation</code> |  | new | missing |
-| <code>Default account will be automatically updated in POS Invoice when this mode is selected.</code> |  | new | missing |
+| <code>Default account will be automatically updated in POS Invoice when this mode is selected.</code> |  | new | translated |
 | <code>Default display currency</code> |  | new | missing |
 | <code>Default price list for buying or selling this item</code> |  | new | missing |
 | <code>Default settings for your stock-related transactions</code> |  | new | missing |
@@ -3792,11 +3792,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Defense</code> |  | new | missing |
 | <code>Deferred Accounting</code> |  | new | missing |
 | <code>Deferred Accounting Defaults</code> |  | new | missing |
-| <code>Deferred Accounting Settings</code> |  | new | missing |
-| <code>Deferred Expense</code> |  | new | missing |
-| <code>Deferred Expense Account</code> |  | new | missing |
-| <code>Deferred Revenue</code> |  | new | missing |
-| <code>Deferred Revenue Account</code> |  | new | missing |
+| <code>Deferred Accounting Settings</code> |  | new | translated |
+| <code>Deferred Expense</code> |  | new | translated |
+| <code>Deferred Expense Account</code> |  | new | translated |
+| <code>Deferred Revenue</code> |  | new | translated |
+| <code>Deferred Revenue Account</code> |  | new | translated |
 | <code>Deferred Revenue and Expense</code> |  | new | missing |
 | <code>Deferred accounting failed for some invoices:</code> |  | new | missing |
 | <code>Define Project type.</code> |  | new | missing |
@@ -3807,9 +3807,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Defines workflow states and rules for a document.</code> |  | new | translated |
 | <code>Dekagram/Litre</code> |  | new | missing |
 | <code>Delay (In Days)</code> |  | new | missing |
-| <code>Delay (in Days)</code> |  | new | missing |
+| <code>Delay (in Days)</code> |  | new | translated |
 | <code>Delay between Delivery Stops</code> |  | new | missing |
-| <code>Delay in payment (Days)</code> |  | new | missing |
+| <code>Delay in payment (Days)</code> |  | new | translated |
 | <code>Delayed</code> |  | new | translated |
 | <code>Delayed Days</code> |  | new | missing |
 | <code>Delayed Item Report</code> |  | new | missing |
@@ -3879,33 +3879,33 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Delimiter options</code> |  | new | missing |
 | <code>Deliver (Dropship)</code> |  | new | missing |
 | <code>Deliver secondary Items</code> |  | new | missing |
-| <code>Delivered</code> |  | new | missing |
+| <code>Delivered</code> |  | new | translated |
 | <code>Delivered Amount</code> |  | new | missing |
 | <code>Delivered At Place</code> |  | new | missing |
 | <code>Delivered At Place Unloaded</code> |  | new | missing |
-| <code>Delivered By Supplier</code> |  | new | missing |
+| <code>Delivered By Supplier</code> |  | new | translated |
 | <code>Delivered Duty Paid</code> |  | new | missing |
-| <code>Delivered Items To Be Billed</code> |  | new | missing |
-| <code>Delivered Qty</code> |  | new | missing |
+| <code>Delivered Items To Be Billed</code> |  | new | translated |
+| <code>Delivered Qty</code> |  | new | translated |
 | <code>Delivered Qty (in Stock UOM)</code> |  | new | missing |
 | <code>Delivered Qty cannot be increased by more than {0} for item {1}</code> |  | new | missing |
 | <code>Delivered Qty cannot be reduced by more than {0} for item {1}</code> |  | new | missing |
-| <code>Delivered Quantity</code> |  | new | missing |
+| <code>Delivered Quantity</code> |  | new | translated |
 | <code>Delivered by Supplier</code> |  | new | missing |
 | <code>Delivered by Supplier (Drop Ship)</code> |  | new | missing |
 | <code>Delivered: {0}</code> |  | new | missing |
 | <code>Delivery</code> |  | new | missing |
-| <code>Delivery Date</code> |  | new | missing |
+| <code>Delivery Date</code> |  | new | translated |
 | <code>Delivery Details</code> |  | new | missing |
 | <code>Delivery From Date</code> |  | new | missing |
 | <code>Delivery Manager</code> |  | new | missing |
-| <code>Delivery Note</code> |  | new | missing |
-| <code>Delivery Note Item</code> |  | new | missing |
+| <code>Delivery Note</code> |  | new | translated |
+| <code>Delivery Note Item</code> |  | new | translated |
 | <code>Delivery Note No</code> |  | new | missing |
 | <code>Delivery Note Packed Item</code> |  | new | missing |
-| <code>Delivery Note Trends</code> |  | new | missing |
-| <code>Delivery Note {0} is not submitted</code> |  | new | missing |
-| <code>Delivery Notes</code> |  | new | missing |
+| <code>Delivery Note Trends</code> |  | new | translated |
+| <code>Delivery Note {0} is not submitted</code> |  | new | translated |
+| <code>Delivery Notes</code> |  | new | translated |
 | <code>Delivery Notes should not be in draft state when submitting a Delivery Trip. The following Delivery Notes are still in draft state: {0}. Please submit them first.</code> |  | new | missing |
 | <code>Delivery Notes {0} updated</code> |  | new | missing |
 | <code>Delivery Schedule</code> |  | new | missing |
@@ -3943,26 +3943,26 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Deposit</code> |  | new | missing |
 | <code>Depreciate based on daily pro-rata</code> |  | new | missing |
 | <code>Depreciate based on shifts</code> |  | new | missing |
-| <code>Depreciated Amount</code> |  | new | missing |
-| <code>Depreciation</code> |  | new | missing |
-| <code>Depreciation Amount</code> |  | new | missing |
-| <code>Depreciation Amount during the period</code> |  | new | missing |
-| <code>Depreciation Date</code> |  | new | missing |
+| <code>Depreciated Amount</code> |  | new | translated |
+| <code>Depreciation</code> |  | new | translated |
+| <code>Depreciation Amount</code> |  | new | translated |
+| <code>Depreciation Amount during the period</code> |  | new | translated |
+| <code>Depreciation Date</code> |  | new | translated |
 | <code>Depreciation Details</code> |  | new | missing |
-| <code>Depreciation Eliminated due to disposal of assets</code> |  | new | missing |
-| <code>Depreciation Entry</code> |  | new | missing |
+| <code>Depreciation Eliminated due to disposal of assets</code> |  | new | translated |
+| <code>Depreciation Entry</code> |  | new | translated |
 | <code>Depreciation Entry Posting Status</code> |  | new | missing |
 | <code>Depreciation Entry against asset {0}</code> |  | new | missing |
 | <code>Depreciation Entry against {0} worth {1}</code> |  | new | missing |
-| <code>Depreciation Expense Account</code> |  | new | missing |
+| <code>Depreciation Expense Account</code> |  | new | translated |
 | <code>Depreciation Expense Account should be an Income or Expense Account.</code> |  | new | missing |
-| <code>Depreciation Method</code> |  | new | missing |
-| <code>Depreciation Options</code> |  | new | missing |
-| <code>Depreciation Posting Date</code> |  | new | missing |
+| <code>Depreciation Method</code> |  | new | translated |
+| <code>Depreciation Options</code> |  | new | translated |
+| <code>Depreciation Posting Date</code> |  | new | translated |
 | <code>Depreciation Posting Date cannot be before Available-for-use Date</code> |  | new | missing |
 | <code>Depreciation Row {0}: Depreciation Posting Date cannot be before Available-for-use Date</code> |  | new | missing |
-| <code>Depreciation Row {0}: Expected value after useful life must be greater than or equal to {1}</code> |  | new | missing |
-| <code>Depreciation Schedule</code> |  | new | missing |
+| <code>Depreciation Row {0}: Expected value after useful life must be greater than or equal to {1}</code> |  | new | translated |
+| <code>Depreciation Schedule</code> |  | new | translated |
 | <code>Depreciation Schedule View</code> |  | new | missing |
 | <code>Depreciation cannot be calculated for fully depreciated assets</code> |  | new | missing |
 | <code>Depreciation eliminated via reversal</code> |  | new | missing |
@@ -3985,7 +3985,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Desktop Icon</code> |  | new | translated |
 | <code>Desktop Layout</code> |  | new | missing |
 | <code>Desktop Settings</code> |  | new | missing |
-| <code>Detailed Reason</code> |  | new | missing |
+| <code>Detailed Reason</code> |  | new | translated |
 | <code>Details</code> |  | new | translated |
 | <code>Detect CSV type</code> |  | new | missing |
 | <code>Detected Amount Format</code> |  | new | missing |
@@ -4001,15 +4001,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Didn&#x27;t receive the link?</code> |  | new | missing |
 | <code>Diesel</code> |  | new | missing |
 | <code>Diff</code> |  | new | missing |
-| <code>Difference</code> |  | new | missing |
-| <code>Difference (Dr - Cr)</code> |  | new | missing |
-| <code>Difference Account</code> |  | new | missing |
+| <code>Difference</code> |  | new | translated |
+| <code>Difference (Dr - Cr)</code> |  | new | translated |
+| <code>Difference Account</code> |  | new | translated |
 | <code>Difference Account in Items Table</code> |  | new | missing |
 | <code>Difference Account must be a Asset/Liability type account (Temporary Opening), since this Stock Entry is an Opening Entry</code> |  | new | missing |
 | <code>Difference Account must be a Asset/Liability type account, since this Stock Reconciliation is an Opening Entry</code> |  | new | missing |
-| <code>Difference Amount</code> |  | new | missing |
-| <code>Difference Amount (Company Currency)</code> |  | new | missing |
-| <code>Difference Amount must be zero</code> |  | new | missing |
+| <code>Difference Amount</code> |  | new | translated |
+| <code>Difference Amount (Company Currency)</code> |  | new | translated |
+| <code>Difference Amount must be zero</code> |  | new | translated |
 | <code>Difference In</code> |  | new | missing |
 | <code>Difference Posting Date</code> |  | new | missing |
 | <code>Difference Qty</code> |  | new | missing |
@@ -4018,20 +4018,20 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Different &#x27;Source Warehouse&#x27; and &#x27;Target Warehouse&#x27; can be set for each row.</code> |  | new | missing |
 | <code>Different UOM for items will lead to incorrect (Total) Net Weight value. Make sure that Net Weight of each item is in the same UOM.</code> |  | new | missing |
 | <code>Digits</code> |  | new | translated |
-| <code>Dimension Defaults</code> |  | new | missing |
+| <code>Dimension Defaults</code> |  | new | translated |
 | <code>Dimension Details</code> |  | new | missing |
-| <code>Dimension Filter</code> |  | new | missing |
+| <code>Dimension Filter</code> |  | new | translated |
 | <code>Dimension Filter Help</code> |  | new | missing |
-| <code>Dimension Name</code> |  | new | missing |
+| <code>Dimension Name</code> |  | new | translated |
 | <code>Dimension-wise Accounts Balance Report</code> |  | new | missing |
 | <code>Dimensions</code> |  | new | missing |
 | <code>Dinars</code> | Currency | new | missing |
 | <code>Direct Expense</code> |  | new | missing |
-| <code>Direct Expenses</code> |  | new | missing |
-| <code>Direct Income</code> |  | new | missing |
+| <code>Direct Expenses</code> |  | new | translated |
+| <code>Direct Income</code> |  | new | translated |
 | <code>Direct return is not allowed for Timesheet.</code> |  | new | missing |
 | <code>Directory Server</code> |  | new | missing |
-| <code>Disable</code> |  | new | missing |
+| <code>Disable</code> |  | new | translated |
 | <code>Disable &quot;Consider Accounting Dimension&quot; Filter</code> |  | new | missing |
 | <code>Disable Auto Refresh</code> |  | new | translated |
 | <code>Disable Automatic Recency Filters</code> |  | new | missing |
@@ -4046,7 +4046,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Disable Prepared Report Automation</code> |  | new | missing |
 | <code>Disable Product Suggestion</code> |  | new | missing |
 | <code>Disable Report</code> |  | new | translated |
-| <code>Disable Rounded Total</code> |  | new | missing |
+| <code>Disable Rounded Total</code> |  | new | translated |
 | <code>Disable SMTP server authentication</code> |  | new | translated |
 | <code>Disable Scrolling</code> |  | new | missing |
 | <code>Disable Serial No and Batch selector</code> |  | new | missing |
@@ -4070,15 +4070,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Disabled pricing rules since this {} is an internal transfer</code> |  | new | missing |
 | <code>Disabled suppliers are hidden from selection in new transactions but remain in historical records</code> |  | new | missing |
 | <code>Disabled tax included prices since this {} is an internal transfer</code> |  | new | missing |
-| <code>Disabled template must not be default template</code> |  | new | missing |
+| <code>Disabled template must not be default template</code> |  | new | translated |
 | <code>Disables auto-fetching of existing quantity</code> |  | new | missing |
 | <code>Disassemble</code> |  | new | missing |
 | <code>Disassemble Order</code> |  | new | missing |
 | <code>Disassemble Qty cannot be less than or equal to 0.</code> |  | new | missing |
 | <code>Disassemble Qty cannot be less than or equal to &lt;b&gt;0&lt;/b&gt;.</code> |  | new | missing |
 | <code>Disassembled Qty</code> |  | new | missing |
-| <code>Disburse Loan</code> |  | new | missing |
-| <code>Disbursed</code> |  | new | missing |
+| <code>Disburse Loan</code> |  | new | translated |
+| <code>Disbursed</code> |  | new | translated |
 | <code>Discard</code> |  | new | translated |
 | <code>Discard</code> | Button in web form | new | missing |
 | <code>Discard</code> | Discard Email | new | missing |
@@ -4087,30 +4087,30 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Discard?</code> |  | new | missing |
 | <code>Discarded</code> |  | new | missing |
 | <code>Disclaimer: These indexes are suggested based on data and queries performed during this recording. These suggestions may or may not help.</code> |  | new | missing |
-| <code>Discount</code> |  | new | missing |
-| <code>Discount (%)</code> |  | new | missing |
-| <code>Discount (%) on Price List Rate with Margin</code> |  | new | missing |
+| <code>Discount</code> |  | new | translated |
+| <code>Discount (%)</code> |  | new | translated |
+| <code>Discount (%) on Price List Rate with Margin</code> |  | new | translated |
 | <code>Discount Account</code> |  | new | missing |
-| <code>Discount Amount</code> |  | new | missing |
+| <code>Discount Amount</code> |  | new | translated |
 | <code>Discount Amount in Transaction</code> |  | new | missing |
 | <code>Discount Date</code> |  | new | missing |
-| <code>Discount Percentage</code> |  | new | missing |
-| <code>Discount Percentage can be applied either against a Price List or for all Price List.</code> |  | new | missing |
+| <code>Discount Percentage</code> |  | new | translated |
+| <code>Discount Percentage can be applied either against a Price List or for all Price List.</code> |  | new | translated |
 | <code>Discount Percentage in Transaction</code> |  | new | missing |
 | <code>Discount Settings</code> |  | new | missing |
-| <code>Discount Type</code> |  | new | missing |
+| <code>Discount Type</code> |  | new | translated |
 | <code>Discount Validity</code> |  | new | missing |
 | <code>Discount Validity Based On</code> |  | new | missing |
-| <code>Discount and Margin</code> |  | new | missing |
-| <code>Discount cannot be greater than 100%</code> |  | new | missing |
+| <code>Discount and Margin</code> |  | new | translated |
+| <code>Discount cannot be greater than 100%</code> |  | new | translated |
 | <code>Discount cannot be greater than 100%.</code> |  | new | missing |
 | <code>Discount must be less than 100</code> |  | new | missing |
 | <code>Discount of {} applied as per Payment Term</code> |  | new | missing |
-| <code>Discount on Other Item</code> |  | new | missing |
-| <code>Discount on Price List Rate (%)</code> |  | new | missing |
+| <code>Discount on Other Item</code> |  | new | translated |
+| <code>Discount on Price List Rate (%)</code> |  | new | translated |
 | <code>Discounted Amount</code> |  | new | missing |
-| <code>Discounted Invoice</code> |  | new | missing |
-| <code>Discounts</code> |  | new | missing |
+| <code>Discounted Invoice</code> |  | new | translated |
+| <code>Discounts</code> |  | new | translated |
 | <code>Discounts to be applied in sequential ranges like buy 1 get 1, buy 2 get 2, buy 3 get 3 and so on</code> |  | new | missing |
 | <code>Discrepancy between General and Payment Ledger</code> |  | new | missing |
 | <code>Discretionary Reason</code> |  | new | missing |
@@ -4134,12 +4134,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Display Depends On</code> |  | new | translated |
 | <code>Display Depends On (JS)</code> |  | new | missing |
 | <code>Display Name</code> |  | new | missing |
-| <code>Disposal Date</code> |  | new | missing |
+| <code>Disposal Date</code> |  | new | translated |
 | <code>Disposal date {0} cannot be before {1} date {2} of the asset.</code> |  | new | missing |
 | <code>Distance</code> |  | new | missing |
 | <code>Distance UOM</code> |  | new | missing |
-| <code>Distance from left edge</code> |  | new | missing |
-| <code>Distance from top edge</code> |  | new | missing |
+| <code>Distance from left edge</code> |  | new | translated |
+| <code>Distance from top edge</code> |  | new | translated |
 | <code>Distinct unit of an Item</code> |  | new | missing |
 | <code>Distribute Additional Costs Based On</code> |  | new | missing |
 | <code>Distribute Charges Based On</code> |  | new | missing |
@@ -4147,12 +4147,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Distribute Manually</code> |  | new | missing |
 | <code>Distributed Discount Amount</code> |  | new | missing |
 | <code>Distribution Frequency</code> |  | new | missing |
-| <code>Distribution Name</code> |  | new | missing |
+| <code>Distribution Name</code> |  | new | translated |
 | <code>Distributor</code> |  | new | missing |
-| <code>Dividends Paid</code> |  | new | missing |
+| <code>Dividends Paid</code> |  | new | translated |
 | <code>Divider</code> |  | new | missing |
 | <code>Divorced</code> |  | new | missing |
-| <code>Do Not Contact</code> |  | new | missing |
+| <code>Do Not Contact</code> |  | new | translated |
 | <code>Do Not Create New User</code> |  | new | missing |
 | <code>Do Not Explode</code> |  | new | missing |
 | <code>Do Not Use Batchwise Valuation</code> |  | new | missing |
@@ -4165,7 +4165,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Do not update variants on save</code> |  | new | missing |
 | <code>Do not use Batch-wise Valuation</code> |  | new | missing |
 | <code>Do not warn me again about {0}</code> |  | new | missing |
-| <code>Do you really want to restore this scrapped asset?</code> |  | new | missing |
+| <code>Do you really want to restore this scrapped asset?</code> |  | new | translated |
 | <code>Do you still want to enable immutable ledger?</code> |  | new | missing |
 | <code>Do you still want to enable negative inventory?</code> |  | new | missing |
 | <code>Do you still want to proceed?</code> |  | new | missing |
@@ -4298,7 +4298,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Done</code> |  | new | translated |
 | <code>Donut</code> |  | new | translated |
 | <code>Doors</code> |  | new | missing |
-| <code>Double Declining Balance</code> |  | new | missing |
+| <code>Double Declining Balance</code> |  | new | translated |
 | <code>Double click to edit label</code> |  | new | missing |
 | <code>Download</code> |  | new | translated |
 | <code>Download</code> | Export report | new | missing |
@@ -4316,7 +4316,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Download as CSV</code> |  | new | missing |
 | <code>Download vCard</code> |  | new | missing |
 | <code>Download vCards</code> |  | new | missing |
-| <code>Downtime</code> |  | new | missing |
+| <code>Downtime</code> |  | new | translated |
 | <code>Downtime (In Hours)</code> |  | new | missing |
 | <code>Downtime Analysis</code> |  | new | missing |
 | <code>Downtime Entry</code> |  | new | missing |
@@ -4340,7 +4340,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Driver licence class</code> |  | new | missing |
 | <code>Driving License Categories</code> |  | new | missing |
 | <code>Driving License Category</code> |  | new | missing |
-| <code>Drop Ship</code> |  | new | missing |
+| <code>Drop Ship</code> |  | new | translated |
 | <code>Drop a file here, or click to select a file</code> |  | new | missing |
 | <code>Drop files here</code> |  | new | translated |
 | <code>Drop some files here, or click to select files</code> |  | new | missing |
@@ -4352,16 +4352,16 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Due Date cannot be after {0}</code> |  | new | missing |
 | <code>Due Date cannot be before {0}</code> |  | new | missing |
 | <code>Due to stock closing entry {0}, you cannot repost item valuation before {1}</code> |  | new | missing |
-| <code>Dunning</code> |  | new | missing |
-| <code>Dunning Amount</code> |  | new | missing |
+| <code>Dunning</code> |  | new | translated |
+| <code>Dunning Amount</code> |  | new | translated |
 | <code>Dunning Amount (Company Currency)</code> |  | new | missing |
-| <code>Dunning Fee</code> |  | new | missing |
-| <code>Dunning Letter</code> |  | new | missing |
-| <code>Dunning Letter Text</code> |  | new | missing |
+| <code>Dunning Fee</code> |  | new | translated |
+| <code>Dunning Letter</code> |  | new | translated |
+| <code>Dunning Letter Text</code> |  | new | translated |
 | <code>Dunning Letter for Dunning Type {0} in language &#x27;{1}&#x27; not found.</code> |  | new | missing |
 | <code>Dunning Letter for Dunning Type {0} not found.</code> |  | new | missing |
 | <code>Dunning Level</code> |  | new | missing |
-| <code>Dunning Type</code> |  | new | missing |
+| <code>Dunning Type</code> |  | new | translated |
 | <code>Duplicate</code> |  | new | translated |
 | <code>Duplicate Customer Group</code> |  | new | missing |
 | <code>Duplicate DocType</code> |  | new | missing |
@@ -4386,7 +4386,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Duplicate entry against the item code {0} and manufacturer {1}</code> |  | new | missing |
 | <code>Duplicate entry: {0}{1}</code> |  | new | missing |
 | <code>Duplicate field</code> |  | new | missing |
-| <code>Duplicate item group found in the item group table</code> |  | new | missing |
+| <code>Duplicate item group found in the item group table</code> |  | new | translated |
 | <code>Duplicate languages found on Dunning Letter Text. Keep only one of them.</code> |  | new | missing |
 | <code>Duplicate line reference: &#x27;{0}&#x27;</code> |  | new | missing |
 | <code>Duplicate project has been created</code> |  | new | missing |
@@ -4394,13 +4394,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Duplicate row {0} with same {1}</code> |  | new | missing |
 | <code>Duplicate rows</code> |  | new | missing |
 | <code>Duplicate vouchers found. Remove the duplicate vouchers to continue to repost.</code> |  | new | missing |
-| <code>Duplicate {0} found in the table</code> |  | new | missing |
+| <code>Duplicate {0} found in the table</code> |  | new | translated |
 | <code>Duplicate {0} rows</code> |  | new | missing |
 | <code>Duration</code> |  | new | translated |
 | <code>Duration (Days)</code> |  | new | missing |
 | <code>Duration (ms)</code> |  | new | missing |
-| <code>Duration in Days</code> |  | new | missing |
-| <code>Duties and Taxes</code> |  | new | missing |
+| <code>Duration in Days</code> |  | new | translated |
+| <code>Duties and Taxes</code> |  | new | translated |
 | <code>Dynamic</code> |  | new | missing |
 | <code>Dynamic Condition</code> |  | new | missing |
 | <code>Dynamic Filters</code> |  | new | translated |
@@ -4424,10 +4424,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>ERPNext User ID</code> |  | new | missing |
 | <code>ERPNext will make a stock ledger entry for each transaction of this item. Keep unchecked for non-stock or service items.</code> |  | new | missing |
 | <code>ESC</code> |  | new | excepted |
-| <code>Each Transaction</code> |  | new | missing |
+| <code>Each Transaction</code> |  | new | translated |
 | <code>Earliest</code> |  | new | missing |
 | <code>Earliest Age</code> |  | new | missing |
-| <code>Earnest Money</code> |  | new | missing |
+| <code>Earnest Money</code> |  | new | translated |
 | <code>Edit</code> |  | new | translated |
 | <code>Edit</code> | Button in list view actions menu | new | missing |
 | <code>Edit</code> | Button in web form | new | missing |
@@ -4458,12 +4458,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Edit Note</code> |  | new | missing |
 | <code>Edit Number Card</code> |  | new | missing |
 | <code>Edit Onboarding</code> |  | new | missing |
-| <code>Edit Posting Date and Time</code> |  | new | missing |
+| <code>Edit Posting Date and Time</code> |  | new | translated |
 | <code>Edit Print Format</code> |  | new | missing |
 | <code>Edit Profile</code> |  | new | translated |
 | <code>Edit Properties</code> |  | new | translated |
 | <code>Edit Quick List</code> |  | new | missing |
-| <code>Edit Receipt</code> |  | new | missing |
+| <code>Edit Receipt</code> |  | new | translated |
 | <code>Edit Section</code> |  | new | missing |
 | <code>Edit Shortcut</code> |  | new | translated |
 | <code>Edit Sidebar</code> |  | new | missing |
@@ -4512,11 +4512,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Email Address must be unique, it is already used in {0}</code> |  | new | missing |
 | <code>Email Address whose Google Contacts are to be synced.</code> |  | new | translated |
 | <code>Email Addresses</code> |  | new | translated |
-| <code>Email Campaign</code> |  | new | missing |
+| <code>Email Campaign</code> |  | new | translated |
 | <code>Email Campaign Error</code> |  | new | missing |
 | <code>Email Campaign For</code> |  | new | missing |
 | <code>Email Campaign Send Error</code> |  | new | missing |
-| <code>Email Details</code> |  | new | missing |
+| <code>Email Details</code> |  | new | translated |
 | <code>Email Digest</code> |  | new | missing |
 | <code>Email Digest Recipient</code> |  | new | missing |
 | <code>Email Digest Settings</code> |  | new | missing |
@@ -4541,7 +4541,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Email Rule</code> |  | new | translated |
 | <code>Email Sent</code> |  | new | translated |
 | <code>Email Sent At</code> |  | new | missing |
-| <code>Email Sent to Supplier {0}</code> |  | new | missing |
+| <code>Email Sent to Supplier {0}</code> |  | new | translated |
 | <code>Email Settings</code> |  | new | translated |
 | <code>Email Signature</code> |  | new | translated |
 | <code>Email Status</code> |  | new | translated |
@@ -4565,7 +4565,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Email or Phone/Mobile of the Contact are mandatory to continue.</code> |  | new | missing |
 | <code>Email queue is currently suspended. Resume to automatically send other emails.</code> |  | new | missing |
 | <code>Email sending undone</code> |  | new | missing |
-| <code>Email sent successfully.</code> |  | new | missing |
+| <code>Email sent successfully.</code> |  | new | translated |
 | <code>Email sent to</code> |  | new | missing |
 | <code>Email sent to {0}</code> |  | new | missing |
 | <code>Email size {0:.2f} MB exceeds the maximum allowed size of {1:.2f} MB</code> |  | new | missing |
@@ -4573,7 +4573,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Email:</code> |  | new | missing |
 | <code>Emails</code> |  | new | missing |
 | <code>Emails Pulled</code> |  | new | missing |
-| <code>Emails Queued</code> |  | new | missing |
+| <code>Emails Queued</code> |  | new | translated |
 | <code>Emails are already being pulled from this account.</code> |  | new | missing |
 | <code>Emails are muted</code> |  | new | translated |
 | <code>Emails will be sent with next possible workflow actions</code> |  | new | translated |
@@ -4581,9 +4581,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Emergency Contact</code> |  | new | missing |
 | <code>Emergency Contact Name</code> |  | new | missing |
 | <code>Emergency Phone</code> |  | new | missing |
-| <code>Employee</code> |  | new | missing |
-| <code>Employee Advance</code> |  | new | missing |
-| <code>Employee Advances</code> |  | new | missing |
+| <code>Employee</code> |  | new | translated |
+| <code>Employee Advance</code> |  | new | translated |
+| <code>Employee Advances</code> |  | new | translated |
 | <code>Employee Benefits Obligation</code> |  | new | missing |
 | <code>Employee Detail</code> |  | new | missing |
 | <code>Employee Education</code> |  | new | missing |
@@ -4597,7 +4597,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Employee User Id</code> |  | new | missing |
 | <code>Employee cannot report to himself.</code> |  | new | missing |
 | <code>Employee is required</code> |  | new | missing |
-| <code>Employee is required while issuing Asset {0}</code> |  | new | missing |
+| <code>Employee is required while issuing Asset {0}</code> |  | new | translated |
 | <code>Employee {0} already has a linked user</code> |  | new | missing |
 | <code>Employee {0} does not belong to the company {1}</code> |  | new | missing |
 | <code>Employee {0} is currently working on another workstation. Please assign another employee.</code> |  | new | missing |
@@ -4617,17 +4617,17 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Enable Allow Auto Repeat for the doctype {0} in Customize Form</code> |  | new | translated |
 | <code>Enable Allow Partial Reservation in the Stock Settings to reserve partial stock.</code> |  | new | missing |
 | <code>Enable Appointment Booking Through Portal</code> |  | new | missing |
-| <code>Enable Appointment Scheduling</code> |  | new | missing |
-| <code>Enable Auto Email</code> |  | new | missing |
+| <code>Enable Appointment Scheduling</code> |  | new | translated |
+| <code>Enable Auto Email</code> |  | new | translated |
 | <code>Enable Auto Re-Order</code> |  | new | missing |
 | <code>Enable Auto Reply</code> |  | new | translated |
 | <code>Enable Automatic Linking in Documents</code> |  | new | translated |
 | <code>Enable Automatic Party Matching</code> |  | new | missing |
-| <code>Enable Capital Work in Progress Accounting</code> |  | new | missing |
+| <code>Enable Capital Work in Progress Accounting</code> |  | new | translated |
 | <code>Enable Comments</code> |  | new | translated |
 | <code>Enable Common Party Accounting</code> |  | new | missing |
-| <code>Enable Deferred Expense</code> |  | new | missing |
-| <code>Enable Deferred Revenue</code> |  | new | missing |
+| <code>Enable Deferred Expense</code> |  | new | translated |
+| <code>Enable Deferred Revenue</code> |  | new | translated |
 | <code>Enable Discounts and Margin</code> |  | new | missing |
 | <code>Enable Dynamic Client Registration</code> |  | new | missing |
 | <code>Enable Email Notifications</code> |  | new | translated |
@@ -4722,14 +4722,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>End Date</code> |  | new | translated |
 | <code>End Date Field</code> |  | new | translated |
 | <code>End Date cannot be before Start Date!</code> |  | new | translated |
-| <code>End Date cannot be before Start Date.</code> |  | new | missing |
+| <code>End Date cannot be before Start Date.</code> |  | new | translated |
 | <code>End Date cannot be today.</code> |  | new | missing |
 | <code>End Time</code> |  | new | missing |
 | <code>End Transit</code> |  | new | missing |
-| <code>End Year</code> |  | new | missing |
-| <code>End Year cannot be before Start Year</code> |  | new | missing |
-| <code>End date cannot be before start date</code> |  | new | missing |
-| <code>End date of current invoice&#x27;s period</code> |  | new | missing |
+| <code>End Year</code> |  | new | translated |
+| <code>End Year cannot be before Start Year</code> |  | new | translated |
+| <code>End date cannot be before start date</code> |  | new | translated |
+| <code>End date of current invoice&#x27;s period</code> |  | new | translated |
 | <code>End of Life</code> |  | new | missing |
 | <code>End of the current subscription period</code> |  | new | missing |
 | <code>Ended At</code> |  | new | missing |
@@ -4742,7 +4742,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Engineer</code> |  | new | missing |
 | <code>Enqueued By</code> |  | new | missing |
 | <code>Enqueued creation of indexes</code> |  | new | missing |
-| <code>Ensure Delivery Based on Produced Serial No</code> |  | new | missing |
+| <code>Ensure Delivery Based on Produced Serial No</code> |  | new | translated |
 | <code>Ensure the user and group search paths are correct.</code> |  | new | missing |
 | <code>Enter API key in Google Settings.</code> |  | new | missing |
 | <code>Enter Client Id and Client Secret in Google Settings.</code> |  | new | translated |
@@ -4760,14 +4760,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Enter a name for the Operation, for example, Cutting.</code> |  | new | missing |
 | <code>Enter a name for this Holiday List.</code> |  | new | missing |
 | <code>Enter a name for this {0}</code> |  | new | missing |
-| <code>Enter amount to be redeemed.</code> |  | new | missing |
+| <code>Enter amount to be redeemed.</code> |  | new | translated |
 | <code>Enter an Item Code, the name will be auto-filled the same as Item Code on clicking inside the Item Name field.</code> |  | new | missing |
-| <code>Enter customer&#x27;s email</code> |  | new | missing |
-| <code>Enter customer&#x27;s phone number</code> |  | new | missing |
+| <code>Enter customer&#x27;s email</code> |  | new | translated |
+| <code>Enter customer&#x27;s phone number</code> |  | new | translated |
 | <code>Enter date to scrap asset</code> |  | new | missing |
 | <code>Enter default value fields (keys) and values. If you add multiple values for a field, the first one will be picked. These defaults are also used to set &quot;match&quot; permission rules. To see list of fields, go to &quot;Customize Form&quot;.</code> |  | new | translated |
-| <code>Enter depreciation details</code> |  | new | missing |
-| <code>Enter discount percentage.</code> |  | new | missing |
+| <code>Enter depreciation details</code> |  | new | translated |
+| <code>Enter discount percentage.</code> |  | new | translated |
 | <code>Enter each serial no in a new line</code> |  | new | missing |
 | <code>Enter folder name</code> |  | new | translated |
 | <code>Enter list of Options, each on a new line.</code> |  | new | missing |
@@ -4785,21 +4785,21 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Enter url parameter for message</code> |  | new | translated |
 | <code>Enter url parameter for receiver nos</code> |  | new | translated |
 | <code>Enter your password</code> |  | new | translated |
-| <code>Enter {0} amount.</code> |  | new | missing |
+| <code>Enter {0} amount.</code> |  | new | translated |
 | <code>Entertainment &amp; Leisure</code> |  | new | missing |
-| <code>Entertainment Expenses</code> |  | new | missing |
-| <code>Entity</code> |  | new | missing |
+| <code>Entertainment Expenses</code> |  | new | translated |
+| <code>Entity</code> |  | new | translated |
 | <code>Entity Name</code> |  | new | translated |
 | <code>Entity Type</code> |  | new | translated |
 | <code>Entries below have a posting date after {0} but the clearance date is before {1}.</code> |  | new | missing |
-| <code>Entry Type</code> |  | new | missing |
+| <code>Entry Type</code> |  | new | translated |
 | <code>Equals</code> |  | new | translated |
-| <code>Equity</code> |  | new | missing |
-| <code>Equity/Liability Account</code> |  | new | missing |
+| <code>Equity</code> |  | new | translated |
+| <code>Equity/Liability Account</code> |  | new | translated |
 | <code>Erg</code> |  | new | missing |
 | <code>Error</code> |  | new | translated |
 | <code>Error</code> | Title of error message in web form | new | missing |
-| <code>Error Description</code> |  | new | missing |
+| <code>Error Description</code> |  | new | translated |
 | <code>Error Log</code> |  | new | translated |
 | <code>Error Logs</code> |  | new | missing |
 | <code>Error Message</code> |  | new | translated |
@@ -4808,7 +4808,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Error connecting via IMAP/POP3: {e}</code> |  | new | missing |
 | <code>Error connecting via SMTP: {e}</code> |  | new | missing |
 | <code>Error during caller information update</code> |  | new | missing |
-| <code>Error evaluating the criteria formula</code> |  | new | missing |
+| <code>Error evaluating the criteria formula</code> |  | new | translated |
 | <code>Error getting details for {0}: {1}</code> |  | new | missing |
 | <code>Error has occurred in {0}</code> |  | new | translated |
 | <code>Error in Client Script</code> |  | new | missing |
@@ -4831,15 +4831,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Error: This asset already has {0} depreciation periods booked.<br>					The `depreciation start` date must be at least {1} periods after the `available for use` date.<br>					Please correct the dates accordingly.</code> |  | new | missing |
 | <code>Error: Value missing for {0}: {1}</code> |  | new | translated |
 | <code>Error: {0} Row #{1}: Value missing for: {2}</code> |  | new | missing |
-| <code>Error: {0} is mandatory field</code> |  | new | missing |
+| <code>Error: {0} is mandatory field</code> |  | new | translated |
 | <code>Errors</code> |  | new | missing |
 | <code>Errors Notification</code> |  | new | missing |
 | <code>Estimated Arrival</code> |  | new | missing |
-| <code>Estimated Cost</code> |  | new | missing |
+| <code>Estimated Cost</code> |  | new | translated |
 | <code>Estimated Time and Cost</code> |  | new | missing |
 | <code>Evaluate as Expression</code> |  | new | missing |
-| <code>Evaluation Period</code> |  | new | missing |
-| <code>Even if there are multiple Pricing Rules with highest priority, then following internal priorities are applied:</code> |  | new | missing |
+| <code>Evaluation Period</code> |  | new | translated |
+| <code>Even if there are multiple Pricing Rules with highest priority, then following internal priorities are applied:</code> |  | new | translated |
 | <code>Event</code> |  | new | translated |
 | <code>Event Category</code> |  | new | translated |
 | <code>Event Frequency</code> |  | new | missing |
@@ -4879,15 +4879,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Exchange Gain / Loss</code> |  | new | missing |
 | <code>Exchange Gain / Loss Account</code> |  | new | missing |
 | <code>Exchange Gain Or Loss</code> |  | new | missing |
-| <code>Exchange Gain/Loss</code> |  | new | missing |
+| <code>Exchange Gain/Loss</code> |  | new | translated |
 | <code>Exchange Gain/Loss amount has been booked through {0}</code> |  | new | missing |
-| <code>Exchange Rate</code> |  | new | missing |
-| <code>Exchange Rate Revaluation</code> |  | new | missing |
-| <code>Exchange Rate Revaluation Account</code> |  | new | missing |
+| <code>Exchange Rate</code> |  | new | translated |
+| <code>Exchange Rate Revaluation</code> |  | new | translated |
+| <code>Exchange Rate Revaluation Account</code> |  | new | translated |
 | <code>Exchange Rate Revaluation Settings</code> |  | new | missing |
 | <code>Exchange Rate must be same as {0} {1} ({2})</code> |  | new | missing |
 | <code>Exchange rate {0} does not match the exchange rate of Purchase Receipt {1}. Use the same exchange rate as the Purchase Receipt or enable {2} in {3} to adjust the landed cost based on this invoice.</code> |  | new | missing |
-| <code>Excise Entry</code> |  | new | missing |
+| <code>Excise Entry</code> |  | new | translated |
 | <code>Excise Invoice</code> |  | new | missing |
 | <code>Excise Page Number</code> |  | new | missing |
 | <code>Exclude Zero Balance Parties</code> |  | new | missing |
@@ -4918,12 +4918,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Expand All</code> |  | new | translated |
 | <code>Expected</code> |  | new | missing |
 | <code>Expected &#x27;and&#x27; or &#x27;or&#x27; operator, found: {0}</code> |  | new | missing |
-| <code>Expected Amount</code> |  | new | missing |
+| <code>Expected Amount</code> |  | new | translated |
 | <code>Expected Arrival Date</code> |  | new | missing |
 | <code>Expected Balance Qty</code> |  | new | missing |
-| <code>Expected Closing Date</code> |  | new | missing |
-| <code>Expected Delivery Date</code> |  | new | missing |
-| <code>Expected Delivery Date should be after Sales Order Date</code> |  | new | missing |
+| <code>Expected Closing Date</code> |  | new | translated |
+| <code>Expected Delivery Date</code> |  | new | translated |
+| <code>Expected Delivery Date should be after Sales Order Date</code> |  | new | translated |
 | <code>Expected End Date</code> |  | new | missing |
 | <code>Expected End Date should be less than or equal to parent task&#x27;s Expected End Date {0}.</code> |  | new | missing |
 | <code>Expected Hrs</code> |  | new | missing |
@@ -4931,22 +4931,22 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Expected Stock Value</code> |  | new | missing |
 | <code>Expected Time (in hours)</code> |  | new | missing |
 | <code>Expected Time Required (In Mins)</code> |  | new | missing |
-| <code>Expected Value After Useful Life</code> |  | new | missing |
-| <code>Expense</code> |  | new | missing |
+| <code>Expected Value After Useful Life</code> |  | new | translated |
+| <code>Expense</code> |  | new | translated |
 | <code>Expense / Difference account ({0}) must be a &#x27;Profit or Loss&#x27; account</code> |  | new | missing |
-| <code>Expense Account</code> |  | new | missing |
+| <code>Expense Account</code> |  | new | translated |
 | <code>Expense Account Missing</code> |  | new | missing |
-| <code>Expense Claim</code> |  | new | missing |
-| <code>Expense Head</code> |  | new | missing |
-| <code>Expense Head Changed</code> |  | new | missing |
-| <code>Expense account is mandatory for item {0}</code> |  | new | missing |
+| <code>Expense Claim</code> |  | new | translated |
+| <code>Expense Head</code> |  | new | translated |
+| <code>Expense Head Changed</code> |  | new | translated |
+| <code>Expense account is mandatory for item {0}</code> |  | new | translated |
 | <code>Expense for this item will be recognized over a period of months. Eg: prepaid insurance or annual software license</code> |  | new | missing |
-| <code>Expenses</code> |  | new | missing |
+| <code>Expenses</code> |  | new | translated |
 | <code>Expenses Added To Stock Account</code> |  | new | missing |
 | <code>Expenses Added To Stock Contra Account</code> |  | new | missing |
 | <code>Expenses Added To Stock for Item {0}</code> |  | new | missing |
-| <code>Expenses Included In Asset Valuation</code> |  | new | missing |
-| <code>Expenses Included In Valuation</code> |  | new | missing |
+| <code>Expenses Included In Asset Valuation</code> |  | new | translated |
+| <code>Expenses Included In Valuation</code> |  | new | translated |
 | <code>Experimental</code> |  | new | missing |
 | <code>Expert</code> |  | new | translated |
 | <code>Expiration date must be in the future</code> |  | new | missing |
@@ -4961,9 +4961,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Expires today or already expired</code> |  | new | missing |
 | <code>Expiry</code> |  | new | missing |
 | <code>Expiry (In Days)</code> |  | new | missing |
-| <code>Expiry Date</code> |  | new | missing |
+| <code>Expiry Date</code> |  | new | translated |
 | <code>Expiry Date Mandatory</code> |  | new | missing |
-| <code>Expiry Duration (in days)</code> |  | new | missing |
+| <code>Expiry Duration (in days)</code> |  | new | translated |
 | <code>Expiry time of QR Code Image Page</code> |  | new | translated |
 | <code>Exploded Items</code> |  | new | missing |
 | <code>Exponential Smoothing Forecasting</code> |  | new | missing |
@@ -5070,7 +5070,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Failed while calling API {0}</code> |  | new | missing |
 | <code>Failing Scheduled Jobs (last 7 days)</code> |  | new | missing |
 | <code>Failure</code> |  | new | translated |
-| <code>Failure Date</code> |  | new | missing |
+| <code>Failure Date</code> |  | new | translated |
 | <code>Failure Description</code> |  | new | missing |
 | <code>Failure Rate</code> |  | new | missing |
 | <code>Failure: {0}</code> |  | new | missing |
@@ -5082,17 +5082,17 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Feedback</code> |  | new | translated |
 | <code>Feedback By</code> |  | new | missing |
 | <code>Feedback Template</code> |  | new | missing |
-| <code>Fees</code> |  | new | missing |
+| <code>Fees</code> |  | new | translated |
 | <code>Female</code> |  | new | translated |
 | <code>Fetch Based On</code> |  | new | missing |
-| <code>Fetch Customers</code> |  | new | missing |
+| <code>Fetch Customers</code> |  | new | translated |
 | <code>Fetch From</code> |  | new | translated |
 | <code>Fetch Images</code> |  | new | translated |
 | <code>Fetch Items from Warehouse</code> |  | new | missing |
 | <code>Fetch Latest Exchange Rate</code> |  | new | missing |
 | <code>Fetch Overdue Payments</code> |  | new | missing |
 | <code>Fetch Payment Schedule in Payment Request</code> |  | new | missing |
-| <code>Fetch Subscription Updates</code> |  | new | missing |
+| <code>Fetch Subscription Updates</code> |  | new | translated |
 | <code>Fetch Timesheet</code> |  | new | missing |
 | <code>Fetch Timesheet in Sales Invoice</code> |  | new | missing |
 | <code>Fetch Value From</code> |  | new | missing |
@@ -5101,7 +5101,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Fetch on Save if Empty</code> |  | new | missing |
 | <code>Fetch valuation rate for internal Transaction</code> |  | new | missing |
 | <code>Fetched automatically on sales orders and invoices for this customer.</code> |  | new | missing |
-| <code>Fetched only {0} available serial numbers.</code> |  | new | missing |
+| <code>Fetched only {0} available serial numbers.</code> |  | new | translated |
 | <code>Fetching Material Requests...</code> |  | new | missing |
 | <code>Fetching Sales Orders...</code> |  | new | missing |
 | <code>Fetching default Global Search documents.</code> |  | new | translated |
@@ -5124,7 +5124,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Field Template</code> |  | new | missing |
 | <code>Field Type</code> |  | new | translated |
 | <code>Field and operator must be strings</code> |  | new | missing |
-| <code>Field in Bank Transaction</code> |  | new | missing |
+| <code>Field in Bank Transaction</code> |  | new | translated |
 | <code>Field not permitted in query</code> |  | new | missing |
 | <code>Field that represents the Workflow State of the transaction (if field is not present, a new hidden Custom Field will be created)</code> |  | new | translated |
 | <code>Field to Track</code> |  | new | translated |
@@ -5183,9 +5183,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Files</code> |  | new | translated |
 | <code>Filter</code> |  | new | translated |
 | <code>Filter Area</code> |  | new | missing |
-| <code>Filter Based On</code> |  | new | missing |
+| <code>Filter Based On</code> |  | new | translated |
 | <code>Filter Data</code> |  | new | translated |
-| <code>Filter Duration (Months)</code> |  | new | missing |
+| <code>Filter Duration (Months)</code> |  | new | translated |
 | <code>Filter List</code> |  | new | translated |
 | <code>Filter Meta</code> |  | new | translated |
 | <code>Filter Name</code> |  | new | translated |
@@ -5193,7 +5193,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Filter Values</code> |  | new | translated |
 | <code>Filter by Reference Date</code> |  | new | missing |
 | <code>Filter by amount</code> |  | new | missing |
-| <code>Filter by invoice status</code> |  | new | missing |
+| <code>Filter by invoice status</code> |  | new | translated |
 | <code>Filter condition missing after operator: {0}</code> |  | new | missing |
 | <code>Filter fields have invalid backtick notation: {0}</code> |  | new | missing |
 | <code>Filter must be [field, operator, value]</code> |  | new | missing |
@@ -5222,10 +5222,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Filters:</code> |  | new | missing |
 | <code>Final BOM</code> |  | new | missing |
 | <code>Final Product</code> |  | new | missing |
-| <code>Finance Book</code> |  | new | missing |
-| <code>Finance Book Detail</code> |  | new | missing |
-| <code>Finance Book Id</code> |  | new | missing |
-| <code>Finance Books</code> |  | new | missing |
+| <code>Finance Book</code> |  | new | translated |
+| <code>Finance Book Detail</code> |  | new | translated |
+| <code>Finance Book Id</code> |  | new | translated |
+| <code>Finance Books</code> |  | new | translated |
 | <code>Finance Manager</code> |  | new | missing |
 | <code>Financial Ratios</code> |  | new | missing |
 | <code>Financial Report Row</code> |  | new | missing |
@@ -5234,7 +5234,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Financial Report Template {0} not found</code> |  | new | missing |
 | <code>Financial Reports</code> |  | new | missing |
 | <code>Financial Services</code> |  | new | missing |
-| <code>Financial Statements</code> |  | new | missing |
+| <code>Financial Statements</code> |  | new | translated |
 | <code>Financial Year Begins On</code> |  | new | missing |
 | <code>Financial reports will be generated using GL Entry doctypes (should be enabled if Period Closing Voucher is not posted for all years sequentially or missing)</code> |  | new | missing |
 | <code>Find {0} in {1}</code> |  | new | translated |
@@ -5243,10 +5243,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Finish</code> |  | new | missing |
 | <code>Finished</code> |  | new | translated |
 | <code>Finished At</code> |  | new | missing |
-| <code>Finished Good</code> |  | new | missing |
+| <code>Finished Good</code> |  | new | translated |
 | <code>Finished Good BOM</code> |  | new | missing |
 | <code>Finished Good Item</code> |  | new | missing |
-| <code>Finished Good Item Code</code> |  | new | missing |
+| <code>Finished Good Item Code</code> |  | new | translated |
 | <code>Finished Good Item Qty</code> |  | new | missing |
 | <code>Finished Good Item Quantity</code> |  | new | missing |
 | <code>Finished Good Item is not specified for service item {0}</code> |  | new | missing |
@@ -5260,7 +5260,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Finished Good {0} is disabled.</code> |  | new | missing |
 | <code>Finished Good {0} must be a stock item.</code> |  | new | missing |
 | <code>Finished Good {0} must be a sub-contracted item.</code> |  | new | missing |
-| <code>Finished Goods</code> |  | new | missing |
+| <code>Finished Goods</code> |  | new | translated |
 | <code>Finished Goods Based Operating Cost</code> |  | new | missing |
 | <code>Finished Goods Item</code> |  | new | missing |
 | <code>Finished Goods Reference</code> |  | new | missing |
@@ -5278,38 +5278,38 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>First Responded On</code> |  | new | missing |
 | <code>First Response Due</code> |  | new | missing |
 | <code>First Response SLA Failed by {}</code> |  | new | missing |
-| <code>First Response Time</code> |  | new | missing |
+| <code>First Response Time</code> |  | new | translated |
 | <code>First Response Time for Issues</code> |  | new | missing |
-| <code>First Response Time for Opportunity</code> |  | new | missing |
+| <code>First Response Time for Opportunity</code> |  | new | translated |
 | <code>First Seen</code> |  | new | missing |
 | <code>First Success Message</code> |  | new | translated |
 | <code>First Used On</code> |  | new | missing |
 | <code>First data column must be blank.</code> |  | new | translated |
 | <code>First set the name and save the record.</code> |  | new | translated |
 | <code>Fiscal Regime is mandatory, kindly set the fiscal regime in the company {0}</code> |  | new | missing |
-| <code>Fiscal Year</code> |  | new | missing |
+| <code>Fiscal Year</code> |  | new | translated |
 | <code>Fiscal Year (requires ERPNext to be installed)</code> |  | new | missing |
-| <code>Fiscal Year Company</code> |  | new | missing |
+| <code>Fiscal Year Company</code> |  | new | translated |
 | <code>Fiscal Year Details</code> |  | new | missing |
-| <code>Fiscal Year End Date should be one year after Fiscal Year Start Date</code> |  | new | missing |
+| <code>Fiscal Year End Date should be one year after Fiscal Year Start Date</code> |  | new | translated |
 | <code>Fiscal Year {0} Does Not Exist</code> |  | new | missing |
-| <code>Fiscal Year {0} does not exist</code> |  | new | missing |
+| <code>Fiscal Year {0} does not exist</code> |  | new | translated |
 | <code>Fiscal Year {0} is not available for Company {1}.</code> |  | new | missing |
-| <code>Fiscal Year {0} is required</code> |  | new | missing |
+| <code>Fiscal Year {0} is required</code> |  | new | translated |
 | <code>Fit</code> |  | new | missing |
 | <code>Fix SABB Entry</code> |  | new | missing |
-| <code>Fixed</code> |  | new | missing |
-| <code>Fixed Asset</code> |  | new | missing |
-| <code>Fixed Asset Account</code> |  | new | missing |
+| <code>Fixed</code> |  | new | translated |
+| <code>Fixed Asset</code> |  | new | translated |
+| <code>Fixed Asset Account</code> |  | new | translated |
 | <code>Fixed Asset Defaults</code> |  | new | missing |
 | <code>Fixed Asset Item must be a non-stock item.</code> |  | new | missing |
-| <code>Fixed Asset Register</code> |  | new | missing |
+| <code>Fixed Asset Register</code> |  | new | translated |
 | <code>Fixed Asset Turnover Ratio</code> |  | new | missing |
 | <code>Fixed Asset item {0} cannot be used in BOMs.</code> |  | new | missing |
-| <code>Fixed Assets</code> |  | new | missing |
-| <code>Fixed Deposit Number</code> |  | new | missing |
+| <code>Fixed Assets</code> |  | new | translated |
+| <code>Fixed Deposit Number</code> |  | new | translated |
 | <code>Fixed Outgoing Email Account</code> |  | new | missing |
-| <code>Fixed Rate</code> |  | new | missing |
+| <code>Fixed Rate</code> |  | new | translated |
 | <code>Fixed Time</code> |  | new | missing |
 | <code>Flag</code> |  | new | translated |
 | <code>Fleet Manager</code> |  | new | missing |
@@ -5319,8 +5319,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Floor Name</code> |  | new | missing |
 | <code>Fluid Ounce (UK)</code> |  | new | missing |
 | <code>Fluid Ounce (US)</code> |  | new | missing |
-| <code>Focus on Item Group filter</code> |  | new | missing |
-| <code>Focus on search input</code> |  | new | missing |
+| <code>Focus on Item Group filter</code> |  | new | translated |
+| <code>Focus on search input</code> |  | new | translated |
 | <code>Fold</code> |  | new | translated |
 | <code>Fold can not be at the end of the form</code> |  | new | translated |
 | <code>Fold must come before a Section Break</code> |  | new | translated |
@@ -5329,15 +5329,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Folder name should not include &#x27;/&#x27; (slash)</code> |  | new | translated |
 | <code>Folder {0} is not empty</code> |  | new | translated |
 | <code>Folio</code> |  | new | excepted |
-| <code>Folio no.</code> |  | new | missing |
+| <code>Folio no.</code> |  | new | translated |
 | <code>Follow</code> |  | new | translated |
-| <code>Follow Calendar Months</code> |  | new | missing |
+| <code>Follow Calendar Months</code> |  | new | translated |
 | <code>Followed by</code> |  | new | translated |
 | <code>Following Material Requests have been raised automatically based on Item&#x27;s re-order level</code> |  | new | missing |
 | <code>Following Report Filters have missing values:</code> |  | new | missing |
 | <code>Following document {0}</code> |  | new | missing |
 | <code>Following documents are linked with {0}</code> |  | new | missing |
-| <code>Following fields are mandatory to create address:</code> |  | new | missing |
+| <code>Following fields are mandatory to create address:</code> |  | new | translated |
 | <code>Following fields are missing:</code> |  | new | translated |
 | <code>Following fields have invalid values:</code> |  | new | missing |
 | <code>Following fields have missing values</code> |  | new | missing |
@@ -5366,7 +5366,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Footer Template Values</code> |  | new | translated |
 | <code>Footer might not be visible as {0} option is disabled&lt;/div&gt;</code> |  | new | excepted |
 | <code>Footer will display correctly only in PDF</code> |  | new | translated |
-| <code>For</code> |  | new | missing |
+| <code>For</code> |  | new | translated |
 | <code>For &#x27;Product Bundle&#x27; items, Warehouse, Serial No and Batch No will be considered from the &#x27;Packing List&#x27; table. If Warehouse and Batch No are same for all packing items for any &#x27;Product Bundle&#x27; item, those values can be entered in the main Item table, values will be copied to &#x27;Packing List&#x27; table.</code> |  | new | missing |
 | <code>For All Stock Asset Accounts</code> |  | new | missing |
 | <code>For Buying</code> |  | new | missing |
@@ -5381,16 +5381,16 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>For Job Card</code> |  | new | missing |
 | <code>For Operation</code> |  | new | missing |
 | <code>For PDF statements, we auto-detect the tables on each page. You can then confirm each detected table, map its columns, and exclude anything that is not transactions (e.g. ads or summaries). Password-protected PDFs are supported - the password is saved on the bank account and reused.</code> |  | new | missing |
-| <code>For Price List</code> |  | new | missing |
-| <code>For Production</code> |  | new | missing |
+| <code>For Price List</code> |  | new | translated |
+| <code>For Production</code> |  | new | translated |
 | <code>For Quantity (Manufactured Qty) is mandatory</code> |  | new | missing |
 | <code>For Raw Materials</code> |  | new | missing |
 | <code>For Return Invoices with Stock effect, &#x27;0&#x27; qty Items are not allowed. Following rows are affected: {0}</code> |  | new | missing |
 | <code>For Selling</code> |  | new | missing |
-| <code>For Supplier</code> |  | new | missing |
+| <code>For Supplier</code> |  | new | translated |
 | <code>For User</code> |  | new | translated |
 | <code>For Value</code> |  | new | translated |
-| <code>For Warehouse</code> |  | new | missing |
+| <code>For Warehouse</code> |  | new | translated |
 | <code>For Work Order</code> |  | new | missing |
 | <code>For a dynamic subject, use Jinja tags like this: &lt;code&gt;{{ doc.name }} Delivered&lt;/code&gt;</code> |  | new | missing |
 | <code>For an item {0}, quantity must be negative number</code> |  | new | missing |
@@ -5398,15 +5398,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>For comparison, use &gt;5, &lt;10 or =324.<br>For ranges, use 5:10 (for values between 5 &amp; 10).</code> |  | new | missing |
 | <code>For comparison, use &gt;5, &lt;10 or =324. For ranges, use 5:10 (for values between 5 &amp; 10).</code> |  | new | translated |
 | <code>For dunning fee and interest</code> |  | new | missing |
-| <code>For e.g. 2012, 2012-13</code> |  | new | missing |
+| <code>For e.g. 2012, 2012-13</code> |  | new | translated |
 | <code>For example, if set to 4, the system will try to find matching transactions in other banks 4 days before and after the transaction date. This is because transactions can clear on different days on different bank accounts.</code> |  | new | missing |
 | <code>For example, if set to 4, the system will try to find matching transfer transactions in other banks 4 days before and after the transaction date. This is because transactions can clear on different days on different bank accounts.</code> |  | new | missing |
 | <code>For example:</code> |  | new | missing |
 | <code>For example: If you want to include the document ID, use {0}</code> |  | new | translated |
 | <code>For example: {} Open</code> |  | new | translated |
 | <code>For help see &lt;a href=&quot;https://frappeframework.com/docs/user/en/guides/portal-development/web-forms&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Client Script API and Examples&lt;/a&gt;</code> |  | new | missing |
-| <code>For how much spent = 1 Loyalty Point</code> |  | new | missing |
-| <code>For individual supplier</code> |  | new | missing |
+| <code>For how much spent = 1 Loyalty Point</code> |  | new | translated |
+| <code>For individual supplier</code> |  | new | translated |
 | <code>For item &lt;b&gt;{0}&lt;/b&gt;, only &lt;b&gt;{1}&lt;/b&gt; asset have been created or linked to &lt;b&gt;{2}&lt;/b&gt;. Please create or link &lt;b&gt;{3}&lt;/b&gt; more asset with the respective document.</code> |  | new | missing |
 | <code>For item {0}, rate must be a positive number. To Allow negative rates, enable {1} in {2}</code> |  | new | missing |
 | <code>For legacy serial nos, do not fetch incoming rate from serial no and calculate it based on the inward transaction</code> |  | new | missing |
@@ -5418,10 +5418,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>For projected and forecast quantities, the system will consider all child warehouses under the selected parent warehouse.</code> |  | new | missing |
 | <code>For quantity {0} should not be greater than allowed quantity {1}</code> |  | new | missing |
 | <code>For reference</code> |  | new | missing |
-| <code>For row {0} in {1}. To include {2} in Item rate, rows {3} must also be included</code> |  | new | missing |
+| <code>For row {0} in {1}. To include {2} in Item rate, rows {3} must also be included</code> |  | new | translated |
 | <code>For row {0}: Enter Planned Qty</code> |  | new | missing |
 | <code>For service item</code> |  | new | missing |
-| <code>For the &#x27;Apply Rule On Other&#x27; condition the field {0} is mandatory</code> |  | new | missing |
+| <code>For the &#x27;Apply Rule On Other&#x27; condition the field {0} is mandatory</code> |  | new | translated |
 | <code>For the convenience of customers, these codes can be used in print formats like Invoices and Delivery Notes</code> |  | new | missing |
 | <code>For the item {0}, the consumed quantity should be {1} according to the BOM {2}.</code> |  | new | missing |
 | <code>For the new {0} to take effect, would you like to clear the current {1}?</code> | Clear payment terms template and/or payment schedule when due date is changed | new | missing |
@@ -5488,16 +5488,16 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Free</code> | Image Cropper | new | missing |
 | <code>Free Alongside Ship</code> |  | new | missing |
 | <code>Free Carrier</code> |  | new | missing |
-| <code>Free Item</code> |  | new | missing |
+| <code>Free Item</code> |  | new | translated |
 | <code>Free Item Rate</code> |  | new | missing |
 | <code>Free On Board</code> |  | new | missing |
-| <code>Free item code is not selected</code> |  | new | missing |
-| <code>Free item not set in the pricing rule {0}</code> |  | new | missing |
+| <code>Free item code is not selected</code> |  | new | translated |
+| <code>Free item not set in the pricing rule {0}</code> |  | new | translated |
 | <code>Freeze stocks older than (days)</code> |  | new | missing |
-| <code>Freight and Forwarding Charges</code> |  | new | missing |
+| <code>Freight and Forwarding Charges</code> |  | new | translated |
 | <code>Frequency</code> |  | new | translated |
 | <code>Frequency To Collect Progress</code> |  | new | missing |
-| <code>Frequency of Depreciation (Months)</code> |  | new | missing |
+| <code>Frequency of Depreciation (Months)</code> |  | new | translated |
 | <code>Frequently Read Articles</code> |  | new | missing |
 | <code>Friday</code> |  | new | translated |
 | <code>From</code> |  | new | translated |
@@ -5509,67 +5509,67 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>From Corrective Job Card</code> |  | new | missing |
 | <code>From Currency</code> |  | new | missing |
 | <code>From Currency and To Currency cannot be same</code> |  | new | missing |
-| <code>From Customer</code> |  | new | missing |
+| <code>From Customer</code> |  | new | translated |
 | <code>From Date</code> |  | new | translated |
 | <code>From Date Field</code> |  | new | translated |
-| <code>From Date and To Date are Mandatory</code> |  | new | missing |
+| <code>From Date and To Date are Mandatory</code> |  | new | translated |
 | <code>From Date and To Date are mandatory</code> |  | new | missing |
-| <code>From Date and To Date lie in different Fiscal Year</code> |  | new | missing |
-| <code>From Date cannot be greater than To Date</code> |  | new | missing |
+| <code>From Date and To Date lie in different Fiscal Year</code> |  | new | translated |
+| <code>From Date cannot be greater than To Date</code> |  | new | translated |
 | <code>From Date cannot be greater than To Date.</code> |  | new | missing |
 | <code>From Date is mandatory</code> |  | new | missing |
-| <code>From Date must be before To Date</code> |  | new | missing |
-| <code>From Date should be within the Fiscal Year. Assuming From Date = {0}</code> |  | new | missing |
+| <code>From Date must be before To Date</code> |  | new | translated |
+| <code>From Date should be within the Fiscal Year. Assuming From Date = {0}</code> |  | new | translated |
 | <code>From Date: {0} cannot be greater than To date: {1}</code> |  | new | missing |
 | <code>From Datetime</code> |  | new | missing |
 | <code>From Delivery Date</code> |  | new | missing |
-| <code>From Delivery Note</code> |  | new | missing |
+| <code>From Delivery Note</code> |  | new | translated |
 | <code>From Doctype</code> |  | new | missing |
 | <code>From Document Type</code> |  | new | translated |
 | <code>From Due Date</code> |  | new | missing |
-| <code>From Employee</code> |  | new | missing |
+| <code>From Employee</code> |  | new | translated |
 | <code>From Employee is required while issuing Asset {0}</code> |  | new | missing |
 | <code>From External Ecomm Platform</code> |  | new | missing |
 | <code>From Field</code> |  | new | missing |
-| <code>From Fiscal Year</code> |  | new | missing |
+| <code>From Fiscal Year</code> |  | new | translated |
 | <code>From Fiscal Year cannot be greater than To Fiscal Year</code> |  | new | missing |
-| <code>From Folio No</code> |  | new | missing |
+| <code>From Folio No</code> |  | new | translated |
 | <code>From Full Name</code> |  | new | translated |
-| <code>From Invoice Date</code> |  | new | missing |
-| <code>From No</code> |  | new | missing |
+| <code>From Invoice Date</code> |  | new | translated |
+| <code>From No</code> |  | new | translated |
 | <code>From Package No.</code> |  | new | missing |
 | <code>From Payment Date</code> |  | new | missing |
 | <code>From Posting Date</code> |  | new | missing |
 | <code>From Range</code> |  | new | missing |
 | <code>From Range has to be less than To Range</code> |  | new | missing |
 | <code>From Reference Date</code> |  | new | missing |
-| <code>From Shareholder</code> |  | new | missing |
-| <code>From Template</code> |  | new | missing |
-| <code>From Time</code> |  | new | missing |
-| <code>From Time Should Be Less Than To Time</code> |  | new | missing |
+| <code>From Shareholder</code> |  | new | translated |
+| <code>From Template</code> |  | new | translated |
+| <code>From Time</code> |  | new | translated |
+| <code>From Time Should Be Less Than To Time</code> |  | new | translated |
 | <code>From User</code> |  | new | translated |
-| <code>From Value</code> |  | new | missing |
+| <code>From Value</code> |  | new | translated |
 | <code>From Voucher Detail No</code> |  | new | missing |
 | <code>From Voucher No</code> |  | new | missing |
 | <code>From Voucher Type</code> |  | new | missing |
-| <code>From Warehouse</code> |  | new | missing |
-| <code>From and To Dates are required.</code> |  | new | missing |
+| <code>From Warehouse</code> |  | new | translated |
+| <code>From and To Dates are required.</code> |  | new | translated |
 | <code>From and To dates are required</code> |  | new | missing |
 | <code>From date cannot be greater than To date</code> |  | new | missing |
-| <code>From value must be less than to value in row {0}</code> |  | new | missing |
+| <code>From value must be less than to value in row {0}</code> |  | new | translated |
 | <code>From version</code> |  | new | missing |
-| <code>Frozen</code> |  | new | missing |
+| <code>Frozen</code> |  | new | translated |
 | <code>Frozen suppliers block new transactions and ledger entries until unfrozen. Only users with the role set in Company&#x27;s &quot;Roles Allowed to Set and Edit Frozen Account Entries&quot; can transact.</code> |  | new | missing |
 | <code>Fuel Type</code> |  | new | missing |
 | <code>Fuel UOM</code> |  | new | missing |
-| <code>Fulfilled</code> |  | new | missing |
-| <code>Fulfillment</code> |  | new | missing |
+| <code>Fulfilled</code> |  | new | translated |
+| <code>Fulfillment</code> |  | new | translated |
 | <code>Fulfillment User</code> |  | new | missing |
-| <code>Fulfilment Deadline</code> |  | new | missing |
-| <code>Fulfilment Details</code> |  | new | missing |
-| <code>Fulfilment Status</code> |  | new | missing |
-| <code>Fulfilment Terms</code> |  | new | missing |
-| <code>Fulfilment Terms and Conditions</code> |  | new | missing |
+| <code>Fulfilment Deadline</code> |  | new | translated |
+| <code>Fulfilment Details</code> |  | new | translated |
+| <code>Fulfilment Status</code> |  | new | translated |
+| <code>Fulfilment Terms</code> |  | new | translated |
+| <code>Fulfilment Terms and Conditions</code> |  | new | translated |
 | <code>Full</code> |  | new | translated |
 | <code>Full Name</code> |  | new | translated |
 | <code>Full Name, Email or Phone/Mobile of the user are mandatory to continue.</code> |  | new | missing |
@@ -5577,10 +5577,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Full Width</code> |  | new | translated |
 | <code>Full and Final Statement</code> |  | new | missing |
 | <code>Full name is required.</code> |  | new | missing |
-| <code>Fully Billed</code> |  | new | missing |
+| <code>Fully Billed</code> |  | new | translated |
 | <code>Fully Completed</code> |  | new | missing |
-| <code>Fully Delivered</code> |  | new | missing |
-| <code>Fully Depreciated</code> |  | new | missing |
+| <code>Fully Delivered</code> |  | new | translated |
+| <code>Fully Depreciated</code> |  | new | translated |
 | <code>Fully Paid</code> |  | new | missing |
 | <code>Function</code> |  | new | translated |
 | <code>Function Based On</code> |  | new | translated |
@@ -5588,20 +5588,20 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Function {0} requires arguments but none were provided</code> |  | new | missing |
 | <code>Furlong</code> |  | new | missing |
 | <code>Furniture and Fixtures</code> |  | new | missing |
-| <code>Further accounts can be made under Groups, but entries can be made against non-Groups</code> |  | new | missing |
-| <code>Further cost centers can be made under Groups but entries can be made against non-Groups</code> |  | new | missing |
+| <code>Further accounts can be made under Groups, but entries can be made against non-Groups</code> |  | new | translated |
+| <code>Further cost centers can be made under Groups but entries can be made against non-Groups</code> |  | new | translated |
 | <code>Further nodes can be only created under &#x27;Group&#x27; type nodes</code> |  | new | missing |
 | <code>Further sub-groups can only be created under records marked as &#x27;Group&#x27;</code> |  | new | missing |
-| <code>Future Payment Amount</code> |  | new | missing |
-| <code>Future Payment Ref</code> |  | new | missing |
-| <code>Future Payments</code> |  | new | missing |
+| <code>Future Payment Amount</code> |  | new | translated |
+| <code>Future Payment Ref</code> |  | new | translated |
+| <code>Future Payments</code> |  | new | translated |
 | <code>Future date is not allowed</code> |  | new | missing |
 | <code>Fw: {0}</code> |  | new | translated |
 | <code>G - D</code> |  | new | excepted |
 | <code>GET</code> |  | new | excepted |
 | <code>GL Account</code> |  | new | missing |
 | <code>GL Balance</code> |  | new | missing |
-| <code>GL Entry</code> |  | new | missing |
+| <code>GL Entry</code> |  | new | translated |
 | <code>GL Entry Processing Status</code> |  | new | missing |
 | <code>GL reposting index</code> |  | new | missing |
 | <code>GMail</code> |  | new | excepted |
@@ -5610,12 +5610,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>GS1</code> |  | new | excepted |
 | <code>GTIN</code> |  | new | excepted |
 | <code>GTIN-14</code> |  | new | excepted |
-| <code>Gain/Loss</code> |  | new | missing |
+| <code>Gain/Loss</code> |  | new | translated |
 | <code>Gain/Loss Account on Asset Disposal</code> |  | new | missing |
 | <code>Gain/Loss accumulated in foreign currency account. Accounts with &#x27;0&#x27; balance in either Base or Account currency</code> |  | new | missing |
 | <code>Gain/Loss already booked</code> |  | new | missing |
 | <code>Gain/Loss from Revaluation</code> |  | new | missing |
-| <code>Gain/Loss on Asset Disposal</code> |  | new | missing |
+| <code>Gain/Loss on Asset Disposal</code> |  | new | translated |
 | <code>Gallon (UK)</code> |  | new | missing |
 | <code>Gallon Dry (US)</code> |  | new | missing |
 | <code>Gallon Liquid (US)</code> |  | new | missing |
@@ -5628,7 +5628,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Gender</code> |  | new | translated |
 | <code>Genderqueer</code> |  | new | translated |
 | <code>General</code> |  | new | translated |
-| <code>General Ledger</code> |  | new | missing |
+| <code>General Ledger</code> |  | new | translated |
 | <code>General Ledger</code> | Warehouse | new | missing |
 | <code>General Ledger Report</code> |  | new | missing |
 | <code>General Ledger remarks length</code> |  | new | missing |
@@ -5642,7 +5642,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Generate E-Invoice</code> |  | new | missing |
 | <code>Generate Invoice At</code> |  | new | missing |
 | <code>Generate Keys</code> |  | new | translated |
-| <code>Generate New Invoices Past Due Date</code> |  | new | missing |
+| <code>Generate New Invoices Past Due Date</code> |  | new | translated |
 | <code>Generate New Report</code> |  | new | translated |
 | <code>Generate Random Password</code> |  | new | missing |
 | <code>Generate Schedule</code> |  | new | missing |
@@ -5661,8 +5661,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Geolocation</code> |  | new | translated |
 | <code>Geolocation Settings</code> |  | new | missing |
 | <code>Get Actual Demand</code> |  | new | missing |
-| <code>Get Advances Paid</code> |  | new | missing |
-| <code>Get Advances Received</code> |  | new | missing |
+| <code>Get Advances Paid</code> |  | new | translated |
+| <code>Get Advances Received</code> |  | new | translated |
 | <code>Get Alerts for Today</code> |  | new | translated |
 | <code>Get Allocations</code> |  | new | missing |
 | <code>Get Backup Encryption Key</code> |  | new | missing |
@@ -5671,30 +5671,30 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Get Current Stock</code> |  | new | missing |
 | <code>Get Customer Group Details</code> |  | new | missing |
 | <code>Get Delivery Schedule</code> |  | new | missing |
-| <code>Get Entries</code> |  | new | missing |
+| <code>Get Entries</code> |  | new | translated |
 | <code>Get Fields</code> |  | new | translated |
 | <code>Get Finished Goods</code> |  | new | missing |
 | <code>Get Finished Goods for Manufacture</code> |  | new | missing |
 | <code>Get Header and Footer wkhtmltopdf variables</code> |  | new | missing |
-| <code>Get Invoices</code> |  | new | missing |
-| <code>Get Invoices based on Filters</code> |  | new | missing |
+| <code>Get Invoices</code> |  | new | translated |
+| <code>Get Invoices based on Filters</code> |  | new | translated |
 | <code>Get Item Locations</code> |  | new | missing |
 | <code>Get Items</code> |  | new | translated |
-| <code>Get Items From</code> |  | new | missing |
+| <code>Get Items From</code> |  | new | translated |
 | <code>Get Items for Purchase / Transfer</code> |  | new | missing |
 | <code>Get Items for Purchase Only</code> |  | new | missing |
 | <code>Get Items from BOM</code> |  | new | missing |
-| <code>Get Items from Material Requests against this Supplier</code> |  | new | missing |
+| <code>Get Items from Material Requests against this Supplier</code> |  | new | translated |
 | <code>Get Items from Product Bundle</code> |  | new | missing |
 | <code>Get Latest Query</code> |  | new | missing |
 | <code>Get Material Request</code> |  | new | missing |
 | <code>Get Material Requests</code> |  | new | missing |
 | <code>Get OpenID Configuration</code> |  | new | missing |
-| <code>Get Outstanding Invoices</code> |  | new | missing |
+| <code>Get Outstanding Invoices</code> |  | new | translated |
 | <code>Get Outstanding Orders</code> |  | new | missing |
 | <code>Get PDF</code> |  | new | missing |
-| <code>Get Payment Entries</code> |  | new | missing |
-| <code>Get Payments from</code> |  | new | missing |
+| <code>Get Payment Entries</code> |  | new | translated |
+| <code>Get Payments from</code> |  | new | translated |
 | <code>Get Raw Materials Cost from Consumption Entry</code> |  | new | missing |
 | <code>Get Sales Orders</code> |  | new | missing |
 | <code>Get Secondary Items</code> |  | new | missing |
@@ -5702,10 +5702,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Get Stock</code> |  | new | missing |
 | <code>Get Sub Assembly Items</code> |  | new | missing |
 | <code>Get Supplier Group Details</code> |  | new | missing |
-| <code>Get Suppliers</code> |  | new | missing |
-| <code>Get Suppliers By</code> |  | new | missing |
+| <code>Get Suppliers</code> |  | new | translated |
+| <code>Get Suppliers By</code> |  | new | translated |
 | <code>Get Timesheets</code> |  | new | missing |
-| <code>Get Unreconciled Entries</code> |  | new | missing |
+| <code>Get Unreconciled Entries</code> |  | new | translated |
 | <code>Get a preview of generated names with a series.</code> |  | new | missing |
 | <code>Get around the system quickly with keyboard shortcuts</code> |  | new | missing |
 | <code>Get notified when an email is received on any of the documents assigned to you.</code> |  | new | missing |
@@ -5713,7 +5713,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Get your globally recognized avatar from Gravatar.com</code> |  | new | translated |
 | <code>Getting Secondary Items</code> |  | new | missing |
 | <code>Getting Started</code> |  | new | translated |
-| <code>Gift Card</code> |  | new | missing |
+| <code>Gift Card</code> |  | new | translated |
 | <code>Git Branch</code> |  | new | translated |
 | <code>GitHub</code> |  | new | excepted |
 | <code>Github flavoured markdown syntax</code> |  | new | translated |
@@ -5779,7 +5779,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Google Sheets URL is invalid or not publicly accessible.</code> |  | new | translated |
 | <code>Google Sheets URL must end with &quot;gid={number}&quot;. Copy and paste the URL from the browser address bar and try again.</code> |  | new | translated |
 | <code>Government</code> |  | new | missing |
-| <code>Grace Period</code> |  | new | missing |
+| <code>Grace Period</code> |  | new | translated |
 | <code>Graduate</code> |  | new | missing |
 | <code>Grain</code> |  | new | missing |
 | <code>Grain/Cubic Foot</code> |  | new | missing |
@@ -5791,9 +5791,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Gram/Cubic Meter</code> |  | new | missing |
 | <code>Gram/Cubic Millimeter</code> |  | new | missing |
 | <code>Gram/Litre</code> |  | new | missing |
-| <code>Grand Total</code> |  | new | missing |
+| <code>Grand Total</code> |  | new | translated |
 | <code>Grand Total (Company Currency</code> |  | new | missing |
-| <code>Grand Total (Company Currency)</code> |  | new | missing |
+| <code>Grand Total (Company Currency)</code> |  | new | translated |
 | <code>Grand Total (Transaction Currency)</code> |  | new | missing |
 | <code>Grand Total must match sum of Payment References</code> |  | new | missing |
 | <code>Grant Commission</code> |  | new | missing |
@@ -5804,7 +5804,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Gray</code> |  | new | missing |
 | <code>Great!</code> |  | new | missing |
 | <code>Greater Than</code> |  | new | missing |
-| <code>Greater Than Amount</code> |  | new | missing |
+| <code>Greater Than Amount</code> |  | new | translated |
 | <code>Greater Than Or Equal To</code> |  | new | missing |
 | <code>Green</code> |  | new | translated |
 | <code>Greeting Message</code> |  | new | missing |
@@ -5817,35 +5817,35 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Grocery</code> |  | new | missing |
 | <code>Gross Margin</code> |  | new | missing |
 | <code>Gross Margin %</code> |  | new | missing |
-| <code>Gross Profit</code> |  | new | missing |
-| <code>Gross Profit / Loss</code> |  | new | missing |
+| <code>Gross Profit</code> |  | new | translated |
+| <code>Gross Profit / Loss</code> |  | new | translated |
 | <code>Gross Profit Percent</code> |  | new | missing |
 | <code>Gross Profit Ratio</code> |  | new | missing |
 | <code>Gross Total</code> |  | new | missing |
 | <code>Gross Weight</code> |  | new | missing |
 | <code>Gross Weight UOM</code> |  | new | missing |
-| <code>Gross and Net Profit Report</code> |  | new | missing |
+| <code>Gross and Net Profit Report</code> |  | new | translated |
 | <code>Group</code> |  | new | translated |
 | <code>Group By</code> |  | new | translated |
 | <code>Group By Based On</code> |  | new | translated |
-| <code>Group By Customer</code> |  | new | missing |
-| <code>Group By Supplier</code> |  | new | missing |
+| <code>Group By Customer</code> |  | new | translated |
+| <code>Group By Supplier</code> |  | new | translated |
 | <code>Group By Type</code> |  | new | translated |
 | <code>Group By field is required to create a dashboard chart</code> |  | new | translated |
 | <code>Group By must be a string</code> |  | new | missing |
-| <code>Group Name</code> |  | new | missing |
+| <code>Group Name</code> |  | new | translated |
 | <code>Group Node</code> |  | new | missing |
 | <code>Group Object Class</code> |  | new | missing |
 | <code>Group Same Items</code> |  | new | missing |
 | <code>Group Warehouses cannot be used in transactions. Please change the value of {0}</code> |  | new | missing |
-| <code>Group by</code> |  | new | missing |
-| <code>Group by Material Request</code> |  | new | missing |
-| <code>Group by Party</code> |  | new | missing |
-| <code>Group by Purchase Order</code> |  | new | missing |
-| <code>Group by Sales Order</code> |  | new | missing |
-| <code>Group by Voucher</code> |  | new | missing |
+| <code>Group by</code> |  | new | translated |
+| <code>Group by Material Request</code> |  | new | translated |
+| <code>Group by Party</code> |  | new | translated |
+| <code>Group by Purchase Order</code> |  | new | translated |
+| <code>Group by Sales Order</code> |  | new | translated |
+| <code>Group by Voucher</code> |  | new | translated |
 | <code>Group node warehouse is not allowed to select for transactions</code> |  | new | missing |
-| <code>Group same items</code> |  | new | missing |
+| <code>Group same items</code> |  | new | translated |
 | <code>Group your custom doctypes under modules</code> |  | new | missing |
 | <code>Grouped by &lt;span style=&#x27;font-weight:600;&#x27;&gt;{0}&lt;/b&gt;</code> |  | new | excepted |
 | <code>Groups</code> |  | new | missing |
@@ -5857,8 +5857,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>HERE</code> |  | new | excepted |
 | <code>HH:mm</code> |  | new | excepted |
 | <code>HH:mm:ss</code> |  | new | excepted |
-| <code>HR Manager</code> |  | new | missing |
-| <code>HR User</code> |  | new | missing |
+| <code>HR Manager</code> |  | new | translated |
+| <code>HR User</code> |  | new | translated |
 | <code>HTML</code> |  | new | excepted |
 | <code>HTML Editor</code> |  | new | translated |
 | <code>HTML Message</code> |  | new | missing |
@@ -5867,7 +5867,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>HTML with jinja support</code> |  | new | translated |
 | <code>Half</code> |  | new | translated |
 | <code>Half Yearly</code> |  | new | translated |
-| <code>Half-Yearly</code> |  | new | missing |
+| <code>Half-Yearly</code> |  | new | translated |
 | <code>Half-yearly</code> |  | new | translated |
 | <code>Hand</code> |  | new | missing |
 | <code>Handle Employee Advances</code> |  | new | missing |
@@ -5885,7 +5885,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Has Item Scanned</code> |  | new | missing |
 | <code>Has Next Condition</code> |  | new | missing |
 | <code>Has Operating Cost</code> |  | new | missing |
-| <code>Has Print Format</code> |  | new | missing |
+| <code>Has Print Format</code> |  | new | translated |
 | <code>Has Priority</code> |  | new | missing |
 | <code>Has Role</code> |  | new | translated |
 | <code>Has Serial No</code> |  | new | missing |
@@ -5916,7 +5916,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Heading 5</code> |  | new | missing |
 | <code>Heading 6</code> |  | new | missing |
 | <code>Headline of the in-app notification. Falls back to Subject if left blank. Supports Jinja.</code> |  | new | missing |
-| <code>Heads (or groups) against which Accounting Entries are made and balances are maintained.</code> |  | new | missing |
+| <code>Heads (or groups) against which Accounting Entries are made and balances are maintained.</code> |  | new | translated |
 | <code>Health Care</code> |  | new | missing |
 | <code>Health Details</code> |  | new | missing |
 | <code>Health Report</code> |  | new | missing |
@@ -5935,8 +5935,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Help Dropdown</code> |  | new | translated |
 | <code>Help HTML</code> |  | new | translated |
 | <code>Help Results for</code> |  | new | missing |
-| <code>Help Section</code> |  | new | missing |
-| <code>Help Text</code> |  | new | missing |
+| <code>Help Section</code> |  | new | translated |
+| <code>Help Text</code> |  | new | translated |
 | <code>Help: To link to another record in the system, use &quot;/desk/note/[Note Name]&quot; as the Link URL. (don&#x27;t use &quot;http://&quot;)</code> |  | new | missing |
 | <code>Helpful</code> |  | new | missing |
 | <code>Helps you distribute the Budget/Target across months if you have seasonality in your business.</code> |  | new | missing |
@@ -5956,7 +5956,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Hidden Fields</code> |  | new | missing |
 | <code>Hidden Line (Internal Use Only)</code> |  | new | missing |
 | <code>Hidden columns include: &lt;br&gt; {0}</code> |  | new | missing |
-| <code>Hidden list maintaining the list of contacts linked to Shareholder</code> |  | new | missing |
+| <code>Hidden list maintaining the list of contacts linked to Shareholder</code> |  | new | translated |
 | <code>Hide</code> |  | new | translated |
 | <code>Hide Block</code> |  | new | translated |
 | <code>Hide Border</code> |  | new | translated |
@@ -5979,7 +5979,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Hide Seconds</code> |  | new | translated |
 | <code>Hide Sidebar, Menu, and Comments</code> |  | new | missing |
 | <code>Hide Standard Menu</code> |  | new | translated |
-| <code>Hide Unavailable Items</code> |  | new | missing |
+| <code>Hide Unavailable Items</code> |  | new | translated |
 | <code>Hide Weekends</code> |  | new | translated |
 | <code>Hide descendant records of &lt;b&gt;For Value&lt;/b&gt;.</code> |  | new | missing |
 | <code>Hide details</code> |  | new | translated |
@@ -5991,15 +5991,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Hide timesheets</code> |  | new | missing |
 | <code>High</code> |  | new | translated |
 | <code>Higher priority rule will be applied first</code> |  | new | translated |
-| <code>Higher the number, higher the priority</code> |  | new | missing |
+| <code>Higher the number, higher the priority</code> |  | new | translated |
 | <code>Highlight</code> |  | new | translated |
 | <code>History In Company</code> |  | new | missing |
-| <code>Hold</code> |  | new | missing |
-| <code>Hold Invoice</code> |  | new | missing |
-| <code>Hold Type</code> |  | new | missing |
+| <code>Hold</code> |  | new | translated |
+| <code>Hold Invoice</code> |  | new | translated |
+| <code>Hold Type</code> |  | new | translated |
 | <code>Holiday</code> |  | new | missing |
 | <code>Holiday Date {0} added multiple times</code> |  | new | missing |
-| <code>Holiday List</code> |  | new | missing |
+| <code>Holiday List</code> |  | new | translated |
 | <code>Holiday List - {0} is not valid for current date.</code> |  | new | missing |
 | <code>Holiday List Name</code> |  | new | missing |
 | <code>Holidays</code> |  | new | missing |
@@ -6020,7 +6020,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Hours</code> |  | new | missing |
 | <code>Hours</code> | Duration | new | missing |
 | <code>Hours Spent</code> |  | new | missing |
-| <code>How Pricing Rule is applied?</code> |  | new | missing |
+| <code>How Pricing Rule is applied?</code> |  | new | translated |
 | <code>How big is the team?</code> |  | new | missing |
 | <code>How frequently?</code> |  | new | missing |
 | <code>How many units of the final product this BOM makes.</code> |  | new | missing |
@@ -6037,7 +6037,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>I - J</code> |  | new | excepted |
 | <code>I - K</code> |  | new | excepted |
 | <code>I guess you don&#x27;t have access to any workspace yet, but you can create one just for yourself. Click on the &lt;b&gt;Create Workspace&lt;/b&gt; button to create one.&lt;br&gt;</code> |  | new | missing |
-| <code>IBAN</code> |  | new | missing |
+| <code>IBAN</code> |  | new | excepted |
 | <code>ID</code> |  | new | translated |
 | <code>ID</code> | Label of name column in report | new | missing |
 | <code>ID (name)</code> |  | new | missing |
@@ -6068,12 +6068,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Identity Details</code> |  | new | translated |
 | <code>Idle</code> |  | new | missing |
 | <code>Idx</code> |  | new | translated |
-| <code>If &quot;Months&quot; is selected, a fixed amount will be booked as deferred revenue or expense for each month irrespective of the number of days in a month. It will be prorated if deferred revenue or expense is not booked for an entire month</code> |  | new | missing |
+| <code>If &quot;Months&quot; is selected, a fixed amount will be booked as deferred revenue or expense for each month irrespective of the number of days in a month. It will be prorated if deferred revenue or expense is not booked for an entire month</code> |  | new | translated |
 | <code>If &lt;b&gt;Enabled&lt;/b&gt; - Reconciliation happens on the &lt;b&gt;Advance Payment posting date&lt;/b&gt;&lt;br&gt;<br>If &lt;b&gt;Disabled&lt;/b&gt; - Reconciliation happens on oldest of 2 Dates: &lt;b&gt;Invoice Date&lt;/b&gt; or the &lt;b&gt;Advance Payment posting date&lt;/b&gt;&lt;br&gt;</code> |  | new | missing |
 | <code>If Apply Strict User Permission is checked and User Permission is defined for a DocType for a User, then all the documents where value of the link is blank, will not be shown to that User</code> |  | new | translated |
-| <code>If Auto Opt In is checked, then the customers will be automatically linked with the concerned Loyalty Program (on save)</code> |  | new | missing |
+| <code>If Auto Opt In is checked, then the customers will be automatically linked with the concerned Loyalty Program (on save)</code> |  | new | translated |
 | <code>If Checked workflow status will not override status in list view</code> |  | new | translated |
-| <code>If Income or Expense</code> |  | new | missing |
+| <code>If Income or Expense</code> |  | new | translated |
 | <code>If Owner</code> |  | new | translated |
 | <code>If a Role does not have access at Level 0, then higher levels are meaningless.</code> |  | new | translated |
 | <code>If a party cannot be matched by account number or IBAN, the system will try fuzzy matching using the party name and transaction description.</code> |  | new | missing |
@@ -6089,7 +6089,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>If checked, picked qty won&#x27;t automatically be fulfilled on submit of pick list.</code> |  | new | missing |
 | <code>If checked, the entire amount (e.g. Freight) is allocated to the valuation of stock &amp; asset items only. If unchecked, the amount is distributed across all items and the portion belonging to non-stock items is not added to valuation.</code> |  | new | missing |
 | <code>If checked, the tax amount will be considered as already included in the Paid Amount in Payment Entry</code> |  | new | missing |
-| <code>If checked, the tax amount will be considered as already included in the Print Rate / Print Amount</code> |  | new | missing |
+| <code>If checked, the tax amount will be considered as already included in the Print Rate / Print Amount</code> |  | new | translated |
 | <code>If checked, updates inventory; stock and accounting entries are created together. Leave unchecked if a Delivery Note is created separately.</code> |  | new | missing |
 | <code>If checked, updates inventory; stock and accounting entries are created together. Leave unchecked if a Purchase Receipt is created separately.</code> |  | new | missing |
 | <code>If checked, users will not see the Confirm Access dialog.</code> |  | new | translated |
@@ -6144,7 +6144,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>If left empty, the default workspace will be the last visited workspace</code> |  | new | missing |
 | <code>If mentioned, the system will allow only the users with this Role to create or modify any stock transaction earlier than the latest stock transaction for a specific item and warehouse. If set as blank, it allows all users to create/edit back-dated transactions.</code> |  | new | missing |
 | <code>If more than one package of the same type (for print)</code> |  | new | missing |
-| <code>If multiple Pricing Rules continue to prevail, users are asked to set Priority manually to resolve conflict.</code> |  | new | missing |
+| <code>If multiple Pricing Rules continue to prevail, users are asked to set Priority manually to resolve conflict.</code> |  | new | translated |
 | <code>If no Item Price is found for an item in the Price List set in the transaction, prices from the Default Price List will be fetched.</code> |  | new | missing |
 | <code>If no Print Format is selected, the default template for this report will be used.</code> |  | new | missing |
 | <code>If no taxes are set, and Taxes and Charges Template is selected, the system will automatically apply the taxes from the chosen template.</code> |  | new | missing |
@@ -6157,12 +6157,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>If party does not exist, create it using the Supplier Name field.</code> |  | new | missing |
 | <code>If rate is zero then item will be treated as &quot;Free Item&quot;</code> |  | new | missing |
 | <code>If rule matches, then:</code> |  | new | missing |
-| <code>If selected Pricing Rule is made for &#x27;Rate&#x27;, it will overwrite Price List. Pricing Rule rate is the final rate, so no further discount should be applied. Hence, in transactions like Sales Order, Purchase Order etc, it will be fetched in &#x27;Rate&#x27; field, rather than &#x27;Price List Rate&#x27; field.</code> |  | new | missing |
+| <code>If selected Pricing Rule is made for &#x27;Rate&#x27;, it will overwrite Price List. Pricing Rule rate is the final rate, so no further discount should be applied. Hence, in transactions like Sales Order, Purchase Order etc, it will be fetched in &#x27;Rate&#x27; field, rather than &#x27;Price List Rate&#x27; field.</code> |  | new | translated |
 | <code>If set, accounting entries for this customer will post to these accounts instead of the company default.</code> |  | new | missing |
 | <code>If set, only user with these roles can access this chart. If not set, DocType or Report permissions will be used.</code> |  | new | missing |
 | <code>If set, the system does not use the user&#x27;s Email or the standard outgoing Email account for sending request for quotations.</code> |  | new | missing |
 | <code>If the BOM results in Scrap material, the Scrap Warehouse needs to be selected.</code> |  | new | missing |
-| <code>If the account is frozen, entries are allowed to restricted users.</code> |  | new | missing |
+| <code>If the account is frozen, entries are allowed to restricted users.</code> |  | new | translated |
 | <code>If the item is transacting as a Zero Valuation Rate item in this entry, please enable &#x27;Allow Zero Valuation Rate&#x27; in the {0} Item table.</code> |  | new | missing |
 | <code>If the reorder check is set at the Group warehouse level, the available quantity becomes the sum of the projected quantities of all its child warehouses.</code> |  | new | missing |
 | <code>If the selected BOM has Operations mentioned in it, the system will fetch all Operations from BOM, these values can be changed.</code> |  | new | missing |
@@ -6172,22 +6172,22 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>If there is no assigned timeslot, then communication will be handled by this group</code> |  | new | missing |
 | <code>If there is no title column, use the code column for the title.</code> |  | new | missing |
 | <code>If these instructions where not helpful, please add in your suggestions on GitHub Issues.</code> |  | new | translated |
-| <code>If this checkbox is checked, paid amount will be splitted and allocated as per the amounts in payment schedule against each payment term</code> |  | new | missing |
+| <code>If this checkbox is checked, paid amount will be splitted and allocated as per the amounts in payment schedule against each payment term</code> |  | new | translated |
 | <code>If this email is registered with us, a download link will be sent to it.</code> |  | new | missing |
 | <code>If this email is registered with us, we have sent password reset instructions to it. Please check your inbox.</code> |  | new | missing |
-| <code>If this is checked subsequent new invoices will be created on calendar  month and quarter start dates irrespective of current invoice start date</code> |  | new | missing |
-| <code>If this is unchecked Journal Entries will be saved in a Draft state and will have to be submitted manually</code> |  | new | missing |
-| <code>If this is unchecked, direct GL entries will be created to book deferred revenue or expense</code> |  | new | missing |
+| <code>If this is checked subsequent new invoices will be created on calendar  month and quarter start dates irrespective of current invoice start date</code> |  | new | translated |
+| <code>If this is unchecked Journal Entries will be saved in a Draft state and will have to be submitted manually</code> |  | new | translated |
+| <code>If this is unchecked, direct GL entries will be created to book deferred revenue or expense</code> |  | new | translated |
 | <code>If this is undesirable please cancel the corresponding Payment Entry.</code> |  | new | missing |
 | <code>If this item has variants, then it cannot be selected in sales orders etc.</code> |  | new | missing |
-| <code>If this option is configured &#x27;Yes&#x27;, ERPNext will prevent you from creating a Purchase Invoice or Receipt without creating a Purchase Order first. This configuration can be overridden for a particular supplier by enabling the &#x27;Allow Purchase Invoice Creation Without Purchase Order&#x27; checkbox in the Supplier master.</code> |  | new | missing |
-| <code>If this option is configured &#x27;Yes&#x27;, ERPNext will prevent you from creating a Purchase Invoice without creating a Purchase Receipt first. This configuration can be overridden for a particular supplier by enabling the &#x27;Allow Purchase Invoice Creation Without Purchase Receipt&#x27; checkbox in the Supplier master.</code> |  | new | missing |
+| <code>If this option is configured &#x27;Yes&#x27;, ERPNext will prevent you from creating a Purchase Invoice or Receipt without creating a Purchase Order first. This configuration can be overridden for a particular supplier by enabling the &#x27;Allow Purchase Invoice Creation Without Purchase Order&#x27; checkbox in the Supplier master.</code> |  | new | translated |
+| <code>If this option is configured &#x27;Yes&#x27;, ERPNext will prevent you from creating a Purchase Invoice without creating a Purchase Receipt first. This configuration can be overridden for a particular supplier by enabling the &#x27;Allow Purchase Invoice Creation Without Purchase Receipt&#x27; checkbox in the Supplier master.</code> |  | new | translated |
 | <code>If this was a mistake or you need access again, please reach out to your team.</code> |  | new | missing |
 | <code>If ticked, multiple materials can be used for a single Work Order. This is useful if one or more time consuming products are being manufactured.</code> |  | new | missing |
 | <code>If ticked, the BOM cost will be automatically updated based on Valuation Rate / Price List Rate / last purchase rate of raw materials.</code> |  | new | missing |
-| <code>If two or more Pricing Rules are found based on the above conditions, Priority is applied. Priority is a number between 0 to 20 while default value is zero (blank). Higher number means it will take precedence if there are multiple Pricing Rules with same conditions.</code> |  | new | missing |
+| <code>If two or more Pricing Rules are found based on the above conditions, Priority is applied. Priority is a number between 0 to 20 while default value is zero (blank). Higher number means it will take precedence if there are multiple Pricing Rules with same conditions.</code> |  | new | translated |
 | <code>If unchecked, the value will always be re-fetched on save.</code> |  | new | missing |
-| <code>If unlimited expiry for the Loyalty Points, keep the Expiry Duration empty or 0.</code> |  | new | missing |
+| <code>If unlimited expiry for the Loyalty Points, keep the Expiry Duration empty or 0.</code> |  | new | translated |
 | <code>If user is the owner</code> |  | new | translated |
 | <code>If yes, then this warehouse will be used to store rejected materials</code> |  | new | missing |
 | <code>If you are maintaining stock of this Item in your Inventory, ERPNext will make a stock ledger entry for each transaction of this item.</code> |  | new | missing |
@@ -6205,21 +6205,21 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>If you still want to proceed, please enable {0}.</code> |  | new | missing |
 | <code>If you think this is unauthorized, please change the Administrator password.</code> |  | new | translated |
 | <code>If you want to run operations in parallel, keep the same sequence ID for them.</code> |  | new | missing |
-| <code>If you {0} {1} quantities of the item {2}, the scheme {3} will be applied on the item.</code> |  | new | missing |
-| <code>If you {0} {1} worth item {2}, the scheme {3} will be applied on the item.</code> |  | new | missing |
+| <code>If you {0} {1} quantities of the item {2}, the scheme {3} will be applied on the item.</code> |  | new | translated |
+| <code>If you {0} {1} worth item {2}, the scheme {3} will be applied on the item.</code> |  | new | translated |
 | <code>If your CSV uses a different delimiter, add that character here, ensuring no spaces or additional characters are included.</code> |  | new | missing |
 | <code>If your bank statement shows a different closing balance, it is because all transactions have not reconciled yet.</code> |  | new | missing |
 | <code>If your data is in HTML, please copy paste the exact HTML code with the tags.</code> |  | new | translated |
-| <code>Ignore</code> |  | new | missing |
+| <code>Ignore</code> |  | new | translated |
 | <code>Ignore Account closing balance</code> |  | new | missing |
 | <code>Ignore Closing Balance</code> |  | new | missing |
 | <code>Ignore Default Payment Terms Template</code> |  | new | missing |
 | <code>Ignore Employee Time Overlap</code> |  | new | missing |
 | <code>Ignore Empty Stock</code> |  | new | missing |
 | <code>Ignore Exchange Rate Revaluation and Gain / Loss Journals</code> |  | new | missing |
-| <code>Ignore Existing Ordered Qty</code> |  | new | missing |
+| <code>Ignore Existing Ordered Qty</code> |  | new | translated |
 | <code>Ignore Is Opening check for reporting</code> |  | new | missing |
-| <code>Ignore Pricing Rule</code> |  | new | missing |
+| <code>Ignore Pricing Rule</code> |  | new | translated |
 | <code>Ignore Pricing Rule is enabled. Cannot apply coupon code.</code> |  | new | missing |
 | <code>Ignore System Generated Credit / Debit Notes</code> |  | new | missing |
 | <code>Ignore Tax Withholding Threshold</code> |  | new | missing |
@@ -6259,7 +6259,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Import</code> | Button in list view menu | new | missing |
 | <code>Import 1 transaction</code> |  | new | missing |
 | <code>Import Bank Statement</code> |  | new | missing |
-| <code>Import Chart of Accounts from a csv file</code> |  | new | missing |
+| <code>Import Chart of Accounts from a csv file</code> |  | new | translated |
 | <code>Import Data</code> |  | new | missing |
 | <code>Import Email From</code> |  | new | translated |
 | <code>Import Employees</code> |  | new | missing |
@@ -6273,9 +6273,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Import Preview</code> |  | new | translated |
 | <code>Import Progress</code> |  | new | translated |
 | <code>Import Subscribers</code> |  | new | translated |
-| <code>Import Successful</code> |  | new | missing |
+| <code>Import Successful</code> |  | new | translated |
 | <code>Import Summary</code> |  | new | missing |
-| <code>Import Supplier Invoice</code> |  | new | missing |
+| <code>Import Supplier Invoice</code> |  | new | translated |
 | <code>Import Type</code> |  | new | translated |
 | <code>Import Using CSV file</code> |  | new | missing |
 | <code>Import Warnings</code> |  | new | translated |
@@ -6307,14 +6307,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>In House</code> |  | new | missing |
 | <code>In List Filter</code> |  | new | missing |
 | <code>In List View</code> |  | new | translated |
-| <code>In Maintenance</code> |  | new | missing |
+| <code>In Maintenance</code> |  | new | translated |
 | <code>In Mins</code> |  | new | missing |
 | <code>In Minutes</code> |  | new | missing |
 | <code>In Minutes (min: 15 mins, max: 60 mins)</code> |  | new | missing |
 | <code>In Party Currency</code> |  | new | missing |
-| <code>In Percentage</code> |  | new | missing |
+| <code>In Percentage</code> |  | new | translated |
 | <code>In Preview</code> |  | new | translated |
-| <code>In Process</code> |  | new | missing |
+| <code>In Process</code> |  | new | translated |
 | <code>In Production</code> |  | new | missing |
 | <code>In Progress</code> |  | new | translated |
 | <code>In Qty</code> |  | new | missing |
@@ -6326,19 +6326,19 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>In Transit Transfer</code> |  | new | missing |
 | <code>In Transit Warehouse</code> |  | new | missing |
 | <code>In Value</code> |  | new | missing |
-| <code>In Words</code> |  | new | missing |
-| <code>In Words (Company Currency)</code> |  | new | missing |
+| <code>In Words</code> |  | new | translated |
+| <code>In Words (Company Currency)</code> |  | new | translated |
 | <code>In Words (Export) will be visible once you save the Delivery Note.</code> |  | new | missing |
 | <code>In Words will be visible once you save the Delivery Note.</code> |  | new | missing |
-| <code>In Words will be visible once you save the Sales Invoice.</code> |  | new | missing |
-| <code>In Words will be visible once you save the Sales Order.</code> |  | new | missing |
+| <code>In Words will be visible once you save the Sales Invoice.</code> |  | new | translated |
+| <code>In Words will be visible once you save the Sales Order.</code> |  | new | translated |
 | <code>In mins</code> |  | new | missing |
 | <code>In minutes</code> |  | new | missing |
 | <code>In points. Default is 9.</code> |  | new | translated |
 | <code>In row {0} of Appointment Booking Slots: &quot;To Time&quot; must be later than &quot;From Time&quot;.</code> |  | new | missing |
 | <code>In seconds</code> |  | new | translated |
 | <code>In stock</code> |  | new | missing |
-| <code>In the case of multi-tier program, Customers will be auto assigned to the concerned tier as per their spent</code> |  | new | missing |
+| <code>In the case of multi-tier program, Customers will be auto assigned to the concerned tier as per their spent</code> |  | new | translated |
 | <code>In this case, the amount will be calculated as 25% of the transaction amount. If the transaction amount is 200, then this will be calculated as 200 * 0.25 = 50.</code> |  | new | missing |
 | <code>In this section, you can define Company-wide transaction-related defaults for this Item. Eg. Default Warehouse, Default Price List, Supplier, etc.</code> |  | new | missing |
 | <code>In {0}, {1} is required in every row.</code> |  | new | missing |
@@ -6346,13 +6346,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>In {0}, {1} is required in rows {2}.</code> |  | new | missing |
 | <code>In {0}, {1} is required in {2} rows.</code> |  | new | missing |
 | <code>Inactive</code> |  | new | translated |
-| <code>Inactive Customers</code> |  | new | missing |
-| <code>Inactive Sales Items</code> |  | new | missing |
+| <code>Inactive Customers</code> |  | new | translated |
+| <code>Inactive Sales Items</code> |  | new | translated |
 | <code>Inactive Status</code> |  | new | missing |
 | <code>Inbox</code> |  | new | translated |
 | <code>Inbox User</code> |  | new | translated |
 | <code>Inbox View</code> |  | new | missing |
-| <code>Incentives</code> |  | new | missing |
+| <code>Incentives</code> |  | new | translated |
 | <code>Inch</code> |  | new | missing |
 | <code>Inch Pound-Force</code> |  | new | missing |
 | <code>Inch/Minute</code> |  | new | missing |
@@ -6360,21 +6360,21 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Inches Of Mercury</code> |  | new | missing |
 | <code>Include</code> |  | new | missing |
 | <code>Include Account Currency</code> |  | new | missing |
-| <code>Include Ageing Summary</code> |  | new | missing |
+| <code>Include Ageing Summary</code> |  | new | translated |
 | <code>Include Closed Orders</code> |  | new | missing |
 | <code>Include Default FB Assets</code> |  | new | missing |
-| <code>Include Default FB Entries</code> |  | new | missing |
+| <code>Include Default FB Entries</code> |  | new | translated |
 | <code>Include Disabled</code> |  | new | missing |
-| <code>Include Expired</code> |  | new | missing |
+| <code>Include Expired</code> |  | new | translated |
 | <code>Include Expired Batches</code> |  | new | missing |
-| <code>Include Exploded Items</code> |  | new | missing |
+| <code>Include Exploded Items</code> |  | new | translated |
 | <code>Include Item In Manufacturing</code> |  | new | missing |
 | <code>Include Name Field</code> |  | new | missing |
 | <code>Include Non Stock Items</code> |  | new | missing |
-| <code>Include POS Transactions</code> |  | new | missing |
-| <code>Include Payment</code> |  | new | missing |
-| <code>Include Payment (POS)</code> |  | new | missing |
-| <code>Include Reconciled Entries</code> |  | new | missing |
+| <code>Include POS Transactions</code> |  | new | translated |
+| <code>Include Payment</code> |  | new | translated |
+| <code>Include Payment (POS)</code> |  | new | translated |
+| <code>Include Reconciled Entries</code> |  | new | translated |
 | <code>Include Returned Invoices (Stand-alone)</code> |  | new | missing |
 | <code>Include Safety Stock in Required Qty Calculation</code> |  | new | missing |
 | <code>Include Search in Top Bar</code> |  | new | translated |
@@ -6388,15 +6388,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Include filters</code> |  | new | missing |
 | <code>Include hidden columns</code> |  | new | missing |
 | <code>Include in Charts</code> |  | new | missing |
-| <code>Include in gross</code> |  | new | missing |
+| <code>Include in gross</code> |  | new | translated |
 | <code>Include indentation</code> |  | new | translated |
 | <code>Include symbols, numbers and capital letters in the password</code> |  | new | translated |
 | <code>Included Fee</code> |  | new | missing |
 | <code>Included fee is bigger than the withdrawal itself.</code> |  | new | missing |
-| <code>Included in Gross Profit</code> |  | new | missing |
+| <code>Included in Gross Profit</code> |  | new | translated |
 | <code>Including items for sub assemblies</code> |  | new | missing |
-| <code>Income</code> |  | new | missing |
-| <code>Income Account</code> |  | new | missing |
+| <code>Income</code> |  | new | translated |
+| <code>Income Account</code> |  | new | translated |
 | <code>Income Account Validation Error</code> |  | new | missing |
 | <code>Income and Expense</code> |  | new | missing |
 | <code>Income from this item will be recognized over a period of months instead of all at once. Eg: annual subscription paid upfront.</code> |  | new | missing |
@@ -6424,7 +6424,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Incorrect Company</code> |  | new | missing |
 | <code>Incorrect Component Quantity</code> |  | new | missing |
 | <code>Incorrect Configuration</code> |  | new | translated |
-| <code>Incorrect Date</code> |  | new | missing |
+| <code>Incorrect Date</code> |  | new | translated |
 | <code>Incorrect Inventory Dimension</code> |  | new | missing |
 | <code>Incorrect Invoice</code> |  | new | missing |
 | <code>Incorrect Payment Type</code> |  | new | missing |
@@ -6439,7 +6439,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Incorrect User or Password</code> |  | new | translated |
 | <code>Incorrect Verification code</code> |  | new | translated |
 | <code>Incorrect Warehouse</code> |  | new | missing |
-| <code>Incorrect number of General Ledger Entries found. You might have selected a wrong Account in the transaction.</code> |  | new | missing |
+| <code>Incorrect number of General Ledger Entries found. You might have selected a wrong Account in the transaction.</code> |  | new | translated |
 | <code>Incorrect value in row {0}:</code> |  | new | missing |
 | <code>Incorrect value:</code> |  | new | missing |
 | <code>Incorrectly Cleared</code> |  | new | missing |
@@ -6463,19 +6463,19 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Indicator Color</code> |  | new | translated |
 | <code>Indicator color</code> |  | new | missing |
 | <code>Indirect Expense</code> |  | new | missing |
-| <code>Indirect Expenses</code> |  | new | missing |
-| <code>Indirect Income</code> |  | new | missing |
-| <code>Individual</code> |  | new | missing |
+| <code>Indirect Expenses</code> |  | new | translated |
+| <code>Indirect Income</code> |  | new | translated |
+| <code>Individual</code> |  | new | translated |
 | <code>Individual GL Entry cannot be cancelled.</code> |  | new | missing |
 | <code>Individual Stock Ledger Entry cannot be cancelled.</code> |  | new | missing |
-| <code>Industry</code> |  | new | missing |
-| <code>Industry Type</code> |  | new | missing |
+| <code>Industry</code> |  | new | translated |
+| <code>Industry Type</code> |  | new | translated |
 | <code>Info</code> |  | new | translated |
 | <code>Info:</code> |  | new | translated |
 | <code>Initial Email Notification Sent</code> |  | new | missing |
 | <code>Initial Sync Count</code> |  | new | translated |
 | <code>Initialize Summary Table</code> |  | new | missing |
-| <code>Initiated</code> |  | new | missing |
+| <code>Initiated</code> |  | new | translated |
 | <code>InnoDB</code> |  | new | excepted |
 | <code>Insert</code> |  | new | translated |
 | <code>Insert Above</code> |  | new | translated |
@@ -6500,17 +6500,17 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Inspection Submission</code> |  | new | missing |
 | <code>Inspection Type</code> |  | new | missing |
 | <code>Install {0} from Marketplace</code> |  | new | missing |
-| <code>Installation Date</code> |  | new | missing |
-| <code>Installation Note</code> |  | new | missing |
-| <code>Installation Note Item</code> |  | new | missing |
+| <code>Installation Date</code> |  | new | translated |
+| <code>Installation Note</code> |  | new | translated |
+| <code>Installation Note Item</code> |  | new | translated |
 | <code>Installation Note {0} has already been submitted</code> |  | new | missing |
 | <code>Installation Status</code> |  | new | missing |
-| <code>Installation Time</code> |  | new | missing |
-| <code>Installation date cannot be before delivery date for Item {0}</code> |  | new | missing |
+| <code>Installation Time</code> |  | new | translated |
+| <code>Installation date cannot be before delivery date for Item {0}</code> |  | new | translated |
 | <code>Installed Application</code> |  | new | translated |
 | <code>Installed Applications</code> |  | new | translated |
 | <code>Installed Apps</code> |  | new | missing |
-| <code>Installed Qty</code> |  | new | missing |
+| <code>Installed Qty</code> |  | new | translated |
 | <code>Installing presets</code> |  | new | missing |
 | <code>Instruction</code> |  | new | missing |
 | <code>Instructions</code> |  | new | translated |
@@ -6520,39 +6520,39 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Insufficient Permissions</code> |  | new | missing |
 | <code>Insufficient Permissions for deleting Report</code> |  | new | missing |
 | <code>Insufficient Permissions for editing Report</code> |  | new | missing |
-| <code>Insufficient Stock</code> |  | new | missing |
+| <code>Insufficient Stock</code> |  | new | translated |
 | <code>Insufficient Stock for Batch</code> |  | new | missing |
 | <code>Insufficient Stock for Product Bundle Items</code> |  | new | missing |
 | <code>Insufficient attachment limit</code> |  | new | missing |
 | <code>Insurance</code> |  | new | missing |
 | <code>Insurance Company</code> |  | new | missing |
 | <code>Insurance Details</code> |  | new | missing |
-| <code>Insurance End Date</code> |  | new | missing |
-| <code>Insurance Start Date</code> |  | new | missing |
+| <code>Insurance End Date</code> |  | new | translated |
+| <code>Insurance Start Date</code> |  | new | translated |
 | <code>Insurance Start date should be less than Insurance End date</code> |  | new | missing |
-| <code>Insured value</code> |  | new | missing |
-| <code>Insurer</code> |  | new | missing |
+| <code>Insured value</code> |  | new | translated |
+| <code>Insurer</code> |  | new | translated |
 | <code>Int</code> |  | new | translated |
-| <code>Integration Details</code> |  | new | missing |
-| <code>Integration ID</code> |  | new | missing |
+| <code>Integration Details</code> |  | new | translated |
+| <code>Integration ID</code> |  | new | translated |
 | <code>Integration Request</code> |  | new | translated |
 | <code>Integrations</code> |  | new | translated |
 | <code>Integrations can use this field to set email delivery status</code> |  | new | translated |
 | <code>Inter</code> |  | new | excepted |
-| <code>Inter Company Invoice Reference</code> |  | new | missing |
-| <code>Inter Company Journal Entry</code> |  | new | missing |
-| <code>Inter Company Journal Entry Reference</code> |  | new | missing |
-| <code>Inter Company Order Reference</code> |  | new | missing |
+| <code>Inter Company Invoice Reference</code> |  | new | translated |
+| <code>Inter Company Journal Entry</code> |  | new | translated |
+| <code>Inter Company Journal Entry Reference</code> |  | new | translated |
+| <code>Inter Company Order Reference</code> |  | new | translated |
 | <code>Inter Company Purchase Order</code> |  | new | missing |
 | <code>Inter Company Reference</code> |  | new | missing |
 | <code>Inter Company Sales Order</code> |  | new | missing |
 | <code>Inter Transfer Reference</code> |  | new | missing |
-| <code>Interest</code> |  | new | missing |
+| <code>Interest</code> |  | new | translated |
 | <code>Interest Expense</code> |  | new | missing |
 | <code>Interest Income</code> |  | new | missing |
 | <code>Interest and/or dunning fee</code> |  | new | missing |
 | <code>Interest on Fixed Deposits</code> |  | new | missing |
-| <code>Interested</code> |  | new | missing |
+| <code>Interested</code> |  | new | translated |
 | <code>Interests</code> |  | new | translated |
 | <code>Intermediate</code> |  | new | translated |
 | <code>Internal</code> |  | new | missing |
@@ -6567,7 +6567,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Internal Supplier Already Exists</code> |  | new | missing |
 | <code>Internal Supplier Details</code> |  | new | missing |
 | <code>Internal Supplier {0} already exists for {1}. Disable it to make this Supplier internal.</code> |  | new | missing |
-| <code>Internal Transfer</code> |  | new | missing |
+| <code>Internal Transfer</code> |  | new | translated |
 | <code>Internal Transfer Reference Missing</code> |  | new | missing |
 | <code>Internal Transfer Rules</code> |  | new | missing |
 | <code>Internal Transfers</code> |  | new | missing |
@@ -6587,7 +6587,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Invalid &quot;depends_on&quot; expression</code> |  | new | translated |
 | <code>Invalid &quot;depends_on&quot; expression set in filter {0}</code> |  | new | translated |
 | <code>Invalid &quot;mandatory_depends_on&quot; expression</code> |  | new | missing |
-| <code>Invalid Account</code> |  | new | missing |
+| <code>Invalid Account</code> |  | new | translated |
 | <code>Invalid Accounting Dimension</code> |  | new | missing |
 | <code>Invalid Action</code> |  | new | missing |
 | <code>Invalid Allocated Amount</code> |  | new | missing |
@@ -6603,7 +6603,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Invalid Child Procedure</code> |  | new | missing |
 | <code>Invalid Code. Please try again.</code> |  | new | missing |
 | <code>Invalid Company Field</code> |  | new | missing |
-| <code>Invalid Company for Inter Company Transaction.</code> |  | new | missing |
+| <code>Invalid Company for Inter Company Transaction.</code> |  | new | translated |
 | <code>Invalid Condition: {}</code> |  | new | missing |
 | <code>Invalid Cost Center</code> |  | new | missing |
 | <code>Invalid Credentials</code> |  | new | translated |
@@ -6633,7 +6633,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Invalid Formula</code> |  | new | missing |
 | <code>Invalid Group By</code> |  | new | missing |
 | <code>Invalid Home Page</code> |  | new | translated |
-| <code>Invalid Item</code> |  | new | missing |
+| <code>Invalid Item</code> |  | new | translated |
 | <code>Invalid Item Defaults</code> |  | new | missing |
 | <code>Invalid JSON</code> |  | new | translated |
 | <code>Invalid JSON format: {0}</code> |  | new | missing |
@@ -6643,7 +6643,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Invalid Mail Server. Please rectify and try again.</code> |  | new | translated |
 | <code>Invalid Naming Series: {}</code> |  | new | missing |
 | <code>Invalid Net Purchase Amount</code> |  | new | missing |
-| <code>Invalid Opening Entry</code> |  | new | missing |
+| <code>Invalid Opening Entry</code> |  | new | translated |
 | <code>Invalid Operation</code> |  | new | missing |
 | <code>Invalid Option</code> |  | new | translated |
 | <code>Invalid Outgoing Mail Server or Port: {0}</code> |  | new | missing |
@@ -6651,11 +6651,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Invalid Override</code> |  | new | missing |
 | <code>Invalid POS Field</code> |  | new | missing |
 | <code>Invalid POS Fields</code> |  | new | missing |
-| <code>Invalid POS Invoices</code> |  | new | missing |
+| <code>Invalid POS Invoices</code> |  | new | translated |
 | <code>Invalid POS Search Field</code> |  | new | missing |
 | <code>Invalid Package Name</code> |  | new | missing |
 | <code>Invalid Parameters.</code> |  | new | missing |
-| <code>Invalid Parent Account</code> |  | new | missing |
+| <code>Invalid Parent Account</code> |  | new | translated |
 | <code>Invalid Part Number</code> |  | new | missing |
 | <code>Invalid Password</code> |  | new | translated |
 | <code>Invalid Phone Number</code> |  | new | missing |
@@ -6699,7 +6699,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Invalid backup path</code> |  | new | missing |
 | <code>Invalid characters in fieldname: {0}. Only letters, numbers, and underscores are allowed.</code> |  | new | missing |
 | <code>Invalid column</code> |  | new | translated |
-| <code>Invalid condition expression</code> |  | new | missing |
+| <code>Invalid condition expression</code> |  | new | translated |
 | <code>Invalid condition type in nested filters: {0}</code> |  | new | missing |
 | <code>Invalid credentials, try again.</code> |  | new | missing |
 | <code>Invalid debit/credit formula: {0}</code> |  | new | missing |
@@ -6725,7 +6725,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Invalid input</code> |  | new | missing |
 | <code>Invalid json added in the custom options: {0}</code> |  | new | translated |
 | <code>Invalid line reference format: &#x27;{0}&#x27;. Must start with letter and contain only letters, numbers, underscores, and hyphens</code> |  | new | missing |
-| <code>Invalid lost reason {0}, please create a new lost reason</code> |  | new | missing |
+| <code>Invalid lost reason {0}, please create a new lost reason</code> |  | new | translated |
 | <code>Invalid name type (integer) for varchar name column</code> |  | new | missing |
 | <code>Invalid naming series (. missing) for {0}</code> |  | new | missing |
 | <code>Invalid naming series {}: dot (.) missing</code> |  | new | missing |
@@ -6754,11 +6754,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Invalid value {0} for {1} against account {2}</code> |  | new | missing |
 | <code>Invalid values for fields:</code> | Error message in web form | new | missing |
 | <code>Invalid wkhtmltopdf version</code> |  | new | missing |
-| <code>Invalid {0}</code> |  | new | missing |
+| <code>Invalid {0}</code> |  | new | translated |
 | <code>Invalid {0} condition</code> |  | new | translated |
 | <code>Invalid {0} dictionary format</code> |  | new | missing |
-| <code>Invalid {0} for Inter Company Transaction.</code> |  | new | missing |
-| <code>Invalid {0}: {1}</code> |  | new | missing |
+| <code>Invalid {0} for Inter Company Transaction.</code> |  | new | translated |
+| <code>Invalid {0}: {1}</code> |  | new | translated |
 | <code>Inventory</code> |  | new | missing |
 | <code>Inventory Account Currency</code> |  | new | missing |
 | <code>Inventory Dimension</code> |  | new | missing |
@@ -6769,7 +6769,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Inventory Valuation</code> |  | new | missing |
 | <code>Inverse</code> |  | new | translated |
 | <code>Investment Banking</code> |  | new | missing |
-| <code>Investments</code> |  | new | missing |
+| <code>Investments</code> |  | new | translated |
 | <code>Invitation already accepted</code> |  | new | missing |
 | <code>Invitation already exists</code> |  | new | missing |
 | <code>Invitation cancelled</code> |  | new | missing |
@@ -6784,79 +6784,79 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Invite Users</code> |  | new | missing |
 | <code>Invite as User</code> |  | new | translated |
 | <code>Invited By</code> |  | new | missing |
-| <code>Invoice</code> |  | new | missing |
+| <code>Invoice</code> |  | new | translated |
 | <code>Invoice Cancellation</code> |  | new | missing |
-| <code>Invoice Date</code> |  | new | missing |
-| <code>Invoice Discounting</code> |  | new | missing |
+| <code>Invoice Date</code> |  | new | translated |
+| <code>Invoice Discounting</code> |  | new | translated |
 | <code>Invoice Document Type Selection Error</code> |  | new | missing |
-| <code>Invoice Grand Total</code> |  | new | missing |
+| <code>Invoice Grand Total</code> |  | new | translated |
 | <code>Invoice Limit</code> |  | new | missing |
 | <code>Invoice No</code> |  | new | missing |
-| <code>Invoice Number</code> |  | new | missing |
+| <code>Invoice Number</code> |  | new | translated |
 | <code>Invoice Paid</code> |  | new | missing |
-| <code>Invoice Portion</code> |  | new | missing |
+| <code>Invoice Portion</code> |  | new | translated |
 | <code>Invoice Portion (%)</code> |  | new | missing |
-| <code>Invoice Posting Date</code> |  | new | missing |
+| <code>Invoice Posting Date</code> |  | new | translated |
 | <code>Invoice Series</code> |  | new | missing |
-| <code>Invoice Status</code> |  | new | missing |
-| <code>Invoice Type</code> |  | new | missing |
+| <code>Invoice Status</code> |  | new | translated |
+| <code>Invoice Type</code> |  | new | translated |
 | <code>Invoice Type Created via POS Screen</code> |  | new | missing |
 | <code>Invoice already created for all billing hours</code> |  | new | missing |
 | <code>Invoice and Billing</code> |  | new | missing |
 | <code>Invoice can&#x27;t be made for zero billing hour</code> |  | new | missing |
 | <code>Invoice is not blocked. Block the invoice to change the release date.</code> |  | new | missing |
-| <code>Invoiced Amount</code> |  | new | missing |
+| <code>Invoiced Amount</code> |  | new | translated |
 | <code>Invoiced Amount (Excl. Tax)</code> |  | new | missing |
 | <code>Invoiced Qty</code> |  | new | missing |
-| <code>Invoices</code> |  | new | missing |
+| <code>Invoices</code> |  | new | translated |
 | <code>Invoices and Payments have been Fetched and Allocated</code> |  | new | missing |
-| <code>Invoicing</code> |  | new | missing |
+| <code>Invoicing</code> |  | new | translated |
 | <code>Invoicing Features</code> |  | new | missing |
-| <code>Inward</code> |  | new | missing |
+| <code>Inward</code> |  | new | translated |
 | <code>Inward Order</code> |  | new | missing |
 | <code>Is</code> |  | new | translated |
-| <code>Is Account Payable</code> |  | new | missing |
+| <code>Is Account Payable</code> |  | new | translated |
 | <code>Is Active</code> |  | new | translated |
 | <code>Is Additional Item</code> |  | new | missing |
 | <code>Is Additional Transfer Entry</code> |  | new | missing |
 | <code>Is Adjustment Entry</code> |  | new | missing |
-| <code>Is Advance</code> |  | new | missing |
+| <code>Is Advance</code> |  | new | translated |
 | <code>Is Alternative</code> |  | new | missing |
 | <code>Is Attachments Folder</code> |  | new | translated |
 | <code>Is Billable</code> |  | new | missing |
 | <code>Is Billing Contact</code> |  | new | missing |
 | <code>Is Calendar and Gantt</code> |  | new | missing |
-| <code>Is Cancelled</code> |  | new | missing |
+| <code>Is Cancelled</code> |  | new | translated |
 | <code>Is Cash or Non Trade Discount</code> |  | new | missing |
 | <code>Is Child Table</code> |  | new | translated |
-| <code>Is Company</code> |  | new | missing |
-| <code>Is Company Account</code> |  | new | missing |
+| <code>Is Company</code> |  | new | translated |
+| <code>Is Company Account</code> |  | new | translated |
 | <code>Is Complete</code> |  | new | translated |
 | <code>Is Completed</code> |  | new | translated |
-| <code>Is Consolidated</code> |  | new | missing |
-| <code>Is Container</code> |  | new | missing |
+| <code>Is Consolidated</code> |  | new | translated |
+| <code>Is Container</code> |  | new | translated |
 | <code>Is Corrective Job Card</code> |  | new | missing |
 | <code>Is Corrective Operation</code> |  | new | missing |
 | <code>Is Credit Card</code> |  | new | missing |
-| <code>Is Cumulative</code> |  | new | missing |
+| <code>Is Cumulative</code> |  | new | translated |
 | <code>Is Current</code> |  | new | missing |
 | <code>Is Custom</code> |  | new | missing |
 | <code>Is Custom Field</code> |  | new | translated |
 | <code>Is Customer Provided Item</code> |  | new | missing |
 | <code>Is Default</code> |  | new | translated |
-| <code>Is Default Account</code> |  | new | missing |
-| <code>Is Default Language</code> |  | new | missing |
+| <code>Is Default Account</code> |  | new | translated |
+| <code>Is Default Language</code> |  | new | translated |
 | <code>Is Delivery Note required to create Sales Invoice?</code> |  | new | missing |
-| <code>Is Discounted</code> |  | new | missing |
+| <code>Is Discounted</code> |  | new | translated |
 | <code>Is Dynamic URL?</code> |  | new | missing |
 | <code>Is Exchange Gain / Loss?</code> |  | new | missing |
 | <code>Is Expandable</code> |  | new | missing |
 | <code>Is Final Finished Good</code> |  | new | missing |
 | <code>Is Finished Item</code> |  | new | missing |
-| <code>Is Fixed Asset</code> |  | new | missing |
+| <code>Is Fixed Asset</code> |  | new | translated |
 | <code>Is Folder</code> |  | new | translated |
-| <code>Is Free Item</code> |  | new | missing |
-| <code>Is Frozen</code> |  | new | missing |
+| <code>Is Free Item</code> |  | new | translated |
+| <code>Is Frozen</code> |  | new | translated |
 | <code>Is Fully Depreciated</code> |  | new | missing |
 | <code>Is Global</code> |  | new | translated |
 | <code>Is Group</code> |  | new | translated |
@@ -6864,18 +6864,18 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Is Half Day</code> |  | new | missing |
 | <code>Is Hidden</code> |  | new | missing |
 | <code>Is Home Folder</code> |  | new | translated |
-| <code>Is Internal Customer</code> |  | new | missing |
-| <code>Is Internal Supplier</code> |  | new | missing |
-| <code>Is Mandatory</code> |  | new | missing |
+| <code>Is Internal Customer</code> |  | new | translated |
+| <code>Is Internal Supplier</code> |  | new | translated |
+| <code>Is Mandatory</code> |  | new | translated |
 | <code>Is Mandatory Field</code> |  | new | translated |
 | <code>Is Milestone</code> |  | new | missing |
 | <code>Is Old Subcontracting Flow</code> |  | new | missing |
-| <code>Is Opening</code> |  | new | missing |
-| <code>Is Opening Entry</code> |  | new | missing |
+| <code>Is Opening</code> |  | new | translated |
+| <code>Is Opening Entry</code> |  | new | translated |
 | <code>Is Optional State</code> |  | new | translated |
 | <code>Is Outward</code> |  | new | missing |
 | <code>Is Packed</code> |  | new | missing |
-| <code>Is Paid</code> |  | new | missing |
+| <code>Is Paid</code> |  | new | translated |
 | <code>Is Paused</code> |  | new | missing |
 | <code>Is Period Closing Voucher Entry</code> |  | new | missing |
 | <code>Is Phantom BOM</code> |  | new | missing |
@@ -6897,9 +6897,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Is Rejected</code> |  | new | missing |
 | <code>Is Rejected Warehouse</code> |  | new | missing |
 | <code>Is Remote Request?</code> |  | new | missing |
-| <code>Is Return</code> |  | new | missing |
-| <code>Is Return (Credit Note)</code> |  | new | missing |
-| <code>Is Return (Debit Note)</code> |  | new | missing |
+| <code>Is Return</code> |  | new | translated |
+| <code>Is Return (Credit Note)</code> |  | new | translated |
+| <code>Is Return (Debit Note)</code> |  | new | translated |
 | <code>Is Rule Evaluated</code> |  | new | missing |
 | <code>Is Sales Order required to create Sales Invoice/Delivery Note?</code> |  | new | missing |
 | <code>Is Setup Complete?</code> |  | new | missing |
@@ -6910,7 +6910,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Is Standard</code> |  | new | translated |
 | <code>Is Stock Item</code> |  | new | missing |
 | <code>Is Sub Assembly Item</code> |  | new | missing |
-| <code>Is Subcontracted</code> |  | new | missing |
+| <code>Is Subcontracted</code> |  | new | translated |
 | <code>Is Subcontracted Item</code> |  | new | missing |
 | <code>Is Submittable</code> |  | new | translated |
 | <code>Is System Generated</code> |  | new | missing |
@@ -6918,16 +6918,16 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Is Table Field</code> |  | new | missing |
 | <code>Is Tax Withholding Account</code> |  | new | missing |
 | <code>Is Template</code> |  | new | missing |
-| <code>Is Transporter</code> |  | new | missing |
+| <code>Is Transporter</code> |  | new | translated |
 | <code>Is Tree</code> |  | new | translated |
 | <code>Is Unique</code> |  | new | translated |
 | <code>Is Virtual</code> |  | new | missing |
 | <code>Is Your Company Address</code> |  | new | missing |
-| <code>Is a Subscription</code> |  | new | missing |
+| <code>Is a Subscription</code> |  | new | translated |
 | <code>Is created using POS</code> |  | new | missing |
 | <code>Is standard</code> |  | new | missing |
-| <code>Is this Tax included in Basic Rate?</code> |  | new | missing |
-| <code>Issue</code> |  | new | missing |
+| <code>Is this Tax included in Basic Rate?</code> |  | new | translated |
+| <code>Issue</code> |  | new | translated |
 | <code>Issue Analytics</code> |  | new | missing |
 | <code>Issue Credit Note</code> |  | new | missing |
 | <code>Issue Date</code> |  | new | missing |
@@ -6937,7 +6937,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Issue Summary</code> |  | new | missing |
 | <code>Issue Type</code> |  | new | missing |
 | <code>Issue a debit note against an existing Sales Invoice to adjust the rate. The quantity will be retained from the original invoice.</code> |  | new | missing |
-| <code>Issued</code> |  | new | missing |
+| <code>Issued</code> |  | new | translated |
 | <code>Issued Items Against Work Order</code> |  | new | missing |
 | <code>Issues</code> |  | new | missing |
 | <code>Issuing Date</code> |  | new | missing |
@@ -6963,25 +6963,25 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Item Attributes</code> |  | new | missing |
 | <code>Item Balance (Simple)</code> |  | new | missing |
 | <code>Item Barcode</code> |  | new | missing |
-| <code>Item Cart</code> |  | new | missing |
-| <code>Item Code</code> |  | new | missing |
+| <code>Item Cart</code> |  | new | translated |
+| <code>Item Code</code> |  | new | translated |
 | <code>Item Code (Final Product)</code> |  | new | missing |
-| <code>Item Code &gt; Item Group &gt; Brand</code> |  | new | missing |
+| <code>Item Code &gt; Item Group &gt; Brand</code> |  | new | translated |
 | <code>Item Code cannot be changed for Serial No.</code> |  | new | missing |
-| <code>Item Code required at Row No {0}</code> |  | new | missing |
-| <code>Item Code: {0} is not available under warehouse {1}.</code> |  | new | missing |
+| <code>Item Code required at Row No {0}</code> |  | new | translated |
+| <code>Item Code: {0} is not available under warehouse {1}.</code> |  | new | translated |
 | <code>Item Customer Detail</code> |  | new | missing |
 | <code>Item Default</code> |  | new | missing |
 | <code>Item Defaults</code> |  | new | missing |
 | <code>Item Description</code> |  | new | missing |
-| <code>Item Details</code> |  | new | missing |
-| <code>Item Group</code> |  | new | missing |
+| <code>Item Details</code> |  | new | translated |
+| <code>Item Group</code> |  | new | translated |
 | <code>Item Group Defaults</code> |  | new | missing |
 | <code>Item Group Name</code> |  | new | missing |
 | <code>Item Group Tree</code> |  | new | missing |
-| <code>Item Group not mentioned in item master for item {0}</code> |  | new | missing |
+| <code>Item Group not mentioned in item master for item {0}</code> |  | new | translated |
 | <code>Item Group wise Discount</code> |  | new | missing |
-| <code>Item Groups</code> |  | new | missing |
+| <code>Item Groups</code> |  | new | translated |
 | <code>Item Image (if not slideshow)</code> |  | new | missing |
 | <code>Item Information</code> |  | new | missing |
 | <code>Item Label</code> |  | new | translated |
@@ -6989,10 +6989,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Item Locations</code> |  | new | missing |
 | <code>Item Manager</code> |  | new | missing |
 | <code>Item Manufacturer</code> |  | new | missing |
-| <code>Item Name</code> |  | new | missing |
+| <code>Item Name</code> |  | new | translated |
 | <code>Item Naming By</code> |  | new | missing |
 | <code>Item Out of Stock</code> |  | new | missing |
-| <code>Item Price</code> |  | new | missing |
+| <code>Item Price</code> |  | new | translated |
 | <code>Item Price Settings</code> |  | new | missing |
 | <code>Item Price Stock</code> |  | new | missing |
 | <code>Item Price added for {0} in Price List - {1}</code> |  | new | missing |
@@ -7009,12 +7009,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Item Shortage Report</code> |  | new | missing |
 | <code>Item Supplier</code> |  | new | missing |
 | <code>Item Tax</code> |  | new | missing |
-| <code>Item Tax Amount Included in Value</code> |  | new | missing |
-| <code>Item Tax Rate</code> |  | new | missing |
-| <code>Item Tax Row {0} must have account of type Tax or Income or Expense or Chargeable</code> |  | new | missing |
+| <code>Item Tax Amount Included in Value</code> |  | new | translated |
+| <code>Item Tax Rate</code> |  | new | translated |
+| <code>Item Tax Row {0} must have account of type Tax or Income or Expense or Chargeable</code> |  | new | translated |
 | <code>Item Tax Row {0}: Account must belong to Company - {1}</code> |  | new | missing |
-| <code>Item Tax Template</code> |  | new | missing |
-| <code>Item Tax Template Detail</code> |  | new | missing |
+| <code>Item Tax Template</code> |  | new | translated |
+| <code>Item Tax Template Detail</code> |  | new | translated |
 | <code>Item To Manufacture</code> |  | new | missing |
 | <code>Item Type</code> |  | new | translated |
 | <code>Item Variant</code> |  | new | missing |
@@ -7025,10 +7025,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Item Variants updated</code> |  | new | missing |
 | <code>Item Warehouse based reposting has been enabled.</code> |  | new | missing |
 | <code>Item Website Specification</code> |  | new | missing |
-| <code>Item Weight Details</code> |  | new | missing |
+| <code>Item Weight Details</code> |  | new | translated |
 | <code>Item Where Used</code> |  | new | missing |
 | <code>Item Wise Consumption</code> |  | new | missing |
-| <code>Item Wise Tax Detail</code> |  | new | missing |
+| <code>Item Wise Tax Detail</code> |  | new | translated |
 | <code>Item Wise Tax Details</code> |  | new | missing |
 | <code>Item Wise Tax Details do not match with Taxes and Charges at the following rows:</code> |  | new | missing |
 | <code>Item and Warehouse</code> |  | new | missing |
@@ -7039,7 +7039,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Item is mandatory in Raw Materials table.</code> |  | new | missing |
 | <code>Item is removed since no serial / batch no selected.</code> |  | new | missing |
 | <code>Item must be added using &#x27;Get Items from Purchase Receipts&#x27; button</code> |  | new | missing |
-| <code>Item name</code> |  | new | missing |
+| <code>Item name</code> |  | new | translated |
 | <code>Item operation</code> |  | new | missing |
 | <code>Item qty can not be updated as raw materials are already processed.</code> |  | new | missing |
 | <code>Item rate has been updated to zero as Allow Zero Valuation Rate is checked for item {0}</code> |  | new | missing |
@@ -7053,12 +7053,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Item {0} cannot be added as a sub-assembly of itself</code> |  | new | missing |
 | <code>Item {0} cannot be ordered more than once</code> |  | new | missing |
 | <code>Item {0} cannot be ordered more than {1} against Blanket Order {2}.</code> |  | new | missing |
-| <code>Item {0} does not exist</code> |  | new | missing |
+| <code>Item {0} does not exist</code> |  | new | translated |
 | <code>Item {0} does not exist in the system or has expired</code> |  | new | missing |
 | <code>Item {0} does not exist.</code> |  | new | missing |
 | <code>Item {0} entered multiple times.</code> |  | new | missing |
 | <code>Item {0} has already been returned</code> |  | new | missing |
-| <code>Item {0} has been disabled</code> |  | new | missing |
+| <code>Item {0} has been disabled</code> |  | new | translated |
 | <code>Item {0} has no Serial No. Only serialized items can have delivery based on Serial No</code> |  | new | missing |
 | <code>Item {0} has no changes in delivered quantity. Please unselect the row if you do not wish to update its quantity.</code> |  | new | missing |
 | <code>Item {0} has reached its end of life on {1}</code> |  | new | missing |
@@ -7067,26 +7067,26 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Item {0} is cancelled</code> |  | new | missing |
 | <code>Item {0} is disabled</code> |  | new | missing |
 | <code>Item {0} is not a drop ship item. Only drop ship items can have Delivered Qty updated.</code> |  | new | missing |
-| <code>Item {0} is not a serialized Item</code> |  | new | missing |
+| <code>Item {0} is not a serialized Item</code> |  | new | translated |
 | <code>Item {0} is not a stock Item</code> |  | new | missing |
 | <code>Item {0} is not a subcontracted item</code> |  | new | missing |
 | <code>Item {0} is not a template item.</code> |  | new | missing |
 | <code>Item {0} is not active or end of life has been reached</code> |  | new | missing |
-| <code>Item {0} must be a Fixed Asset Item</code> |  | new | missing |
+| <code>Item {0} must be a Fixed Asset Item</code> |  | new | translated |
 | <code>Item {0} must be a Non-Stock Item</code> |  | new | missing |
 | <code>Item {0} must be a Sub-contracted Item</code> |  | new | missing |
-| <code>Item {0} must be a non-stock item</code> |  | new | missing |
+| <code>Item {0} must be a non-stock item</code> |  | new | translated |
 | <code>Item {0} not found in &#x27;Raw Materials Supplied&#x27; table in {1} {2}</code> |  | new | missing |
 | <code>Item {0} not found.</code> |  | new | missing |
-| <code>Item {0}: Ordered qty {1} cannot be less than minimum order qty {2} (defined in Item).</code> |  | new | missing |
+| <code>Item {0}: Ordered qty {1} cannot be less than minimum order qty {2} (defined in Item).</code> |  | new | translated |
 | <code>Item {0}: Ordered qty {1} {2} exceeds the minimum order qty {3} {2} by {4} {2} due to purchase UOM rounding.</code> |  | new | missing |
 | <code>Item {0}: {1} qty produced.</code> |  | new | missing |
 | <code>Item {} does not exist.</code> |  | new | missing |
 | <code>Item-wise Price List Rate</code> |  | new | missing |
-| <code>Item-wise Purchase History</code> |  | new | missing |
-| <code>Item-wise Purchase Register</code> |  | new | missing |
-| <code>Item-wise Sales History</code> |  | new | missing |
-| <code>Item-wise Sales Register</code> |  | new | missing |
+| <code>Item-wise Purchase History</code> |  | new | translated |
+| <code>Item-wise Purchase Register</code> |  | new | translated |
+| <code>Item-wise Sales History</code> |  | new | translated |
+| <code>Item-wise Sales Register</code> |  | new | translated |
 | <code>Item-wise sales Register</code> |  | new | missing |
 | <code>Item/Item Code required to get Item Tax Template.</code> |  | new | missing |
 | <code>Item: {0} does not exist in the system</code> |  | new | missing |
@@ -7094,13 +7094,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Items &amp; Pricing</code> |  | new | missing |
 | <code>Items Catalogue</code> |  | new | missing |
 | <code>Items Filter</code> |  | new | missing |
-| <code>Items Required</code> |  | new | missing |
+| <code>Items Required</code> |  | new | translated |
 | <code>Items To Be Received</code> |  | new | missing |
-| <code>Items To Be Requested</code> |  | new | missing |
-| <code>Items and Pricing</code> |  | new | missing |
+| <code>Items To Be Requested</code> |  | new | translated |
+| <code>Items and Pricing</code> |  | new | translated |
 | <code>Items cannot be updated as Subcontracting Inward Order(s) exist against this Subcontracted Sales Order.</code> |  | new | missing |
 | <code>Items cannot be updated as Subcontracting Order is created against the Purchase Order {0}.</code> |  | new | missing |
-| <code>Items for Raw Material Request</code> |  | new | missing |
+| <code>Items for Raw Material Request</code> |  | new | translated |
 | <code>Items not found.</code> |  | new | missing |
 | <code>Items rate has been updated to zero as Allow Zero Valuation Rate is checked for the following items: {0}</code> |  | new | missing |
 | <code>Items to Be Repost</code> |  | new | missing |
@@ -7124,7 +7124,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Javascript is disabled on your browser</code> |  | new | translated |
 | <code>Jinja</code> |  | new | excepted |
 | <code>Job Capacity</code> |  | new | missing |
-| <code>Job Card</code> |  | new | missing |
+| <code>Job Card</code> |  | new | translated |
 | <code>Job Card Analysis</code> |  | new | missing |
 | <code>Job Card Item</code> |  | new | missing |
 | <code>Job Card On Hold</code> |  | new | missing |
@@ -7142,10 +7142,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Job Info</code> |  | new | missing |
 | <code>Job Name</code> |  | new | missing |
 | <code>Job Paused</code> |  | new | missing |
-| <code>Job Started</code> |  | new | missing |
+| <code>Job Started</code> |  | new | translated |
 | <code>Job Status</code> |  | new | missing |
 | <code>Job Stopped Successfully</code> |  | new | missing |
-| <code>Job Title</code> |  | new | missing |
+| <code>Job Title</code> |  | new | translated |
 | <code>Job Worker</code> |  | new | missing |
 | <code>Job Worker Address</code> |  | new | missing |
 | <code>Job Worker Address Details</code> |  | new | missing |
@@ -7164,16 +7164,16 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Joule</code> |  | new | missing |
 | <code>Joule/Meter</code> |  | new | missing |
 | <code>Journal Entries</code> |  | new | missing |
-| <code>Journal Entries {0} are un-linked</code> |  | new | missing |
-| <code>Journal Entry</code> |  | new | missing |
-| <code>Journal Entry Account</code> |  | new | missing |
-| <code>Journal Entry Template</code> |  | new | missing |
-| <code>Journal Entry Template Account</code> |  | new | missing |
-| <code>Journal Entry Type</code> |  | new | missing |
+| <code>Journal Entries {0} are un-linked</code> |  | new | translated |
+| <code>Journal Entry</code> |  | new | translated |
+| <code>Journal Entry Account</code> |  | new | translated |
+| <code>Journal Entry Template</code> |  | new | translated |
+| <code>Journal Entry Template Account</code> |  | new | translated |
+| <code>Journal Entry Type</code> |  | new | translated |
 | <code>Journal Entry for Asset scrapping cannot be cancelled. Please restore the Asset.</code> |  | new | missing |
-| <code>Journal Entry for Scrap</code> |  | new | missing |
+| <code>Journal Entry for Scrap</code> |  | new | translated |
 | <code>Journal Entry type should be set as Depreciation Entry for asset depreciation</code> |  | new | missing |
-| <code>Journal Entry {0} does not have account {1} or already matched against other voucher</code> |  | new | missing |
+| <code>Journal Entry {0} does not have account {1} or already matched against other voucher</code> |  | new | translated |
 | <code>Journal Template Accounts</code> |  | new | missing |
 | <code>Journal entries have been created</code> |  | new | missing |
 | <code>Journals</code> |  | new | missing |
@@ -7192,7 +7192,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Keeps track of all communications</code> |  | new | translated |
 | <code>Kelvin</code> |  | new | missing |
 | <code>Key</code> |  | new | translated |
-| <code>Key Reports</code> |  | new | missing |
+| <code>Key Reports</code> |  | new | translated |
 | <code>Key Required</code> |  | new | missing |
 | <code>Key required</code> |  | new | missing |
 | <code>Keyboard Shortcuts</code> |  | new | translated |
@@ -7262,14 +7262,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Landed Cost Report</code> |  | new | missing |
 | <code>Landed Cost Taxes and Charges</code> |  | new | missing |
 | <code>Landed Cost Vendor Invoice</code> |  | new | missing |
-| <code>Landed Cost Voucher</code> |  | new | missing |
-| <code>Landed Cost Voucher Amount</code> |  | new | missing |
+| <code>Landed Cost Voucher</code> |  | new | translated |
+| <code>Landed Cost Voucher Amount</code> |  | new | translated |
 | <code>Landing Page</code> |  | new | translated |
 | <code>Landscape</code> |  | new | translated |
 | <code>Language</code> |  | new | translated |
 | <code>Language Code</code> |  | new | translated |
 | <code>Language Name</code> |  | new | translated |
-| <code>Lapsed</code> |  | new | missing |
+| <code>Lapsed</code> |  | new | translated |
 | <code>Large</code> |  | new | missing |
 | <code>Last</code> |  | new | translated |
 | <code>Last 10 active users</code> |  | new | missing |
@@ -7280,16 +7280,16 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Last 90 Days</code> |  | new | missing |
 | <code>Last Active</code> |  | new | translated |
 | <code>Last Carbon Check</code> |  | new | missing |
-| <code>Last Communication</code> |  | new | missing |
-| <code>Last Communication Date</code> |  | new | missing |
-| <code>Last Completion Date</code> |  | new | missing |
+| <code>Last Communication</code> |  | new | translated |
+| <code>Last Communication Date</code> |  | new | translated |
+| <code>Last Completion Date</code> |  | new | translated |
 | <code>Last Edited By You</code> |  | new | missing |
 | <code>Last Edited By {0}</code> |  | new | missing |
 | <code>Last Execution</code> |  | new | translated |
 | <code>Last GL Entry update was done {}. This operation is not allowed while system is actively being used. Please wait for 5 minutes before retrying.</code> |  | new | missing |
 | <code>Last Heartbeat</code> |  | new | missing |
 | <code>Last IP</code> |  | new | translated |
-| <code>Last Integration Date</code> |  | new | missing |
+| <code>Last Integration Date</code> |  | new | translated |
 | <code>Last Known Versions</code> |  | new | translated |
 | <code>Last Login</code> |  | new | translated |
 | <code>Last Modified Date</code> |  | new | translated |
@@ -7297,10 +7297,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Last Month</code> |  | new | translated |
 | <code>Last Month Downtime Analysis</code> |  | new | missing |
 | <code>Last Name</code> |  | new | translated |
-| <code>Last Order Amount</code> |  | new | missing |
-| <code>Last Order Date</code> |  | new | missing |
+| <code>Last Order Amount</code> |  | new | translated |
+| <code>Last Order Date</code> |  | new | translated |
 | <code>Last Password Reset Date</code> |  | new | translated |
-| <code>Last Purchase Rate</code> |  | new | missing |
+| <code>Last Purchase Rate</code> |  | new | translated |
 | <code>Last Quarter</code> |  | new | translated |
 | <code>Last Received At</code> |  | new | missing |
 | <code>Last Reset Password Key Generated On</code> |  | new | missing |
@@ -7322,27 +7322,27 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Last transacted</code> |  | new | missing |
 | <code>Latest</code> |  | new | missing |
 | <code>Latest Age</code> |  | new | missing |
-| <code>Latitude</code> |  | new | missing |
+| <code>Latitude</code> |  | new | translated |
 | <code>Layout</code> |  | new | missing |
 | <code>Layout Reset</code> |  | new | missing |
 | <code>Layout will be reset to standard layout, are you sure you want to do this?</code> |  | new | missing |
-| <code>Lead</code> |  | new | missing |
+| <code>Lead</code> |  | new | translated |
 | <code>Lead -&gt; Prospect</code> |  | new | missing |
-| <code>Lead Conversion Time</code> |  | new | missing |
-| <code>Lead Count</code> |  | new | missing |
-| <code>Lead Details</code> |  | new | missing |
-| <code>Lead Name</code> |  | new | missing |
-| <code>Lead Owner</code> |  | new | missing |
-| <code>Lead Owner Efficiency</code> |  | new | missing |
+| <code>Lead Conversion Time</code> |  | new | translated |
+| <code>Lead Count</code> |  | new | translated |
+| <code>Lead Details</code> |  | new | translated |
+| <code>Lead Name</code> |  | new | translated |
+| <code>Lead Owner</code> |  | new | translated |
+| <code>Lead Owner Efficiency</code> |  | new | translated |
 | <code>Lead Owner cannot be same as the Lead Email Address</code> |  | new | missing |
-| <code>Lead Source</code> |  | new | missing |
+| <code>Lead Source</code> |  | new | translated |
 | <code>Lead Time</code> |  | new | missing |
-| <code>Lead Time (Days)</code> |  | new | missing |
+| <code>Lead Time (Days)</code> |  | new | translated |
 | <code>Lead Time (in mins)</code> |  | new | missing |
 | <code>Lead Time Date</code> |  | new | missing |
 | <code>Lead Time Days</code> |  | new | missing |
 | <code>Lead Time in days</code> |  | new | missing |
-| <code>Lead Type</code> |  | new | missing |
+| <code>Lead Type</code> |  | new | translated |
 | <code>Lead {0} has been added to prospect {1}.</code> |  | new | missing |
 | <code>Leads</code> |  | new | missing |
 | <code>Leads help you get business, add all your contacts and more as your leads</code> |  | new | missing |
@@ -7352,7 +7352,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Learn more</code> |  | new | missing |
 | <code>Leave Encashed?</code> |  | new | missing |
 | <code>Leave blank for home.<br>This is relative to site URL, for example &quot;about&quot; will redirect to &quot;https://yoursitename.com/about&quot;</code> |  | new | missing |
-| <code>Leave blank if the Supplier is blocked indefinitely</code> |  | new | missing |
+| <code>Leave blank if the Supplier is blocked indefinitely</code> |  | new | translated |
 | <code>Leave blank to repeat always</code> |  | new | translated |
 | <code>Leave blank to use the password already saved for this bank account (if any). It is stored encrypted and reused for future statements.</code> |  | new | missing |
 | <code>Leave blank to use the standard Delivery Note format</code> |  | new | missing |
@@ -7376,7 +7376,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Legacy Fields</code> |  | new | missing |
 | <code>Legal</code> |  | new | excepted |
 | <code>Legal Entity / Subsidiary with a separate Chart of Accounts belonging to the Organization.</code> |  | new | missing |
-| <code>Legal Expenses</code> |  | new | missing |
+| <code>Legal Expenses</code> |  | new | translated |
 | <code>Legend</code> |  | new | missing |
 | <code>Length</code> |  | new | translated |
 | <code>Length (cm)</code> |  | new | missing |
@@ -7384,7 +7384,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Length of {0} should be between 1 and 1000</code> |  | new | translated |
 | <code>Less</code> |  | new | translated |
 | <code>Less Than</code> |  | new | missing |
-| <code>Less Than Amount</code> |  | new | missing |
+| <code>Less Than Amount</code> |  | new | translated |
 | <code>Less Than Or Equal To</code> |  | new | missing |
 | <code>Let us continue with the onboarding</code> |  | new | missing |
 | <code>Let&#x27;s Get Started</code> |  | new | translated |
@@ -7400,14 +7400,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Letter Head Scripts</code> |  | new | missing |
 | <code>Letter Head cannot be both disabled and default</code> |  | new | missing |
 | <code>Letter Head in HTML</code> |  | new | translated |
-| <code>Letter or Email Body Text</code> |  | new | missing |
-| <code>Letter or Email Closing Text</code> |  | new | missing |
+| <code>Letter or Email Body Text</code> |  | new | translated |
+| <code>Letter or Email Closing Text</code> |  | new | translated |
 | <code>Level</code> |  | new | translated |
 | <code>Level (BOM)</code> |  | new | missing |
 | <code>Level 0 is for document level permissions, higher levels for field level permissions.</code> |  | new | translated |
-| <code>Lft</code> |  | new | missing |
-| <code>Liabilities</code> |  | new | missing |
-| <code>Liability</code> |  | new | missing |
+| <code>Lft</code> |  | new | translated |
+| <code>Liabilities</code> |  | new | translated |
+| <code>Liability</code> |  | new | translated |
 | <code>Library</code> |  | new | missing |
 | <code>License</code> |  | new | translated |
 | <code>License Details</code> |  | new | missing |
@@ -7433,7 +7433,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Line</code> |  | new | translated |
 | <code>Line Reference</code> |  | new | missing |
 | <code>Line references undefined in {0}: {1}</code> |  | new | missing |
-| <code>Line spacing for amount in words</code> |  | new | missing |
+| <code>Line spacing for amount in words</code> |  | new | translated |
 | <code>Link</code> |  | new | translated |
 | <code>Link Cards</code> |  | new | translated |
 | <code>Link Count</code> |  | new | missing |
@@ -7455,15 +7455,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Link existing Quality Procedure.</code> |  | new | missing |
 | <code>Link for About Us Page is &quot;/about&quot;.</code> |  | new | missing |
 | <code>Link that is the website home page. Standard Links (home, login, products, blog, about, contact)</code> |  | new | missing |
-| <code>Link to Material Request</code> |  | new | missing |
-| <code>Link to Material Requests</code> |  | new | missing |
+| <code>Link to Material Request</code> |  | new | translated |
+| <code>Link to Material Requests</code> |  | new | translated |
 | <code>Link to the page you want to open. Leave blank if you want to make it a group parent.</code> |  | new | translated |
 | <code>Link with Customer</code> |  | new | missing |
 | <code>Link with Supplier</code> |  | new | missing |
 | <code>Linked</code> |  | new | translated |
-| <code>Linked Documents</code> |  | new | missing |
-| <code>Linked Invoices</code> |  | new | missing |
-| <code>Linked Location</code> |  | new | missing |
+| <code>Linked Documents</code> |  | new | translated |
+| <code>Linked Invoices</code> |  | new | translated |
+| <code>Linked Location</code> |  | new | translated |
 | <code>Linked with submitted documents</code> |  | new | missing |
 | <code>Linked with {0}</code> |  | new | translated |
 | <code>Linking Failed</code> |  | new | missing |
@@ -7480,13 +7480,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>List View</code> |  | new | missing |
 | <code>List View Settings</code> |  | new | translated |
 | <code>List as [{&quot;label&quot;: _(&quot;Jobs&quot;), &quot;route&quot;:&quot;jobs&quot;}]</code> |  | new | translated |
-| <code>List items that form the package.</code> |  | new | missing |
+| <code>List items that form the package.</code> |  | new | translated |
 | <code>List of email addresses, separated by comma or new line.</code> |  | new | missing |
 | <code>List of patches executed</code> |  | new | translated |
 | <code>List setting message</code> |  | new | missing |
 | <code>Litre</code> |  | new | missing |
 | <code>Litre-Atmosphere</code> |  | new | missing |
-| <code>Load All Criteria</code> |  | new | missing |
+| <code>Load All Criteria</code> |  | new | translated |
 | <code>Load Balancing</code> |  | new | translated |
 | <code>Load More</code> |  | new | translated |
 | <code>Load More Communications</code> | Form timeline | new | missing |
@@ -7497,17 +7497,17 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Loading error stats...</code> |  | new | missing |
 | <code>Loading import file...</code> |  | new | translated |
 | <code>Loading...</code> |  | new | translated |
-| <code>Loan</code> |  | new | missing |
-| <code>Loan End Date</code> |  | new | missing |
-| <code>Loan Period (Days)</code> |  | new | missing |
-| <code>Loan Start Date</code> |  | new | missing |
-| <code>Loan Start Date and Loan Period are mandatory to save the Invoice Discounting</code> |  | new | missing |
-| <code>Loans (Liabilities)</code> |  | new | missing |
-| <code>Loans and Advances (Assets)</code> |  | new | missing |
+| <code>Loan</code> |  | new | translated |
+| <code>Loan End Date</code> |  | new | translated |
+| <code>Loan Period (Days)</code> |  | new | translated |
+| <code>Loan Start Date</code> |  | new | translated |
+| <code>Loan Start Date and Loan Period are mandatory to save the Invoice Discounting</code> |  | new | translated |
+| <code>Loans (Liabilities)</code> |  | new | translated |
+| <code>Loans and Advances (Assets)</code> |  | new | translated |
 | <code>Local</code> |  | new | missing |
 | <code>Location</code> |  | new | translated |
-| <code>Location Details</code> |  | new | missing |
-| <code>Location Name</code> |  | new | missing |
+| <code>Location Details</code> |  | new | translated |
+| <code>Location Name</code> |  | new | translated |
 | <code>Locked</code> |  | new | missing |
 | <code>Log</code> |  | new | translated |
 | <code>Log API Requests</code> |  | new | missing |
@@ -7565,37 +7565,37 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Logs to Clear</code> |  | new | missing |
 | <code>Long Text</code> |  | new | translated |
 | <code>Long-term Provisions</code> |  | new | missing |
-| <code>Longitude</code> |  | new | missing |
+| <code>Longitude</code> |  | new | translated |
 | <code>Looks like you didn&#x27;t change the value</code> |  | new | translated |
 | <code>Looks like you haven’t added any third party apps.</code> |  | new | missing |
 | <code>Looks like you haven’t received any notifications.</code> |  | new | missing |
-| <code>Lost</code> |  | new | missing |
-| <code>Lost Opportunity</code> |  | new | missing |
-| <code>Lost Quotation</code> |  | new | missing |
+| <code>Lost</code> |  | new | translated |
+| <code>Lost Opportunity</code> |  | new | translated |
+| <code>Lost Quotation</code> |  | new | translated |
 | <code>Lost Quotations</code> |  | new | missing |
 | <code>Lost Quotations %</code> |  | new | missing |
-| <code>Lost Reason</code> |  | new | missing |
-| <code>Lost Reason Detail</code> |  | new | missing |
-| <code>Lost Reasons</code> |  | new | missing |
+| <code>Lost Reason</code> |  | new | translated |
+| <code>Lost Reason Detail</code> |  | new | translated |
+| <code>Lost Reasons</code> |  | new | translated |
 | <code>Lost Reasons are required in case opportunity is Lost.</code> |  | new | missing |
 | <code>Lost Value</code> |  | new | missing |
 | <code>Lost Value %</code> |  | new | missing |
 | <code>Low</code> |  | new | translated |
-| <code>Lower Deduction Certificate</code> |  | new | missing |
+| <code>Lower Deduction Certificate</code> |  | new | translated |
 | <code>Lower Income</code> |  | new | missing |
-| <code>Loyalty Amount</code> |  | new | missing |
-| <code>Loyalty Point Entry</code> |  | new | missing |
-| <code>Loyalty Point Entry Redemption</code> |  | new | missing |
-| <code>Loyalty Points</code> |  | new | missing |
-| <code>Loyalty Points Redemption</code> |  | new | missing |
-| <code>Loyalty Points will be calculated from the spent done (via the Sales Invoice), based on collection factor mentioned.</code> |  | new | missing |
+| <code>Loyalty Amount</code> |  | new | translated |
+| <code>Loyalty Point Entry</code> |  | new | translated |
+| <code>Loyalty Point Entry Redemption</code> |  | new | translated |
+| <code>Loyalty Points</code> |  | new | translated |
+| <code>Loyalty Points Redemption</code> |  | new | translated |
+| <code>Loyalty Points will be calculated from the spent done (via the Sales Invoice), based on collection factor mentioned.</code> |  | new | translated |
 | <code>Loyalty Points: {0}</code> |  | new | missing |
-| <code>Loyalty Program</code> |  | new | missing |
-| <code>Loyalty Program Collection</code> |  | new | missing |
-| <code>Loyalty Program Help</code> |  | new | missing |
-| <code>Loyalty Program Name</code> |  | new | missing |
-| <code>Loyalty Program Tier</code> |  | new | missing |
-| <code>Loyalty Program Type</code> |  | new | missing |
+| <code>Loyalty Program</code> |  | new | translated |
+| <code>Loyalty Program Collection</code> |  | new | translated |
+| <code>Loyalty Program Help</code> |  | new | translated |
+| <code>Loyalty Program Name</code> |  | new | translated |
+| <code>Loyalty Program Tier</code> |  | new | translated |
+| <code>Loyalty Program Type</code> |  | new | translated |
 | <code>Loyalty scheme this customer earns points under. Auto-assigned if a matching program exists.</code> |  | new | missing |
 | <code>M</code> | Number system | new | excepted |
 | <code>MIT License</code> |  | new | missing |
@@ -7620,49 +7620,49 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Maintain same rate throughout internal Transaction</code> |  | new | missing |
 | <code>Maintain same rate throughout sales cycle</code> |  | new | missing |
 | <code>Maintain same rate throughout the purchase  cycle</code> |  | new | missing |
-| <code>Maintenance</code> |  | new | missing |
+| <code>Maintenance</code> |  | new | translated |
 | <code>Maintenance Date</code> |  | new | missing |
 | <code>Maintenance Details</code> |  | new | missing |
-| <code>Maintenance Log</code> |  | new | missing |
+| <code>Maintenance Log</code> |  | new | translated |
 | <code>Maintenance Manager</code> |  | new | translated |
-| <code>Maintenance Manager Name</code> |  | new | missing |
-| <code>Maintenance Required</code> |  | new | missing |
-| <code>Maintenance Role</code> |  | new | missing |
-| <code>Maintenance Schedule</code> |  | new | missing |
+| <code>Maintenance Manager Name</code> |  | new | translated |
+| <code>Maintenance Required</code> |  | new | translated |
+| <code>Maintenance Role</code> |  | new | translated |
+| <code>Maintenance Schedule</code> |  | new | translated |
 | <code>Maintenance Schedule Detail</code> |  | new | missing |
 | <code>Maintenance Schedule Item</code> |  | new | missing |
 | <code>Maintenance Schedule is not generated for all the items. Please click on &#x27;Generate Schedule&#x27;</code> |  | new | missing |
 | <code>Maintenance Schedule {0} exists against {1}</code> |  | new | missing |
 | <code>Maintenance Schedules</code> |  | new | missing |
-| <code>Maintenance Status</code> |  | new | missing |
-| <code>Maintenance Status has to be Cancelled or Completed to Submit</code> |  | new | missing |
-| <code>Maintenance Task</code> |  | new | missing |
-| <code>Maintenance Tasks</code> |  | new | missing |
-| <code>Maintenance Team</code> |  | new | missing |
-| <code>Maintenance Team Member</code> |  | new | missing |
-| <code>Maintenance Team Members</code> |  | new | missing |
-| <code>Maintenance Team Name</code> |  | new | missing |
+| <code>Maintenance Status</code> |  | new | translated |
+| <code>Maintenance Status has to be Cancelled or Completed to Submit</code> |  | new | translated |
+| <code>Maintenance Task</code> |  | new | translated |
+| <code>Maintenance Tasks</code> |  | new | translated |
+| <code>Maintenance Team</code> |  | new | translated |
+| <code>Maintenance Team Member</code> |  | new | translated |
+| <code>Maintenance Team Members</code> |  | new | translated |
+| <code>Maintenance Team Name</code> |  | new | translated |
 | <code>Maintenance Time</code> |  | new | missing |
-| <code>Maintenance Type</code> |  | new | missing |
+| <code>Maintenance Type</code> |  | new | translated |
 | <code>Maintenance User</code> |  | new | translated |
-| <code>Maintenance Visit</code> |  | new | missing |
+| <code>Maintenance Visit</code> |  | new | translated |
 | <code>Maintenance Visit Purpose</code> |  | new | missing |
 | <code>Maintenance start date can not be before delivery date for Serial No {0}</code> |  | new | missing |
 | <code>Major</code> |  | new | missing |
 | <code>Major/Optional Subjects</code> |  | new | missing |
-| <code>Make</code> |  | new | missing |
+| <code>Make</code> |  | new | translated |
 | <code>Make &quot;name&quot; searchable in Global Search</code> |  | new | translated |
 | <code>Make Asset Movement</code> |  | new | missing |
 | <code>Make Attachment Public (by default)</code> |  | new | missing |
 | <code>Make Attachments Public by Default</code> |  | new | missing |
-| <code>Make Depreciation Entry</code> |  | new | missing |
-| <code>Make Difference Entry</code> |  | new | missing |
-| <code>Make Payment via Journal Entry</code> |  | new | missing |
+| <code>Make Depreciation Entry</code> |  | new | translated |
+| <code>Make Difference Entry</code> |  | new | translated |
+| <code>Make Payment via Journal Entry</code> |  | new | translated |
 | <code>Make Purchase / Work Order</code> |  | new | missing |
 | <code>Make Purchase Invoice</code> |  | new | missing |
 | <code>Make Quotation</code> |  | new | missing |
 | <code>Make Return Entry</code> |  | new | missing |
-| <code>Make Sales Invoice</code> |  | new | missing |
+| <code>Make Sales Invoice</code> |  | new | translated |
 | <code>Make Serial No / Batch from Work Order</code> |  | new | missing |
 | <code>Make Stock Entry</code> |  | new | missing |
 | <code>Make Subcontracting PO</code> |  | new | missing |
@@ -7693,40 +7693,40 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Mandatory Depends On (Backend)</code> |  | new | missing |
 | <code>Mandatory Depends On (JS)</code> |  | new | missing |
 | <code>Mandatory Field</code> |  | new | missing |
-| <code>Mandatory For Balance Sheet</code> |  | new | missing |
-| <code>Mandatory For Profit and Loss Account</code> |  | new | missing |
+| <code>Mandatory For Balance Sheet</code> |  | new | translated |
+| <code>Mandatory For Profit and Loss Account</code> |  | new | translated |
 | <code>Mandatory Information missing:</code> |  | new | translated |
-| <code>Mandatory Missing</code> |  | new | missing |
-| <code>Mandatory Purchase Order</code> |  | new | missing |
-| <code>Mandatory Purchase Receipt</code> |  | new | missing |
+| <code>Mandatory Missing</code> |  | new | translated |
+| <code>Mandatory Purchase Order</code> |  | new | translated |
+| <code>Mandatory Purchase Receipt</code> |  | new | translated |
 | <code>Mandatory Section</code> |  | new | missing |
 | <code>Mandatory field: set role for</code> |  | new | translated |
 | <code>Mandatory field: {0}</code> |  | new | translated |
 | <code>Mandatory fields required:</code> | Error message in web form | new | missing |
 | <code>Mandatory:</code> |  | new | translated |
-| <code>Manual</code> |  | new | missing |
+| <code>Manual</code> |  | new | translated |
 | <code>Manual Inspection</code> |  | new | missing |
-| <code>Manual entry cannot be created! Disable automatic entry for deferred accounting in accounts settings and try again</code> |  | new | missing |
-| <code>Manufacture</code> |  | new | missing |
+| <code>Manual entry cannot be created! Disable automatic entry for deferred accounting in accounts settings and try again</code> |  | new | translated |
+| <code>Manufacture</code> |  | new | translated |
 | <code>Manufacture against Material Request</code> |  | new | missing |
 | <code>Manufactured Items Value</code> |  | new | missing |
 | <code>Manufactured Qty</code> |  | new | missing |
 | <code>Manufactured Qty (including Process Loss)</code> |  | new | missing |
-| <code>Manufacturer</code> |  | new | missing |
-| <code>Manufacturer Part Number</code> |  | new | missing |
+| <code>Manufacturer</code> |  | new | translated |
+| <code>Manufacturer Part Number</code> |  | new | translated |
 | <code>Manufacturer Part Number &lt;b&gt;{0}&lt;/b&gt; is invalid</code> |  | new | missing |
 | <code>Manufacturers used in Items</code> |  | new | missing |
-| <code>Manufacturing</code> |  | new | missing |
+| <code>Manufacturing</code> |  | new | translated |
 | <code>Manufacturing BOM</code> |  | new | missing |
 | <code>Manufacturing Date</code> |  | new | missing |
-| <code>Manufacturing Manager</code> |  | new | missing |
+| <code>Manufacturing Manager</code> |  | new | translated |
 | <code>Manufacturing Quantity is mandatory</code> |  | new | missing |
-| <code>Manufacturing Section</code> |  | new | missing |
+| <code>Manufacturing Section</code> |  | new | translated |
 | <code>Manufacturing Settings</code> |  | new | missing |
 | <code>Manufacturing Setup</code> |  | new | missing |
 | <code>Manufacturing Time</code> |  | new | missing |
 | <code>Manufacturing Type</code> |  | new | missing |
-| <code>Manufacturing User</code> |  | new | missing |
+| <code>Manufacturing User</code> |  | new | translated |
 | <code>Map</code> |  | new | missing |
 | <code>Map Columns</code> |  | new | translated |
 | <code>Map View</code> |  | new | missing |
@@ -7737,14 +7737,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Mapping column {0} to field {1}</code> |  | new | translated |
 | <code>Mapping {0} ...</code> |  | new | missing |
 | <code>Maps To</code> |  | new | missing |
-| <code>Margin</code> |  | new | missing |
+| <code>Margin</code> |  | new | translated |
 | <code>Margin Bottom</code> |  | new | missing |
 | <code>Margin Left</code> |  | new | missing |
-| <code>Margin Money</code> |  | new | missing |
-| <code>Margin Rate or Amount</code> |  | new | missing |
+| <code>Margin Money</code> |  | new | translated |
+| <code>Margin Rate or Amount</code> |  | new | translated |
 | <code>Margin Right</code> |  | new | missing |
 | <code>Margin Top</code> |  | new | missing |
-| <code>Margin Type</code> |  | new | missing |
+| <code>Margin Type</code> |  | new | translated |
 | <code>Margin View</code> |  | new | missing |
 | <code>MariaDB Variables</code> |  | new | missing |
 | <code>Marital Status</code> |  | new | missing |
@@ -7758,9 +7758,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Markdown</code> |  | new | excepted |
 | <code>Markdown Editor</code> |  | new | translated |
 | <code>Marked As Spam</code> |  | new | translated |
-| <code>Market Segment</code> |  | new | missing |
+| <code>Market Segment</code> |  | new | translated |
 | <code>Marketing</code> |  | new | missing |
-| <code>Marketing Expenses</code> |  | new | missing |
+| <code>Marketing Expenses</code> |  | new | translated |
 | <code>Marketing Manager</code> |  | new | missing |
 | <code>Marketing Specialist</code> |  | new | missing |
 | <code>Married</code> |  | new | missing |
@@ -7769,7 +7769,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Master</code> |  | new | translated |
 | <code>Master Production Schedule</code> |  | new | missing |
 | <code>Master Production Schedule Item</code> |  | new | missing |
-| <code>Masters</code> |  | new | missing |
+| <code>Masters</code> |  | new | translated |
 | <code>Match</code> |  | new | missing |
 | <code>Match and Reconcile</code> |  | new | missing |
 | <code>Match or Create</code> |  | new | missing |
@@ -7786,23 +7786,23 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Material Issue</code> |  | new | missing |
 | <code>Material Planning</code> |  | new | missing |
 | <code>Material Receipt</code> |  | new | missing |
-| <code>Material Request</code> |  | new | missing |
-| <code>Material Request Date</code> |  | new | missing |
+| <code>Material Request</code> |  | new | translated |
+| <code>Material Request Date</code> |  | new | translated |
 | <code>Material Request Detail</code> |  | new | missing |
-| <code>Material Request Item</code> |  | new | missing |
-| <code>Material Request No</code> |  | new | missing |
+| <code>Material Request Item</code> |  | new | translated |
+| <code>Material Request No</code> |  | new | translated |
 | <code>Material Request Plan Item</code> |  | new | missing |
 | <code>Material Request Type</code> |  | new | missing |
 | <code>Material Request already created for the ordered quantity</code> |  | new | missing |
-| <code>Material Request not created, as quantity for Raw Materials already available.</code> |  | new | missing |
+| <code>Material Request not created, as quantity for Raw Materials already available.</code> |  | new | translated |
 | <code>Material Request of maximum {0} can be made for Item {1} against Sales Order {2}</code> |  | new | missing |
 | <code>Material Request used to make this Stock Entry</code> |  | new | missing |
 | <code>Material Request {0} is cancelled or stopped</code> |  | new | missing |
-| <code>Material Request {0} submitted.</code> |  | new | missing |
+| <code>Material Request {0} submitted.</code> |  | new | translated |
 | <code>Material Requested</code> |  | new | missing |
-| <code>Material Requests</code> |  | new | missing |
+| <code>Material Requests</code> |  | new | translated |
 | <code>Material Requests Required</code> |  | new | missing |
-| <code>Material Requests for which Supplier Quotations are not created</code> |  | new | missing |
+| <code>Material Requests for which Supplier Quotations are not created</code> |  | new | translated |
 | <code>Material Requirements Planning</code> |  | new | missing |
 | <code>Material Requirements Planning Report</code> |  | new | missing |
 | <code>Material Returned from WIP</code> |  | new | missing |
@@ -7812,45 +7812,45 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Material Transferred</code> |  | new | missing |
 | <code>Material Transferred for Manufacture</code> |  | new | missing |
 | <code>Material Transferred for Manufacturing</code> |  | new | missing |
-| <code>Material Transferred for Subcontract</code> |  | new | missing |
+| <code>Material Transferred for Subcontract</code> |  | new | translated |
 | <code>Material from Customer</code> |  | new | missing |
-| <code>Material to Supplier</code> |  | new | missing |
+| <code>Material to Supplier</code> |  | new | translated |
 | <code>Materials To Be Transferred</code> |  | new | missing |
 | <code>Materials are already received against the {0} {1}</code> |  | new | missing |
 | <code>Materials needs to be transferred to the work in progress warehouse for the job card {0}</code> |  | new | missing |
 | <code>Max 500 records at a time</code> |  | new | translated |
-| <code>Max Amount</code> |  | new | missing |
-| <code>Max Amt</code> |  | new | missing |
+| <code>Max Amount</code> |  | new | translated |
+| <code>Max Amt</code> |  | new | translated |
 | <code>Max Attachments</code> |  | new | translated |
 | <code>Max Discount (%)</code> |  | new | missing |
 | <code>Max File Size (MB)</code> |  | new | missing |
-| <code>Max Grade</code> |  | new | missing |
+| <code>Max Grade</code> |  | new | translated |
 | <code>Max Height</code> |  | new | missing |
 | <code>Max Length</code> |  | new | translated |
 | <code>Max Producible Qty</code> |  | new | missing |
-| <code>Max Qty</code> |  | new | missing |
+| <code>Max Qty</code> |  | new | translated |
 | <code>Max Qty (As Per Stock UOM)</code> |  | new | missing |
 | <code>Max Report Rows</code> |  | new | missing |
 | <code>Max Sample Quantity</code> |  | new | missing |
-| <code>Max Score</code> |  | new | missing |
+| <code>Max Score</code> |  | new | translated |
 | <code>Max Value</code> |  | new | translated |
 | <code>Max Zip Extract Size (MB)</code> |  | new | missing |
 | <code>Max attachment size</code> |  | new | missing |
 | <code>Max auto email report per user</code> |  | new | missing |
-| <code>Max discount allowed for item: {0} is {1}%</code> |  | new | missing |
+| <code>Max discount allowed for item: {0} is {1}%</code> |  | new | translated |
 | <code>Max signups allowed per hour</code> |  | new | missing |
 | <code>Max width for type Currency is 100px in row {0}</code> |  | new | translated |
 | <code>Max: {0}</code> |  | new | missing |
 | <code>Maximum</code> |  | new | translated |
 | <code>Maximum Amount</code> |  | new | missing |
 | <code>Maximum Attachment Limit of {0} has been reached for {1} {2}.</code> |  | new | missing |
-| <code>Maximum Invoice Amount</code> |  | new | missing |
+| <code>Maximum Invoice Amount</code> |  | new | translated |
 | <code>Maximum Net Rate</code> |  | new | missing |
 | <code>Maximum Payment Amount</code> |  | new | missing |
 | <code>Maximum Producible Items</code> |  | new | missing |
 | <code>Maximum Samples - {0} can be retained for Batch {1} and Item {2}.</code> |  | new | missing |
 | <code>Maximum Samples - {0} have already been retained for Batch {1} and Item {2} in Batch {3}.</code> |  | new | missing |
-| <code>Maximum Use</code> |  | new | missing |
+| <code>Maximum Use</code> |  | new | translated |
 | <code>Maximum Value</code> |  | new | missing |
 | <code>Maximum attachment limit of {0} has been reached.</code> |  | new | missing |
 | <code>Maximum discount % allowed when selling this item. Eg: if set to 20%, a discount greater than 20% cannot be applied in sales transactions.</code> |  | new | missing |
@@ -7877,13 +7877,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Mention if non-standard receivable account applicable</code> |  | new | missing |
 | <code>Mentions</code> |  | new | translated |
 | <code>Menu</code> |  | new | translated |
-| <code>Merge</code> |  | new | missing |
-| <code>Merge Account</code> |  | new | missing |
+| <code>Merge</code> |  | new | translated |
+| <code>Merge Account</code> |  | new | translated |
 | <code>Merge Invoices Based On</code> |  | new | missing |
 | <code>Merge Progress</code> |  | new | missing |
 | <code>Merge similar Account Heads</code> |  | new | missing |
 | <code>Merge taxes from multiple documents</code> |  | new | missing |
-| <code>Merge with Existing Account</code> |  | new | missing |
+| <code>Merge with Existing Account</code> |  | new | translated |
 | <code>Merge with existing</code> |  | new | translated |
 | <code>Merged</code> |  | new | missing |
 | <code>Merging is only possible between Group-to-Group or Leaf Node-to-Leaf Node</code> |  | new | translated |
@@ -7897,15 +7897,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Message Sent</code> |  | new | translated |
 | <code>Message Type</code> |  | new | missing |
 | <code>Message clipped</code> |  | new | translated |
-| <code>Message for Supplier</code> |  | new | missing |
+| <code>Message for Supplier</code> |  | new | translated |
 | <code>Message from server: {0}</code> |  | new | translated |
 | <code>Message not setup</code> |  | new | translated |
 | <code>Message to be displayed on successful completion</code> |  | new | missing |
-| <code>Message to show</code> |  | new | missing |
+| <code>Message to show</code> |  | new | translated |
 | <code>Message will be sent to the users to get their status on the Project</code> |  | new | missing |
 | <code>Message-id</code> |  | new | translated |
 | <code>Messages</code> |  | new | missing |
-| <code>Messages greater than 160 characters will be split into multiple messages</code> |  | new | missing |
+| <code>Messages greater than 160 characters will be split into multiple messages</code> |  | new | translated |
 | <code>Messaging CRM Campaign</code> |  | new | missing |
 | <code>Meta</code> |  | new | missing |
 | <code>Meta Description</code> |  | new | translated |
@@ -7956,28 +7956,28 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Millimeter Of Mercury</code> |  | new | missing |
 | <code>Millimeter Of Water</code> |  | new | missing |
 | <code>Millisecond</code> |  | new | missing |
-| <code>Min Amount</code> |  | new | missing |
-| <code>Min Amt</code> |  | new | missing |
-| <code>Min Amt can not be greater than Max Amt</code> |  | new | missing |
-| <code>Min Grade</code> |  | new | missing |
+| <code>Min Amount</code> |  | new | translated |
+| <code>Min Amt</code> |  | new | translated |
+| <code>Min Amt can not be greater than Max Amt</code> |  | new | translated |
+| <code>Min Grade</code> |  | new | translated |
 | <code>Min Order Qty</code> |  | new | missing |
-| <code>Min Qty</code> |  | new | missing |
+| <code>Min Qty</code> |  | new | translated |
 | <code>Min Qty (As Per Stock UOM)</code> |  | new | missing |
-| <code>Min Qty can not be greater than Max Qty</code> |  | new | missing |
+| <code>Min Qty can not be greater than Max Qty</code> |  | new | translated |
 | <code>Min Qty should be greater than Recurse Over Qty</code> |  | new | missing |
 | <code>Min Value: {0}, Max Value: {1}, in Increments of: {2}</code> |  | new | missing |
 | <code>Min amount cannot be greater than max amount.</code> |  | new | missing |
 | <code>Minimum</code> |  | new | translated |
 | <code>Minimum Amount</code> |  | new | missing |
-| <code>Minimum Invoice Amount</code> |  | new | missing |
-| <code>Minimum Lead Age (Days)</code> |  | new | missing |
+| <code>Minimum Invoice Amount</code> |  | new | translated |
+| <code>Minimum Lead Age (Days)</code> |  | new | translated |
 | <code>Minimum Net Rate</code> |  | new | missing |
 | <code>Minimum Order Qty</code> |  | new | missing |
 | <code>Minimum Order Quantity</code> |  | new | missing |
 | <code>Minimum Password Score</code> |  | new | translated |
 | <code>Minimum Payment Amount</code> |  | new | missing |
 | <code>Minimum Qty</code> |  | new | missing |
-| <code>Minimum Total Spent</code> |  | new | missing |
+| <code>Minimum Total Spent</code> |  | new | translated |
 | <code>Minimum Value</code> |  | new | missing |
 | <code>Minimum quantity should be as per Stock UOM</code> |  | new | missing |
 | <code>Minimum stock level to maintain as a buffer. Used to calculate recommended reorder level: Reorder Level = Safety Stock + (Average Daily Consumption × Lead Time).</code> |  | new | missing |
@@ -7989,12 +7989,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Minutes Before</code> |  | new | missing |
 | <code>Minutes Offset</code> |  | new | missing |
 | <code>Miscellaneous</code> |  | new | missing |
-| <code>Miscellaneous Expenses</code> |  | new | missing |
+| <code>Miscellaneous Expenses</code> |  | new | translated |
 | <code>Misconfigured</code> |  | new | missing |
 | <code>Mismatch</code> |  | new | missing |
 | <code>Miss</code> |  | new | translated |
 | <code>Missing</code> |  | new | missing |
-| <code>Missing Account</code> |  | new | missing |
+| <code>Missing Account</code> |  | new | translated |
 | <code>Missing Accounting Dimension</code> |  | new | missing |
 | <code>Missing Asset</code> |  | new | missing |
 | <code>Missing Company</code> |  | new | missing |
@@ -8021,17 +8021,17 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Missing email template for dispatch. Please set one in Delivery Settings.</code> |  | new | missing |
 | <code>Missing required filter: {0}</code> |  | new | missing |
 | <code>Missing value</code> |  | new | missing |
-| <code>Mixed Conditions</code> |  | new | missing |
+| <code>Mixed Conditions</code> |  | new | translated |
 | <code>Mobile</code> |  | new | translated |
 | <code>Mobile No</code> |  | new | translated |
 | <code>Mobile Number</code> |  | new | translated |
 | <code>Modal Trigger</code> |  | new | missing |
-| <code>Mode Of Payment</code> |  | new | missing |
-| <code>Mode of Payment</code> |  | new | missing |
-| <code>Mode of Payment Account</code> |  | new | missing |
-| <code>Mode of Payments</code> |  | new | missing |
+| <code>Mode Of Payment</code> |  | new | translated |
+| <code>Mode of Payment</code> |  | new | translated |
+| <code>Mode of Payment Account</code> |  | new | translated |
+| <code>Mode of Payments</code> |  | new | translated |
 | <code>Model</code> |  | new | missing |
-| <code>Modes of Payment</code> |  | new | missing |
+| <code>Modes of Payment</code> |  | new | translated |
 | <code>Modified By</code> |  | new | missing |
 | <code>Modified On</code> |  | new | missing |
 | <code>Module</code> |  | new | translated |
@@ -8055,18 +8055,18 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Monitoring Frequency</code> |  | new | missing |
 | <code>Monospace</code> |  | new | translated |
 | <code>Month</code> |  | new | translated |
-| <code>Month(s) after the end of the invoice month</code> |  | new | missing |
+| <code>Month(s) after the end of the invoice month</code> |  | new | translated |
 | <code>Monthly</code> |  | new | translated |
 | <code>Monthly Completed Work Orders</code> |  | new | missing |
-| <code>Monthly Distribution</code> |  | new | missing |
-| <code>Monthly Distribution Percentage</code> |  | new | missing |
-| <code>Monthly Distribution Percentages</code> |  | new | missing |
+| <code>Monthly Distribution</code> |  | new | translated |
+| <code>Monthly Distribution Percentage</code> |  | new | translated |
+| <code>Monthly Distribution Percentages</code> |  | new | translated |
 | <code>Monthly Long</code> |  | new | translated |
 | <code>Monthly Quality Inspections</code> |  | new | missing |
-| <code>Monthly Rate</code> |  | new | missing |
+| <code>Monthly Rate</code> |  | new | translated |
 | <code>Monthly Sales Target</code> |  | new | missing |
 | <code>Monthly Total Work Orders</code> |  | new | missing |
-| <code>Months</code> |  | new | missing |
+| <code>Months</code> |  | new | translated |
 | <code>More</code> |  | new | translated |
 | <code>More Info</code> |  | new | translated |
 | <code>More Information</code> |  | new | translated |
@@ -8099,14 +8099,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Mr</code> |  | new | translated |
 | <code>Mrs</code> |  | new | translated |
 | <code>Ms</code> |  | new | translated |
-| <code>Multi Currency</code> |  | new | missing |
+| <code>Multi Currency</code> |  | new | translated |
 | <code>Multi-level BOM Creator</code> |  | new | missing |
 | <code>Multiple Accounts</code> |  | new | missing |
 | <code>Multiple Accounts (Journal Template)</code> |  | new | missing |
 | <code>Multiple Loyalty Programs found for Customer {}. Please select manually.</code> |  | new | missing |
 | <code>Multiple POS Opening Entry</code> |  | new | missing |
-| <code>Multiple Price Rules exists with same criteria, please resolve conflict by assigning priority. Price Rules: {0}</code> |  | new | missing |
-| <code>Multiple Tier Program</code> |  | new | missing |
+| <code>Multiple Price Rules exists with same criteria, please resolve conflict by assigning priority. Price Rules: {0}</code> |  | new | translated |
+| <code>Multiple Tier Program</code> |  | new | translated |
 | <code>Multiple Variants</code> |  | new | missing |
 | <code>Multiple company fields available: {0}. Please select manually.</code> |  | new | missing |
 | <code>Multiple fiscal years exist for the date {0}. Please set company in Fiscal Year</code> |  | new | missing |
@@ -8120,14 +8120,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Must be of type &quot;Attach Image&quot;</code> |  | new | translated |
 | <code>Must have report permission to access this report.</code> |  | new | translated |
 | <code>Must specify a Query to run</code> |  | new | translated |
-| <code>Mute Email</code> |  | new | missing |
+| <code>Mute Email</code> |  | new | translated |
 | <code>Mute Sounds</code> |  | new | translated |
 | <code>Mx</code> |  | new | excepted |
 | <code>My Account</code> |  | new | translated |
 | <code>My Device</code> |  | new | missing |
 | <code>My Workspaces</code> |  | new | missing |
 | <code>MyISAM</code> |  | new | excepted |
-| <code>N/A</code> |  | new | missing |
+| <code>N/A</code> |  | new | translated |
 | <code>N/A</code> | Number not available | new | missing |
 | <code>NEVER</code> |  | new | excepted |
 | <code>NOTE: If you add states or transitions in the table, it will be reflected in the Workflow Builder but you will have to position them manually. Also Workflow Builder is currently in &lt;b&gt;BETA&lt;/b&gt;.</code> |  | new | missing |
@@ -8137,10 +8137,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Name already taken, please set a new name</code> |  | new | missing |
 | <code>Name and Employee ID</code> |  | new | missing |
 | <code>Name cannot contain special characters like {0}</code> |  | new | translated |
-| <code>Name of Beneficiary</code> |  | new | missing |
-| <code>Name of new Account. Note: Please don&#x27;t create accounts for Customers and Suppliers</code> |  | new | missing |
+| <code>Name of Beneficiary</code> |  | new | translated |
+| <code>Name of new Account. Note: Please don&#x27;t create accounts for Customers and Suppliers</code> |  | new | translated |
 | <code>Name of the Document Type (DocType) you want this field to be linked to. e.g. Customer</code> |  | new | translated |
-| <code>Name of the Monthly Distribution</code> |  | new | missing |
+| <code>Name of the Monthly Distribution</code> |  | new | translated |
 | <code>Name of the new Print Format</code> |  | new | translated |
 | <code>Name of {0} cannot be {1}</code> |  | new | translated |
 | <code>Named Place</code> |  | new | missing |
@@ -8184,53 +8184,53 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Negotiation/Review</code> |  | new | missing |
 | <code>Nested filters must be provided as a list or tuple.</code> |  | new | missing |
 | <code>Nested set error. Please contact the Administrator.</code> |  | new | translated |
-| <code>Net Amount</code> |  | new | missing |
-| <code>Net Amount (Company Currency)</code> |  | new | missing |
-| <code>Net Asset value as on</code> |  | new | missing |
-| <code>Net Cash from Financing</code> |  | new | missing |
-| <code>Net Cash from Investing</code> |  | new | missing |
-| <code>Net Cash from Operations</code> |  | new | missing |
-| <code>Net Change in Accounts Payable</code> |  | new | missing |
-| <code>Net Change in Accounts Receivable</code> |  | new | missing |
-| <code>Net Change in Cash</code> |  | new | missing |
-| <code>Net Change in Equity</code> |  | new | missing |
-| <code>Net Change in Fixed Asset</code> |  | new | missing |
-| <code>Net Change in Inventory</code> |  | new | missing |
+| <code>Net Amount</code> |  | new | translated |
+| <code>Net Amount (Company Currency)</code> |  | new | translated |
+| <code>Net Asset value as on</code> |  | new | translated |
+| <code>Net Cash from Financing</code> |  | new | translated |
+| <code>Net Cash from Investing</code> |  | new | translated |
+| <code>Net Cash from Operations</code> |  | new | translated |
+| <code>Net Change in Accounts Payable</code> |  | new | translated |
+| <code>Net Change in Accounts Receivable</code> |  | new | translated |
+| <code>Net Change in Cash</code> |  | new | translated |
+| <code>Net Change in Equity</code> |  | new | translated |
+| <code>Net Change in Fixed Asset</code> |  | new | translated |
+| <code>Net Change in Inventory</code> |  | new | translated |
 | <code>Net Hour Rate</code> |  | new | missing |
-| <code>Net Profit</code> |  | new | missing |
+| <code>Net Profit</code> |  | new | translated |
 | <code>Net Profit Ratio</code> |  | new | missing |
-| <code>Net Profit/Loss</code> |  | new | missing |
+| <code>Net Profit/Loss</code> |  | new | translated |
 | <code>Net Purchase Amount</code> |  | new | missing |
 | <code>Net Purchase Amount is mandatory</code> |  | new | missing |
 | <code>Net Purchase Amount should be &lt;b&gt;equal&lt;/b&gt; to purchase amount of one single Asset.</code> |  | new | missing |
 | <code>Net Purchase Amount {0} cannot be depreciated over {1} cycles.</code> |  | new | missing |
-| <code>Net Rate</code> |  | new | missing |
-| <code>Net Rate (Company Currency)</code> |  | new | missing |
-| <code>Net Total</code> |  | new | missing |
-| <code>Net Total (Company Currency)</code> |  | new | missing |
-| <code>Net Weight</code> |  | new | missing |
+| <code>Net Rate</code> |  | new | translated |
+| <code>Net Rate (Company Currency)</code> |  | new | translated |
+| <code>Net Total</code> |  | new | translated |
+| <code>Net Total (Company Currency)</code> |  | new | translated |
+| <code>Net Weight</code> |  | new | translated |
 | <code>Net Weight UOM</code> |  | new | missing |
 | <code>Net total calculation precision loss</code> |  | new | missing |
 | <code>Network Printer Settings</code> |  | new | missing |
 | <code>Never</code> |  | new | missing |
 | <code>New</code> |  | new | translated |
-| <code>New Account Name</code> |  | new | missing |
+| <code>New Account Name</code> |  | new | translated |
 | <code>New Activity</code> |  | new | translated |
 | <code>New Address</code> |  | new | translated |
-| <code>New Asset Value</code> |  | new | missing |
+| <code>New Asset Value</code> |  | new | translated |
 | <code>New BOM</code> |  | new | missing |
 | <code>New Balance In Account Currency</code> |  | new | missing |
-| <code>New Balance In Base Currency</code> |  | new | missing |
+| <code>New Balance In Base Currency</code> |  | new | translated |
 | <code>New Batch ID (Optional)</code> |  | new | missing |
 | <code>New Batch Qty</code> |  | new | missing |
 | <code>New Chart</code> |  | new | translated |
-| <code>New Company</code> |  | new | missing |
+| <code>New Company</code> |  | new | translated |
 | <code>New Contact</code> |  | new | translated |
-| <code>New Cost Center Name</code> |  | new | missing |
+| <code>New Cost Center Name</code> |  | new | translated |
 | <code>New Custom Block</code> |  | new | missing |
 | <code>New Custom Print Format</code> |  | new | translated |
-| <code>New Customer Revenue</code> |  | new | missing |
-| <code>New Customers</code> |  | new | missing |
+| <code>New Customer Revenue</code> |  | new | translated |
+| <code>New Customers</code> |  | new | translated |
 | <code>New Department</code> |  | new | missing |
 | <code>New Document Form</code> |  | new | missing |
 | <code>New Document Shared {0}</code> |  | new | translated |
@@ -8238,17 +8238,17 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>New Email Account</code> |  | new | translated |
 | <code>New Employee</code> |  | new | missing |
 | <code>New Event</code> |  | new | translated |
-| <code>New Exchange Rate</code> |  | new | missing |
+| <code>New Exchange Rate</code> |  | new | translated |
 | <code>New Expenses</code> |  | new | missing |
 | <code>New Fiscal Year - {0}</code> |  | new | missing |
 | <code>New Folder</code> |  | new | translated |
 | <code>New Income</code> |  | new | missing |
-| <code>New Invoice</code> |  | new | missing |
+| <code>New Invoice</code> |  | new | translated |
 | <code>New Journal Entry will be posted for the difference amount. The Posting Date can be modified.</code> |  | new | missing |
 | <code>New Kanban Board</code> |  | new | translated |
 | <code>New Lead (Last 1 Month)</code> |  | new | missing |
 | <code>New Links</code> |  | new | missing |
-| <code>New Location</code> |  | new | missing |
+| <code>New Location</code> |  | new | translated |
 | <code>New Mention on {0}</code> |  | new | translated |
 | <code>New Message from Website Contact Page</code> |  | new | translated |
 | <code>New Name</code> |  | new | translated |
@@ -8281,13 +8281,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>New Workflow Name</code> |  | new | missing |
 | <code>New Workplace</code> |  | new | missing |
 | <code>New Workspace</code> |  | new | missing |
-| <code>New credit limit is less than current outstanding amount for the customer. Credit limit has to be atleast {0}</code> |  | new | missing |
-| <code>New invoices will be generated as per schedule even if current invoices are unpaid or past due date</code> |  | new | missing |
+| <code>New credit limit is less than current outstanding amount for the customer. Credit limit has to be atleast {0}</code> |  | new | translated |
+| <code>New invoices will be generated as per schedule even if current invoices are unpaid or past due date</code> |  | new | translated |
 | <code>New line separated list of allowed public client URLs (eg &lt;code&gt;https://frappe.io&lt;/code&gt;), or &lt;code&gt;*&lt;/code&gt; to accept all.<br>&lt;br&gt;<br>Public clients are restricted by default.</code> |  | new | missing |
 | <code>New line separated list of scope values.</code> |  | new | missing |
 | <code>New lines separated list of strings representing ways to contact people responsible for this client, typically email addresses.</code> |  | new | missing |
 | <code>New password cannot be same as old password</code> |  | new | missing |
-| <code>New release date should be in the future</code> |  | new | missing |
+| <code>New release date should be in the future</code> |  | new | translated |
 | <code>New revised budget created successfully</code> |  | new | missing |
 | <code>New role created successfully.</code> |  | new | missing |
 | <code>New task</code> |  | new | missing |
@@ -8296,7 +8296,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>New value to be set</code> |  | new | translated |
 | <code>New {0}</code> |  | new | translated |
 | <code>New {0} Created</code> |  | new | translated |
-| <code>New {0} pricing rules are created</code> |  | new | missing |
+| <code>New {0} pricing rules are created</code> |  | new | translated |
 | <code>New {0} {1} added to Dashboard {2}</code> |  | new | translated |
 | <code>New {0} {1} created</code> |  | new | translated |
 | <code>New {0}: {1}</code> |  | new | translated |
@@ -8314,9 +8314,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Next Action Email Template</code> |  | new | translated |
 | <code>Next Actions</code> |  | new | missing |
 | <code>Next Actions HTML</code> |  | new | translated |
-| <code>Next Depreciation Date</code> |  | new | missing |
+| <code>Next Depreciation Date</code> |  | new | translated |
 | <code>Next Document</code> |  | new | missing |
-| <code>Next Due Date</code> |  | new | missing |
+| <code>Next Due Date</code> |  | new | translated |
 | <code>Next Execution</code> |  | new | missing |
 | <code>Next Form Tour</code> |  | new | missing |
 | <code>Next Month</code> |  | new | missing |
@@ -8340,7 +8340,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>No Active Sessions</code> |  | new | translated |
 | <code>No Answer</code> |  | new | missing |
 | <code>No Copy</code> |  | new | translated |
-| <code>No Customer found for Inter Company Transactions which represents company {0}</code> |  | new | missing |
+| <code>No Customer found for Inter Company Transactions which represents company {0}</code> |  | new | translated |
 | <code>No Customers found with selected options.</code> |  | new | missing |
 | <code>No Data</code> |  | new | translated |
 | <code>No Data...</code> |  | new | missing |
@@ -8360,7 +8360,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>No Item with Serial No {0}</code> |  | new | missing |
 | <code>No Items selected for transfer.</code> |  | new | missing |
 | <code>No Items with Bill of Materials to Manufacture or all items already manufactured</code> |  | new | missing |
-| <code>No Items with Bill of Materials.</code> |  | new | missing |
+| <code>No Items with Bill of Materials.</code> |  | new | translated |
 | <code>No LDAP User found for email: {0}</code> |  | new | translated |
 | <code>No Label</code> |  | new | translated |
 | <code>No Letterhead</code> |  | new | missing |
@@ -8371,7 +8371,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>No Notes</code> |  | new | missing |
 | <code>No Outstanding Invoices found for this party</code> |  | new | missing |
 | <code>No POS Profile found. Please create a New POS Profile first</code> |  | new | missing |
-| <code>No Permission</code> |  | new | missing |
+| <code>No Permission</code> |  | new | translated |
 | <code>No Permissions Specified</code> |  | new | translated |
 | <code>No Permissions set for this criteria.</code> |  | new | translated |
 | <code>No Preview</code> |  | new | translated |
@@ -8389,7 +8389,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>No Stock Available Currently</code> |  | new | missing |
 | <code>No Suggestions</code> |  | new | missing |
 | <code>No Summary</code> |  | new | missing |
-| <code>No Supplier found for Inter Company Transactions which represents company {0}</code> |  | new | missing |
+| <code>No Supplier found for Inter Company Transactions which represents company {0}</code> |  | new | translated |
 | <code>No Tables Detected</code> |  | new | missing |
 | <code>No Tags</code> |  | new | translated |
 | <code>No Tax Withholding data found for the current posting date.</code> |  | new | missing |
@@ -8403,7 +8403,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>No accounting entries for the following warehouses</code> |  | new | missing |
 | <code>No accounts configured</code> |  | new | missing |
 | <code>No accounts found.</code> |  | new | missing |
-| <code>No active BOM found for item {0}. Delivery by Serial No cannot be ensured</code> |  | new | missing |
+| <code>No active BOM found for item {0}. Delivery by Serial No cannot be ensured</code> |  | new | translated |
 | <code>No active item prices found.</code> |  | new | missing |
 | <code>No additional fields available</code> |  | new | missing |
 | <code>No address added yet.</code> |  | new | translated |
@@ -8428,7 +8428,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>No contacts linked to document</code> |  | new | translated |
 | <code>No contacts with email IDs found.</code> |  | new | missing |
 | <code>No currency fields in {0}</code> |  | new | missing |
-| <code>No data for this period</code> |  | new | missing |
+| <code>No data for this period</code> |  | new | translated |
 | <code>No data found. Seems like you uploaded a blank file</code> |  | new | missing |
 | <code>No data to export</code> |  | new | translated |
 | <code>No data to perform this action</code> |  | new | missing |
@@ -8454,7 +8454,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>No item available for transfer.</code> |  | new | missing |
 | <code>No items are available in sales orders {0} for production</code> |  | new | missing |
 | <code>No items are available in the sales order {0} for production</code> |  | new | missing |
-| <code>No items found. Scan barcode again.</code> |  | new | missing |
+| <code>No items found. Scan barcode again.</code> |  | new | translated |
 | <code>No items in cart</code> |  | new | missing |
 | <code>No matches occurred via auto reconciliation</code> |  | new | missing |
 | <code>No matching entries in the current results</code> |  | new | missing |
@@ -8470,7 +8470,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>No of Deliveries</code> |  | new | missing |
 | <code>No of Docs</code> |  | new | missing |
 | <code>No of Employees</code> |  | new | missing |
-| <code>No of Interactions</code> |  | new | missing |
+| <code>No of Interactions</code> |  | new | translated |
 | <code>No of Items to Repost</code> |  | new | missing |
 | <code>No of Months (Expense)</code> |  | new | missing |
 | <code>No of Months (Revenue)</code> |  | new | missing |
@@ -8478,7 +8478,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>No of Requested SMS</code> |  | new | translated |
 | <code>No of Rows (Max 500)</code> |  | new | translated |
 | <code>No of Sent SMS</code> |  | new | translated |
-| <code>No of Shares</code> |  | new | missing |
+| <code>No of Shares</code> |  | new | translated |
 | <code>No of Shift</code> |  | new | missing |
 | <code>No of Units Produced</code> |  | new | missing |
 | <code>No of Visits</code> |  | new | missing |
@@ -8488,8 +8488,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>No open event</code> |  | new | missing |
 | <code>No open task</code> |  | new | missing |
 | <code>No other document types.</code> |  | new | missing |
-| <code>No outstanding invoices found</code> |  | new | missing |
-| <code>No outstanding invoices require exchange rate revaluation</code> |  | new | missing |
+| <code>No outstanding invoices found</code> |  | new | translated |
+| <code>No outstanding invoices require exchange rate revaluation</code> |  | new | translated |
 | <code>No outstanding {0} found for the {1} {2} which qualify the filters you have specified.</code> |  | new | missing |
 | <code>No page image is available for this page.</code> |  | new | missing |
 | <code>No pending Material Requests found to link for the given items.</code> |  | new | missing |
@@ -8503,7 +8503,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>No recent transactions found</code> |  | new | missing |
 | <code>No recipients found for campaign {0}</code> |  | new | missing |
 | <code>No reconciliation actions found</code> |  | new | missing |
-| <code>No record found</code> |  | new | missing |
+| <code>No record found</code> |  | new | translated |
 | <code>No records deleted</code> |  | new | translated |
 | <code>No records found in Allocation table</code> |  | new | missing |
 | <code>No records found in the Invoices table</code> |  | new | missing |
@@ -8534,7 +8534,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>No vouchers found for this transaction</code> |  | new | missing |
 | <code>No {0}</code> |  | new | missing |
 | <code>No {0} found</code> |  | new | translated |
-| <code>No {0} found for Inter Company Transactions.</code> |  | new | missing |
+| <code>No {0} found for Inter Company Transactions.</code> |  | new | translated |
 | <code>No {0} found with matching filters. Clear filters to see all {0}.</code> |  | new | missing |
 | <code>No {0} mail</code> |  | new | translated |
 | <code>No.</code> |  | new | missing |
@@ -8563,11 +8563,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Nos</code> |  | new | missing |
 | <code>Not Allowed</code> |  | new | translated |
 | <code>Not Ancestors Of</code> |  | new | translated |
-| <code>Not Applicable</code> |  | new | missing |
-| <code>Not Available</code> |  | new | missing |
-| <code>Not Billed</code> |  | new | missing |
+| <code>Not Applicable</code> |  | new | translated |
+| <code>Not Available</code> |  | new | translated |
+| <code>Not Billed</code> |  | new | translated |
 | <code>Not Cleared</code> |  | new | missing |
-| <code>Not Delivered</code> |  | new | missing |
+| <code>Not Delivered</code> |  | new | translated |
 | <code>Not Descendants Of</code> |  | new | translated |
 | <code>Not Equals</code> |  | new | translated |
 | <code>Not Found</code> |  | new | translated |
@@ -8587,8 +8587,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Not Sent</code> |  | new | translated |
 | <code>Not Set</code> |  | new | translated |
 | <code>Not Set</code> | Field value is not set | new | missing |
-| <code>Not Specified</code> |  | new | missing |
-| <code>Not Started</code> |  | new | missing |
+| <code>Not Specified</code> |  | new | translated |
+| <code>Not Started</code> |  | new | translated |
 | <code>Not Used</code> |  | new | missing |
 | <code>Not a valid Comma Separated Value (CSV File)</code> |  | new | translated |
 | <code>Not a valid User Image.</code> |  | new | translated |
@@ -8598,14 +8598,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Not allow to set alternative item for the item {0}</code> |  | new | missing |
 | <code>Not allowed for {0}: {1}</code> |  | new | translated |
 | <code>Not allowed to attach {0} document, please enable Allow Print For {0} in Print Settings</code> |  | new | translated |
-| <code>Not allowed to create accounting dimension for {0}</code> |  | new | missing |
+| <code>Not allowed to create accounting dimension for {0}</code> |  | new | translated |
 | <code>Not allowed to create custom Virtual DocType.</code> |  | new | missing |
 | <code>Not allowed to print cancelled documents</code> |  | new | translated |
 | <code>Not allowed to print draft documents</code> |  | new | translated |
 | <code>Not allowed to update stock transactions older than {0}</code> |  | new | missing |
 | <code>Not allowed via controller permission check</code> |  | new | missing |
 | <code>Not authorized since {0} exceeds limits</code> |  | new | missing |
-| <code>Not authorized to edit frozen Account {0}</code> |  | new | missing |
+| <code>Not authorized to edit frozen Account {0}</code> |  | new | translated |
 | <code>Not configured</code> |  | new | missing |
 | <code>Not found</code> |  | new | translated |
 | <code>Not in Developer Mode</code> |  | new | translated |
@@ -8630,15 +8630,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Note: Item {0} added multiple times</code> |  | new | missing |
 | <code>Note: Multiple sessions will be allowed in case of mobile device</code> |  | new | translated |
 | <code>Note: Payment Entry will not be created since &#x27;Cash or Bank Account&#x27; was not specified</code> |  | new | missing |
-| <code>Note: This Cost Center is a Group. Cannot make accounting entries against groups.</code> |  | new | missing |
+| <code>Note: This Cost Center is a Group. Cannot make accounting entries against groups.</code> |  | new | translated |
 | <code>Note: This will be shared with user.</code> |  | new | missing |
 | <code>Note: To merge the items, create a separate Stock Reconciliation for the old item {0}</code> |  | new | missing |
 | <code>Note: Your request for account deletion will be fulfilled within {0} hours.</code> |  | new | missing |
-| <code>Notes</code> |  | new | missing |
+| <code>Notes</code> |  | new | translated |
 | <code>Notes HTML</code> |  | new | missing |
 | <code>Notes:</code> |  | new | translated |
 | <code>Nothing New</code> |  | new | missing |
-| <code>Nothing is included in gross</code> |  | new | missing |
+| <code>Nothing is included in gross</code> |  | new | translated |
 | <code>Nothing left to redo</code> |  | new | missing |
 | <code>Nothing left to undo</code> |  | new | missing |
 | <code>Nothing more to show.</code> |  | new | missing |
@@ -8664,16 +8664,16 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Notifications Disabled</code> |  | new | translated |
 | <code>Notifications and bulk mails will be sent from this outgoing server.</code> |  | new | translated |
 | <code>Notify Customers via Email</code> |  | new | missing |
-| <code>Notify Employee</code> |  | new | missing |
-| <code>Notify Other</code> |  | new | missing |
+| <code>Notify Employee</code> |  | new | translated |
+| <code>Notify Other</code> |  | new | translated |
 | <code>Notify Reposting Error to Role</code> |  | new | missing |
-| <code>Notify Supplier</code> |  | new | missing |
+| <code>Notify Supplier</code> |  | new | translated |
 | <code>Notify Users On Every Login</code> |  | new | translated |
-| <code>Notify Via Email</code> |  | new | missing |
+| <code>Notify Via Email</code> |  | new | translated |
 | <code>Notify by Email</code> |  | new | translated |
 | <code>Notify by email</code> |  | new | translated |
 | <code>Notify by email on creation of automatic Material Request</code> |  | new | missing |
-| <code>Notify customer and agent via email on the day of the appointment.</code> |  | new | missing |
+| <code>Notify customer and agent via email on the day of the appointment.</code> |  | new | translated |
 | <code>Notify if unreplied</code> |  | new | translated |
 | <code>Notify if unreplied for (in mins)</code> |  | new | translated |
 | <code>Notify users with a popup when they log in</code> |  | new | translated |
@@ -8685,12 +8685,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Number Cards</code> |  | new | translated |
 | <code>Number Format</code> |  | new | translated |
 | <code>Number of Backups</code> |  | new | translated |
-| <code>Number of Concurrent Appointments</code> |  | new | missing |
+| <code>Number of Concurrent Appointments</code> |  | new | translated |
 | <code>Number of Days</code> |  | new | missing |
 | <code>Number of Events</code> |  | new | missing |
 | <code>Number of Groups</code> |  | new | translated |
-| <code>Number of Interaction</code> |  | new | missing |
-| <code>Number of Order</code> |  | new | missing |
+| <code>Number of Interaction</code> |  | new | translated |
+| <code>Number of Order</code> |  | new | translated |
 | <code>Number of Queries</code> |  | new | missing |
 | <code>Number of Transactions</code> |  | new | missing |
 | <code>Number of Weeks / Months</code> |  | new | missing |
@@ -8698,16 +8698,16 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Number of backups must be greater than zero.</code> |  | new | missing |
 | <code>Number of columns for a field in a Grid (Total Columns in a grid should be less than 11)</code> |  | new | translated |
 | <code>Number of columns for a field in a List View or a Grid (Total Columns should be less than 11)</code> |  | new | translated |
-| <code>Number of days after invoice date has elapsed before canceling subscription or marking subscription as unpaid</code> |  | new | missing |
+| <code>Number of days after invoice date has elapsed before canceling subscription or marking subscription as unpaid</code> |  | new | translated |
 | <code>Number of days after which the document Web View link shared on email will be expired</code> |  | new | missing |
-| <code>Number of days appointments can be booked in advance</code> |  | new | missing |
-| <code>Number of days that the subscriber has to pay invoices generated by this subscription</code> |  | new | missing |
+| <code>Number of days appointments can be booked in advance</code> |  | new | translated |
+| <code>Number of days that the subscriber has to pay invoices generated by this subscription</code> |  | new | translated |
 | <code>Number of days to consider for matching transfers across bank accounts</code> |  | new | missing |
 | <code>Number of days to match transfers</code> |  | new | missing |
-| <code>Number of intervals for the interval field e.g if Interval is &#x27;Days&#x27; and Billing Interval Count is 3, invoices will be generated every 3 days</code> |  | new | missing |
+| <code>Number of intervals for the interval field e.g if Interval is &#x27;Days&#x27; and Billing Interval Count is 3, invoices will be generated every 3 days</code> |  | new | translated |
 | <code>Number of keys</code> |  | new | missing |
-| <code>Number of new Account, it will be included in the account name as a prefix</code> |  | new | missing |
-| <code>Number of new Cost Center, it will be included in the cost center name as a prefix</code> |  | new | missing |
+| <code>Number of new Account, it will be included in the account name as a prefix</code> |  | new | translated |
+| <code>Number of new Cost Center, it will be included in the cost center name as a prefix</code> |  | new | translated |
 | <code>Number of onsite backups</code> |  | new | missing |
 | <code>Numbers this customer uses to identify your company in their own system.</code> |  | new | missing |
 | <code>Numeric</code> |  | new | missing |
@@ -8748,15 +8748,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Office</code> |  | new | translated |
 | <code>Office 365</code> |  | new | excepted |
 | <code>Office Equipment</code> |  | new | missing |
-| <code>Office Maintenance Expenses</code> |  | new | missing |
-| <code>Office Rent</code> |  | new | missing |
+| <code>Office Maintenance Expenses</code> |  | new | translated |
+| <code>Office Rent</code> |  | new | translated |
 | <code>Official Documentation</code> |  | new | missing |
 | <code>Offset X</code> |  | new | missing |
 | <code>Offset Y</code> |  | new | missing |
 | <code>Offset must be a non-negative integer</code> |  | new | missing |
 | <code>Offsetting Account</code> |  | new | missing |
 | <code>Offsetting for Accounting Dimension</code> |  | new | missing |
-| <code>Old Parent</code> |  | new | missing |
+| <code>Old Parent</code> |  | new | translated |
 | <code>Old Password</code> |  | new | translated |
 | <code>Old and new fieldnames are same.</code> |  | new | missing |
 | <code>Older backups will be automatically deleted</code> |  | new | translated |
@@ -8765,8 +8765,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>On Hand</code> |  | new | missing |
 | <code>On Hold</code> |  | new | translated |
 | <code>On Hold Since</code> |  | new | missing |
-| <code>On Item Quantity</code> |  | new | missing |
-| <code>On Net Total</code> |  | new | missing |
+| <code>On Item Quantity</code> |  | new | translated |
+| <code>On Net Total</code> |  | new | translated |
 | <code>On Paid Amount</code> |  | new | missing |
 | <code>On Payment Authorization</code> |  | new | missing |
 | <code>On Payment Charge Processed</code> |  | new | missing |
@@ -8774,8 +8774,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>On Payment Mandate Acquisition Processed</code> |  | new | missing |
 | <code>On Payment Mandate Charge Processed</code> |  | new | missing |
 | <code>On Payment Paid</code> |  | new | missing |
-| <code>On Previous Row Amount</code> |  | new | missing |
-| <code>On Previous Row Total</code> |  | new | missing |
+| <code>On Previous Row Amount</code> |  | new | translated |
+| <code>On Previous Row Total</code> |  | new | translated |
 | <code>On This Date</code> |  | new | missing |
 | <code>On Track</code> |  | new | missing |
 | <code>On checking this option, URL will be treated like a jinja template string</code> |  | new | missing |
@@ -8796,13 +8796,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Onboarding Step Map</code> |  | new | translated |
 | <code>Onboarding complete</code> |  | new | missing |
 | <code>Onboarding for Stock!</code> |  | new | missing |
-| <code>Once set, this invoice will be on hold till the set date</code> |  | new | missing |
+| <code>Once set, this invoice will be on hold till the set date</code> |  | new | translated |
 | <code>Once submitted, submittable documents cannot be changed. They can only be Cancelled and Amended.</code> |  | new | translated |
 | <code>Once the Work Order is Closed. It can&#x27;t be resumed.</code> |  | new | missing |
 | <code>Once you have set this, the users will only be able access documents (eg. Blog Post) where the link exists (eg. Blogger).</code> |  | new | translated |
 | <code>One Last Step</code> |  | new | translated |
 | <code>One Time Password (OTP) Registration Code from {}</code> |  | new | translated |
-| <code>One customer can be part of only single Loyalty Program.</code> |  | new | missing |
+| <code>One customer can be part of only single Loyalty Program.</code> |  | new | translated |
 | <code>One of</code> |  | new | translated |
 | <code>Ongoing</code> |  | new | missing |
 | <code>Ongoing Job Cards</code> |  | new | missing |
@@ -8842,8 +8842,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Only pending invitations can be resent</code> |  | new | missing |
 | <code>Only reports of type Report Builder can be deleted</code> |  | new | missing |
 | <code>Only reports of type Report Builder can be edited</code> |  | new | missing |
-| <code>Only show Customer of these Customer Groups</code> |  | new | missing |
-| <code>Only show Items from these Item Groups</code> |  | new | missing |
+| <code>Only show Customer of these Customer Groups</code> |  | new | translated |
+| <code>Only show Items from these Item Groups</code> |  | new | translated |
 | <code>Only standard DocTypes are allowed to be customized from Customize Form.</code> |  | new | translated |
 | <code>Only the Administrator can delete a standard DocType.</code> |  | new | missing |
 | <code>Only the assignee can complete this to-do.</code> |  | new | missing |
@@ -8866,7 +8866,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Open Documents</code> |  | new | translated |
 | <code>Open Event</code> |  | new | missing |
 | <code>Open Events</code> |  | new | missing |
-| <code>Open Form View</code> |  | new | missing |
+| <code>Open Form View</code> |  | new | translated |
 | <code>Open Frappe CRM</code> |  | new | missing |
 | <code>Open Frappe Helpdesk</code> |  | new | missing |
 | <code>Open Global Search</code> |  | new | missing |
@@ -8901,27 +8901,27 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>OpenID Configuration fetched successfully!</code> |  | new | missing |
 | <code>OpenLDAP</code> |  | new | excepted |
 | <code>Opened</code> |  | new | translated |
-| <code>Opening</code> |  | new | missing |
+| <code>Opening</code> |  | new | translated |
 | <code>Opening &amp; Closing</code> |  | new | missing |
-| <code>Opening (Cr)</code> |  | new | missing |
-| <code>Opening (Dr)</code> |  | new | missing |
-| <code>Opening Accumulated Depreciation</code> |  | new | missing |
-| <code>Opening Amount</code> |  | new | missing |
-| <code>Opening Balance</code> |  | new | missing |
+| <code>Opening (Cr)</code> |  | new | translated |
+| <code>Opening (Dr)</code> |  | new | translated |
+| <code>Opening Accumulated Depreciation</code> |  | new | translated |
+| <code>Opening Amount</code> |  | new | translated |
+| <code>Opening Balance</code> |  | new | translated |
 | <code>Opening Balance = Start of period, Closing Balance = End of period, Period Movement = Net change during period</code> |  | new | missing |
-| <code>Opening Balance Details</code> |  | new | missing |
-| <code>Opening Balance Equity</code> |  | new | missing |
+| <code>Opening Balance Details</code> |  | new | translated |
+| <code>Opening Balance Equity</code> |  | new | translated |
 | <code>Opening Balances</code> |  | new | missing |
 | <code>Opening Date</code> |  | new | missing |
-| <code>Opening Entry</code> |  | new | missing |
-| <code>Opening Invoice Creation In Progress</code> |  | new | missing |
-| <code>Opening Invoice Creation Tool</code> |  | new | missing |
-| <code>Opening Invoice Creation Tool Item</code> |  | new | missing |
-| <code>Opening Invoice Item</code> |  | new | missing |
+| <code>Opening Entry</code> |  | new | translated |
+| <code>Opening Invoice Creation In Progress</code> |  | new | translated |
+| <code>Opening Invoice Creation Tool</code> |  | new | translated |
+| <code>Opening Invoice Creation Tool Item</code> |  | new | translated |
+| <code>Opening Invoice Item</code> |  | new | translated |
 | <code>Opening Invoice Tool</code> |  | new | missing |
 | <code>Opening Invoice has rounding adjustment of {0}.&lt;br&gt;&lt;br&gt; &#x27;{1}&#x27; account is required to post these values. Please set it in Company: {2}.&lt;br&gt;&lt;br&gt; Or, &#x27;{3}&#x27; can be enabled to not post any rounding adjustment.</code> |  | new | missing |
-| <code>Opening Invoices</code> |  | new | missing |
-| <code>Opening Invoices Summary</code> |  | new | missing |
+| <code>Opening Invoices</code> |  | new | translated |
+| <code>Opening Invoices Summary</code> |  | new | translated |
 | <code>Opening Number of Booked Depreciations</code> |  | new | missing |
 | <code>Opening Purchase Invoice(s) have been created.</code> |  | new | missing |
 | <code>Opening Qty</code> |  | new | missing |
@@ -8931,7 +8931,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Opening Stock entry created: {0}</code> |  | new | missing |
 | <code>Opening Time</code> |  | new | missing |
 | <code>Opening Value</code> |  | new | missing |
-| <code>Opening and Closing</code> |  | new | missing |
+| <code>Opening and Closing</code> |  | new | translated |
 | <code>Operating Component</code> |  | new | missing |
 | <code>Operating Components Cost</code> |  | new | missing |
 | <code>Operating Cost</code> |  | new | missing |
@@ -8963,24 +8963,24 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Operator &#x27;{0}&#x27; requires a list value</code> |  | new | missing |
 | <code>Operator must be one of {0}</code> |  | new | translated |
 | <code>Operator {0} requires exactly 2 arguments (left and right operands)</code> |  | new | missing |
-| <code>Opp Count</code> |  | new | missing |
-| <code>Opp/Lead %</code> |  | new | missing |
-| <code>Opportunities</code> |  | new | missing |
+| <code>Opp Count</code> |  | new | translated |
+| <code>Opp/Lead %</code> |  | new | translated |
+| <code>Opportunities</code> |  | new | translated |
 | <code>Opportunities by Campaign</code> |  | new | missing |
 | <code>Opportunities by Medium</code> |  | new | missing |
 | <code>Opportunities by Source</code> |  | new | missing |
-| <code>Opportunity</code> |  | new | missing |
-| <code>Opportunity Amount</code> |  | new | missing |
+| <code>Opportunity</code> |  | new | translated |
+| <code>Opportunity Amount</code> |  | new | translated |
 | <code>Opportunity Amount (Company Currency)</code> |  | new | missing |
-| <code>Opportunity Date</code> |  | new | missing |
-| <code>Opportunity From</code> |  | new | missing |
-| <code>Opportunity Item</code> |  | new | missing |
-| <code>Opportunity Lost Reason</code> |  | new | missing |
-| <code>Opportunity Lost Reason Detail</code> |  | new | missing |
+| <code>Opportunity Date</code> |  | new | translated |
+| <code>Opportunity From</code> |  | new | translated |
+| <code>Opportunity Item</code> |  | new | translated |
+| <code>Opportunity Lost Reason</code> |  | new | translated |
+| <code>Opportunity Lost Reason Detail</code> |  | new | translated |
 | <code>Opportunity Owner</code> |  | new | missing |
 | <code>Opportunity Source</code> |  | new | missing |
 | <code>Opportunity Summary by Sales Stage</code> |  | new | missing |
-| <code>Opportunity Type</code> |  | new | missing |
+| <code>Opportunity Type</code> |  | new | translated |
 | <code>Opportunity Value</code> |  | new | missing |
 | <code>Opportunity {0} created</code> |  | new | missing |
 | <code>Optimize</code> |  | new | missing |
@@ -8992,8 +8992,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Option {0} for field {1} is not a child table</code> |  | new | translated |
 | <code>Optional body of the in-app notification. Supports Jinja.</code> |  | new | missing |
 | <code>Optional. Select a specific manufacture entry to reverse.</code> |  | new | missing |
-| <code>Optional. Sets company&#x27;s default currency, if not specified.</code> |  | new | missing |
-| <code>Optional. This setting will be used to filter in various transactions.</code> |  | new | missing |
+| <code>Optional. Sets company&#x27;s default currency, if not specified.</code> |  | new | translated |
+| <code>Optional. This setting will be used to filter in various transactions.</code> |  | new | translated |
 | <code>Optional. Used with Financial Report Template</code> |  | new | missing |
 | <code>Optional: Always send to these ids. Each Email Address on a new row</code> |  | new | translated |
 | <code>Optional: The alert will be sent if this expression is true</code> |  | new | translated |
@@ -9009,39 +9009,39 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Or copy and paste this link:</code> |  | new | missing |
 | <code>Orange</code> |  | new | translated |
 | <code>Order</code> |  | new | translated |
-| <code>Order Amount</code> |  | new | missing |
+| <code>Order Amount</code> |  | new | translated |
 | <code>Order By</code> |  | new | missing |
 | <code>Order By must be a string</code> |  | new | missing |
-| <code>Order Confirmation Date</code> |  | new | missing |
-| <code>Order Confirmation No</code> |  | new | missing |
-| <code>Order Count</code> |  | new | missing |
+| <code>Order Confirmation Date</code> |  | new | translated |
+| <code>Order Confirmation No</code> |  | new | translated |
+| <code>Order Count</code> |  | new | translated |
 | <code>Order Date</code> |  | new | missing |
 | <code>Order Information</code> |  | new | missing |
 | <code>Order No</code> |  | new | missing |
-| <code>Order Qty</code> |  | new | missing |
+| <code>Order Qty</code> |  | new | translated |
 | <code>Order Status</code> |  | new | missing |
 | <code>Order Summary</code> |  | new | missing |
-| <code>Order Type</code> |  | new | missing |
-| <code>Order Value</code> |  | new | missing |
-| <code>Order/Quot %</code> |  | new | missing |
-| <code>Ordered</code> |  | new | missing |
-| <code>Ordered Qty</code> |  | new | missing |
+| <code>Order Type</code> |  | new | translated |
+| <code>Order Value</code> |  | new | translated |
+| <code>Order/Quot %</code> |  | new | translated |
+| <code>Ordered</code> |  | new | translated |
+| <code>Ordered Qty</code> |  | new | translated |
 | <code>Ordered Qty: Quantity ordered for purchase, but not received.</code> |  | new | missing |
 | <code>Ordered Quantity</code> |  | new | missing |
 | <code>Ordered timeline of document lifecycle methods and doc_events handlers that ran during this request, attributed to the app(s) that hook them.</code> |  | new | missing |
-| <code>Orders</code> |  | new | missing |
+| <code>Orders</code> |  | new | translated |
 | <code>Org History</code> |  | new | translated |
 | <code>Org History Heading</code> |  | new | translated |
-| <code>Organization</code> |  | new | missing |
-| <code>Organization Name</code> |  | new | missing |
+| <code>Organization</code> |  | new | translated |
+| <code>Organization Name</code> |  | new | translated |
 | <code>Orientation</code> |  | new | translated |
 | <code>Original</code> |  | new | missing |
 | <code>Original Item</code> |  | new | missing |
 | <code>Original Value</code> |  | new | translated |
 | <code>Other</code> |  | new | translated |
-| <code>Other Details</code> |  | new | missing |
+| <code>Other Details</code> |  | new | translated |
 | <code>Other Info</code> |  | new | missing |
-| <code>Other Reports</code> |  | new | missing |
+| <code>Other Reports</code> |  | new | translated |
 | <code>Other Settings</code> |  | new | missing |
 | <code>Others</code> |  | new | missing |
 | <code>Ounce</code> |  | new | missing |
@@ -9053,7 +9053,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Out Qty</code> |  | new | missing |
 | <code>Out Value</code> |  | new | missing |
 | <code>Out of AMC</code> |  | new | missing |
-| <code>Out of Order</code> |  | new | missing |
+| <code>Out of Order</code> |  | new | translated |
 | <code>Out of Stock</code> |  | new | missing |
 | <code>Out of Warranty</code> |  | new | missing |
 | <code>Out of stock</code> |  | new | missing |
@@ -9069,44 +9069,44 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Outgoing email account not correct</code> |  | new | translated |
 | <code>Outlook.com</code> |  | new | excepted |
 | <code>Output</code> |  | new | translated |
-| <code>Outstanding</code> |  | new | missing |
+| <code>Outstanding</code> |  | new | translated |
 | <code>Outstanding (Company Currency)</code> |  | new | missing |
-| <code>Outstanding Amount</code> |  | new | missing |
-| <code>Outstanding Amt</code> |  | new | missing |
+| <code>Outstanding Amount</code> |  | new | translated |
+| <code>Outstanding Amt</code> |  | new | translated |
 | <code>Outstanding Checks and Deposits to clear</code> |  | new | missing |
-| <code>Outstanding Cheques and Deposits to clear</code> |  | new | missing |
-| <code>Outstanding for {0} cannot be less than zero ({1})</code> |  | new | missing |
-| <code>Outward</code> |  | new | missing |
+| <code>Outstanding Cheques and Deposits to clear</code> |  | new | translated |
+| <code>Outstanding for {0} cannot be less than zero ({1})</code> |  | new | translated |
+| <code>Outward</code> |  | new | translated |
 | <code>Outward Order</code> |  | new | missing |
-| <code>Over Billing Allowance (%)</code> |  | new | missing |
+| <code>Over Billing Allowance (%)</code> |  | new | translated |
 | <code>Over Billing Allowance exceeded for Purchase Receipt Item {0} ({1}) by {2}%</code> |  | new | missing |
 | <code>Over Delivery/Receipt Allowance (%)</code> |  | new | missing |
 | <code>Over Order Allowance (%)</code> |  | new | missing |
 | <code>Over Picking Allowance (%)</code> |  | new | missing |
 | <code>Over Receipt</code> |  | new | missing |
 | <code>Over Receipt/Delivery of {0} {1} ignored for item {2} because you have {3} role.</code> |  | new | missing |
-| <code>Over Transfer Allowance (%)</code> |  | new | missing |
+| <code>Over Transfer Allowance (%)</code> |  | new | translated |
 | <code>Over Withheld</code> |  | new | missing |
 | <code>Overbilling of {0} {1} ignored for item {2} because you have {3} role.</code> |  | new | missing |
 | <code>Overbilling of {} ignored because you have {} role.</code> |  | new | missing |
-| <code>Overdue</code> |  | new | missing |
-| <code>Overdue Days</code> |  | new | missing |
+| <code>Overdue</code> |  | new | translated |
+| <code>Overdue Days</code> |  | new | translated |
 | <code>Overdue Limit</code> |  | new | missing |
 | <code>Overdue Limit Crossed</code> |  | new | missing |
 | <code>Overdue Limit crossed for customer {0}. Overdue amount {1} exceeds the allowed limit {2}.</code> |  | new | missing |
 | <code>Overdue Payment</code> |  | new | missing |
 | <code>Overdue Payments</code> |  | new | missing |
 | <code>Overdue Tasks</code> |  | new | missing |
-| <code>Overdue and Discounted</code> |  | new | missing |
-| <code>Overlap in scoring between {0} and {1}</code> |  | new | missing |
-| <code>Overlapping conditions found between:</code> |  | new | missing |
+| <code>Overdue and Discounted</code> |  | new | translated |
+| <code>Overlap in scoring between {0} and {1}</code> |  | new | translated |
+| <code>Overlapping conditions found between:</code> |  | new | translated |
 | <code>Overproduction Percentage For Sales Order</code> |  | new | missing |
 | <code>Overproduction Percentage For Work Order</code> |  | new | missing |
 | <code>Overproduction for Sales and Work Order</code> |  | new | missing |
 | <code>Override the default payable / advance accounts on a per-company basis. Leave blank to use each company&#x27;s defaults from Company settings.</code> |  | new | missing |
 | <code>Overview</code> |  | new | missing |
 | <code>Owned</code> |  | new | missing |
-| <code>Owner</code> |  | new | missing |
+| <code>Owner</code> |  | new | translated |
 | <code>Ownership</code> |  | new | missing |
 | <code>P&amp;L Closing Balance</code> |  | new | missing |
 | <code>PAN No</code> |  | new | missing |
@@ -9137,60 +9137,60 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>POS</code> |  | new | excepted |
 | <code>POS Additional Fields</code> |  | new | missing |
 | <code>POS Closed</code> |  | new | missing |
-| <code>POS Closing Entry</code> |  | new | missing |
-| <code>POS Closing Entry Detail</code> |  | new | missing |
-| <code>POS Closing Entry Taxes</code> |  | new | missing |
+| <code>POS Closing Entry</code> |  | new | translated |
+| <code>POS Closing Entry Detail</code> |  | new | translated |
+| <code>POS Closing Entry Taxes</code> |  | new | translated |
 | <code>POS Closing Failed</code> |  | new | missing |
 | <code>POS Closing failed while running in a background process. You can resolve the {0} and retry the process again.</code> |  | new | missing |
 | <code>POS Configurations</code> |  | new | missing |
-| <code>POS Customer Group</code> |  | new | missing |
-| <code>POS Field</code> |  | new | missing |
-| <code>POS Invoice</code> |  | new | missing |
-| <code>POS Invoice Item</code> |  | new | missing |
-| <code>POS Invoice Merge Log</code> |  | new | missing |
-| <code>POS Invoice Reference</code> |  | new | missing |
+| <code>POS Customer Group</code> |  | new | translated |
+| <code>POS Field</code> |  | new | translated |
+| <code>POS Invoice</code> |  | new | translated |
+| <code>POS Invoice Item</code> |  | new | translated |
+| <code>POS Invoice Merge Log</code> |  | new | translated |
+| <code>POS Invoice Reference</code> |  | new | translated |
 | <code>POS Invoice is already consolidated</code> |  | new | missing |
 | <code>POS Invoice is not submitted</code> |  | new | missing |
-| <code>POS Invoice isn&#x27;t created by user {}</code> |  | new | missing |
+| <code>POS Invoice isn&#x27;t created by user {}</code> |  | new | translated |
 | <code>POS Invoice should have the field {0} checked.</code> |  | new | missing |
-| <code>POS Invoices</code> |  | new | missing |
+| <code>POS Invoices</code> |  | new | translated |
 | <code>POS Invoices can&#x27;t be added when Sales Invoice is enabled</code> |  | new | missing |
 | <code>POS Invoices will be consolidated in a background process</code> |  | new | missing |
 | <code>POS Invoices will be unconsolidated in a background process</code> |  | new | missing |
 | <code>POS Item Details</code> |  | new | missing |
-| <code>POS Item Group</code> |  | new | missing |
+| <code>POS Item Group</code> |  | new | translated |
 | <code>POS Item Selector</code> |  | new | missing |
-| <code>POS Opening Entry</code> |  | new | missing |
+| <code>POS Opening Entry</code> |  | new | translated |
 | <code>POS Opening Entry - {0} is outdated. Please close the POS and create a new POS Opening Entry.</code> |  | new | missing |
 | <code>POS Opening Entry Cancellation Error</code> |  | new | missing |
 | <code>POS Opening Entry Cancelled</code> |  | new | missing |
-| <code>POS Opening Entry Detail</code> |  | new | missing |
+| <code>POS Opening Entry Detail</code> |  | new | translated |
 | <code>POS Opening Entry Exists</code> |  | new | missing |
 | <code>POS Opening Entry Missing</code> |  | new | missing |
 | <code>POS Opening Entry cannot be cancelled as unconsolidated Invoices exists.</code> |  | new | missing |
 | <code>POS Opening Entry has been cancelled. Please refresh the page.</code> |  | new | missing |
-| <code>POS Payment Method</code> |  | new | missing |
-| <code>POS Profile</code> |  | new | missing |
+| <code>POS Payment Method</code> |  | new | translated |
+| <code>POS Profile</code> |  | new | translated |
 | <code>POS Profile - {0} has multiple open POS Opening Entries. Please close or cancel the existing entries before proceeding.</code> |  | new | missing |
 | <code>POS Profile - {0} is currently open. Please close the POS or cancel the existing POS Opening Entry before cancelling this POS Closing Entry.</code> |  | new | missing |
-| <code>POS Profile User</code> |  | new | missing |
+| <code>POS Profile User</code> |  | new | translated |
 | <code>POS Profile doesn&#x27;t match {}</code> |  | new | missing |
 | <code>POS Profile is mandatory to mark this invoice as POS Transaction.</code> |  | new | missing |
-| <code>POS Profile required to make POS Entry</code> |  | new | missing |
+| <code>POS Profile required to make POS Entry</code> |  | new | translated |
 | <code>POS Profile {0} cannot be disabled as there are ongoing POS sessions.</code> |  | new | missing |
 | <code>POS Profile {} contains Mode of Payment {}. Please remove them to disable this mode.</code> |  | new | missing |
 | <code>POS Profile {} does not belong to company {}</code> |  | new | missing |
 | <code>POS Profile {} does not exist.</code> |  | new | missing |
 | <code>POS Profile {} is disabled.</code> |  | new | missing |
-| <code>POS Register</code> |  | new | missing |
+| <code>POS Register</code> |  | new | translated |
 | <code>POS Search Fields</code> |  | new | missing |
-| <code>POS Settings</code> |  | new | missing |
-| <code>POS Transactions</code> |  | new | missing |
+| <code>POS Settings</code> |  | new | translated |
+| <code>POS Transactions</code> |  | new | translated |
 | <code>POS has been closed at {0}. Please refresh the page.</code> |  | new | missing |
 | <code>POS invoice {0} created successfully</code> |  | new | missing |
 | <code>POST</code> |  | new | excepted |
-| <code>PSOA Cost Center</code> |  | new | missing |
-| <code>PSOA Project</code> |  | new | missing |
+| <code>PSOA Cost Center</code> |  | new | translated |
+| <code>PSOA Project</code> |  | new | translated |
 | <code>PUT</code> |  | new | excepted |
 | <code>PZN</code> |  | new | excepted |
 | <code>Package</code> |  | new | missing |
@@ -9204,10 +9204,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Packages are lightweight apps (collection of Module Defs) that can be created, imported, or released right from the UI</code> |  | new | missing |
 | <code>Packaging Slip From Delivery Note</code> |  | new | missing |
 | <code>Packed Item</code> |  | new | missing |
-| <code>Packed Items</code> |  | new | missing |
+| <code>Packed Items</code> |  | new | translated |
 | <code>Packed Items cannot be transferred internally</code> |  | new | missing |
 | <code>Packed Qty</code> |  | new | missing |
-| <code>Packing List</code> |  | new | missing |
+| <code>Packing List</code> |  | new | translated |
 | <code>Packing Slip</code> |  | new | missing |
 | <code>Packing Slip Item</code> |  | new | missing |
 | <code>Packing Slip(s) cancelled</code> |  | new | missing |
@@ -9234,12 +9234,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Page preview</code> |  | new | missing |
 | <code>Page to show on the website</code> |  | new | missing |
 | <code>Page {0} of {1}</code> |  | new | translated |
-| <code>Paid</code> |  | new | missing |
-| <code>Paid Amount</code> |  | new | missing |
-| <code>Paid Amount (Company Currency)</code> |  | new | missing |
+| <code>Paid</code> |  | new | translated |
+| <code>Paid Amount</code> |  | new | translated |
+| <code>Paid Amount (Company Currency)</code> |  | new | translated |
 | <code>Paid Amount After Tax</code> |  | new | missing |
 | <code>Paid Amount After Tax (Company Currency)</code> |  | new | missing |
-| <code>Paid Amount cannot be greater than total negative outstanding amount {0}</code> |  | new | missing |
+| <code>Paid Amount cannot be greater than total negative outstanding amount {0}</code> |  | new | translated |
 | <code>Paid From</code> |  | new | missing |
 | <code>Paid From (GL Account)</code> |  | new | missing |
 | <code>Paid From Account Type</code> |  | new | missing |
@@ -9247,26 +9247,26 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Paid To</code> |  | new | missing |
 | <code>Paid To (GL Account)</code> |  | new | missing |
 | <code>Paid To Account Type</code> |  | new | missing |
-| <code>Paid amount + Write Off Amount can not be greater than Grand Total</code> |  | new | missing |
+| <code>Paid amount + Write Off Amount can not be greater than Grand Total</code> |  | new | translated |
 | <code>Paid to</code> |  | new | missing |
 | <code>Pair</code> |  | new | missing |
 | <code>Pallets</code> |  | new | missing |
 | <code>Parameter</code> |  | new | translated |
 | <code>Parameter Group</code> |  | new | missing |
 | <code>Parameter Group Name</code> |  | new | missing |
-| <code>Parameter Name</code> |  | new | missing |
-| <code>Parameters</code> |  | new | missing |
+| <code>Parameter Name</code> |  | new | translated |
+| <code>Parameters</code> |  | new | translated |
 | <code>Parcel Template</code> |  | new | missing |
 | <code>Parcel Template Name</code> |  | new | missing |
 | <code>Parcel weight cannot be 0</code> |  | new | missing |
 | <code>Parcels</code> |  | new | missing |
 | <code>Parent</code> |  | new | translated |
-| <code>Parent Account</code> |  | new | missing |
+| <code>Parent Account</code> |  | new | translated |
 | <code>Parent Account Missing</code> |  | new | missing |
 | <code>Parent Batch</code> |  | new | missing |
 | <code>Parent Company</code> |  | new | missing |
 | <code>Parent Company must be a group company</code> |  | new | missing |
-| <code>Parent Cost Center</code> |  | new | missing |
+| <code>Parent Cost Center</code> |  | new | translated |
 | <code>Parent Customer Group</code> |  | new | missing |
 | <code>Parent Department</code> |  | new | missing |
 | <code>Parent Detail docname</code> |  | new | missing |
@@ -9279,12 +9279,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Parent Field (Tree)</code> |  | new | translated |
 | <code>Parent Field must be a valid fieldname</code> |  | new | translated |
 | <code>Parent Icon</code> |  | new | missing |
-| <code>Parent Item</code> |  | new | missing |
+| <code>Parent Item</code> |  | new | translated |
 | <code>Parent Item Group</code> |  | new | missing |
 | <code>Parent Item {0} must not be a Fixed Asset</code> |  | new | missing |
-| <code>Parent Item {0} must not be a Stock Item</code> |  | new | missing |
+| <code>Parent Item {0} must not be a Stock Item</code> |  | new | translated |
 | <code>Parent Label</code> |  | new | translated |
-| <code>Parent Location</code> |  | new | missing |
+| <code>Parent Location</code> |  | new | translated |
 | <code>Parent Missing</code> |  | new | missing |
 | <code>Parent Page</code> |  | new | missing |
 | <code>Parent Procedure</code> |  | new | missing |
@@ -9315,10 +9315,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Partially Billed</code> |  | new | missing |
 | <code>Partially Completed</code> |  | new | missing |
 | <code>Partially Delivered</code> |  | new | missing |
-| <code>Partially Depreciated</code> |  | new | missing |
-| <code>Partially Fulfilled</code> |  | new | missing |
-| <code>Partially Ordered</code> |  | new | missing |
-| <code>Partially Paid</code> |  | new | missing |
+| <code>Partially Depreciated</code> |  | new | translated |
+| <code>Partially Fulfilled</code> |  | new | translated |
+| <code>Partially Ordered</code> |  | new | translated |
+| <code>Partially Paid</code> |  | new | translated |
 | <code>Partially Received</code> |  | new | missing |
 | <code>Partially Reconciled</code> |  | new | missing |
 | <code>Partially Reposted</code> |  | new | missing |
@@ -9327,44 +9327,44 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Partially Transferred</code> |  | new | missing |
 | <code>Partially Used</code> |  | new | missing |
 | <code>Participants</code> |  | new | translated |
-| <code>Partly Billed</code> |  | new | missing |
-| <code>Partly Delivered</code> |  | new | missing |
+| <code>Partly Billed</code> |  | new | translated |
+| <code>Partly Delivered</code> |  | new | translated |
 | <code>Partly Paid</code> |  | new | missing |
 | <code>Partly Paid and Discounted</code> |  | new | missing |
 | <code>Partner Type</code> |  | new | missing |
 | <code>Partner website</code> |  | new | missing |
 | <code>Partnership</code> |  | new | missing |
 | <code>Parts Per Million</code> |  | new | missing |
-| <code>Party</code> |  | new | missing |
-| <code>Party Account</code> |  | new | missing |
-| <code>Party Account Currency</code> |  | new | missing |
+| <code>Party</code> |  | new | translated |
+| <code>Party Account</code> |  | new | translated |
+| <code>Party Account Currency</code> |  | new | translated |
 | <code>Party Account No.</code> |  | new | missing |
 | <code>Party Account No. (Bank Statement)</code> |  | new | missing |
 | <code>Party Account {0} currency ({1}) and document currency ({2}) should be same</code> |  | new | missing |
-| <code>Party Bank Account</code> |  | new | missing |
-| <code>Party Details</code> |  | new | missing |
+| <code>Party Bank Account</code> |  | new | translated |
+| <code>Party Details</code> |  | new | translated |
 | <code>Party Full Name</code> |  | new | missing |
 | <code>Party IBAN</code> |  | new | missing |
 | <code>Party IBAN (Bank Statement)</code> |  | new | missing |
 | <code>Party ID</code> |  | new | missing |
-| <code>Party Information</code> |  | new | missing |
+| <code>Party Information</code> |  | new | translated |
 | <code>Party Item Code</code> |  | new | missing |
 | <code>Party Link</code> |  | new | missing |
 | <code>Party Mismatch</code> |  | new | missing |
-| <code>Party Name</code> |  | new | missing |
+| <code>Party Name</code> |  | new | translated |
 | <code>Party Name/Account Holder</code> |  | new | missing |
 | <code>Party Name/Account Holder (Bank Statement)</code> |  | new | missing |
 | <code>Party Not Required</code> |  | new | missing |
 | <code>Party Specific Item</code> |  | new | missing |
-| <code>Party Type</code> |  | new | missing |
+| <code>Party Type</code> |  | new | translated |
 | <code>Party Type and Party can only be set for Receivable / Payable account&lt;br&gt;&lt;br&gt;{0}</code> |  | new | missing |
-| <code>Party Type and Party is mandatory for {0} account</code> |  | new | missing |
+| <code>Party Type and Party is mandatory for {0} account</code> |  | new | translated |
 | <code>Party Type and Party is required for Receivable / Payable account {0}</code> |  | new | missing |
-| <code>Party Type is mandatory</code> |  | new | missing |
-| <code>Party User</code> |  | new | missing |
+| <code>Party Type is mandatory</code> |  | new | translated |
+| <code>Party User</code> |  | new | translated |
 | <code>Party account is required to create a payment entry.</code> |  | new | missing |
 | <code>Party can only be one of {0}</code> |  | new | missing |
-| <code>Party is mandatory</code> |  | new | missing |
+| <code>Party is mandatory</code> |  | new | translated |
 | <code>Party is required</code> |  | new | missing |
 | <code>Party is required create a payment entry.</code> |  | new | missing |
 | <code>Party type is required to create a payment entry.</code> |  | new | missing |
@@ -9392,7 +9392,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Password used to open password-protected PDF statements for this account. Stored encrypted.</code> |  | new | missing |
 | <code>Passwords do not match</code> |  | new | missing |
 | <code>Passwords do not match!</code> |  | new | translated |
-| <code>Past Due Date</code> |  | new | missing |
+| <code>Past Due Date</code> |  | new | translated |
 | <code>Past Events</code> |  | new | missing |
 | <code>Paste</code> |  | new | translated |
 | <code>Patch</code> |  | new | translated |
@@ -9404,109 +9404,109 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Path to private Key File</code> |  | new | translated |
 | <code>Path {0} is not within module {1}</code> |  | new | missing |
 | <code>Path {0} it not a valid path</code> |  | new | missing |
-| <code>Pause</code> |  | new | missing |
+| <code>Pause</code> |  | new | translated |
 | <code>Pause Job</code> |  | new | missing |
 | <code>Pause SLA On Status</code> |  | new | missing |
 | <code>Paused</code> |  | new | missing |
-| <code>Pay</code> |  | new | missing |
+| <code>Pay</code> |  | new | translated |
 | <code>Pay</code> | Amount | new | missing |
-| <code>Pay To / Recd From</code> |  | new | missing |
-| <code>Payable</code> |  | new | missing |
-| <code>Payable Account</code> |  | new | missing |
+| <code>Pay To / Recd From</code> |  | new | translated |
+| <code>Payable</code> |  | new | translated |
+| <code>Payable Account</code> |  | new | translated |
 | <code>Payables</code> |  | new | missing |
-| <code>Payer Settings</code> |  | new | missing |
+| <code>Payer Settings</code> |  | new | translated |
 | <code>Payload Count</code> |  | new | missing |
-| <code>Payment</code> |  | new | missing |
-| <code>Payment Account</code> |  | new | missing |
-| <code>Payment Amount</code> |  | new | missing |
+| <code>Payment</code> |  | new | translated |
+| <code>Payment Account</code> |  | new | translated |
+| <code>Payment Amount</code> |  | new | translated |
 | <code>Payment Amount (Company Currency)</code> |  | new | missing |
-| <code>Payment Channel</code> |  | new | missing |
-| <code>Payment Deductions or Loss</code> |  | new | missing |
+| <code>Payment Channel</code> |  | new | translated |
+| <code>Payment Deductions or Loss</code> |  | new | translated |
 | <code>Payment Details</code> |  | new | missing |
-| <code>Payment Document</code> |  | new | missing |
-| <code>Payment Document Type</code> |  | new | missing |
-| <code>Payment Due Date</code> |  | new | missing |
-| <code>Payment Entries</code> |  | new | missing |
-| <code>Payment Entries {0} are un-linked</code> |  | new | missing |
-| <code>Payment Entry</code> |  | new | missing |
+| <code>Payment Document</code> |  | new | translated |
+| <code>Payment Document Type</code> |  | new | translated |
+| <code>Payment Due Date</code> |  | new | translated |
+| <code>Payment Entries</code> |  | new | translated |
+| <code>Payment Entries {0} are un-linked</code> |  | new | translated |
+| <code>Payment Entry</code> |  | new | translated |
 | <code>Payment Entry Created</code> |  | new | missing |
-| <code>Payment Entry Deduction</code> |  | new | missing |
-| <code>Payment Entry Reference</code> |  | new | missing |
-| <code>Payment Entry already exists</code> |  | new | missing |
-| <code>Payment Entry has been modified after you pulled it. Please pull it again.</code> |  | new | missing |
-| <code>Payment Entry is already created</code> |  | new | missing |
+| <code>Payment Entry Deduction</code> |  | new | translated |
+| <code>Payment Entry Reference</code> |  | new | translated |
+| <code>Payment Entry already exists</code> |  | new | translated |
+| <code>Payment Entry has been modified after you pulled it. Please pull it again.</code> |  | new | translated |
+| <code>Payment Entry is already created</code> |  | new | translated |
 | <code>Payment Entry {0} is linked against Order {1}, check if it should be pulled as advance in this invoice.</code> |  | new | missing |
-| <code>Payment Failed</code> |  | new | missing |
-| <code>Payment From / To</code> |  | new | missing |
-| <code>Payment Gateway</code> |  | new | missing |
-| <code>Payment Gateway Account</code> |  | new | missing |
-| <code>Payment Gateway Account not created, please create one manually.</code> |  | new | missing |
-| <code>Payment Gateway Details</code> |  | new | missing |
+| <code>Payment Failed</code> |  | new | translated |
+| <code>Payment From / To</code> |  | new | translated |
+| <code>Payment Gateway</code> |  | new | translated |
+| <code>Payment Gateway Account</code> |  | new | translated |
+| <code>Payment Gateway Account not created, please create one manually.</code> |  | new | translated |
+| <code>Payment Gateway Details</code> |  | new | translated |
 | <code>Payment Ledger</code> |  | new | missing |
 | <code>Payment Ledger Balance</code> |  | new | missing |
 | <code>Payment Ledger Entry</code> |  | new | missing |
 | <code>Payment Limit</code> |  | new | missing |
 | <code>Payment Link couldn&#x27;t be sent.</code> |  | new | missing |
-| <code>Payment Method</code> |  | new | missing |
-| <code>Payment Methods</code> |  | new | missing |
-| <code>Payment Mode</code> |  | new | missing |
+| <code>Payment Method</code> |  | new | translated |
+| <code>Payment Methods</code> |  | new | translated |
+| <code>Payment Mode</code> |  | new | translated |
 | <code>Payment Options</code> |  | new | missing |
-| <code>Payment Order</code> |  | new | missing |
-| <code>Payment Order Reference</code> |  | new | missing |
-| <code>Payment Order Status</code> |  | new | missing |
-| <code>Payment Order Type</code> |  | new | missing |
-| <code>Payment Ordered</code> |  | new | missing |
-| <code>Payment Period Based On Invoice Date</code> |  | new | missing |
-| <code>Payment Plan</code> |  | new | missing |
-| <code>Payment Receipt Note</code> |  | new | missing |
-| <code>Payment Received</code> |  | new | missing |
-| <code>Payment Reconciliation</code> |  | new | missing |
+| <code>Payment Order</code> |  | new | translated |
+| <code>Payment Order Reference</code> |  | new | translated |
+| <code>Payment Order Status</code> |  | new | translated |
+| <code>Payment Order Type</code> |  | new | translated |
+| <code>Payment Ordered</code> |  | new | translated |
+| <code>Payment Period Based On Invoice Date</code> |  | new | translated |
+| <code>Payment Plan</code> |  | new | translated |
+| <code>Payment Receipt Note</code> |  | new | translated |
+| <code>Payment Received</code> |  | new | translated |
+| <code>Payment Reconciliation</code> |  | new | translated |
 | <code>Payment Reconciliation Allocation</code> |  | new | missing |
-| <code>Payment Reconciliation Invoice</code> |  | new | missing |
+| <code>Payment Reconciliation Invoice</code> |  | new | translated |
 | <code>Payment Reconciliation Job: {0} is running for this party. Can&#x27;t reconcile now.</code> |  | new | missing |
-| <code>Payment Reconciliation Payment</code> |  | new | missing |
+| <code>Payment Reconciliation Payment</code> |  | new | translated |
 | <code>Payment Reconciliation Settings</code> |  | new | missing |
 | <code>Payment Recorded</code> |  | new | missing |
-| <code>Payment Reference</code> |  | new | missing |
-| <code>Payment References</code> |  | new | missing |
-| <code>Payment Request</code> |  | new | missing |
+| <code>Payment Reference</code> |  | new | translated |
+| <code>Payment References</code> |  | new | translated |
+| <code>Payment Request</code> |  | new | translated |
 | <code>Payment Request Outstanding</code> |  | new | missing |
-| <code>Payment Request Type</code> |  | new | missing |
-| <code>Payment Request for {0}</code> |  | new | missing |
+| <code>Payment Request Type</code> |  | new | translated |
+| <code>Payment Request for {0}</code> |  | new | translated |
 | <code>Payment Request is already created</code> |  | new | missing |
 | <code>Payment Request took too long to respond. Please try requesting for payment again.</code> |  | new | missing |
 | <code>Payment Requests cannot be created against: {0}</code> |  | new | missing |
 | <code>Payment Requests made from Sales / Purchase Invoice will be put in Draft explicitly</code> |  | new | missing |
-| <code>Payment Schedule</code> |  | new | missing |
+| <code>Payment Schedule</code> |  | new | translated |
 | <code>Payment Schedule based Payment Requests cannot be created because a Payment Entry already exists for this document.</code> |  | new | missing |
 | <code>Payment Schedules</code> |  | new | missing |
-| <code>Payment Term</code> |  | new | missing |
-| <code>Payment Term Name</code> |  | new | missing |
+| <code>Payment Term</code> |  | new | translated |
+| <code>Payment Term Name</code> |  | new | translated |
 | <code>Payment Term Outstanding</code> |  | new | missing |
-| <code>Payment Terms</code> |  | new | missing |
+| <code>Payment Terms</code> |  | new | translated |
 | <code>Payment Terms Status for Sales Order</code> |  | new | missing |
-| <code>Payment Terms Template</code> |  | new | missing |
-| <code>Payment Terms Template Detail</code> |  | new | missing |
+| <code>Payment Terms Template</code> |  | new | translated |
+| <code>Payment Terms Template Detail</code> |  | new | translated |
 | <code>Payment Terms from orders will be fetched into the invoices as is</code> |  | new | missing |
 | <code>Payment Terms:</code> |  | new | missing |
-| <code>Payment Type</code> |  | new | missing |
-| <code>Payment Type must be one of Receive, Pay and Internal Transfer</code> |  | new | missing |
+| <code>Payment Type</code> |  | new | translated |
+| <code>Payment Type must be one of Receive, Pay and Internal Transfer</code> |  | new | translated |
 | <code>Payment URL</code> |  | new | missing |
 | <code>Payment Unlink Error</code> |  | new | missing |
-| <code>Payment against {0} {1} cannot be greater than Outstanding Amount {2}</code> |  | new | missing |
-| <code>Payment amount cannot be less than or equal to 0</code> |  | new | missing |
-| <code>Payment methods are mandatory. Please add at least one payment method.</code> |  | new | missing |
+| <code>Payment against {0} {1} cannot be greater than Outstanding Amount {2}</code> |  | new | translated |
+| <code>Payment amount cannot be less than or equal to 0</code> |  | new | translated |
+| <code>Payment methods are mandatory. Please add at least one payment method.</code> |  | new | translated |
 | <code>Payment methods refreshed. Please review before proceeding.</code> |  | new | missing |
 | <code>Payment of {0} received successfully.</code> |  | new | missing |
 | <code>Payment of {0} received successfully. Waiting for other requests to complete...</code> |  | new | missing |
-| <code>Payment related to {0} is not completed</code> |  | new | missing |
+| <code>Payment related to {0} is not completed</code> |  | new | translated |
 | <code>Payment request failed</code> |  | new | missing |
 | <code>Payment term {0} not used in {1}</code> |  | new | missing |
-| <code>Payments</code> |  | new | missing |
+| <code>Payments</code> |  | new | translated |
 | <code>Payments could not be updated.</code> |  | new | missing |
 | <code>Payments updated.</code> |  | new | missing |
-| <code>Payroll Entry</code> |  | new | missing |
-| <code>Payroll Payable</code> |  | new | missing |
+| <code>Payroll Entry</code> |  | new | translated |
+| <code>Payroll Payable</code> |  | new | translated |
 | <code>Payslip</code> |  | new | missing |
 | <code>Peak Memory Usage</code> |  | new | missing |
 | <code>Peck (UK)</code> |  | new | missing |
@@ -9516,16 +9516,16 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Pegged Currency Details</code> |  | new | missing |
 | <code>Pending</code> |  | new | translated |
 | <code>Pending Activities</code> |  | new | missing |
-| <code>Pending Amount</code> |  | new | missing |
+| <code>Pending Amount</code> |  | new | translated |
 | <code>Pending Approval</code> |  | new | translated |
 | <code>Pending Emails</code> |  | new | missing |
 | <code>Pending Jobs</code> |  | new | missing |
-| <code>Pending Qty</code> |  | new | missing |
-| <code>Pending Quantity</code> |  | new | missing |
+| <code>Pending Qty</code> |  | new | translated |
+| <code>Pending Quantity</code> |  | new | translated |
 | <code>Pending Quantity cannot be greater than {0}</code> |  | new | missing |
 | <code>Pending Quantity cannot be less than 0</code> |  | new | missing |
 | <code>Pending Review</code> |  | new | missing |
-| <code>Pending SO Items For Purchase Request</code> |  | new | missing |
+| <code>Pending SO Items For Purchase Request</code> |  | new | translated |
 | <code>Pending Verification</code> |  | new | translated |
 | <code>Pending Work Order</code> |  | new | missing |
 | <code>Pending activities for today</code> |  | new | missing |
@@ -9535,40 +9535,40 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Pension Funds</code> |  | new | missing |
 | <code>Per Day</code> |  | new | missing |
 | <code>Per Day<br>Shift Time (In Hours) * No of Workstations * No of Shift</code> |  | new | missing |
-| <code>Per Month</code> |  | new | missing |
+| <code>Per Month</code> |  | new | translated |
 | <code>Per Received</code> |  | new | missing |
 | <code>Per Transferred</code> |  | new | missing |
 | <code>Per Unit Time in Mins</code> |  | new | missing |
-| <code>Per Week</code> |  | new | missing |
-| <code>Per Year</code> |  | new | missing |
+| <code>Per Week</code> |  | new | translated |
+| <code>Per Year</code> |  | new | translated |
 | <code>Per-Company Accounts</code> |  | new | missing |
 | <code>Per-table extraction data for PDF statements (rows, bbox, page image, column mapping). Edited via the banking app.</code> |  | new | missing |
 | <code>Percent</code> |  | new | translated |
 | <code>Percentage</code> |  | new | translated |
 | <code>Percentage (%)</code> |  | new | missing |
-| <code>Percentage Allocation</code> |  | new | missing |
-| <code>Percentage Allocation should be equal to 100%</code> |  | new | missing |
+| <code>Percentage Allocation</code> |  | new | translated |
+| <code>Percentage Allocation should be equal to 100%</code> |  | new | translated |
 | <code>Percentage by which over-billing is allowed against a Sales/Purchase Order for this item. If not set, value from Accounts Settings will be used.</code> |  | new | missing |
 | <code>Percentage by which over-delivery or over-receipt is allowed against a Sales/Purchase Order for this item. If not set, value from Stock Settings will be used.</code> |  | new | missing |
 | <code>Percentage you are allowed to order beyond the Blanket Order quantity.</code> |  | new | missing |
 | <code>Percentage you are allowed to sell beyond the Blanket Order quantity.</code> |  | new | missing |
-| <code>Percentage you are allowed to transfer more against the quantity ordered. For example: If you have ordered 100 units. and your Allowance is 10% then you are allowed to transfer 110 units.</code> |  | new | missing |
+| <code>Percentage you are allowed to transfer more against the quantity ordered. For example: If you have ordered 100 units. and your Allowance is 10% then you are allowed to transfer 110 units.</code> |  | new | translated |
 | <code>Perception Analysis</code> |  | new | missing |
 | <code>Period</code> |  | new | translated |
-| <code>Period Based On</code> |  | new | missing |
+| <code>Period Based On</code> |  | new | translated |
 | <code>Period Closed</code> |  | new | missing |
 | <code>Period Closing Entry For Current Period</code> |  | new | missing |
-| <code>Period Closing Voucher</code> |  | new | missing |
+| <code>Period Closing Voucher</code> |  | new | translated |
 | <code>Period Closing Voucher {0} GL Entry Cancellation Failed</code> |  | new | missing |
 | <code>Period Closing Voucher {0} GL Entry Processing Failed</code> |  | new | missing |
 | <code>Period Details</code> |  | new | missing |
-| <code>Period End Date</code> |  | new | missing |
+| <code>Period End Date</code> |  | new | translated |
 | <code>Period End Date cannot be greater than Fiscal Year End Date</code> |  | new | missing |
 | <code>Period Movement (Debits - Credits)</code> |  | new | missing |
-| <code>Period Name</code> |  | new | missing |
-| <code>Period Score</code> |  | new | missing |
-| <code>Period Settings</code> |  | new | missing |
-| <code>Period Start Date</code> |  | new | missing |
+| <code>Period Name</code> |  | new | translated |
+| <code>Period Score</code> |  | new | translated |
+| <code>Period Settings</code> |  | new | translated |
+| <code>Period Start Date</code> |  | new | translated |
 | <code>Period Start Date cannot be greater than Period End Date</code> |  | new | missing |
 | <code>Period Start Date must be {0}</code> |  | new | missing |
 | <code>Period To Date</code> |  | new | missing |
@@ -9578,7 +9578,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Periodic Accounting Entry</code> |  | new | missing |
 | <code>Periodic Accounting Entry is not allowed for company {0} with perpetual inventory enabled</code> |  | new | missing |
 | <code>Periodic Entry Difference Account</code> |  | new | missing |
-| <code>Periodicity</code> |  | new | missing |
+| <code>Periodicity</code> |  | new | translated |
 | <code>Perm Level</code> |  | new | translated |
 | <code>Permanent</code> |  | new | translated |
 | <code>Permanent Address</code> |  | new | missing |
@@ -9626,12 +9626,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Phone Ext.</code> |  | new | missing |
 | <code>Phone No</code> |  | new | missing |
 | <code>Phone No.</code> |  | new | translated |
-| <code>Phone Number</code> |  | new | missing |
+| <code>Phone Number</code> |  | new | translated |
 | <code>Phone Number {0} set in field {1} is not valid.</code> |  | new | missing |
 | <code>Pick Columns</code> |  | new | translated |
-| <code>Pick List</code> |  | new | missing |
+| <code>Pick List</code> |  | new | translated |
 | <code>Pick List Incomplete</code> |  | new | missing |
-| <code>Pick List Item</code> |  | new | missing |
+| <code>Pick List Item</code> |  | new | translated |
 | <code>Pick Manually</code> |  | new | missing |
 | <code>Pick Serial / Batch</code> |  | new | missing |
 | <code>Pick Serial / Batch Based On</code> |  | new | missing |
@@ -9659,22 +9659,22 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Pipeline By</code> |  | new | missing |
 | <code>Place of Issue</code> |  | new | missing |
 | <code>Placeholder</code> |  | new | missing |
-| <code>Plaid Access Token</code> |  | new | missing |
+| <code>Plaid Access Token</code> |  | new | translated |
 | <code>Plaid Client ID</code> |  | new | missing |
 | <code>Plaid Environment</code> |  | new | missing |
 | <code>Plaid Link Failed</code> |  | new | missing |
 | <code>Plaid Link Refresh Required</code> |  | new | missing |
 | <code>Plaid Link Updated</code> |  | new | missing |
 | <code>Plaid Secret</code> |  | new | missing |
-| <code>Plaid Settings</code> |  | new | missing |
+| <code>Plaid Settings</code> |  | new | translated |
 | <code>Plaid transactions sync error</code> |  | new | missing |
 | <code>Plain Text</code> |  | new | missing |
-| <code>Plan</code> |  | new | missing |
-| <code>Plan Name</code> |  | new | missing |
+| <code>Plan</code> |  | new | translated |
+| <code>Plan Name</code> |  | new | translated |
 | <code>Plan material for sub-assemblies</code> |  | new | missing |
 | <code>Plan operations X days in advance</code> |  | new | missing |
 | <code>Plan time logs outside Workstation working hours</code> |  | new | missing |
-| <code>Planned</code> |  | new | missing |
+| <code>Planned</code> |  | new | translated |
 | <code>Planned End Date</code> |  | new | missing |
 | <code>Planned End Date cannot be before Planned Start Date</code> |  | new | missing |
 | <code>Planned End Time</code> |  | new | missing |
@@ -9682,36 +9682,36 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Planned Purchase Order</code> |  | new | missing |
 | <code>Planned Qty</code> |  | new | missing |
 | <code>Planned Qty: Quantity, for which, Work Order has been raised, but is pending to be manufactured.</code> |  | new | missing |
-| <code>Planned Quantity</code> |  | new | missing |
+| <code>Planned Quantity</code> |  | new | translated |
 | <code>Planned Start Date</code> |  | new | missing |
 | <code>Planned Start Time</code> |  | new | missing |
 | <code>Planned Work Order</code> |  | new | missing |
-| <code>Planning</code> |  | new | missing |
-| <code>Plans</code> |  | new | missing |
+| <code>Planning</code> |  | new | translated |
+| <code>Plans</code> |  | new | translated |
 | <code>Plant</code> |  | new | translated |
 | <code>Plant Dashboard</code> |  | new | missing |
 | <code>Plant Floor</code> |  | new | missing |
-| <code>Plants and Machineries</code> |  | new | missing |
+| <code>Plants and Machineries</code> |  | new | translated |
 | <code>Please Authorize OAuth for Email Account {0}</code> |  | new | missing |
 | <code>Please Authorize OAuth for Email Account {}</code> |  | new | missing |
 | <code>Please Duplicate this Website Theme to customize.</code> |  | new | translated |
 | <code>Please Install the ldap3 library via pip to use ldap functionality.</code> |  | new | translated |
 | <code>Please Restock Items and Update the Pick List to continue. To discontinue, cancel the Pick List.</code> |  | new | missing |
-| <code>Please Select a Company</code> |  | new | missing |
-| <code>Please Select a Company.</code> |  | new | missing |
-| <code>Please Select a Customer</code> |  | new | missing |
+| <code>Please Select a Company</code> |  | new | translated |
+| <code>Please Select a Company.</code> |  | new | translated |
+| <code>Please Select a Customer</code> |  | new | translated |
 | <code>Please Select a Supplier</code> |  | new | missing |
 | <code>Please Set Chart</code> |  | new | translated |
 | <code>Please Set Priority</code> |  | new | missing |
-| <code>Please Set Supplier Group in Buying Settings.</code> |  | new | missing |
+| <code>Please Set Supplier Group in Buying Settings.</code> |  | new | translated |
 | <code>Please Specify Account</code> |  | new | missing |
 | <code>Please Update SMS Settings</code> |  | new | translated |
 | <code>Please add &#x27;Supplier&#x27; role to user {0}.</code> |  | new | missing |
-| <code>Please add Mode of payments and opening balance details.</code> |  | new | missing |
+| <code>Please add Mode of payments and opening balance details.</code> |  | new | translated |
 | <code>Please add Operations first.</code> |  | new | missing |
 | <code>Please add Request for Quotation to the sidebar in Portal Settings.</code> |  | new | missing |
 | <code>Please add Root Account for - {0}</code> |  | new | missing |
-| <code>Please add a Temporary Opening account in Chart of Accounts</code> |  | new | missing |
+| <code>Please add a Temporary Opening account in Chart of Accounts</code> |  | new | translated |
 | <code>Please add a subject to your email</code> |  | new | translated |
 | <code>Please add a valid Holiday List on Appointment Booking Settings.</code> |  | new | missing |
 | <code>Please add a valid comment.</code> |  | new | translated |
@@ -9721,7 +9721,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Please add atleast one user on Allowed Users to allow Data Synchronization from Frappe CRM site.</code> |  | new | missing |
 | <code>Please add the Bank Account column</code> |  | new | missing |
 | <code>Please add the account to root level Company - {0}</code> |  | new | missing |
-| <code>Please add the account to root level Company - {}</code> |  | new | missing |
+| <code>Please add the account to root level Company - {}</code> |  | new | translated |
 | <code>Please add {1} role to user {0}.</code> |  | new | missing |
 | <code>Please adjust filters to include some data</code> |  | new | missing |
 | <code>Please adjust the qty or edit {0} to proceed.</code> |  | new | missing |
@@ -9735,7 +9735,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Please cancel payment entry manually first</code> |  | new | missing |
 | <code>Please cancel related transaction.</code> |  | new | missing |
 | <code>Please capitalize this asset before submitting.</code> |  | new | missing |
-| <code>Please check Multi Currency option to allow accounts with other currency</code> |  | new | missing |
+| <code>Please check Multi Currency option to allow accounts with other currency</code> |  | new | translated |
 | <code>Please check Process Deferred Accounting {0} and submit manually after resolving errors.</code> |  | new | missing |
 | <code>Please check either with operations or FG Based Operating Cost.</code> |  | new | missing |
 | <code>Please check the &#x27;Activate Serial and Batch No for Item&#x27; checkbox in the {0} to make Serial and Batch Bundle for the item.</code> |  | new | missing |
@@ -9762,14 +9762,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Please contact any of the following users to {} this transaction.</code> |  | new | missing |
 | <code>Please contact your administrator to extend the credit limits for {0}.</code> |  | new | missing |
 | <code>Please contact your system manager to install correct version.</code> |  | new | missing |
-| <code>Please convert the parent account in corresponding child company to a group account.</code> |  | new | missing |
+| <code>Please convert the parent account in corresponding child company to a group account.</code> |  | new | translated |
 | <code>Please create Card first</code> |  | new | translated |
-| <code>Please create Customer from Lead {0}.</code> |  | new | missing |
+| <code>Please create Customer from Lead {0}.</code> |  | new | translated |
 | <code>Please create Landed Cost Vouchers against Invoices that have &#x27;Update Stock&#x27; enabled.</code> |  | new | missing |
 | <code>Please create a new Accounting Dimension if required.</code> |  | new | missing |
 | <code>Please create chart first</code> |  | new | translated |
 | <code>Please create purchase from internal sale or delivery document itself</code> |  | new | missing |
-| <code>Please create purchase receipt or purchase invoice for the item {0}</code> |  | new | missing |
+| <code>Please create purchase receipt or purchase invoice for the item {0}</code> |  | new | translated |
 | <code>Please delete Product Bundle {0}, before merging {1} into {2}</code> |  | new | missing |
 | <code>Please delete the field from {0} or add the required doctype.</code> |  | new | missing |
 | <code>Please disable workflow temporarily for Journal Entry {0}</code> |  | new | missing |
@@ -9777,8 +9777,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Please do not change the template headings.</code> |  | new | translated |
 | <code>Please do not create more than 500 items at a time</code> |  | new | missing |
 | <code>Please duplicate this to make changes</code> |  | new | translated |
-| <code>Please enable Applicable on Booking Actual Expenses</code> |  | new | missing |
-| <code>Please enable Applicable on Purchase Order and Applicable on Booking Actual Expenses</code> |  | new | missing |
+| <code>Please enable Applicable on Booking Actual Expenses</code> |  | new | translated |
+| <code>Please enable Applicable on Purchase Order and Applicable on Booking Actual Expenses</code> |  | new | translated |
 | <code>Please enable Use Old Serial / Batch Fields to make_bundle</code> |  | new | missing |
 | <code>Please enable atleast one Social Login Key or LDAP or Login With Email Link before disabling username/password based login.</code> |  | new | missing |
 | <code>Please enable only if the understand the effects of enabling this.</code> |  | new | missing |
@@ -9794,7 +9794,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Please ensure {} account {} is a Receivable account.</code> |  | new | missing |
 | <code>Please enter &lt;b&gt;Difference Account&lt;/b&gt; or set default &lt;b&gt;Stock Adjustment Account&lt;/b&gt; for company {0}</code> |  | new | missing |
 | <code>Please enter Access Token URL</code> |  | new | translated |
-| <code>Please enter Account for Change Amount</code> |  | new | missing |
+| <code>Please enter Account for Change Amount</code> |  | new | translated |
 | <code>Please enter Approving Role or Approving User</code> |  | new | missing |
 | <code>Please enter Authorize URL</code> |  | new | translated |
 | <code>Please enter Base URL</code> |  | new | translated |
@@ -9802,10 +9802,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Please enter Client ID before social login is enabled</code> |  | new | translated |
 | <code>Please enter Client Secret before social login is enabled</code> |  | new | translated |
 | <code>Please enter Cost Center</code> |  | new | missing |
-| <code>Please enter Delivery Date</code> |  | new | missing |
+| <code>Please enter Delivery Date</code> |  | new | translated |
 | <code>Please enter Employee Id of this sales person</code> |  | new | missing |
 | <code>Please enter Expense Account</code> |  | new | missing |
-| <code>Please enter Item Code to get Batch Number</code> |  | new | missing |
+| <code>Please enter Item Code to get Batch Number</code> |  | new | translated |
 | <code>Please enter Item Code to get batch no</code> |  | new | missing |
 | <code>Please enter Item first</code> |  | new | missing |
 | <code>Please enter Maintenance Details first</code> |  | new | missing |
@@ -9815,13 +9815,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Please enter Purchase Receipt first</code> |  | new | missing |
 | <code>Please enter Receipt Document</code> |  | new | missing |
 | <code>Please enter Redirect URL</code> |  | new | translated |
-| <code>Please enter Reference date</code> |  | new | missing |
+| <code>Please enter Reference date</code> |  | new | translated |
 | <code>Please enter Root Type for account- {0}</code> |  | new | missing |
 | <code>Please enter Serial No</code> |  | new | missing |
 | <code>Please enter Serial Nos</code> |  | new | missing |
 | <code>Please enter Shipment Parcel information</code> |  | new | missing |
 | <code>Please enter Warehouse and Date</code> |  | new | missing |
-| <code>Please enter Write Off Account</code> |  | new | missing |
+| <code>Please enter Write Off Account</code> |  | new | translated |
 | <code>Please enter a valid Write Off Account</code> |  | new | missing |
 | <code>Please enter a valid Write Off Cost Center</code> |  | new | missing |
 | <code>Please enter a valid email address.</code> |  | new | missing |
@@ -9830,11 +9830,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Please enter a valid quantity</code> |  | new | missing |
 | <code>Please enter at least one delivery date and quantity</code> |  | new | missing |
 | <code>Please enter both your email and message so that we can get back to you. Thanks!</code> |  | new | missing |
-| <code>Please enter company name first</code> |  | new | missing |
+| <code>Please enter company name first</code> |  | new | translated |
 | <code>Please enter default currency in Company Master</code> |  | new | missing |
-| <code>Please enter message before sending</code> |  | new | missing |
+| <code>Please enter message before sending</code> |  | new | translated |
 | <code>Please enter mobile number first.</code> |  | new | missing |
-| <code>Please enter parent cost center</code> |  | new | missing |
+| <code>Please enter parent cost center</code> |  | new | translated |
 | <code>Please enter quantity for item {0}</code> |  | new | missing |
 | <code>Please enter relieving date.</code> |  | new | missing |
 | <code>Please enter serial nos</code> |  | new | missing |
@@ -9842,7 +9842,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Please enter the first delivery date</code> |  | new | missing |
 | <code>Please enter the password</code> |  | new | translated |
 | <code>Please enter the password for: &lt;b&gt;{0}&lt;/b&gt;</code> | Email Account | new | missing |
-| <code>Please enter the phone number first</code> |  | new | missing |
+| <code>Please enter the phone number first</code> |  | new | translated |
 | <code>Please enter the {schedule_date}.</code> |  | new | missing |
 | <code>Please enter valid Financial Year Start and End Dates</code> |  | new | missing |
 | <code>Please enter valid mobile nos</code> |  | new | translated |
@@ -9871,7 +9871,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Please mention &#x27;{0}&#x27; in Company: {1}</code> |  | new | missing |
 | <code>Please mention no of visits required</code> |  | new | missing |
 | <code>Please mention the Current and New BOM for replacement.</code> |  | new | missing |
-| <code>Please pull items from Delivery Note</code> |  | new | missing |
+| <code>Please pull items from Delivery Note</code> |  | new | translated |
 | <code>Please rectify and try again.</code> |  | new | missing |
 | <code>Please refresh or reset the Plaid linking of the Bank {}.</code> |  | new | missing |
 | <code>Please refresh to get the latest document.</code> |  | new | translated |
@@ -9887,33 +9887,33 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Please save the form before previewing the message</code> |  | new | missing |
 | <code>Please save the report first</code> |  | new | translated |
 | <code>Please save to edit the template.</code> |  | new | translated |
-| <code>Please select &lt;b&gt;Template Type&lt;/b&gt; to download template</code> |  | new | missing |
+| <code>Please select &lt;b&gt;Template Type&lt;/b&gt; to download template</code> |  | new | translated |
 | <code>Please select Apply Discount On</code> |  | new | missing |
-| <code>Please select BOM against item {0}</code> |  | new | missing |
+| <code>Please select BOM against item {0}</code> |  | new | translated |
 | <code>Please select BOM for Item in Row {0}</code> |  | new | missing |
 | <code>Please select BOM in BOM field for Item {item_code}.</code> |  | new | missing |
 | <code>Please select Bank Account</code> |  | new | missing |
-| <code>Please select Category first</code> |  | new | missing |
-| <code>Please select Charge Type first</code> |  | new | missing |
-| <code>Please select Company</code> |  | new | missing |
-| <code>Please select Company and Posting Date to getting entries</code> |  | new | missing |
-| <code>Please select Company first</code> |  | new | missing |
-| <code>Please select Completion Date for Completed Asset Maintenance Log</code> |  | new | missing |
-| <code>Please select Customer first</code> |  | new | missing |
+| <code>Please select Category first</code> |  | new | translated |
+| <code>Please select Charge Type first</code> |  | new | translated |
+| <code>Please select Company</code> |  | new | translated |
+| <code>Please select Company and Posting Date to getting entries</code> |  | new | translated |
+| <code>Please select Company first</code> |  | new | translated |
+| <code>Please select Completion Date for Completed Asset Maintenance Log</code> |  | new | translated |
+| <code>Please select Customer first</code> |  | new | translated |
 | <code>Please select DocType first</code> |  | new | translated |
 | <code>Please select Document Type first.</code> |  | new | missing |
 | <code>Please select Entity Type first</code> |  | new | translated |
 | <code>Please select Existing Company for creating Chart of Accounts</code> |  | new | missing |
 | <code>Please select Finished Good Item for Service Item {0}</code> |  | new | missing |
-| <code>Please select Item Code first</code> |  | new | missing |
-| <code>Please select Maintenance Status as Completed or remove Completion Date</code> |  | new | missing |
+| <code>Please select Item Code first</code> |  | new | translated |
+| <code>Please select Maintenance Status as Completed or remove Completion Date</code> |  | new | translated |
 | <code>Please select Minimum Password Score</code> |  | new | translated |
-| <code>Please select Party Type first</code> |  | new | missing |
+| <code>Please select Party Type first</code> |  | new | translated |
 | <code>Please select Periodic Accounting Entry Difference Account</code> |  | new | missing |
-| <code>Please select Posting Date before selecting Party</code> |  | new | missing |
-| <code>Please select Posting Date first</code> |  | new | missing |
+| <code>Please select Posting Date before selecting Party</code> |  | new | translated |
+| <code>Please select Posting Date first</code> |  | new | translated |
 | <code>Please select Price List</code> |  | new | missing |
-| <code>Please select Qty against item {0}</code> |  | new | missing |
+| <code>Please select Qty against item {0}</code> |  | new | translated |
 | <code>Please select Sample Retention Warehouse in Stock Settings first</code> |  | new | missing |
 | <code>Please select Serial/Batch Nos to reserve or change Reservation Based On to Qty.</code> |  | new | missing |
 | <code>Please select Start Date and End Date for Item {0}</code> |  | new | missing |
@@ -9922,14 +9922,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Please select Unrealized Profit / Loss account or add default Unrealized Profit / Loss account account for company {0}</code> |  | new | missing |
 | <code>Please select X and Y fields</code> |  | new | missing |
 | <code>Please select a BOM</code> |  | new | missing |
-| <code>Please select a Company</code> |  | new | missing |
-| <code>Please select a Company first.</code> |  | new | missing |
-| <code>Please select a Customer</code> |  | new | missing |
+| <code>Please select a Company</code> |  | new | translated |
+| <code>Please select a Company first.</code> |  | new | translated |
+| <code>Please select a Customer</code> |  | new | translated |
 | <code>Please select a Delivery Note</code> |  | new | missing |
 | <code>Please select a DocType in options before setting filters</code> |  | new | missing |
 | <code>Please select a Holiday List to enable Appointment Scheduling.</code> |  | new | missing |
 | <code>Please select a Subcontracting Purchase Order.</code> |  | new | missing |
-| <code>Please select a Supplier</code> |  | new | missing |
+| <code>Please select a Supplier</code> |  | new | translated |
 | <code>Please select a Warehouse</code> |  | new | missing |
 | <code>Please select a Work Order first.</code> |  | new | missing |
 | <code>Please select a bank account to view the bank clearance summary.</code> |  | new | missing |
@@ -9941,8 +9941,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Please select a customer for fetching payments.</code> |  | new | missing |
 | <code>Please select a date</code> |  | new | missing |
 | <code>Please select a date and time</code> |  | new | missing |
-| <code>Please select a default mode of payment</code> |  | new | missing |
-| <code>Please select a field to edit from numpad</code> |  | new | missing |
+| <code>Please select a default mode of payment</code> |  | new | translated |
+| <code>Please select a field to edit from numpad</code> |  | new | translated |
 | <code>Please select a file first.</code> |  | new | missing |
 | <code>Please select a file or url</code> |  | new | translated |
 | <code>Please select a frequency for delivery schedule</code> |  | new | missing |
@@ -9954,7 +9954,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Please select a valid csv file with data</code> |  | new | translated |
 | <code>Please select a valid date filter</code> |  | new | translated |
 | <code>Please select a valid {0}</code> |  | new | missing |
-| <code>Please select a value for {0} quotation_to {1}</code> |  | new | missing |
+| <code>Please select a value for {0} quotation_to {1}</code> |  | new | translated |
 | <code>Please select a warehouse first.</code> |  | new | missing |
 | <code>Please select an item code before setting the warehouse.</code> |  | new | missing |
 | <code>Please select applicable Doctypes</code> |  | new | translated |
@@ -9967,8 +9967,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Please select atleast 1 column from {0} to sort/group</code> |  | new | translated |
 | <code>Please select atleast one item to continue</code> |  | new | missing |
 | <code>Please select atleast one operation to create Job Card</code> |  | new | missing |
-| <code>Please select correct account</code> |  | new | missing |
-| <code>Please select date</code> |  | new | missing |
+| <code>Please select correct account</code> |  | new | translated |
+| <code>Please select date</code> |  | new | translated |
 | <code>Please select dates to view the bank clearance summary.</code> |  | new | missing |
 | <code>Please select dates to view the bank reconciliation statement.</code> |  | new | missing |
 | <code>Please select either the Item or Warehouse or Warehouse Type filter to generate the report.</code> |  | new | missing |
@@ -9978,61 +9978,61 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Please select only one row to create a Reposting Entry</code> |  | new | missing |
 | <code>Please select prefix first</code> |  | new | translated |
 | <code>Please select rows to create Reposting Entries</code> |  | new | missing |
-| <code>Please select the Company</code> |  | new | missing |
+| <code>Please select the Company</code> |  | new | translated |
 | <code>Please select the Document Type.</code> |  | new | translated |
 | <code>Please select the LDAP Directory being used</code> |  | new | missing |
-| <code>Please select the Multiple Tier Program type for more than one collection rules.</code> |  | new | missing |
+| <code>Please select the Multiple Tier Program type for more than one collection rules.</code> |  | new | translated |
 | <code>Please select the Warehouse first</code> |  | new | missing |
-| <code>Please select the customer.</code> |  | new | missing |
-| <code>Please select the document type first</code> |  | new | missing |
+| <code>Please select the customer.</code> |  | new | translated |
+| <code>Please select the document type first</code> |  | new | translated |
 | <code>Please select the document type first.</code> |  | new | missing |
 | <code>Please select the required filters</code> |  | new | missing |
 | <code>Please select valid document type.</code> |  | new | missing |
 | <code>Please select weekly off day</code> |  | new | missing |
 | <code>Please select {0}</code> |  | new | translated |
-| <code>Please select {0} first</code> |  | new | missing |
+| <code>Please select {0} first</code> |  | new | translated |
 | <code>Please set &#x27;Apply Additional Discount On&#x27;</code> |  | new | missing |
-| <code>Please set &#x27;Asset Depreciation Cost Center&#x27; in Company {0}</code> |  | new | missing |
-| <code>Please set &#x27;Gain/Loss Account on Asset Disposal&#x27; in Company {0}</code> |  | new | missing |
+| <code>Please set &#x27;Asset Depreciation Cost Center&#x27; in Company {0}</code> |  | new | translated |
+| <code>Please set &#x27;Gain/Loss Account on Asset Disposal&#x27; in Company {0}</code> |  | new | translated |
 | <code>Please set &#x27;{0}&#x27; in Company: {1}</code> |  | new | missing |
 | <code>Please set Account</code> |  | new | missing |
 | <code>Please set Account for Change Amount</code> |  | new | missing |
 | <code>Please set Account in Warehouse {0} or Default Inventory Account in Company {1}</code> |  | new | missing |
 | <code>Please set Accounting Dimension {} in {}</code> |  | new | missing |
-| <code>Please set Company</code> |  | new | missing |
+| <code>Please set Company</code> |  | new | translated |
 | <code>Please set Customer Address to determine if the transaction is an export.</code> |  | new | missing |
-| <code>Please set Depreciation related Accounts in Asset Category {0} or Company {1}</code> |  | new | missing |
+| <code>Please set Depreciation related Accounts in Asset Category {0} or Company {1}</code> |  | new | translated |
 | <code>Please set Email Address</code> |  | new | translated |
 | <code>Please set Email/Phone for the contact</code> |  | new | missing |
 | <code>Please set Fixed Asset Account in Asset Category {0}</code> |  | new | missing |
 | <code>Please set Fixed Asset Account in {} against {}.</code> |  | new | missing |
 | <code>Please set Parent Row No for item {0}</code> |  | new | missing |
 | <code>Please set Root Type</code> |  | new | missing |
-| <code>Please set Unrealized Exchange Gain/Loss Account in Company {0}</code> |  | new | missing |
+| <code>Please set Unrealized Exchange Gain/Loss Account in Company {0}</code> |  | new | translated |
 | <code>Please set VAT Accounts in {0}</code> |  | new | missing |
 | <code>Please set Vat Accounts for Company: &quot;{0}&quot; in UAE VAT Settings</code> |  | new | missing |
-| <code>Please set a Company</code> |  | new | missing |
+| <code>Please set a Company</code> |  | new | translated |
 | <code>Please set a Cost Center for the Asset or set an Asset Depreciation Cost Center for the Company {}</code> |  | new | missing |
 | <code>Please set a default Holiday List for Company {0}</code> |  | new | missing |
 | <code>Please set a default Holiday List for Employee {0} or Company {1}</code> |  | new | missing |
 | <code>Please set a primary email ID for the Contact {0}</code> |  | new | missing |
 | <code>Please set a printer mapping for this print format in the Printer Settings</code> |  | new | translated |
-| <code>Please set account in Warehouse {0}</code> |  | new | missing |
+| <code>Please set account in Warehouse {0}</code> |  | new | translated |
 | <code>Please set actual demand or sales forecast to generate Material Requirements Planning Report.</code> |  | new | missing |
 | <code>Please set an Expense Account in the Items table</code> |  | new | missing |
-| <code>Please set an email id for the Lead {0}</code> |  | new | missing |
+| <code>Please set an email id for the Lead {0}</code> |  | new | translated |
 | <code>Please set at least one row in the Taxes and Charges Table</code> |  | new | missing |
 | <code>Please set both the Tax ID and Fiscal Code on Company {0}</code> |  | new | missing |
 | <code>Please set company on the Document before requesting for invoices.</code> |  | new | missing |
-| <code>Please set default Cash or Bank account in Mode of Payment {0}</code> |  | new | missing |
-| <code>Please set default Cash or Bank account in Mode of Payment {}</code> |  | new | missing |
-| <code>Please set default Cash or Bank account in Mode of Payments {}</code> |  | new | missing |
+| <code>Please set default Cash or Bank account in Mode of Payment {0}</code> |  | new | translated |
+| <code>Please set default Cash or Bank account in Mode of Payment {}</code> |  | new | translated |
+| <code>Please set default Cash or Bank account in Mode of Payments {}</code> |  | new | translated |
 | <code>Please set default Exchange Gain/Loss Account in Company {}</code> |  | new | missing |
 | <code>Please set default Expense Account in Company {0}</code> |  | new | missing |
 | <code>Please set default UOM in Stock Settings</code> |  | new | missing |
 | <code>Please set default cost of goods sold account in company {0} for booking rounding gain and loss during stock transfer</code> |  | new | missing |
 | <code>Please set default inventory account for item {0}, or their item group or brand.</code> |  | new | missing |
-| <code>Please set default {0} in Company {1}</code> |  | new | missing |
+| <code>Please set default {0} in Company {1}</code> |  | new | translated |
 | <code>Please set filter based on Item or Warehouse</code> |  | new | missing |
 | <code>Please set filters</code> |  | new | translated |
 | <code>Please set filters value in Report Filter table.</code> |  | new | translated |
@@ -10040,7 +10040,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Please set opening number of booked depreciations</code> |  | new | missing |
 | <code>Please set recurring after saving</code> |  | new | missing |
 | <code>Please set the Customer Address</code> |  | new | missing |
-| <code>Please set the Default Cost Center in {0} company.</code> |  | new | missing |
+| <code>Please set the Default Cost Center in {0} company.</code> |  | new | translated |
 | <code>Please set the Item Code first</code> |  | new | missing |
 | <code>Please set the Target Warehouse in the Job Card</code> |  | new | missing |
 | <code>Please set the WIP Warehouse in the Job Card</code> |  | new | missing |
@@ -10048,7 +10048,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Please set the document name</code> |  | new | missing |
 | <code>Please set the following documents in this Dashboard as standard first.</code> |  | new | translated |
 | <code>Please set the series to be used.</code> |  | new | translated |
-| <code>Please set up the Campaign Schedule in the Campaign {0}</code> |  | new | missing |
+| <code>Please set up the Campaign Schedule in the Campaign {0}</code> |  | new | translated |
 | <code>Please set {0}</code> |  | new | missing |
 | <code>Please set {0} first.</code> |  | new | missing |
 | <code>Please set {0} for Batched Item {1}, which is used to set {2} on Submit.</code> |  | new | missing |
@@ -10065,7 +10065,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Please share this email with your support team so that they can find and fix the issue.</code> |  | new | missing |
 | <code>Please specify</code> |  | new | translated |
 | <code>Please specify Company</code> |  | new | missing |
-| <code>Please specify Company to proceed</code> |  | new | missing |
+| <code>Please specify Company to proceed</code> |  | new | translated |
 | <code>Please specify a valid Row ID for row {0} in table {1}</code> |  | new | missing |
 | <code>Please specify a valid parent DocType for {0}</code> |  | new | missing |
 | <code>Please specify a {0} first.</code> |  | new | missing |
@@ -10087,13 +10087,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Please use a valid LDAP search filter</code> |  | new | missing |
 | <code>Please use following links to download file backup.</code> |  | new | missing |
 | <code>Please visit https://frappecloud.com/docs/sites/migrate-an-existing-site#encryption-key for more information.</code> |  | new | missing |
-| <code>Point Of Sale</code> |  | new | missing |
-| <code>Point of Sale</code> |  | new | missing |
-| <code>Point-of-Sale Profile</code> |  | new | missing |
+| <code>Point Of Sale</code> |  | new | translated |
+| <code>Point of Sale</code> |  | new | translated |
+| <code>Point-of-Sale Profile</code> |  | new | translated |
 | <code>Policy</code> |  | new | missing |
 | <code>Policy No</code> |  | new | missing |
 | <code>Policy URI</code> |  | new | missing |
-| <code>Policy number</code> |  | new | missing |
+| <code>Policy number</code> |  | new | translated |
 | <code>Polling</code> |  | new | missing |
 | <code>Pond</code> |  | new | missing |
 | <code>Pood</code> |  | new | missing |
@@ -10109,7 +10109,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Portal Users</code> |  | new | missing |
 | <code>Portrait</code> |  | new | translated |
 | <code>Position</code> |  | new | translated |
-| <code>Possible Supplier</code> |  | new | missing |
+| <code>Possible Supplier</code> |  | new | translated |
 | <code>Post</code> |  | new | translated |
 | <code>Post Description Key</code> |  | new | missing |
 | <code>Post Graduate</code> |  | new | missing |
@@ -10120,21 +10120,21 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Post it here, our mentors will help you out.</code> |  | new | missing |
 | <code>Postal</code> |  | new | translated |
 | <code>Postal Code</code> |  | new | translated |
-| <code>Postal Expenses</code> |  | new | missing |
+| <code>Postal Expenses</code> |  | new | translated |
 | <code>Posted On</code> |  | new | missing |
-| <code>Posting Date</code> |  | new | missing |
+| <code>Posting Date</code> |  | new | translated |
 | <code>Posting Date cannot be future date</code> |  | new | missing |
 | <code>Posting Date inheritance for exchange gain / loss</code> |  | new | missing |
 | <code>Posting Date will change to today&#x27;s date as Edit Posting Date and Time is unchecked. Are you sure want to proceed?</code> |  | new | missing |
 | <code>Posting Datetime</code> |  | new | missing |
-| <code>Posting Time</code> |  | new | missing |
+| <code>Posting Time</code> |  | new | translated |
 | <code>Posting Timestamp</code> |  | new | missing |
 | <code>Posting date and posting time is mandatory</code> |  | new | missing |
 | <code>Posting date does not match the selected transaction</code> |  | new | missing |
 | <code>Posting date is required</code> |  | new | missing |
 | <code>Posting date matches the selected transaction</code> |  | new | missing |
 | <code>Posting timestamp must be after {0}</code> |  | new | missing |
-| <code>Potential Sales Deal</code> |  | new | missing |
+| <code>Potential Sales Deal</code> |  | new | translated |
 | <code>Pound</code> |  | new | missing |
 | <code>Pound-Force</code> |  | new | missing |
 | <code>Pound/Cubic Foot</code> |  | new | missing |
@@ -10144,7 +10144,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Pound/Gallon (US)</code> |  | new | missing |
 | <code>Poundal</code> |  | new | missing |
 | <code>Powered by {0}</code> |  | new | missing |
-| <code>Pre Sales</code> |  | new | missing |
+| <code>Pre Sales</code> |  | new | translated |
 | <code>Pre-filled on payment entries for this customer. Must be a company account.</code> |  | new | missing |
 | <code>Precision</code> |  | new | translated |
 | <code>Precision ({0}) for {1} cannot be greater than its length ({2}).</code> |  | new | missing |
@@ -10171,17 +10171,17 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Press Alt Key to trigger additional shortcuts in Menu and Sidebar</code> |  | new | translated |
 | <code>Press Enter to save</code> |  | new | translated |
 | <code>Prevdoc DocType</code> |  | new | missing |
-| <code>Prevent POs</code> |  | new | missing |
-| <code>Prevent Purchase Orders</code> |  | new | missing |
-| <code>Prevent RFQs</code> |  | new | missing |
+| <code>Prevent POs</code> |  | new | translated |
+| <code>Prevent Purchase Orders</code> |  | new | translated |
+| <code>Prevent RFQs</code> |  | new | translated |
 | <code>Prevent Sales Invoice when Customer is Overdue</code> |  | new | missing |
 | <code>Preventive</code> |  | new | missing |
 | <code>Preventive Action</code> |  | new | missing |
-| <code>Preventive Maintenance</code> |  | new | missing |
+| <code>Preventive Maintenance</code> |  | new | translated |
 | <code>Prevents the automatic reservation of stock quantities from sales orders when processing sales returns.</code> |  | new | missing |
 | <code>Prevents the system from automatically using the rate from the last purchase transaction when creating new purchase orders or transactions.</code> |  | new | missing |
 | <code>Preview</code> |  | new | translated |
-| <code>Preview Email</code> |  | new | missing |
+| <code>Preview Email</code> |  | new | translated |
 | <code>Preview HTML</code> |  | new | translated |
 | <code>Preview Message</code> |  | new | translated |
 | <code>Preview Mode</code> |  | new | missing |
@@ -10194,26 +10194,26 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Previous</code> |  | new | translated |
 | <code>Previous</code> | Go to previous slide | new | missing |
 | <code>Previous Document</code> |  | new | missing |
-| <code>Previous Financial Year is not closed</code> |  | new | missing |
+| <code>Previous Financial Year is not closed</code> |  | new | translated |
 | <code>Previous Imports</code> |  | new | missing |
 | <code>Previous Qty</code> |  | new | missing |
 | <code>Previous Submission</code> |  | new | missing |
 | <code>Previous Work Experience</code> |  | new | missing |
 | <code>Previous Year is not closed, please close it first</code> |  | new | missing |
-| <code>Price</code> |  | new | missing |
+| <code>Price</code> |  | new | translated |
 | <code>Price ({0})</code> |  | new | missing |
-| <code>Price Discount Scheme</code> |  | new | missing |
-| <code>Price Discount Slabs</code> |  | new | missing |
-| <code>Price List</code> |  | new | missing |
+| <code>Price Discount Scheme</code> |  | new | translated |
+| <code>Price Discount Slabs</code> |  | new | translated |
+| <code>Price List</code> |  | new | translated |
 | <code>Price List &amp; Currency</code> |  | new | missing |
 | <code>Price List Country</code> |  | new | missing |
-| <code>Price List Currency</code> |  | new | missing |
+| <code>Price List Currency</code> |  | new | translated |
 | <code>Price List Currency not selected</code> |  | new | missing |
 | <code>Price List Defaults</code> |  | new | missing |
-| <code>Price List Exchange Rate</code> |  | new | missing |
+| <code>Price List Exchange Rate</code> |  | new | translated |
 | <code>Price List Name</code> |  | new | missing |
-| <code>Price List Rate</code> |  | new | missing |
-| <code>Price List Rate (Company Currency)</code> |  | new | missing |
+| <code>Price List Rate</code> |  | new | translated |
+| <code>Price List Rate (Company Currency)</code> |  | new | translated |
 | <code>Price List must be applicable for Buying or Selling</code> |  | new | missing |
 | <code>Price List {0} is disabled</code> |  | new | missing |
 | <code>Price List {0} is disabled or does not exist</code> |  | new | missing |
@@ -10222,22 +10222,22 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Price Per Unit ({0})</code> |  | new | missing |
 | <code>Price is not set for the item.</code> |  | new | missing |
 | <code>Price not found for item {0} in price list {1}</code> |  | new | missing |
-| <code>Price or Product Discount</code> |  | new | missing |
-| <code>Price or product discount slabs are required</code> |  | new | missing |
-| <code>Price per Unit (Stock UOM)</code> |  | new | missing |
+| <code>Price or Product Discount</code> |  | new | translated |
+| <code>Price or product discount slabs are required</code> |  | new | translated |
+| <code>Price per Unit (Stock UOM)</code> |  | new | translated |
 | <code>Prices HTML</code> |  | new | missing |
-| <code>Pricing</code> |  | new | missing |
-| <code>Pricing Rule</code> |  | new | missing |
-| <code>Pricing Rule Brand</code> |  | new | missing |
-| <code>Pricing Rule Detail</code> |  | new | missing |
-| <code>Pricing Rule Help</code> |  | new | missing |
-| <code>Pricing Rule Item Code</code> |  | new | missing |
-| <code>Pricing Rule Item Group</code> |  | new | missing |
-| <code>Pricing Rule is first selected based on &#x27;Apply On&#x27; field, which can be Item, Item Group or Brand.</code> |  | new | missing |
-| <code>Pricing Rule is made to overwrite Price List / define discount percentage, based on some criteria.</code> |  | new | missing |
-| <code>Pricing Rule {0} is updated</code> |  | new | missing |
-| <code>Pricing Rules</code> |  | new | missing |
-| <code>Pricing Rules are further filtered based on quantity.</code> |  | new | missing |
+| <code>Pricing</code> |  | new | translated |
+| <code>Pricing Rule</code> |  | new | translated |
+| <code>Pricing Rule Brand</code> |  | new | translated |
+| <code>Pricing Rule Detail</code> |  | new | translated |
+| <code>Pricing Rule Help</code> |  | new | translated |
+| <code>Pricing Rule Item Code</code> |  | new | translated |
+| <code>Pricing Rule Item Group</code> |  | new | translated |
+| <code>Pricing Rule is first selected based on &#x27;Apply On&#x27; field, which can be Item, Item Group or Brand.</code> |  | new | translated |
+| <code>Pricing Rule is made to overwrite Price List / define discount percentage, based on some criteria.</code> |  | new | translated |
+| <code>Pricing Rule {0} is updated</code> |  | new | translated |
+| <code>Pricing Rules</code> |  | new | translated |
+| <code>Pricing Rules are further filtered based on quantity.</code> |  | new | translated |
 | <code>Primary</code> |  | new | translated |
 | <code>Primary Address</code> |  | new | translated |
 | <code>Primary Address Details</code> |  | new | missing |
@@ -10246,13 +10246,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Primary Color</code> |  | new | translated |
 | <code>Primary Contact</code> |  | new | missing |
 | <code>Primary Contact Details</code> |  | new | missing |
-| <code>Primary Contact Email</code> |  | new | missing |
+| <code>Primary Contact Email</code> |  | new | translated |
 | <code>Primary Email</code> |  | new | missing |
 | <code>Primary Mobile</code> |  | new | missing |
 | <code>Primary Party</code> |  | new | missing |
 | <code>Primary Phone</code> |  | new | missing |
 | <code>Primary Role</code> |  | new | missing |
-| <code>Primary Settings</code> |  | new | missing |
+| <code>Primary Settings</code> |  | new | translated |
 | <code>Primary key of doctype {0} can not be changed as there are existing values.</code> |  | new | missing |
 | <code>Print</code> |  | new | translated |
 | <code>Print</code> | Button in list view actions menu | new | missing |
@@ -10273,8 +10273,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Print Hide</code> |  | new | translated |
 | <code>Print Hide If No Value</code> |  | new | translated |
 | <code>Print Language</code> |  | new | translated |
-| <code>Print Preferences</code> |  | new | missing |
-| <code>Print Receipt</code> |  | new | missing |
+| <code>Print Preferences</code> |  | new | translated |
+| <code>Print Receipt</code> |  | new | translated |
 | <code>Print Receipt on Order Complete</code> |  | new | missing |
 | <code>Print Sent to the printer!</code> |  | new | translated |
 | <code>Print Server</code> |  | new | translated |
@@ -10286,9 +10286,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Print Width</code> |  | new | translated |
 | <code>Print Width of the field, if the field is a column in a table</code> |  | new | translated |
 | <code>Print Without Amount</code> |  | new | missing |
-| <code>Print and Stationery</code> |  | new | missing |
+| <code>Print and Stationery</code> |  | new | translated |
 | <code>Print document</code> |  | new | missing |
-| <code>Print settings updated in respective print format</code> |  | new | missing |
+| <code>Print settings updated in respective print format</code> |  | new | translated |
 | <code>Print taxes with zero amount</code> |  | new | missing |
 | <code>Print with letterhead</code> |  | new | translated |
 | <code>Printed on {0}</code> |  | new | missing |
@@ -10299,7 +10299,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Printer mapping not set.</code> |  | new | missing |
 | <code>Printing</code> |  | new | translated |
 | <code>Printing Details</code> |  | new | missing |
-| <code>Printing Settings</code> |  | new | missing |
+| <code>Printing Settings</code> |  | new | translated |
 | <code>Printing failed</code> |  | new | translated |
 | <code>Priorities</code> |  | new | missing |
 | <code>Priority</code> |  | new | translated |
@@ -10313,12 +10313,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Private Files Backup:</code> |  | new | missing |
 | <code>ProTip: Add &lt;code&gt;Reference: {{ reference_doctype }} {{ reference_name }}&lt;/code&gt; to send document reference</code> |  | new | translated |
 | <code>Probability</code> |  | new | missing |
-| <code>Probability (%)</code> |  | new | missing |
+| <code>Probability (%)</code> |  | new | translated |
 | <code>Problem</code> |  | new | missing |
 | <code>Procedure</code> |  | new | missing |
 | <code>Proceed</code> |  | new | missing |
 | <code>Proceed Anyway</code> |  | new | translated |
-| <code>Process Deferred Accounting</code> |  | new | missing |
+| <code>Process Deferred Accounting</code> |  | new | translated |
 | <code>Process Description</code> |  | new | missing |
 | <code>Process Loss</code> |  | new | missing |
 | <code>Process Loss %</code> |  | new | missing |
@@ -10335,9 +10335,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Process Payment Reconciliation Log Allocations</code> |  | new | missing |
 | <code>Process Period Closing Voucher</code> |  | new | missing |
 | <code>Process Period Closing Voucher Detail</code> |  | new | missing |
-| <code>Process Statement Of Accounts</code> |  | new | missing |
+| <code>Process Statement Of Accounts</code> |  | new | translated |
 | <code>Process Statement Of Accounts CC</code> |  | new | missing |
-| <code>Process Statement Of Accounts Customer</code> |  | new | missing |
+| <code>Process Statement Of Accounts Customer</code> |  | new | translated |
 | <code>Process Subscription</code> |  | new | missing |
 | <code>Process in Single Transaction</code> |  | new | missing |
 | <code>Process loss booked against the operations of this work order.</code> |  | new | missing |
@@ -10349,23 +10349,23 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Processing XML Files</code> |  | new | missing |
 | <code>Processing import...</code> |  | new | missing |
 | <code>Processing...</code> |  | new | translated |
-| <code>Procurement</code> |  | new | missing |
-| <code>Procurement Tracker</code> |  | new | missing |
+| <code>Procurement</code> |  | new | translated |
+| <code>Procurement Tracker</code> |  | new | translated |
 | <code>Produce Qty</code> |  | new | missing |
 | <code>Produced</code> |  | new | missing |
 | <code>Produced / Received Qty</code> |  | new | missing |
 | <code>Produced Qty</code> |  | new | missing |
-| <code>Produced Quantity</code> |  | new | missing |
-| <code>Product</code> |  | new | missing |
-| <code>Product Bundle</code> |  | new | missing |
+| <code>Produced Quantity</code> |  | new | translated |
+| <code>Product</code> |  | new | translated |
+| <code>Product Bundle</code> |  | new | translated |
 | <code>Product Bundle Balance</code> |  | new | missing |
 | <code>Product Bundle Component</code> |  | new | missing |
-| <code>Product Bundle Help</code> |  | new | missing |
-| <code>Product Bundle Item</code> |  | new | missing |
+| <code>Product Bundle Help</code> |  | new | translated |
+| <code>Product Bundle Item</code> |  | new | translated |
 | <code>Product Bundle Parent</code> |  | new | missing |
-| <code>Product Discount Scheme</code> |  | new | missing |
-| <code>Product Discount Slabs</code> |  | new | missing |
-| <code>Product Enquiry</code> |  | new | missing |
+| <code>Product Discount Scheme</code> |  | new | translated |
+| <code>Product Discount Slabs</code> |  | new | translated |
+| <code>Product Enquiry</code> |  | new | translated |
 | <code>Product Manager</code> |  | new | missing |
 | <code>Product Price ID</code> |  | new | missing |
 | <code>Production</code> |  | new | missing |
@@ -10373,9 +10373,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Production Capacity</code> |  | new | missing |
 | <code>Production Item</code> |  | new | missing |
 | <code>Production Item Info</code> |  | new | missing |
-| <code>Production Plan</code> |  | new | missing |
+| <code>Production Plan</code> |  | new | translated |
 | <code>Production Plan Already Submitted</code> |  | new | missing |
-| <code>Production Plan Item</code> |  | new | missing |
+| <code>Production Plan Item</code> |  | new | translated |
 | <code>Production Plan Item Reference</code> |  | new | missing |
 | <code>Production Plan Material Request</code> |  | new | missing |
 | <code>Production Plan Material Request Warehouse</code> |  | new | missing |
@@ -10391,14 +10391,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Profile Picture</code> |  | new | missing |
 | <code>Profile updated successfully.</code> |  | new | missing |
 | <code>Profit &amp; Loss</code> |  | new | missing |
-| <code>Profit This Year</code> |  | new | missing |
-| <code>Profit and Loss</code> |  | new | missing |
-| <code>Profit and Loss Statement</code> |  | new | missing |
+| <code>Profit This Year</code> |  | new | translated |
+| <code>Profit and Loss</code> |  | new | translated |
+| <code>Profit and Loss Statement</code> |  | new | translated |
 | <code>Profit and Loss Statement requires {0} to be synced to DuckDB</code> |  | new | missing |
 | <code>Profit and Loss Summary</code> |  | new | missing |
-| <code>Profit for the year</code> |  | new | missing |
-| <code>Profitability</code> |  | new | missing |
-| <code>Profitability Analysis</code> |  | new | missing |
+| <code>Profit for the year</code> |  | new | translated |
+| <code>Profitability</code> |  | new | translated |
+| <code>Profitability Analysis</code> |  | new | translated |
 | <code>Progress</code> |  | new | translated |
 | <code>Progress % for a task cannot be more than 100.</code> |  | new | missing |
 | <code>Progress (%)</code> |  | new | missing |
@@ -10407,7 +10407,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Project Id</code> |  | new | missing |
 | <code>Project Management</code> |  | new | missing |
 | <code>Project Manager</code> |  | new | missing |
-| <code>Project Name</code> |  | new | missing |
+| <code>Project Name</code> |  | new | translated |
 | <code>Project Progress:</code> |  | new | missing |
 | <code>Project Start Date</code> |  | new | missing |
 | <code>Project Status</code> |  | new | missing |
@@ -10427,20 +10427,20 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Project-wise data is not available for Quotation</code> |  | new | missing |
 | <code>Projected</code> |  | new | missing |
 | <code>Projected On Hand</code> |  | new | missing |
-| <code>Projected Qty</code> |  | new | missing |
+| <code>Projected Qty</code> |  | new | translated |
 | <code>Projected Quantity</code> |  | new | missing |
 | <code>Projected Quantity Formula</code> |  | new | missing |
 | <code>Projected Quantity as Source</code> |  | new | missing |
-| <code>Projects</code> |  | new | missing |
+| <code>Projects</code> |  | new | translated |
 | <code>Projects Manager</code> |  | new | missing |
 | <code>Projects Settings</code> |  | new | missing |
 | <code>Projects Setup</code> |  | new | missing |
 | <code>Projects User</code> |  | new | missing |
-| <code>Promotional</code> |  | new | missing |
-| <code>Promotional Scheme</code> |  | new | missing |
-| <code>Promotional Scheme Id</code> |  | new | missing |
-| <code>Promotional Scheme Price Discount</code> |  | new | missing |
-| <code>Promotional Scheme Product Discount</code> |  | new | missing |
+| <code>Promotional</code> |  | new | translated |
+| <code>Promotional Scheme</code> |  | new | translated |
+| <code>Promotional Scheme Id</code> |  | new | translated |
+| <code>Promotional Scheme Price Discount</code> |  | new | translated |
+| <code>Promotional Scheme Product Discount</code> |  | new | translated |
 | <code>Prompt Qty</code> |  | new | missing |
 | <code>Property</code> |  | new | translated |
 | <code>Property Depends On</code> |  | new | translated |
@@ -10449,14 +10449,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Property Type</code> |  | new | translated |
 | <code>Proposal Writing</code> |  | new | missing |
 | <code>Proposal/Price Quote</code> |  | new | missing |
-| <code>Prorate</code> |  | new | missing |
+| <code>Prorate</code> |  | new | translated |
 | <code>Prospect</code> |  | new | missing |
 | <code>Prospect Lead</code> |  | new | missing |
 | <code>Prospect Opportunity</code> |  | new | missing |
 | <code>Prospect Owner</code> |  | new | missing |
 | <code>Prospect {0} already exists</code> |  | new | missing |
 | <code>Prospecting</code> |  | new | missing |
-| <code>Prospects Engaged But Not Converted</code> |  | new | missing |
+| <code>Prospects Engaged But Not Converted</code> |  | new | translated |
 | <code>Protect Attached Files</code> |  | new | missing |
 | <code>Protected DocType</code> |  | new | missing |
 | <code>Protected File</code> |  | new | missing |
@@ -10465,10 +10465,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Provide a list of allowed file extensions for file uploads. Each line should contain one allowed file type. If unset, all file extensions are allowed. Example: &lt;br&gt;CSV&lt;br&gt;JPG&lt;br&gt;PNG</code> |  | new | missing |
 | <code>Provider</code> |  | new | translated |
 | <code>Provider Name</code> |  | new | translated |
-| <code>Providing</code> |  | new | missing |
+| <code>Providing</code> |  | new | translated |
 | <code>Provisional Account</code> |  | new | missing |
 | <code>Provisional Expense Account</code> |  | new | missing |
-| <code>Provisional Profit / Loss (Credit)</code> |  | new | missing |
+| <code>Provisional Profit / Loss (Credit)</code> |  | new | translated |
 | <code>Provisional liability account used for service items before invoice is received</code> |  | new | missing |
 | <code>Psi/1000 Feet</code> |  | new | missing |
 | <code>Public</code> |  | new | translated |
@@ -10491,81 +10491,81 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Pulled from Google Calendar</code> |  | new | translated |
 | <code>Pulled from Google Contacts</code> |  | new | translated |
 | <code>Pulling emails...</code> |  | new | missing |
-| <code>Purchase</code> |  | new | missing |
-| <code>Purchase Amount</code> |  | new | missing |
-| <code>Purchase Analytics</code> |  | new | missing |
-| <code>Purchase Date</code> |  | new | missing |
+| <code>Purchase</code> |  | new | translated |
+| <code>Purchase Amount</code> |  | new | translated |
+| <code>Purchase Analytics</code> |  | new | translated |
+| <code>Purchase Date</code> |  | new | translated |
 | <code>Purchase Defaults</code> |  | new | missing |
-| <code>Purchase Details</code> |  | new | missing |
+| <code>Purchase Details</code> |  | new | translated |
 | <code>Purchase Expense</code> |  | new | missing |
 | <code>Purchase Expense Account</code> |  | new | missing |
 | <code>Purchase Expense Contra Account</code> |  | new | missing |
 | <code>Purchase Expense for Item {0}</code> |  | new | missing |
-| <code>Purchase Invoice</code> |  | new | missing |
-| <code>Purchase Invoice Advance</code> |  | new | missing |
-| <code>Purchase Invoice Item</code> |  | new | missing |
+| <code>Purchase Invoice</code> |  | new | translated |
+| <code>Purchase Invoice Advance</code> |  | new | translated |
+| <code>Purchase Invoice Item</code> |  | new | translated |
 | <code>Purchase Invoice Settings</code> |  | new | missing |
-| <code>Purchase Invoice Trends</code> |  | new | missing |
+| <code>Purchase Invoice Trends</code> |  | new | translated |
 | <code>Purchase Invoice can be held after submitting.</code> |  | new | missing |
-| <code>Purchase Invoice cannot be made against an existing asset {0}</code> |  | new | missing |
+| <code>Purchase Invoice cannot be made against an existing asset {0}</code> |  | new | translated |
 | <code>Purchase Invoice without any outstanding amount cannot be held.</code> |  | new | missing |
-| <code>Purchase Invoices</code> |  | new | missing |
+| <code>Purchase Invoices</code> |  | new | translated |
 | <code>Purchase Manager</code> |  | new | translated |
 | <code>Purchase Master Manager</code> |  | new | translated |
-| <code>Purchase Order</code> |  | new | missing |
-| <code>Purchase Order Amount</code> |  | new | missing |
-| <code>Purchase Order Amount(Company Currency)</code> |  | new | missing |
-| <code>Purchase Order Analysis</code> |  | new | missing |
-| <code>Purchase Order Date</code> |  | new | missing |
-| <code>Purchase Order Item</code> |  | new | missing |
-| <code>Purchase Order Item Supplied</code> |  | new | missing |
+| <code>Purchase Order</code> |  | new | translated |
+| <code>Purchase Order Amount</code> |  | new | translated |
+| <code>Purchase Order Amount(Company Currency)</code> |  | new | translated |
+| <code>Purchase Order Analysis</code> |  | new | translated |
+| <code>Purchase Order Date</code> |  | new | translated |
+| <code>Purchase Order Item</code> |  | new | translated |
+| <code>Purchase Order Item Supplied</code> |  | new | translated |
 | <code>Purchase Order Item reference is missing in Subcontracting Receipt {0}</code> |  | new | missing |
 | <code>Purchase Order Items not received on time</code> |  | new | missing |
-| <code>Purchase Order Pricing Rule</code> |  | new | missing |
-| <code>Purchase Order Required</code> |  | new | missing |
-| <code>Purchase Order Required for item {}</code> |  | new | missing |
-| <code>Purchase Order Trends</code> |  | new | missing |
-| <code>Purchase Order already created for all Sales Order items</code> |  | new | missing |
+| <code>Purchase Order Pricing Rule</code> |  | new | translated |
+| <code>Purchase Order Required</code> |  | new | translated |
+| <code>Purchase Order Required for item {}</code> |  | new | translated |
+| <code>Purchase Order Trends</code> |  | new | translated |
+| <code>Purchase Order already created for all Sales Order items</code> |  | new | translated |
 | <code>Purchase Order number required for Item {0}</code> |  | new | missing |
 | <code>Purchase Order {0} created</code> |  | new | missing |
-| <code>Purchase Order {0} is not submitted</code> |  | new | missing |
-| <code>Purchase Orders</code> |  | new | missing |
+| <code>Purchase Order {0} is not submitted</code> |  | new | translated |
+| <code>Purchase Orders</code> |  | new | translated |
 | <code>Purchase Orders Count</code> |  | new | missing |
 | <code>Purchase Orders Items Overdue</code> |  | new | missing |
-| <code>Purchase Orders are not allowed for {0} due to a scorecard standing of {1}.</code> |  | new | missing |
+| <code>Purchase Orders are not allowed for {0} due to a scorecard standing of {1}.</code> |  | new | translated |
 | <code>Purchase Orders to Bill</code> |  | new | missing |
 | <code>Purchase Orders to Receive</code> |  | new | missing |
 | <code>Purchase Orders {0} are un-linked</code> |  | new | missing |
 | <code>Purchase Price List</code> |  | new | missing |
-| <code>Purchase Receipt</code> |  | new | missing |
+| <code>Purchase Receipt</code> |  | new | translated |
 | <code>Purchase Receipt (Draft) will be auto-created on submission of Subcontracting Receipt.</code> |  | new | missing |
-| <code>Purchase Receipt Detail</code> |  | new | missing |
-| <code>Purchase Receipt Item</code> |  | new | missing |
-| <code>Purchase Receipt Item Supplied</code> |  | new | missing |
+| <code>Purchase Receipt Detail</code> |  | new | translated |
+| <code>Purchase Receipt Item</code> |  | new | translated |
+| <code>Purchase Receipt Item Supplied</code> |  | new | translated |
 | <code>Purchase Receipt No</code> |  | new | missing |
-| <code>Purchase Receipt Required</code> |  | new | missing |
-| <code>Purchase Receipt Required for item {}</code> |  | new | missing |
-| <code>Purchase Receipt Trends</code> |  | new | missing |
+| <code>Purchase Receipt Required</code> |  | new | translated |
+| <code>Purchase Receipt Required for item {}</code> |  | new | translated |
+| <code>Purchase Receipt Trends</code> |  | new | translated |
 | <code>Purchase Receipt doesn&#x27;t have any Item for which Retain Sample is enabled.</code> |  | new | missing |
 | <code>Purchase Receipt {0} created.</code> |  | new | missing |
-| <code>Purchase Receipt {0} is not submitted</code> |  | new | missing |
-| <code>Purchase Register</code> |  | new | missing |
+| <code>Purchase Receipt {0} is not submitted</code> |  | new | translated |
+| <code>Purchase Register</code> |  | new | translated |
 | <code>Purchase Return</code> |  | new | missing |
-| <code>Purchase Tax Template</code> |  | new | missing |
+| <code>Purchase Tax Template</code> |  | new | translated |
 | <code>Purchase Tax Withholding Category</code> |  | new | missing |
-| <code>Purchase Taxes and Charges</code> |  | new | missing |
-| <code>Purchase Taxes and Charges Template</code> |  | new | missing |
+| <code>Purchase Taxes and Charges</code> |  | new | translated |
+| <code>Purchase Taxes and Charges Template</code> |  | new | translated |
 | <code>Purchase Time</code> |  | new | missing |
 | <code>Purchase User</code> |  | new | translated |
 | <code>Purchase Value</code> |  | new | missing |
 | <code>Purchase Voucher No</code> |  | new | missing |
 | <code>Purchase Voucher Type</code> |  | new | missing |
 | <code>Purchase orders help you plan and follow up on your purchases</code> |  | new | missing |
-| <code>Purchased</code> |  | new | missing |
+| <code>Purchased</code> |  | new | translated |
 | <code>Purchases</code> |  | new | missing |
-| <code>Purchasing</code> |  | new | missing |
+| <code>Purchasing</code> |  | new | translated |
 | <code>Purple</code> |  | new | translated |
-| <code>Purpose</code> |  | new | missing |
+| <code>Purpose</code> |  | new | translated |
 | <code>Purpose must be one of {0}</code> |  | new | missing |
 | <code>Purposes</code> |  | new | missing |
 | <code>Purposes Required</code> |  | new | missing |
@@ -10586,7 +10586,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>QR Code</code> |  | new | translated |
 | <code>QR Code for Login Verification</code> |  | new | translated |
 | <code>QZ Tray Failed:</code> |  | new | missing |
-| <code>Qty</code> |  | new | missing |
+| <code>Qty</code> |  | new | translated |
 | <code>Qty (As per BOM)</code> |  | new | missing |
 | <code>Qty (Company)</code> |  | new | missing |
 | <code>Qty (Warehouse)</code> |  | new | missing |
@@ -10603,7 +10603,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Qty Wise Chart</code> |  | new | missing |
 | <code>Qty and Rate</code> |  | new | missing |
 | <code>Qty as Per Stock UOM</code> |  | new | missing |
-| <code>Qty as per Stock UOM</code> |  | new | missing |
+| <code>Qty as per Stock UOM</code> |  | new | translated |
 | <code>Qty for which recursion isn&#x27;t applicable.</code> |  | new | missing |
 | <code>Qty for {0}</code> |  | new | missing |
 | <code>Qty in Stock UOM</code> |  | new | missing |
@@ -10613,17 +10613,17 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Qty of raw materials will be decided based on the qty of the Finished Goods Item</code> |  | new | missing |
 | <code>Qty scrapped in this cycle, nobody will produce it.</code> |  | new | missing |
 | <code>Qty to Be Consumed</code> |  | new | missing |
-| <code>Qty to Bill</code> |  | new | missing |
+| <code>Qty to Bill</code> |  | new | translated |
 | <code>Qty to Build</code> |  | new | missing |
-| <code>Qty to Deliver</code> |  | new | missing |
+| <code>Qty to Deliver</code> |  | new | translated |
 | <code>Qty to Disassemble</code> |  | new | missing |
 | <code>Qty to Fetch</code> |  | new | missing |
 | <code>Qty to Manufacture in this Cycle</code> |  | new | missing |
-| <code>Qty to Order</code> |  | new | missing |
+| <code>Qty to Order</code> |  | new | translated |
 | <code>Qty to Produce</code> |  | new | missing |
-| <code>Qty to Receive</code> |  | new | missing |
+| <code>Qty to Receive</code> |  | new | translated |
 | <code>Qty to Transfer</code> |  | new | missing |
-| <code>Qualification</code> |  | new | missing |
+| <code>Qualification</code> |  | new | translated |
 | <code>Qualification Status</code> |  | new | missing |
 | <code>Qualified</code> |  | new | missing |
 | <code>Qualified By</code> |  | new | missing |
@@ -10637,7 +10637,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Quality Feedback Template Parameter</code> |  | new | missing |
 | <code>Quality Goal</code> |  | new | missing |
 | <code>Quality Goal Objective</code> |  | new | missing |
-| <code>Quality Inspection</code> |  | new | missing |
+| <code>Quality Inspection</code> |  | new | translated |
 | <code>Quality Inspection Analysis</code> |  | new | missing |
 | <code>Quality Inspection Not Configured</code> |  | new | missing |
 | <code>Quality Inspection Parameter</code> |  | new | missing |
@@ -10653,7 +10653,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Quality Inspection(s)</code> |  | new | missing |
 | <code>Quality Inspections</code> |  | new | missing |
 | <code>Quality Management</code> |  | new | missing |
-| <code>Quality Manager</code> |  | new | missing |
+| <code>Quality Manager</code> |  | new | translated |
 | <code>Quality Meeting</code> |  | new | missing |
 | <code>Quality Meeting Agenda</code> |  | new | missing |
 | <code>Quality Meeting Minutes</code> |  | new | missing |
@@ -10662,17 +10662,17 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Quality Review</code> |  | new | missing |
 | <code>Quality Review Objective</code> |  | new | missing |
 | <code>Quantities updated successfully.</code> |  | new | missing |
-| <code>Quantity</code> |  | new | missing |
+| <code>Quantity</code> |  | new | translated |
 | <code>Quantity  that must be bought or sold per UOM</code> |  | new | missing |
-| <code>Quantity &amp; Stock</code> |  | new | missing |
+| <code>Quantity &amp; Stock</code> |  | new | translated |
 | <code>Quantity (A - B)</code> |  | new | missing |
 | <code>Quantity (Output Qty)</code> |  | new | missing |
 | <code>Quantity Available</code> |  | new | missing |
 | <code>Quantity Difference</code> |  | new | missing |
 | <code>Quantity Tolerance</code> |  | new | missing |
-| <code>Quantity and Amount</code> |  | new | missing |
+| <code>Quantity and Amount</code> |  | new | translated |
 | <code>Quantity and Description</code> |  | new | missing |
-| <code>Quantity and Rate</code> |  | new | missing |
+| <code>Quantity and Rate</code> |  | new | translated |
 | <code>Quantity and Warehouse</code> |  | new | missing |
 | <code>Quantity cannot be greater than {0} for Item {1}</code> |  | new | missing |
 | <code>Quantity for Item {0} must be greater than zero and cannot exceed {1}</code> |  | new | missing |
@@ -10718,33 +10718,33 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Queuing {0} for Submission</code> |  | new | missing |
 | <code>Quick Entry</code> |  | new | translated |
 | <code>Quick Help for Setting Permissions</code> |  | new | translated |
-| <code>Quick Journal Entry</code> |  | new | missing |
+| <code>Quick Journal Entry</code> |  | new | translated |
 | <code>Quick List Filter</code> |  | new | missing |
 | <code>Quick Lists</code> |  | new | missing |
 | <code>Quick Ratio</code> |  | new | missing |
 | <code>Quick Stock Balance</code> |  | new | missing |
 | <code>Quintal</code> |  | new | missing |
-| <code>Quot Count</code> |  | new | missing |
-| <code>Quot/Lead %</code> |  | new | missing |
-| <code>Quotation</code> |  | new | missing |
-| <code>Quotation Amount</code> |  | new | missing |
-| <code>Quotation Item</code> |  | new | missing |
+| <code>Quot Count</code> |  | new | translated |
+| <code>Quot/Lead %</code> |  | new | translated |
+| <code>Quotation</code> |  | new | translated |
+| <code>Quotation Amount</code> |  | new | translated |
+| <code>Quotation Item</code> |  | new | translated |
 | <code>Quotation Lost Reason</code> |  | new | missing |
 | <code>Quotation Lost Reason Detail</code> |  | new | missing |
 | <code>Quotation Number</code> |  | new | missing |
-| <code>Quotation To</code> |  | new | missing |
-| <code>Quotation Trends</code> |  | new | missing |
-| <code>Quotation {0} is cancelled</code> |  | new | missing |
-| <code>Quotation {0} not of type {1}</code> |  | new | missing |
-| <code>Quotations</code> |  | new | missing |
+| <code>Quotation To</code> |  | new | translated |
+| <code>Quotation Trends</code> |  | new | translated |
+| <code>Quotation {0} is cancelled</code> |  | new | translated |
+| <code>Quotation {0} not of type {1}</code> |  | new | translated |
+| <code>Quotations</code> |  | new | translated |
 | <code>Quotations are proposals, bids you have sent to your customers</code> |  | new | missing |
 | <code>Quotations:</code> |  | new | missing |
-| <code>Quote Status</code> |  | new | missing |
+| <code>Quote Status</code> |  | new | translated |
 | <code>Quoted Amount</code> |  | new | missing |
 | <code>Quoting must be between 0 and 3</code> |  | new | missing |
 | <code>RAW Information Log</code> |  | new | translated |
 | <code>RFQ and Purchase Order Settings</code> |  | new | missing |
-| <code>RFQs are not allowed for {0} due to a scorecard standing of {1}</code> |  | new | missing |
+| <code>RFQs are not allowed for {0} due to a scorecard standing of {1}</code> |  | new | translated |
 | <code>RQ Job</code> |  | new | missing |
 | <code>RQ Worker</code> |  | new | missing |
 | <code>Raise Material Request when stock reaches re-order level</code> |  | new | missing |
@@ -10752,33 +10752,33 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Raised By (Email)</code> |  | new | missing |
 | <code>Random</code> |  | new | translated |
 | <code>Range</code> |  | new | translated |
-| <code>Rate</code> |  | new | missing |
+| <code>Rate</code> |  | new | translated |
 | <code>Rate &amp; Amount</code> |  | new | missing |
-| <code>Rate (Company Currency)</code> |  | new | missing |
+| <code>Rate (Company Currency)</code> |  | new | translated |
 | <code>Rate Limiting</code> |  | new | missing |
 | <code>Rate Of Materials Based On</code> |  | new | missing |
 | <code>Rate Of TDS As Per Certificate</code> |  | new | missing |
 | <code>Rate Section</code> |  | new | missing |
-| <code>Rate With Margin</code> |  | new | missing |
-| <code>Rate With Margin (Company Currency)</code> |  | new | missing |
+| <code>Rate With Margin</code> |  | new | translated |
+| <code>Rate With Margin (Company Currency)</code> |  | new | translated |
 | <code>Rate and Amount</code> |  | new | missing |
-| <code>Rate at which Customer Currency is converted to customer&#x27;s base currency</code> |  | new | missing |
+| <code>Rate at which Customer Currency is converted to customer&#x27;s base currency</code> |  | new | translated |
 | <code>Rate at which Price List Currency is converted to Company Currency</code> |  | new | missing |
-| <code>Rate at which Price list currency is converted to company&#x27;s base currency</code> |  | new | missing |
-| <code>Rate at which Price list currency is converted to customer&#x27;s base currency</code> |  | new | missing |
-| <code>Rate at which customer&#x27;s currency is converted to company&#x27;s base currency</code> |  | new | missing |
+| <code>Rate at which Price list currency is converted to company&#x27;s base currency</code> |  | new | translated |
+| <code>Rate at which Price list currency is converted to customer&#x27;s base currency</code> |  | new | translated |
+| <code>Rate at which customer&#x27;s currency is converted to company&#x27;s base currency</code> |  | new | translated |
 | <code>Rate at which document currency is converted to company currency</code> |  | new | missing |
 | <code>Rate at which supplier&#x27;s currency is converted to company&#x27;s base currency</code> |  | new | missing |
-| <code>Rate at which this tax is applied</code> |  | new | missing |
+| <code>Rate at which this tax is applied</code> |  | new | translated |
 | <code>Rate limit for email link login</code> |  | new | missing |
 | <code>Rate of &#x27;{}&#x27; items cannot be changed</code> |  | new | missing |
-| <code>Rate of Depreciation</code> |  | new | missing |
+| <code>Rate of Depreciation</code> |  | new | translated |
 | <code>Rate of Depreciation (%)</code> |  | new | missing |
-| <code>Rate of Interest (%) Yearly</code> |  | new | missing |
+| <code>Rate of Interest (%) Yearly</code> |  | new | translated |
 | <code>Rate of Stock UOM</code> |  | new | missing |
-| <code>Rate or Discount</code> |  | new | missing |
-| <code>Rate or Discount is required for the price discount.</code> |  | new | missing |
-| <code>Rates</code> |  | new | missing |
+| <code>Rate or Discount</code> |  | new | translated |
+| <code>Rate or Discount is required for the price discount.</code> |  | new | translated |
+| <code>Rates</code> |  | new | translated |
 | <code>Rating</code> |  | new | translated |
 | <code>Ratios</code> |  | new | missing |
 | <code>Raw Commands</code> |  | new | translated |
@@ -10791,7 +10791,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Raw Material Cost (Company Currency)</code> |  | new | missing |
 | <code>Raw Material Cost Per Qty</code> |  | new | missing |
 | <code>Raw Material Item</code> |  | new | missing |
-| <code>Raw Material Item Code</code> |  | new | missing |
+| <code>Raw Material Item Code</code> |  | new | translated |
 | <code>Raw Material Name</code> |  | new | missing |
 | <code>Raw Material Value</code> |  | new | missing |
 | <code>Raw Material Voucher No</code> |  | new | missing |
@@ -10803,8 +10803,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Raw Materials Consumption</code> |  | new | missing |
 | <code>Raw Materials Missing</code> |  | new | missing |
 | <code>Raw Materials Required</code> |  | new | missing |
-| <code>Raw Materials Supplied</code> |  | new | missing |
-| <code>Raw Materials Supplied Cost</code> |  | new | missing |
+| <code>Raw Materials Supplied</code> |  | new | translated |
+| <code>Raw Materials Supplied Cost</code> |  | new | translated |
 | <code>Raw Materials cannot be blank.</code> |  | new | missing |
 | <code>Raw Materials to Customer</code> |  | new | missing |
 | <code>Raw Method</code> |  | new | missing |
@@ -10814,7 +10814,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Raw materials consumed qty will be validated based on FG BOM required qty</code> |  | new | missing |
 | <code>Re-Run in Console</code> |  | new | missing |
 | <code>Re-extracting</code> |  | new | missing |
-| <code>Re-open</code> |  | new | missing |
+| <code>Re-open</code> |  | new | translated |
 | <code>Re-order Level</code> |  | new | missing |
 | <code>Re-order Qty</code> |  | new | missing |
 | <code>Re:</code> |  | new | excepted |
@@ -10847,9 +10847,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Real Estate</code> |  | new | missing |
 | <code>Realtime (SocketIO)</code> |  | new | missing |
 | <code>Reason</code> |  | new | translated |
-| <code>Reason For Putting On Hold</code> |  | new | missing |
+| <code>Reason For Putting On Hold</code> |  | new | translated |
 | <code>Reason for Failure</code> |  | new | missing |
-| <code>Reason for Hold</code> |  | new | missing |
+| <code>Reason for Hold</code> |  | new | translated |
 | <code>Reason for Leaving</code> |  | new | missing |
 | <code>Reason for hold:</code> |  | new | missing |
 | <code>Rebuild</code> |  | new | translated |
@@ -10860,59 +10860,59 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Recalculate Incoming/Outgoing Rate</code> |  | new | missing |
 | <code>Recalculate Valuation Rate</code> |  | new | missing |
 | <code>Recalculate Values</code> |  | new | missing |
-| <code>Receipt</code> |  | new | missing |
+| <code>Receipt</code> |  | new | translated |
 | <code>Receipt Document</code> |  | new | missing |
 | <code>Receipt Document Type</code> |  | new | missing |
 | <code>Receipt Items</code> |  | new | missing |
-| <code>Receivable</code> |  | new | missing |
-| <code>Receivable / Payable Account</code> |  | new | missing |
-| <code>Receivable Account</code> |  | new | missing |
+| <code>Receivable</code> |  | new | translated |
+| <code>Receivable / Payable Account</code> |  | new | translated |
+| <code>Receivable Account</code> |  | new | translated |
 | <code>Receivable/Payable Account</code> |  | new | missing |
 | <code>Receivable/Payable Account: {0} doesn&#x27;t belong to company {1}</code> |  | new | missing |
 | <code>Receivables</code> |  | new | missing |
-| <code>Receive</code> |  | new | missing |
+| <code>Receive</code> |  | new | translated |
 | <code>Receive an email for notifications of these types. Remove a type to stop its emails (in-app notifications are unaffected).</code> |  | new | missing |
 | <code>Receive from Customer</code> |  | new | missing |
 | <code>Received</code> |  | new | translated |
-| <code>Received Amount</code> |  | new | missing |
-| <code>Received Amount (Company Currency)</code> |  | new | missing |
+| <code>Received Amount</code> |  | new | translated |
+| <code>Received Amount (Company Currency)</code> |  | new | translated |
 | <code>Received Amount After Tax</code> |  | new | missing |
 | <code>Received Amount After Tax (Company Currency)</code> |  | new | missing |
 | <code>Received Amount cannot be greater than Paid Amount</code> |  | new | missing |
-| <code>Received From</code> |  | new | missing |
-| <code>Received Items To Be Billed</code> |  | new | missing |
-| <code>Received On</code> |  | new | missing |
-| <code>Received Qty</code> |  | new | missing |
-| <code>Received Qty Amount</code> |  | new | missing |
+| <code>Received From</code> |  | new | translated |
+| <code>Received Items To Be Billed</code> |  | new | translated |
+| <code>Received On</code> |  | new | translated |
+| <code>Received Qty</code> |  | new | translated |
+| <code>Received Qty Amount</code> |  | new | translated |
 | <code>Received Qty in Stock UOM</code> |  | new | missing |
-| <code>Received Quantity</code> |  | new | missing |
+| <code>Received Quantity</code> |  | new | translated |
 | <code>Received Stock Entries</code> |  | new | missing |
 | <code>Received an invalid token type.</code> |  | new | missing |
 | <code>Received and Accepted</code> |  | new | missing |
 | <code>Received from</code> |  | new | missing |
 | <code>Receiver By Document Field</code> |  | new | translated |
 | <code>Receiver By Role</code> |  | new | translated |
-| <code>Receiver List</code> |  | new | missing |
-| <code>Receiver List is empty. Please create Receiver List</code> |  | new | missing |
+| <code>Receiver List</code> |  | new | translated |
+| <code>Receiver List is empty. Please create Receiver List</code> |  | new | translated |
 | <code>Receiver Parameter</code> |  | new | translated |
-| <code>Receiving</code> |  | new | missing |
+| <code>Receiving</code> |  | new | translated |
 | <code>Recent Orders</code> |  | new | missing |
 | <code>Recent Transactions</code> |  | new | missing |
 | <code>Recent years are easy to guess.</code> |  | new | translated |
 | <code>Recipient</code> |  | new | translated |
 | <code>Recipient &amp; Status</code> |  | new | missing |
 | <code>Recipient Account Field</code> |  | new | missing |
-| <code>Recipient Message And Payment Details</code> |  | new | missing |
+| <code>Recipient Message And Payment Details</code> |  | new | translated |
 | <code>Recipient Unsubscribed</code> |  | new | translated |
 | <code>Recipients</code> |  | new | translated |
 | <code>Recommended Action</code> |  | new | missing |
-| <code>Reconcile</code> |  | new | missing |
+| <code>Reconcile</code> |  | new | translated |
 | <code>Reconcile All Serial Nos / Batches</code> |  | new | missing |
 | <code>Reconcile Effect On</code> |  | new | missing |
-| <code>Reconcile Entries</code> |  | new | missing |
+| <code>Reconcile Entries</code> |  | new | translated |
 | <code>Reconcile on Advance Payment Date</code> |  | new | missing |
 | <code>Reconcile the Bank Transaction</code> |  | new | missing |
-| <code>Reconciled</code> |  | new | missing |
+| <code>Reconciled</code> |  | new | translated |
 | <code>Reconciled Entries</code> |  | new | missing |
 | <code>Reconciliation Date</code> |  | new | missing |
 | <code>Reconciliation Error Log</code> |  | new | missing |
@@ -10950,13 +10950,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Recursive Fetch From</code> |  | new | missing |
 | <code>Red</code> |  | new | translated |
 | <code>Redact Message After Send</code> |  | new | missing |
-| <code>Redeem Against</code> |  | new | missing |
-| <code>Redeem Loyalty Points</code> |  | new | missing |
-| <code>Redeemed Points</code> |  | new | missing |
-| <code>Redemption</code> |  | new | missing |
-| <code>Redemption Account</code> |  | new | missing |
-| <code>Redemption Cost Center</code> |  | new | missing |
-| <code>Redemption Date</code> |  | new | missing |
+| <code>Redeem Against</code> |  | new | translated |
+| <code>Redeem Loyalty Points</code> |  | new | translated |
+| <code>Redeemed Points</code> |  | new | translated |
+| <code>Redemption</code> |  | new | translated |
+| <code>Redemption Account</code> |  | new | translated |
+| <code>Redemption Cost Center</code> |  | new | translated |
+| <code>Redemption Date</code> |  | new | translated |
 | <code>Redirect HTTP Status</code> |  | new | missing |
 | <code>Redirect To Path</code> |  | new | missing |
 | <code>Redirect URI</code> |  | new | missing |
@@ -10971,42 +10971,42 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Redo last action</code> |  | new | missing |
 | <code>Ref</code> |  | new | missing |
 | <code>Ref Code</code> |  | new | missing |
-| <code>Ref Date</code> |  | new | missing |
+| <code>Ref Date</code> |  | new | translated |
 | <code>Ref DocType</code> |  | new | translated |
 | <code>Ref.</code> |  | new | missing |
 | <code>Referance Doctype and Dashboard Name both can&#x27;t be used at the same time.</code> |  | new | missing |
 | <code>Reference</code> |  | new | translated |
 | <code>Reference #</code> |  | new | missing |
-| <code>Reference #{0} dated {1}</code> |  | new | missing |
+| <code>Reference #{0} dated {1}</code> |  | new | translated |
 | <code>Reference Date</code> |  | new | translated |
 | <code>Reference Date for Early Payment Discount</code> |  | new | missing |
 | <code>Reference Date is required</code> |  | new | missing |
 | <code>Reference Datetime</code> |  | new | missing |
-| <code>Reference Detail No</code> |  | new | missing |
+| <code>Reference Detail No</code> |  | new | translated |
 | <code>Reference Doc</code> |  | new | missing |
 | <code>Reference DocName</code> |  | new | translated |
 | <code>Reference DocType</code> |  | new | translated |
 | <code>Reference DocType and Reference Name are required</code> |  | new | translated |
 | <code>Reference Docname</code> |  | new | translated |
 | <code>Reference Doctype</code> |  | new | translated |
-| <code>Reference Doctype must be one of {0}</code> |  | new | missing |
+| <code>Reference Doctype must be one of {0}</code> |  | new | translated |
 | <code>Reference Document</code> |  | new | translated |
 | <code>Reference Document Name</code> |  | new | translated |
 | <code>Reference Document Type</code> |  | new | translated |
-| <code>Reference Due Date</code> |  | new | missing |
+| <code>Reference Due Date</code> |  | new | translated |
 | <code>Reference Exchange Rate</code> |  | new | missing |
 | <code>Reference Name</code> |  | new | translated |
 | <code>Reference No</code> |  | new | missing |
-| <code>Reference No &amp; Reference Date is required for {0}</code> |  | new | missing |
-| <code>Reference No and Reference Date is mandatory for Bank transaction</code> |  | new | missing |
-| <code>Reference No is mandatory if you entered Reference Date</code> |  | new | missing |
-| <code>Reference No.</code> |  | new | missing |
-| <code>Reference Number</code> |  | new | missing |
+| <code>Reference No &amp; Reference Date is required for {0}</code> |  | new | translated |
+| <code>Reference No and Reference Date is mandatory for Bank transaction</code> |  | new | translated |
+| <code>Reference No is mandatory if you entered Reference Date</code> |  | new | translated |
+| <code>Reference No.</code> |  | new | translated |
+| <code>Reference Number</code> |  | new | translated |
 | <code>Reference Owner</code> |  | new | translated |
 | <code>Reference Purchase Receipt</code> |  | new | missing |
 | <code>Reference Report</code> |  | new | translated |
-| <code>Reference Row</code> |  | new | missing |
-| <code>Reference Row #</code> |  | new | missing |
+| <code>Reference Row</code> |  | new | translated |
+| <code>Reference Row #</code> |  | new | translated |
 | <code>Reference Type</code> |  | new | translated |
 | <code>Reference date does not match the selected transaction</code> |  | new | missing |
 | <code>Reference date matches the selected transaction</code> |  | new | missing |
@@ -11024,7 +11024,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>References to Sales Orders are Incomplete</code> |  | new | missing |
 | <code>References {0} of type {1} had no outstanding amount left before submitting the Payment Entry. Now they have a negative outstanding amount.</code> |  | new | missing |
 | <code>Referral Code</code> |  | new | missing |
-| <code>Referral Sales Partner</code> |  | new | missing |
+| <code>Referral Sales Partner</code> |  | new | translated |
 | <code>Referrer</code> |  | new | translated |
 | <code>Refresh</code> |  | new | translated |
 | <code>Refresh All</code> |  | new | translated |
@@ -11038,28 +11038,28 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Regards,</code> |  | new | missing |
 | <code>Regenerate Stock Closing Entry</code> |  | new | missing |
 | <code>Regex</code> |  | new | missing |
-| <code>Regional</code> |  | new | missing |
+| <code>Regional</code> |  | new | translated |
 | <code>Registered but disabled</code> |  | new | translated |
 | <code>Registers</code> |  | new | missing |
 | <code>Registration Details</code> |  | new | missing |
-| <code>Regular</code> |  | new | missing |
+| <code>Regular</code> |  | new | translated |
 | <code>Rejected</code> |  | new | translated |
-| <code>Rejected Qty</code> |  | new | missing |
+| <code>Rejected Qty</code> |  | new | translated |
 | <code>Rejected Quantity</code> |  | new | missing |
-| <code>Rejected Serial No</code> |  | new | missing |
+| <code>Rejected Serial No</code> |  | new | translated |
 | <code>Rejected Serial and Batch Bundle</code> |  | new | missing |
-| <code>Rejected Warehouse</code> |  | new | missing |
+| <code>Rejected Warehouse</code> |  | new | translated |
 | <code>Rejected Warehouse and Accepted Warehouse cannot be same.</code> |  | new | missing |
 | <code>Rejected malformed encoded address header with synthesized &#x27;@&#x27;: {0}</code> |  | new | missing |
-| <code>Related</code> |  | new | missing |
+| <code>Related</code> |  | new | translated |
 | <code>Related Item</code> |  | new | missing |
 | <code>Relation</code> |  | new | missing |
 | <code>Relay Server URL missing</code> |  | new | missing |
 | <code>Relay Settings</code> |  | new | missing |
 | <code>Release</code> |  | new | missing |
-| <code>Release Date</code> |  | new | missing |
+| <code>Release Date</code> |  | new | translated |
 | <code>Release Notes</code> |  | new | missing |
-| <code>Release date must be in the future</code> |  | new | missing |
+| <code>Release date must be in the future</code> |  | new | translated |
 | <code>Relieving Date</code> |  | new | missing |
 | <code>Relink</code> |  | new | translated |
 | <code>Relink Communication</code> |  | new | translated |
@@ -11070,9 +11070,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Reload Report</code> |  | new | missing |
 | <code>Remaining</code> |  | new | missing |
 | <code>Remaining Amount</code> |  | new | missing |
-| <code>Remaining Balance</code> |  | new | missing |
-| <code>Remark</code> |  | new | missing |
-| <code>Remarks</code> |  | new | missing |
+| <code>Remaining Balance</code> |  | new | translated |
+| <code>Remark</code> |  | new | translated |
+| <code>Remarks</code> |  | new | translated |
 | <code>Remarks:</code> |  | new | missing |
 | <code>Remember Last Selected Value</code> |  | new | translated |
 | <code>Remind At</code> |  | new | missing |
@@ -11106,13 +11106,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Rename Attribute Value in Item Attribute.</code> |  | new | missing |
 | <code>Rename Fieldname</code> |  | new | missing |
 | <code>Rename Log</code> |  | new | missing |
-| <code>Rename Not Allowed</code> |  | new | missing |
+| <code>Rename Not Allowed</code> |  | new | translated |
 | <code>Rename Tool</code> |  | new | missing |
 | <code>Rename jobs for doctype {0} have been enqueued.</code> |  | new | missing |
 | <code>Rename jobs for doctype {0} have not been enqueued.</code> |  | new | missing |
 | <code>Rename {0}</code> |  | new | translated |
 | <code>Renamed files and replaced code in controllers, please check!</code> |  | new | translated |
-| <code>Renaming it is only allowed via parent company {0}, to avoid mismatch.</code> |  | new | missing |
+| <code>Renaming it is only allowed via parent company {0}, to avoid mismatch.</code> |  | new | translated |
 | <code>Render labels to the left and values to the right in this section</code> |  | new | missing |
 | <code>Rent</code> |  | new | missing |
 | <code>Rented</code> |  | new | missing |
@@ -11122,12 +11122,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Reorder level based on Warehouse</code> |  | new | missing |
 | <code>Repack</code> |  | new | missing |
 | <code>Repair</code> |  | new | missing |
-| <code>Repair Cost</code> |  | new | missing |
+| <code>Repair Cost</code> |  | new | translated |
 | <code>Repair Purchase Invoices</code> |  | new | missing |
-| <code>Repair Status</code> |  | new | missing |
+| <code>Repair Status</code> |  | new | translated |
 | <code>Repeat</code> |  | new | translated |
-| <code>Repeat Customer Revenue</code> |  | new | missing |
-| <code>Repeat Customers</code> |  | new | missing |
+| <code>Repeat Customer Revenue</code> |  | new | translated |
+| <code>Repeat Customers</code> |  | new | translated |
 | <code>Repeat Header and Footer</code> |  | new | missing |
 | <code>Repeat On</code> |  | new | translated |
 | <code>Repeat Till</code> |  | new | translated |
@@ -11154,7 +11154,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Report</code> |  | new | translated |
 | <code>Report Builder</code> |  | new | translated |
 | <code>Report Column</code> |  | new | translated |
-| <code>Report Date</code> |  | new | missing |
+| <code>Report Date</code> |  | new | translated |
 | <code>Report Description</code> |  | new | translated |
 | <code>Report Document Error</code> |  | new | translated |
 | <code>Report Error</code> |  | new | missing |
@@ -11170,7 +11170,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Report Reference Doctype</code> |  | new | translated |
 | <code>Report Template</code> |  | new | missing |
 | <code>Report Type</code> |  | new | translated |
-| <code>Report Type is mandatory</code> |  | new | missing |
+| <code>Report Type is mandatory</code> |  | new | translated |
 | <code>Report View</code> |  | new | missing |
 | <code>Report an Issue</code> |  | new | missing |
 | <code>Report bug</code> |  | new | missing |
@@ -11227,7 +11227,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Reposting in the background.</code> |  | new | missing |
 | <code>Reposting is still in progress in background.</code> |  | new | missing |
 | <code>Reposting {0} {1}</code> |  | new | missing |
-| <code>Represents Company</code> |  | new | missing |
+| <code>Represents Company</code> |  | new | translated |
 | <code>Represents a Financial Year. All accounting entries and other major transactions are tracked against the Fiscal Year.</code> |  | new | missing |
 | <code>Represents a User in the system.</code> |  | new | translated |
 | <code>Represents the states allowed in one document and role assigned to change the state.</code> |  | new | translated |
@@ -11238,7 +11238,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Request Body</code> |  | new | missing |
 | <code>Request Data</code> |  | new | translated |
 | <code>Request Description</code> |  | new | missing |
-| <code>Request For Quotation</code> |  | new | missing |
+| <code>Request For Quotation</code> |  | new | translated |
 | <code>Request Headers</code> |  | new | missing |
 | <code>Request ID</code> |  | new | missing |
 | <code>Request Limit</code> |  | new | missing |
@@ -11247,49 +11247,49 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Request Structure</code> |  | new | translated |
 | <code>Request Timed Out</code> |  | new | translated |
 | <code>Request Timeout</code> |  | new | missing |
-| <code>Request Type</code> |  | new | missing |
+| <code>Request Type</code> |  | new | translated |
 | <code>Request URL</code> |  | new | translated |
 | <code>Request for</code> |  | new | missing |
 | <code>Request for Account Deletion</code> |  | new | missing |
-| <code>Request for Information</code> |  | new | missing |
-| <code>Request for Quotation</code> |  | new | missing |
-| <code>Request for Quotation Item</code> |  | new | missing |
-| <code>Request for Quotation Supplier</code> |  | new | missing |
-| <code>Request for Raw Materials</code> |  | new | missing |
+| <code>Request for Information</code> |  | new | translated |
+| <code>Request for Quotation</code> |  | new | translated |
+| <code>Request for Quotation Item</code> |  | new | translated |
+| <code>Request for Quotation Supplier</code> |  | new | translated |
+| <code>Request for Raw Materials</code> |  | new | translated |
 | <code>Request to your server failed.</code> |  | new | missing |
-| <code>Requested</code> |  | new | missing |
+| <code>Requested</code> |  | new | translated |
 | <code>Requested Items To Be Transferred</code> |  | new | missing |
-| <code>Requested Items to Order and Receive</code> |  | new | missing |
+| <code>Requested Items to Order and Receive</code> |  | new | translated |
 | <code>Requested Numbers</code> |  | new | translated |
-| <code>Requested Qty</code> |  | new | missing |
+| <code>Requested Qty</code> |  | new | translated |
 | <code>Requested Qty: Quantity requested for purchase, but not ordered.</code> |  | new | missing |
-| <code>Requesting Site</code> |  | new | missing |
-| <code>Requestor</code> |  | new | missing |
+| <code>Requesting Site</code> |  | new | translated |
+| <code>Requestor</code> |  | new | translated |
 | <code>Require Trusted Certificate</code> |  | new | translated |
-| <code>Required By</code> |  | new | missing |
-| <code>Required Date</code> |  | new | missing |
+| <code>Required By</code> |  | new | translated |
+| <code>Required Date</code> |  | new | translated |
 | <code>Required Items</code> |  | new | missing |
 | <code>Required On</code> |  | new | missing |
-| <code>Required Qty</code> |  | new | missing |
-| <code>Required Quantity</code> |  | new | missing |
-| <code>Requirement</code> |  | new | missing |
-| <code>Requires Fulfilment</code> |  | new | missing |
+| <code>Required Qty</code> |  | new | translated |
+| <code>Required Quantity</code> |  | new | translated |
+| <code>Requirement</code> |  | new | translated |
+| <code>Requires Fulfilment</code> |  | new | translated |
 | <code>Requires any valid fdn path. i.e. ou=groups,dc=example,dc=com</code> |  | new | missing |
 | <code>Requires any valid fdn path. i.e. ou=users,dc=example,dc=com</code> |  | new | missing |
 | <code>Res: {0}</code> |  | new | excepted |
 | <code>Research</code> |  | new | missing |
 | <code>Research &amp; Development</code> |  | new | missing |
 | <code>Researcher</code> |  | new | missing |
-| <code>Reselect, if the chosen address is edited after save</code> |  | new | missing |
-| <code>Reselect, if the chosen contact is edited after save</code> |  | new | missing |
+| <code>Reselect, if the chosen address is edited after save</code> |  | new | translated |
+| <code>Reselect, if the chosen contact is edited after save</code> |  | new | translated |
 | <code>Reseller</code> |  | new | missing |
 | <code>Resend</code> |  | new | missing |
-| <code>Resend Payment Email</code> |  | new | missing |
+| <code>Resend Payment Email</code> |  | new | translated |
 | <code>Reservation</code> |  | new | missing |
 | <code>Reservation Based On</code> |  | new | missing |
 | <code>Reserve</code> |  | new | missing |
 | <code>Reserve Stock</code> |  | new | missing |
-| <code>Reserve Warehouse</code> |  | new | missing |
+| <code>Reserve Warehouse</code> |  | new | translated |
 | <code>Reserve for Raw Materials</code> |  | new | missing |
 | <code>Reserve for Sub-assembly</code> |  | new | missing |
 | <code>Reserved</code> |  | new | missing |
@@ -11351,8 +11351,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Resolution Due</code> |  | new | missing |
 | <code>Resolution Time</code> |  | new | missing |
 | <code>Resolutions</code> |  | new | missing |
-| <code>Resolve</code> |  | new | missing |
-| <code>Resolved</code> |  | new | missing |
+| <code>Resolve</code> |  | new | translated |
+| <code>Resolved</code> |  | new | translated |
 | <code>Resolved By</code> |  | new | missing |
 | <code>Resource</code> |  | new | missing |
 | <code>Resource Documentation</code> |  | new | missing |
@@ -11374,7 +11374,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Rest of the day</code> |  | new | missing |
 | <code>Restart</code> |  | new | missing |
 | <code>Restart Failed Entries</code> |  | new | missing |
-| <code>Restart Subscription</code> |  | new | missing |
+| <code>Restart Subscription</code> |  | new | translated |
 | <code>Restore</code> |  | new | translated |
 | <code>Restore Asset</code> |  | new | missing |
 | <code>Restore Original Permissions</code> |  | new | translated |
@@ -11386,7 +11386,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Restrict Items Based On</code> |  | new | missing |
 | <code>Restrict Removal</code> |  | new | missing |
 | <code>Restrict To Domain</code> |  | new | translated |
-| <code>Restrict to Countries</code> |  | new | missing |
+| <code>Restrict to Countries</code> |  | new | translated |
 | <code>Restrict to Domain</code> |  | new | translated |
 | <code>Restrict user from this IP address only. Multiple IP addresses can be added by separating with commas. Also accepts partial IP addresses like (111.111.111)</code> |  | new | translated |
 | <code>Restrictions</code> | Title of message showing restrictions in list view | new | missing |
@@ -11395,24 +11395,24 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Result Preview Field</code> |  | new | missing |
 | <code>Result Route Field</code> |  | new | missing |
 | <code>Result Title Field</code> |  | new | missing |
-| <code>Resume</code> |  | new | missing |
+| <code>Resume</code> |  | new | translated |
 | <code>Resume Job</code> |  | new | missing |
 | <code>Resume Sending</code> |  | new | translated |
 | <code>Resume Timer</code> |  | new | missing |
 | <code>Retail &amp; Wholesale</code> |  | new | missing |
 | <code>Retailer</code> |  | new | missing |
 | <code>Retain Sample</code> |  | new | missing |
-| <code>Retained Earnings</code> |  | new | missing |
+| <code>Retained Earnings</code> |  | new | translated |
 | <code>Retried</code> |  | new | missing |
 | <code>Retry</code> |  | new | translated |
 | <code>Retry Failed Transactions</code> |  | new | missing |
 | <code>Retry Sending</code> |  | new | missing |
-| <code>Return</code> |  | new | missing |
-| <code>Return / Credit Note</code> |  | new | missing |
-| <code>Return / Debit Note</code> |  | new | missing |
+| <code>Return</code> |  | new | translated |
+| <code>Return / Credit Note</code> |  | new | translated |
+| <code>Return / Debit Note</code> |  | new | translated |
 | <code>Return Against</code> |  | new | missing |
 | <code>Return Against Delivery Note</code> |  | new | missing |
-| <code>Return Against Purchase Invoice</code> |  | new | missing |
+| <code>Return Against Purchase Invoice</code> |  | new | translated |
 | <code>Return Against Purchase Receipt</code> |  | new | missing |
 | <code>Return Against Subcontracting Receipt</code> |  | new | missing |
 | <code>Return Components</code> |  | new | missing |
@@ -11428,12 +11428,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Return to the Verification screen and enter the code displayed by your authentication app</code> |  | new | translated |
 | <code>Returned</code> |  | new | missing |
 | <code>Returned Against</code> |  | new | missing |
-| <code>Returned Amount</code> |  | new | missing |
-| <code>Returned Qty</code> |  | new | missing |
+| <code>Returned Amount</code> |  | new | translated |
+| <code>Returned Qty</code> |  | new | translated |
 | <code>Returned Qty in Stock UOM</code> |  | new | missing |
 | <code>Returned Quantity</code> |  | new | missing |
 | <code>Returned exchange rate is neither integer not float.</code> |  | new | missing |
-| <code>Returns</code> |  | new | missing |
+| <code>Returns</code> |  | new | translated |
 | <code>Revaluation Journals</code> |  | new | missing |
 | <code>Revaluation Surplus</code> |  | new | missing |
 | <code>Revenue</code> |  | new | missing |
@@ -11441,7 +11441,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Reversal Journal Entries</code> |  | new | missing |
 | <code>Reversal Of</code> |  | new | missing |
 | <code>Reversal Of Exchange Rate Revaluation</code> |  | new | missing |
-| <code>Reverse Journal Entry</code> |  | new | missing |
+| <code>Reverse Journal Entry</code> |  | new | translated |
 | <code>Reverse Sign</code> |  | new | missing |
 | <code>Reverse {0} already available in draft status: {1}</code> |  | new | missing |
 | <code>Reversing Journals...</code> |  | new | missing |
@@ -11464,7 +11464,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Revocation URI</code> |  | new | missing |
 | <code>Revoke</code> |  | new | translated |
 | <code>Revoked</code> |  | new | translated |
-| <code>Rgt</code> |  | new | missing |
+| <code>Rgt</code> |  | new | translated |
 | <code>Rich Text</code> |  | new | translated |
 | <code>Right</code> |  | new | translated |
 | <code>Right</code> | alignment | new | missing |
@@ -11504,26 +11504,26 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Roles Html</code> |  | new | translated |
 | <code>Roles can be set for users from their User page.</code> |  | new | translated |
 | <code>Root</code> |  | new | missing |
-| <code>Root Company</code> |  | new | missing |
-| <code>Root Type</code> |  | new | missing |
+| <code>Root Company</code> |  | new | translated |
+| <code>Root Type</code> |  | new | translated |
 | <code>Root Type for {0} must be one of the Asset, Liability, Income, Expense and Equity</code> |  | new | missing |
-| <code>Root Type is mandatory</code> |  | new | missing |
-| <code>Root cannot be edited.</code> |  | new | missing |
-| <code>Root cannot have a parent cost center</code> |  | new | missing |
+| <code>Root Type is mandatory</code> |  | new | translated |
+| <code>Root cannot be edited.</code> |  | new | translated |
+| <code>Root cannot have a parent cost center</code> |  | new | translated |
 | <code>Root {0} cannot be deleted</code> |  | new | translated |
 | <code>Round Free Qty</code> |  | new | missing |
-| <code>Round Off</code> |  | new | missing |
+| <code>Round Off</code> |  | new | translated |
 | <code>Round Off Account</code> |  | new | missing |
 | <code>Round Off Cost Center</code> |  | new | missing |
 | <code>Round Off Tax Amount</code> |  | new | missing |
 | <code>Round Off for Opening</code> |  | new | missing |
 | <code>Round Robin</code> |  | new | translated |
 | <code>Round tax amount row-wise</code> |  | new | missing |
-| <code>Rounded Total</code> |  | new | missing |
-| <code>Rounded Total (Company Currency)</code> |  | new | missing |
-| <code>Rounding Adjustment</code> |  | new | missing |
-| <code>Rounding Adjustment (Company Currency</code> |  | new | missing |
-| <code>Rounding Adjustment (Company Currency)</code> |  | new | missing |
+| <code>Rounded Total</code> |  | new | translated |
+| <code>Rounded Total (Company Currency)</code> |  | new | translated |
+| <code>Rounding Adjustment</code> |  | new | translated |
+| <code>Rounding Adjustment (Company Currency</code> |  | new | translated |
+| <code>Rounding Adjustment (Company Currency)</code> |  | new | translated |
 | <code>Rounding Loss Allowance</code> |  | new | missing |
 | <code>Rounding Loss Allowance should be between 0 and 1</code> |  | new | missing |
 | <code>Rounding Method</code> |  | new | missing |
@@ -11544,8 +11544,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Row # {0}: Rate cannot be greater than the rate used in {1} {2}</code> |  | new | missing |
 | <code>Row # {0}: Returned Item {1} does not exist in {2} {3}</code> |  | new | missing |
 | <code>Row #1: Sequence ID must be 1 for Operation {0}.</code> |  | new | missing |
-| <code>Row #{0} (Payment Table): Amount must be negative</code> |  | new | missing |
-| <code>Row #{0} (Payment Table): Amount must be positive</code> |  | new | missing |
+| <code>Row #{0} (Payment Table): Amount must be negative</code> |  | new | translated |
+| <code>Row #{0} (Payment Table): Amount must be positive</code> |  | new | translated |
 | <code>Row #{0}:</code> |  | new | translated |
 | <code>Row #{0}: % of Component Cost needs a BOM secondary item. Choose Valuation Rate or Manual for {1}.</code> |  | new | missing |
 | <code>Row #{0}: &#x27;{1}&#x27; cannot be used to search items.</code> |  | new | missing |
@@ -11558,7 +11558,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Row #{0}: Accepted Warehouse is mandatory for the accepted Item {1}</code> |  | new | missing |
 | <code>Row #{0}: Account {1} does not belong to company {2}</code> |  | new | missing |
 | <code>Row #{0}: Allocated Amount cannot be greater than Outstanding Amount of Payment Request {1}</code> |  | new | missing |
-| <code>Row #{0}: Allocated Amount cannot be greater than outstanding amount.</code> |  | new | missing |
+| <code>Row #{0}: Allocated Amount cannot be greater than outstanding amount.</code> |  | new | translated |
 | <code>Row #{0}: Allocated amount:{1} is greater than outstanding amount:{2} for Payment Term {3}</code> |  | new | missing |
 | <code>Row #{0}: Amount must be a positive number</code> |  | new | missing |
 | <code>Row #{0}: Asset {1} cannot be sold, it is already {2}</code> |  | new | missing |
@@ -11580,13 +11580,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Row #{0}: Cannot set Rate if the billed amount is greater than the amount for Item {1}.</code> |  | new | missing |
 | <code>Row #{0}: Cannot transfer more than Required Qty {1} for Item {2} against Job Card {3}</code> |  | new | missing |
 | <code>Row #{0}: Cannot transfer {1} {2} of Item {3}. Maximum transferable quantity is {4} {2}.</code> |  | new | missing |
-| <code>Row #{0}: Child Item should not be a Product Bundle. Please remove Item {1} and Save</code> |  | new | missing |
+| <code>Row #{0}: Child Item should not be a Product Bundle. Please remove Item {1} and Save</code> |  | new | translated |
 | <code>Row #{0}: Consumed Asset {1} cannot be Draft</code> |  | new | missing |
 | <code>Row #{0}: Consumed Asset {1} cannot be cancelled</code> |  | new | missing |
 | <code>Row #{0}: Consumed Asset {1} cannot be the same as the Target Asset</code> |  | new | missing |
 | <code>Row #{0}: Consumed Asset {1} cannot be {2}</code> |  | new | missing |
 | <code>Row #{0}: Consumed Asset {1} does not belong to company {2}</code> |  | new | missing |
-| <code>Row #{0}: Cost Center {1} does not belong to company {2}</code> |  | new | missing |
+| <code>Row #{0}: Cost Center {1} does not belong to company {2}</code> |  | new | translated |
 | <code>Row #{0}: Could not find enough {1} entries to match. Remaining amount: {2}</code> |  | new | missing |
 | <code>Row #{0}: Cumulative threshold cannot be less than Single Transaction threshold</code> |  | new | missing |
 | <code>Row #{0}: Customer Provided Item {1} against Subcontracting Inward Order Item {2} ({3}) cannot be added multiple times.</code> |  | new | missing |
@@ -11600,8 +11600,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Row #{0}: Dates overlapping with other row in group {1}</code> |  | new | missing |
 | <code>Row #{0}: Default BOM not found for FG Item {1}</code> |  | new | missing |
 | <code>Row #{0}: Depreciation Start Date is required</code> |  | new | missing |
-| <code>Row #{0}: Duplicate entry in References {1} {2}</code> |  | new | missing |
-| <code>Row #{0}: Expected Delivery Date cannot be before Purchase Order Date</code> |  | new | missing |
+| <code>Row #{0}: Duplicate entry in References {1} {2}</code> |  | new | translated |
+| <code>Row #{0}: Expected Delivery Date cannot be before Purchase Order Date</code> |  | new | translated |
 | <code>Row #{0}: Expense Account not set for the Item {1}. {2}</code> |  | new | missing |
 | <code>Row #{0}: Expense account {1} is not valid for Purchase Invoice {2}. Only expense accounts from non-stock items are allowed.</code> |  | new | missing |
 | <code>Row #{0}: FG / Semi FG Item is required for the operation {1} as &#x27;Track Semi Finished Goods&#x27; is enabled.</code> |  | new | missing |
@@ -11634,10 +11634,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Row #{0}: Item {1} mismatch. Changing of item code is not permitted, add another row instead.</code> |  | new | missing |
 | <code>Row #{0}: Item {1} mismatch. Changing of item code is not permitted.</code> |  | new | missing |
 | <code>Row #{0}: Item {1} quantity ({2} in stock UOM) does not match the quantity derived from the source ({3}). Do not change the UOM, conversion factor or quantity of disassembly rows.</code> |  | new | missing |
-| <code>Row #{0}: Journal Entry {1} does not have account {2} or already matched against another voucher</code> |  | new | missing |
+| <code>Row #{0}: Journal Entry {1} does not have account {2} or already matched against another voucher</code> |  | new | translated |
 | <code>Row #{0}: Next Depreciation Date cannot be before Available-for-use Date</code> |  | new | missing |
 | <code>Row #{0}: Next Depreciation Date cannot be before Purchase Date</code> |  | new | missing |
-| <code>Row #{0}: Not allowed to change Supplier as Purchase Order already exists</code> |  | new | missing |
+| <code>Row #{0}: Not allowed to change Supplier as Purchase Order already exists</code> |  | new | translated |
 | <code>Row #{0}: Only {1} available to reserve for the Item {2}</code> |  | new | missing |
 | <code>Row #{0}: Opening Accumulated Depreciation must be less than or equal to {1}</code> |  | new | missing |
 | <code>Row #{0}: Operation {1} is not completed for {2} qty of finished goods in Work Order {3}. Please update operation status via Job Card {4}.</code> |  | new | missing |
@@ -11662,8 +11662,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Row #{0}: Quantity to reserve for the Item {1} should be greater than 0.</code> |  | new | missing |
 | <code>Row #{0}: Rate must be same as {1}: {2} ({3} / {4})</code> |  | new | missing |
 | <code>Row #{0}: Reading {1} {2} is not a valid number in the {3} number format. Use {4} as the decimal separator.</code> |  | new | missing |
-| <code>Row #{0}: Reference Document Type must be one of Purchase Order, Purchase Invoice or Journal Entry</code> |  | new | missing |
-| <code>Row #{0}: Reference Document Type must be one of Sales Order, Sales Invoice, Journal Entry or Dunning</code> |  | new | missing |
+| <code>Row #{0}: Reference Document Type must be one of Purchase Order, Purchase Invoice or Journal Entry</code> |  | new | translated |
+| <code>Row #{0}: Reference Document Type must be one of Sales Order, Sales Invoice, Journal Entry or Dunning</code> |  | new | translated |
 | <code>Row #{0}: Rejected Qty cannot be set for Secondary Item {1}.</code> |  | new | missing |
 | <code>Row #{0}: Rejected Warehouse is mandatory for the rejected Item {1}</code> |  | new | missing |
 | <code>Row #{0}: Repair cost {1} exceeds available amount {2} for Purchase Invoice {3} and Account {4}</code> |  | new | missing |
@@ -11680,7 +11680,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Row #{0}: Service End Date cannot be before Invoice Posting Date</code> |  | new | missing |
 | <code>Row #{0}: Service Start Date cannot be greater than Service End Date</code> |  | new | missing |
 | <code>Row #{0}: Service Start and End Date is required for deferred accounting</code> |  | new | missing |
-| <code>Row #{0}: Set Supplier for item {1}</code> |  | new | missing |
+| <code>Row #{0}: Set Supplier for item {1}</code> |  | new | translated |
 | <code>Row #{0}: Since &#x27;Track Semi Finished Goods&#x27; is enabled, the BOM {1} cannot be used for Sub Assembly Items</code> |  | new | missing |
 | <code>Row #{0}: Source Warehouse must be same as Customer Warehouse {1} from the linked Subcontracting Inward Order</code> |  | new | missing |
 | <code>Row #{0}: Source Warehouse {1} for item {2} cannot be a customer warehouse.</code> |  | new | missing |
@@ -11689,7 +11689,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Row #{0}: Source, Target Warehouse and Inventory Dimensions cannot be the exact same for Material Transfer</code> |  | new | missing |
 | <code>Row #{0}: Start Time must be before End Time</code> |  | new | missing |
 | <code>Row #{0}: Status is mandatory</code> |  | new | missing |
-| <code>Row #{0}: Status must be {1} for Invoice Discounting {2}</code> |  | new | missing |
+| <code>Row #{0}: Status must be {1} for Invoice Discounting {2}</code> |  | new | translated |
 | <code>Row #{0}: Stock cannot be reserved for Item {1} against a disabled Batch {2}.</code> |  | new | missing |
 | <code>Row #{0}: Stock cannot be reserved for a non-stock Item {1}</code> |  | new | missing |
 | <code>Row #{0}: Stock cannot be reserved in group warehouse {1}.</code> |  | new | missing |
@@ -11714,7 +11714,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Row #{0}: {1} can not be negative for item {2}</code> |  | new | missing |
 | <code>Row #{0}: {1} is mandatory for the Inventory Dimension {2}.</code> |  | new | missing |
 | <code>Row #{0}: {1} is not a valid reading field. Please refer to the field description.</code> |  | new | missing |
-| <code>Row #{0}: {1} is required to create the Opening {2} Invoices</code> |  | new | missing |
+| <code>Row #{0}: {1} is required to create the Opening {2} Invoices</code> |  | new | translated |
 | <code>Row #{0}: {1} of {2} should be {3}. Please update the {1} or select a different account.</code> |  | new | missing |
 | <code>Row #{0}:Quantity for Item {1} cannot be zero.</code> |  | new | missing |
 | <code>Row #{1}: Warehouse is mandatory for stock Item {0}</code> |  | new | missing |
@@ -11726,22 +11726,22 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Row #{idx}: {field_label} is mandatory.</code> |  | new | missing |
 | <code>Row #{idx}: {from_warehouse_field} and {to_warehouse_field} cannot be same.</code> |  | new | missing |
 | <code>Row #{idx}: {schedule_date} cannot be before {transaction_date}.</code> |  | new | missing |
-| <code>Row #{}: Currency of {} - {} doesn&#x27;t matches company currency.</code> |  | new | missing |
+| <code>Row #{}: Currency of {} - {} doesn&#x27;t matches company currency.</code> |  | new | translated |
 | <code>Row #{}: Either Party ID or Party Name is required</code> |  | new | missing |
 | <code>Row #{}: Fieldname is required</code> |  | new | missing |
 | <code>Row #{}: Finance Book should not be empty since you&#x27;re using multiple.</code> |  | new | missing |
-| <code>Row #{}: POS Invoice {} has been {}</code> |  | new | missing |
-| <code>Row #{}: POS Invoice {} is not against customer {}</code> |  | new | missing |
-| <code>Row #{}: POS Invoice {} is not submitted yet</code> |  | new | missing |
+| <code>Row #{}: POS Invoice {} has been {}</code> |  | new | translated |
+| <code>Row #{}: POS Invoice {} is not against customer {}</code> |  | new | translated |
+| <code>Row #{}: POS Invoice {} is not submitted yet</code> |  | new | translated |
 | <code>Row #{}: Party ID is required</code> |  | new | missing |
 | <code>Row #{}: Please assign task to a member.</code> |  | new | missing |
 | <code>Row #{}: Please use a different Finance Book.</code> |  | new | missing |
-| <code>Row #{}: Serial No {} cannot be returned since it was not transacted in original invoice {}</code> |  | new | missing |
+| <code>Row #{}: Serial No {} cannot be returned since it was not transacted in original invoice {}</code> |  | new | translated |
 | <code>Row #{}: The original Invoice {} of return invoice {} is not consolidated.</code> |  | new | missing |
 | <code>Row #{}: You cannot add positive quantities in a return invoice. Please remove item {} to complete the return.</code> |  | new | missing |
 | <code>Row #{}: item {} has been picked already.</code> |  | new | missing |
-| <code>Row #{}: {}</code> |  | new | missing |
-| <code>Row #{}: {} {} does not exist.</code> |  | new | missing |
+| <code>Row #{}: {}</code> |  | new | translated |
+| <code>Row #{}: {} {} does not exist.</code> |  | new | translated |
 | <code>Row #{}: {} {} doesn&#x27;t belong to Company {}. Please select valid {}.</code> |  | new | missing |
 | <code>Row Format</code> |  | new | missing |
 | <code>Row Indexes</code> |  | new | missing |
@@ -11758,8 +11758,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Row {0}: Account {1} and Party Type {2} have different account types</code> |  | new | missing |
 | <code>Row {0}: Accounting Dimension {1} is mandatory for account {2}. Set it on this Taxes and Charges row, or on Item Row {3} ({4}).</code> |  | new | missing |
 | <code>Row {0}: Activity Type is mandatory.</code> |  | new | missing |
-| <code>Row {0}: Advance against Customer must be credit</code> |  | new | missing |
-| <code>Row {0}: Advance against Supplier must be debit</code> |  | new | missing |
+| <code>Row {0}: Advance against Customer must be credit</code> |  | new | translated |
+| <code>Row {0}: Advance against Supplier must be debit</code> |  | new | translated |
 | <code>Row {0}: Allocated amount {1} must be less than or equal to invoice outstanding amount {2}</code> |  | new | missing |
 | <code>Row {0}: Allocated amount {1} must be less than or equal to remaining payment amount {2}</code> |  | new | missing |
 | <code>Row {0}: As {1} is enabled, raw materials cannot be added to {2} entry. Use {3} entry to consume raw materials.</code> |  | new | missing |
@@ -11769,27 +11769,27 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Row {0}: Conversion Factor is mandatory</code> |  | new | missing |
 | <code>Row {0}: Cost Center {1} does not belong to Company {2}</code> |  | new | missing |
 | <code>Row {0}: Cost center is required for an item {1}</code> |  | new | missing |
-| <code>Row {0}: Credit entry can not be linked with a {1}</code> |  | new | missing |
+| <code>Row {0}: Credit entry can not be linked with a {1}</code> |  | new | translated |
 | <code>Row {0}: Currency of the BOM #{1} should be equal to the selected currency {2}</code> |  | new | missing |
-| <code>Row {0}: Debit entry can not be linked with a {1}</code> |  | new | missing |
+| <code>Row {0}: Debit entry can not be linked with a {1}</code> |  | new | translated |
 | <code>Row {0}: Delivery Warehouse ({1}) and Customer Warehouse ({2}) can not be same</code> |  | new | missing |
 | <code>Row {0}: Delivery Warehouse cannot be same as Customer Warehouse for Item {1}.</code> |  | new | missing |
 | <code>Row {0}: Due Date in the Payment Terms table cannot be before Posting Date</code> |  | new | missing |
 | <code>Row {0}: Either Delivery Note Item or Packed Item reference is mandatory.</code> |  | new | missing |
-| <code>Row {0}: Exchange Rate is mandatory</code> |  | new | missing |
+| <code>Row {0}: Exchange Rate is mandatory</code> |  | new | translated |
 | <code>Row {0}: Expected Value After Useful Life cannot be negative</code> |  | new | missing |
 | <code>Row {0}: Expected Value After Useful Life must be less than Net Purchase Amount</code> |  | new | missing |
 | <code>Row {0}: Expense Account {1} is linked to company {2}. Please select an account belonging to company {3}.</code> |  | new | missing |
 | <code>Row {0}: Expense Head changed to {1} as no Purchase Receipt is created against Item {2}.</code> |  | new | missing |
 | <code>Row {0}: Expense Head changed to {1} because account {2} is not linked to warehouse {3} or it is not the default inventory account</code> |  | new | missing |
 | <code>Row {0}: Expense Head changed to {1} because expense is booked against this account in Purchase Receipt {2}</code> |  | new | missing |
-| <code>Row {0}: For Supplier {1}, Email Address is Required to send an email</code> |  | new | missing |
+| <code>Row {0}: For Supplier {1}, Email Address is Required to send an email</code> |  | new | translated |
 | <code>Row {0}: From Time and To Time is mandatory.</code> |  | new | missing |
 | <code>Row {0}: From Time and To Time of {1} is overlapping with {2}</code> |  | new | missing |
 | <code>Row {0}: From Warehouse is mandatory for internal transfers</code> |  | new | missing |
 | <code>Row {0}: From time must be less than to time</code> |  | new | missing |
 | <code>Row {0}: Hours value must be greater than zero.</code> |  | new | missing |
-| <code>Row {0}: Invalid reference {1}</code> |  | new | missing |
+| <code>Row {0}: Invalid reference {1}</code> |  | new | translated |
 | <code>Row {0}: Item Tax template updated as per validity and rate applied</code> |  | new | missing |
 | <code>Row {0}: Item rate has been updated as per valuation rate since its an internal stock transfer</code> |  | new | missing |
 | <code>Row {0}: Item {1} must be a stock item.</code> |  | new | missing |
@@ -11801,11 +11801,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Row {0}: Operation time should be greater than 0 for operation {1}</code> |  | new | missing |
 | <code>Row {0}: Packed Qty must be equal to {1} Qty.</code> |  | new | missing |
 | <code>Row {0}: Packing Slip is already created for Item {1}.</code> |  | new | missing |
-| <code>Row {0}: Party / Account does not match with {1} / {2} in {3} {4}</code> |  | new | missing |
-| <code>Row {0}: Party Type and Party is required for Receivable / Payable account {1}</code> |  | new | missing |
+| <code>Row {0}: Party / Account does not match with {1} / {2} in {3} {4}</code> |  | new | translated |
+| <code>Row {0}: Party Type and Party is required for Receivable / Payable account {1}</code> |  | new | translated |
 | <code>Row {0}: Payment Term is mandatory</code> |  | new | missing |
-| <code>Row {0}: Payment against Sales/Purchase Order should always be marked as advance</code> |  | new | missing |
-| <code>Row {0}: Please check &#x27;Is Advance&#x27; against Account {1} if this is an advance entry.</code> |  | new | missing |
+| <code>Row {0}: Payment against Sales/Purchase Order should always be marked as advance</code> |  | new | translated |
+| <code>Row {0}: Please check &#x27;Is Advance&#x27; against Account {1} if this is an advance entry.</code> |  | new | translated |
 | <code>Row {0}: Please provide a valid Delivery Note Item or Packed Item reference.</code> |  | new | missing |
 | <code>Row {0}: Please select a BOM for Item {1}.</code> |  | new | missing |
 | <code>Row {0}: Please select an active BOM for Item {1}.</code> |  | new | missing |
@@ -11839,15 +11839,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Row {0}: user has not applied the rule {1} on the item {2}</code> |  | new | missing |
 | <code>Row {0}: {1}</code> | Financial Report Template | new | missing |
 | <code>Row {0}: {1} account already applied for Accounting Dimension {2}</code> |  | new | missing |
-| <code>Row {0}: {1} must be greater than 0</code> |  | new | missing |
+| <code>Row {0}: {1} must be greater than 0</code> |  | new | translated |
 | <code>Row {0}: {1} {2} cannot be same as {3} (Party Account) {4}</code> |  | new | missing |
-| <code>Row {0}: {1} {2} does not match with {3}</code> |  | new | missing |
+| <code>Row {0}: {1} {2} does not match with {3}</code> |  | new | translated |
 | <code>Row {0}: {1} {2} is linked to company {3}. Please select a document belonging to company {4}.</code> |  | new | missing |
 | <code>Row {0}: {2} Item {1} does not exist in {2} {3}</code> |  | new | missing |
 | <code>Row {1}: Quantity ({0}) cannot be a fraction. To allow this, disable &#x27;{2}&#x27; in UOM {3}.</code> |  | new | missing |
 | <code>Row {idx}: Asset Naming Series is mandatory for the auto creation of assets for item {item_code}.</code> |  | new | missing |
 | <code>Row({0}): Outstanding Amount cannot be greater than actual Outstanding Amount {1} in {2}</code> |  | new | missing |
-| <code>Row({0}): {1} is already discounted in {2}</code> |  | new | missing |
+| <code>Row({0}): {1} is already discounted in {2}</code> |  | new | translated |
 | <code>Rows Added</code> |  | new | translated |
 | <code>Rows Added in {0}</code> |  | new | missing |
 | <code>Rows Removed</code> |  | new | translated |
@@ -11858,10 +11858,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Rows: {0} have &#x27;Payment Entry&#x27; as reference_type. This should not be set manually.</code> |  | new | missing |
 | <code>Rows: {0} in {1} section are Invalid. Reference Name should point to a valid Payment Entry or Journal Entry.</code> |  | new | missing |
 | <code>Rule</code> |  | new | translated |
-| <code>Rule Applied</code> |  | new | missing |
+| <code>Rule Applied</code> |  | new | translated |
 | <code>Rule Conditions</code> |  | new | translated |
-| <code>Rule Description</code> |  | new | missing |
-| <code>Rule Name</code> |  | new | missing |
+| <code>Rule Description</code> |  | new | translated |
+| <code>Rule Name</code> |  | new | translated |
 | <code>Rule created successfully</code> |  | new | missing |
 | <code>Rule deleted.</code> |  | new | missing |
 | <code>Rule for this doctype, role, permlevel and if-owner combination already exists.</code> |  | new | missing |
@@ -11888,7 +11888,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Running...</code> |  | new | missing |
 | <code>Runtime in Minutes</code> |  | new | missing |
 | <code>Runtime in Seconds</code> |  | new | missing |
-| <code>S.O. No.</code> |  | new | missing |
+| <code>S.O. No.</code> |  | new | translated |
 | <code>SCIO Detail</code> |  | new | missing |
 | <code>SCO Supplied Item</code> |  | new | missing |
 | <code>SLA Fulfilled On</code> |  | new | missing |
@@ -11898,7 +11898,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>SLA will be applied if {1} is set as {2}{3}</code> |  | new | missing |
 | <code>SLA will be applied on every {0}</code> |  | new | missing |
 | <code>SMS</code> |  | new | translated |
-| <code>SMS Center</code> |  | new | missing |
+| <code>SMS Center</code> |  | new | translated |
 | <code>SMS Gateway URL</code> |  | new | translated |
 | <code>SMS Log</code> |  | new | translated |
 | <code>SMS Parameter</code> |  | new | translated |
@@ -11907,7 +11907,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>SMS sent successfully</code> |  | new | missing |
 | <code>SMS was not sent. Please contact Administrator.</code> |  | new | translated |
 | <code>SMTP Server is required</code> |  | new | missing |
-| <code>SO Qty</code> |  | new | missing |
+| <code>SO Qty</code> |  | new | translated |
 | <code>SO Total Qty</code> |  | new | missing |
 | <code>SQL</code> |  | new | excepted |
 | <code>SQL Conditions. Example: {&quot;status&quot; : &quot;open&quot;, &quot;priority&quot; : &quot;medium&quot;}</code> |  | new | missing |
@@ -11921,32 +11921,32 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>SUCCESS,FAILURE</code> |  | new | excepted |
 | <code>SUCCESS,FAILURE,DELAY</code> |  | new | excepted |
 | <code>SWATCHES</code> |  | new | missing |
-| <code>SWIFT Number</code> |  | new | missing |
-| <code>SWIFT number</code> |  | new | missing |
+| <code>SWIFT Number</code> |  | new | translated |
+| <code>SWIFT number</code> |  | new | translated |
 | <code>Safety Stock</code> |  | new | missing |
-| <code>Salary</code> |  | new | missing |
+| <code>Salary</code> |  | new | translated |
 | <code>Salary Currency</code> |  | new | missing |
 | <code>Salary Mode</code> |  | new | missing |
-| <code>Sales</code> |  | new | missing |
+| <code>Sales</code> |  | new | translated |
 | <code>Sales &amp; Purchase</code> |  | new | missing |
 | <code>Sales Account</code> |  | new | missing |
-| <code>Sales Analytics</code> |  | new | missing |
-| <code>Sales Contributions and Incentives</code> |  | new | missing |
+| <code>Sales Analytics</code> |  | new | translated |
+| <code>Sales Contributions and Incentives</code> |  | new | translated |
 | <code>Sales Defaults</code> |  | new | missing |
-| <code>Sales Expenses</code> |  | new | missing |
+| <code>Sales Expenses</code> |  | new | translated |
 | <code>Sales Forecast</code> |  | new | missing |
 | <code>Sales Forecast Item</code> |  | new | missing |
-| <code>Sales Funnel</code> |  | new | missing |
+| <code>Sales Funnel</code> |  | new | translated |
 | <code>Sales Incoming Rate</code> |  | new | missing |
-| <code>Sales Invoice</code> |  | new | missing |
-| <code>Sales Invoice Advance</code> |  | new | missing |
-| <code>Sales Invoice Item</code> |  | new | missing |
+| <code>Sales Invoice</code> |  | new | translated |
+| <code>Sales Invoice Advance</code> |  | new | translated |
+| <code>Sales Invoice Item</code> |  | new | translated |
 | <code>Sales Invoice No</code> |  | new | missing |
-| <code>Sales Invoice Payment</code> |  | new | missing |
+| <code>Sales Invoice Payment</code> |  | new | translated |
 | <code>Sales Invoice Reference</code> |  | new | missing |
-| <code>Sales Invoice Timesheet</code> |  | new | missing |
+| <code>Sales Invoice Timesheet</code> |  | new | translated |
 | <code>Sales Invoice Transactions</code> |  | new | missing |
-| <code>Sales Invoice Trends</code> |  | new | missing |
+| <code>Sales Invoice Trends</code> |  | new | translated |
 | <code>Sales Invoice does not have Payments</code> |  | new | missing |
 | <code>Sales Invoice is already consolidated</code> |  | new | missing |
 | <code>Sales Invoice is not created using POS</code> |  | new | missing |
@@ -11961,80 +11961,80 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Sales Opportunities by Campaign</code> |  | new | missing |
 | <code>Sales Opportunities by Medium</code> |  | new | missing |
 | <code>Sales Opportunities by Source</code> |  | new | missing |
-| <code>Sales Order</code> |  | new | missing |
-| <code>Sales Order Analysis</code> |  | new | missing |
-| <code>Sales Order Date</code> |  | new | missing |
-| <code>Sales Order Item</code> |  | new | missing |
+| <code>Sales Order</code> |  | new | translated |
+| <code>Sales Order Analysis</code> |  | new | translated |
+| <code>Sales Order Date</code> |  | new | translated |
+| <code>Sales Order Item</code> |  | new | translated |
 | <code>Sales Order Packed Item</code> |  | new | missing |
 | <code>Sales Order Reference</code> |  | new | missing |
 | <code>Sales Order Schedule</code> |  | new | missing |
 | <code>Sales Order Status</code> |  | new | missing |
-| <code>Sales Order Trends</code> |  | new | missing |
+| <code>Sales Order Trends</code> |  | new | translated |
 | <code>Sales Order required for Item {0}</code> |  | new | missing |
 | <code>Sales Order {0} already exists against Customer&#x27;s Purchase Order {1}. To allow multiple Sales Orders, Enable {2} in {3}</code> |  | new | missing |
 | <code>Sales Order {0} is not available for production</code> |  | new | missing |
-| <code>Sales Order {0} is not submitted</code> |  | new | missing |
+| <code>Sales Order {0} is not submitted</code> |  | new | translated |
 | <code>Sales Order {0} is not valid</code> |  | new | missing |
-| <code>Sales Orders</code> |  | new | missing |
+| <code>Sales Orders</code> |  | new | translated |
 | <code>Sales Orders Required</code> |  | new | missing |
 | <code>Sales Orders to Bill</code> |  | new | missing |
 | <code>Sales Orders to Deliver</code> |  | new | missing |
-| <code>Sales Partner</code> |  | new | missing |
-| <code>Sales Partner Commission Summary</code> |  | new | missing |
+| <code>Sales Partner</code> |  | new | translated |
+| <code>Sales Partner Commission Summary</code> |  | new | translated |
 | <code>Sales Partner Item</code> |  | new | missing |
 | <code>Sales Partner Name</code> |  | new | missing |
 | <code>Sales Partner Target</code> |  | new | missing |
 | <code>Sales Partner Target Variance Based On Item Group</code> |  | new | missing |
-| <code>Sales Partner Target Variance based on Item Group</code> |  | new | missing |
-| <code>Sales Partner Transaction Summary</code> |  | new | missing |
-| <code>Sales Partner Type</code> |  | new | missing |
-| <code>Sales Partners Commission</code> |  | new | missing |
-| <code>Sales Payment Summary</code> |  | new | missing |
-| <code>Sales Person</code> |  | new | missing |
+| <code>Sales Partner Target Variance based on Item Group</code> |  | new | translated |
+| <code>Sales Partner Transaction Summary</code> |  | new | translated |
+| <code>Sales Partner Type</code> |  | new | translated |
+| <code>Sales Partners Commission</code> |  | new | translated |
+| <code>Sales Payment Summary</code> |  | new | translated |
+| <code>Sales Person</code> |  | new | translated |
 | <code>Sales Person &lt;b&gt;{0}&lt;/b&gt; is disabled.</code> |  | new | missing |
-| <code>Sales Person Commission Summary</code> |  | new | missing |
+| <code>Sales Person Commission Summary</code> |  | new | translated |
 | <code>Sales Person Name</code> |  | new | missing |
-| <code>Sales Person Target Variance Based On Item Group</code> |  | new | missing |
+| <code>Sales Person Target Variance Based On Item Group</code> |  | new | translated |
 | <code>Sales Person Targets</code> |  | new | missing |
-| <code>Sales Person-wise Transaction Summary</code> |  | new | missing |
-| <code>Sales Pipeline</code> |  | new | missing |
+| <code>Sales Person-wise Transaction Summary</code> |  | new | translated |
+| <code>Sales Pipeline</code> |  | new | translated |
 | <code>Sales Pipeline Analytics</code> |  | new | missing |
 | <code>Sales Pipeline by Stage</code> |  | new | missing |
 | <code>Sales Price List</code> |  | new | missing |
-| <code>Sales Register</code> |  | new | missing |
+| <code>Sales Register</code> |  | new | translated |
 | <code>Sales Representative</code> |  | new | missing |
-| <code>Sales Return</code> |  | new | missing |
-| <code>Sales Stage</code> |  | new | missing |
-| <code>Sales Summary</code> |  | new | missing |
-| <code>Sales Tax Template</code> |  | new | missing |
+| <code>Sales Return</code> |  | new | translated |
+| <code>Sales Stage</code> |  | new | translated |
+| <code>Sales Summary</code> |  | new | translated |
+| <code>Sales Tax Template</code> |  | new | translated |
 | <code>Sales Tax Withholding Category</code> |  | new | missing |
 | <code>Sales Taxes</code> |  | new | missing |
-| <code>Sales Taxes and Charges</code> |  | new | missing |
-| <code>Sales Taxes and Charges Template</code> |  | new | missing |
-| <code>Sales Team</code> |  | new | missing |
+| <code>Sales Taxes and Charges</code> |  | new | translated |
+| <code>Sales Taxes and Charges Template</code> |  | new | translated |
+| <code>Sales Team</code> |  | new | translated |
 | <code>Sales User</code> |  | new | translated |
 | <code>Sales Value</code> |  | new | missing |
-| <code>Sales and Returns</code> |  | new | missing |
+| <code>Sales and Returns</code> |  | new | translated |
 | <code>Sales orders are not available for production</code> |  | new | missing |
 | <code>Sales without complexity, lock-in and per-user costs. Try it for free!</code> |  | new | missing |
 | <code>Salesforce</code> |  | new | excepted |
 | <code>Salutation</code> |  | new | translated |
 | <code>Salvage Value</code> |  | new | missing |
 | <code>Salvage Value Percentage</code> |  | new | missing |
-| <code>Same Company is entered more than once</code> |  | new | missing |
+| <code>Same Company is entered more than once</code> |  | new | translated |
 | <code>Same Field is entered more than once</code> |  | new | translated |
-| <code>Same Item</code> |  | new | missing |
+| <code>Same Item</code> |  | new | translated |
 | <code>Same day</code> |  | new | missing |
 | <code>Same item and warehouse combination already entered.</code> |  | new | missing |
-| <code>Same item cannot be entered multiple times.</code> |  | new | missing |
-| <code>Same supplier has been entered multiple times</code> |  | new | missing |
+| <code>Same item cannot be entered multiple times.</code> |  | new | translated |
+| <code>Same supplier has been entered multiple times</code> |  | new | translated |
 | <code>Sample</code> |  | new | translated |
 | <code>Sample Quantity</code> |  | new | missing |
 | <code>Sample Retention Stock Entry</code> |  | new | missing |
 | <code>Sample Retention Warehouse</code> |  | new | missing |
 | <code>Sample Size</code> |  | new | missing |
 | <code>Sample quantity {0} cannot be more than received quantity {1}</code> |  | new | missing |
-| <code>Sanctioned</code> |  | new | missing |
+| <code>Sanctioned</code> |  | new | translated |
 | <code>Saturday</code> |  | new | translated |
 | <code>Save</code> |  | new | translated |
 | <code>Save Anyway</code> |  | new | translated |
@@ -12059,7 +12059,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Savings</code> |  | new | missing |
 | <code>Sazhen</code> |  | new | missing |
 | <code>Scan</code> |  | new | missing |
-| <code>Scan Barcode</code> |  | new | missing |
+| <code>Scan Barcode</code> |  | new | translated |
 | <code>Scan Batch No</code> |  | new | missing |
 | <code>Scan Job Card Qrcode</code> |  | new | missing |
 | <code>Scan Mode</code> |  | new | missing |
@@ -12068,10 +12068,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Scan barcode for item {0}</code> |  | new | missing |
 | <code>Scan mode enabled, existing quantity will not be fetched.</code> |  | new | missing |
 | <code>Scan the QR Code and enter the resulting code displayed.</code> |  | new | translated |
-| <code>Scanned Cheque</code> |  | new | missing |
+| <code>Scanned Cheque</code> |  | new | translated |
 | <code>Scanned Quantity</code> |  | new | missing |
 | <code>Schedule</code> |  | new | translated |
-| <code>Schedule Date</code> |  | new | missing |
+| <code>Schedule Date</code> |  | new | translated |
 | <code>Schedule Name</code> |  | new | missing |
 | <code>Schedule Send At</code> |  | new | missing |
 | <code>Scheduled</code> |  | new | translated |
@@ -12081,7 +12081,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Scheduled Job Log</code> |  | new | translated |
 | <code>Scheduled Job Type</code> |  | new | translated |
 | <code>Scheduled Jobs Logs</code> |  | new | missing |
-| <code>Scheduled Time</code> |  | new | missing |
+| <code>Scheduled Time</code> |  | new | translated |
 | <code>Scheduled Time Logs</code> |  | new | missing |
 | <code>Scheduled execution for script {0} has updated</code> |  | new | translated |
 | <code>Scheduled job disabled. Transactions will not be auto classified.</code> |  | new | missing |
@@ -12107,18 +12107,18 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Scope</code> |  | new | translated |
 | <code>Scopes</code> |  | new | translated |
 | <code>Scopes Supported</code> |  | new | missing |
-| <code>Score</code> |  | new | missing |
-| <code>Scorecard Actions</code> |  | new | missing |
+| <code>Score</code> |  | new | translated |
+| <code>Scorecard Actions</code> |  | new | translated |
 | <code>Scorecard variables can be used, as well as:<br>{total_score} (the total score from that period),<br>{period_number} (the number of periods to present day)</code> |  | new | missing |
-| <code>Scorecards</code> |  | new | missing |
-| <code>Scoring Criteria</code> |  | new | missing |
-| <code>Scoring Setup</code> |  | new | missing |
-| <code>Scoring Standings</code> |  | new | missing |
+| <code>Scorecards</code> |  | new | translated |
+| <code>Scoring Criteria</code> |  | new | translated |
+| <code>Scoring Setup</code> |  | new | translated |
+| <code>Scoring Standings</code> |  | new | translated |
 | <code>Scrap</code> |  | new | missing |
 | <code>Scrap Asset</code> |  | new | missing |
 | <code>Scrap Warehouse</code> |  | new | missing |
 | <code>Scrap date cannot be before purchase date</code> |  | new | missing |
-| <code>Scrapped</code> |  | new | missing |
+| <code>Scrapped</code> |  | new | translated |
 | <code>Script</code> |  | new | translated |
 | <code>Script Manager</code> |  | new | translated |
 | <code>Script Report</code> |  | new | translated |
@@ -12136,9 +12136,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Search Sub Assemblies</code> |  | new | missing |
 | <code>Search Term Param Name</code> |  | new | missing |
 | <code>Search account...</code> |  | new | missing |
-| <code>Search by customer name, phone, email.</code> |  | new | missing |
+| <code>Search by customer name, phone, email.</code> |  | new | translated |
 | <code>Search by filename or extension</code> |  | new | translated |
-| <code>Search by invoice id or customer name</code> |  | new | missing |
+| <code>Search by invoice id or customer name</code> |  | new | translated |
 | <code>Search by item code, serial number or barcode</code> |  | new | missing |
 | <code>Search company...</code> |  | new | missing |
 | <code>Search field {0} is not valid</code> |  | new | translated |
@@ -12178,9 +12178,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Section ID</code> |  | new | missing |
 | <code>Section Title</code> |  | new | missing |
 | <code>Section must have at least one column</code> |  | new | missing |
-| <code>Secured Loans</code> |  | new | missing |
+| <code>Secured Loans</code> |  | new | translated |
 | <code>Securities &amp; Commodity Exchanges</code> |  | new | missing |
-| <code>Securities and Deposits</code> |  | new | missing |
+| <code>Securities and Deposits</code> |  | new | translated |
 | <code>Security Alert: Your account is being impersonated</code> |  | new | missing |
 | <code>Security Alert: Your password has been changed.</code> |  | new | missing |
 | <code>Security Error: The Path provided is not safe.</code> |  | new | missing |
@@ -12207,27 +12207,27 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Select Alternative Items for Sales Order</code> |  | new | missing |
 | <code>Select Attachments</code> |  | new | translated |
 | <code>Select Attribute Values</code> |  | new | missing |
-| <code>Select BOM</code> |  | new | missing |
-| <code>Select BOM and Qty for Production</code> |  | new | missing |
+| <code>Select BOM</code> |  | new | translated |
+| <code>Select BOM and Qty for Production</code> |  | new | translated |
 | <code>Select Batch No</code> |  | new | missing |
-| <code>Select Billing Address</code> |  | new | missing |
+| <code>Select Billing Address</code> |  | new | translated |
 | <code>Select Brand...</code> |  | new | missing |
 | <code>Select Child Table</code> |  | new | translated |
 | <code>Select Column</code> |  | new | translated |
 | <code>Select Columns</code> |  | new | translated |
 | <code>Select Columns and Filters</code> |  | new | missing |
-| <code>Select Company</code> |  | new | missing |
+| <code>Select Company</code> |  | new | translated |
 | <code>Select Company Address</code> |  | new | missing |
 | <code>Select Corrective Operation</code> |  | new | missing |
 | <code>Select Country</code> |  | new | missing |
 | <code>Select Currency</code> |  | new | missing |
-| <code>Select Customers By</code> |  | new | missing |
+| <code>Select Customers By</code> |  | new | translated |
 | <code>Select Dashboard</code> |  | new | translated |
 | <code>Select Date Range</code> |  | new | translated |
 | <code>Select Date of Birth. This will validate Employees age and prevent hiring of under-age staff.</code> |  | new | missing |
 | <code>Select Date of joining. It will have impact on the first salary calculation, Leave allocation on pro-rata bases.</code> |  | new | missing |
-| <code>Select Default Supplier</code> |  | new | missing |
-| <code>Select Difference Account</code> |  | new | missing |
+| <code>Select Default Supplier</code> |  | new | translated |
+| <code>Select Difference Account</code> |  | new | translated |
 | <code>Select Dimension</code> |  | new | missing |
 | <code>Select Dispatch Address</code> |  | new | missing |
 | <code>Select DocType</code> |  | new | translated |
@@ -12247,31 +12247,31 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Select Google Calendar to which event should be synced.</code> |  | new | translated |
 | <code>Select Google Contacts to which contact should be synced.</code> |  | new | translated |
 | <code>Select Group By...</code> |  | new | translated |
-| <code>Select Items</code> |  | new | missing |
-| <code>Select Items based on Delivery Date</code> |  | new | missing |
+| <code>Select Items</code> |  | new | translated |
+| <code>Select Items based on Delivery Date</code> |  | new | translated |
 | <code>Select Items for Quality Inspection</code> |  | new | missing |
-| <code>Select Items to Manufacture</code> |  | new | missing |
+| <code>Select Items to Manufacture</code> |  | new | translated |
 | <code>Select Items to Receive</code> |  | new | missing |
 | <code>Select Items up to Delivery Date</code> |  | new | missing |
 | <code>Select Job Worker Address</code> |  | new | missing |
 | <code>Select Kanban</code> |  | new | missing |
 | <code>Select Language</code> |  | new | translated |
 | <code>Select List View</code> |  | new | missing |
-| <code>Select Loyalty Program</code> |  | new | missing |
+| <code>Select Loyalty Program</code> |  | new | translated |
 | <code>Select Mandatory</code> |  | new | translated |
 | <code>Select Module</code> |  | new | translated |
 | <code>Select Network Printer</code> |  | new | missing |
 | <code>Select Page</code> |  | new | missing |
 | <code>Select Payment Schedule</code> |  | new | missing |
-| <code>Select Possible Supplier</code> |  | new | missing |
+| <code>Select Possible Supplier</code> |  | new | translated |
 | <code>Select Print Format</code> |  | new | translated |
 | <code>Select Print Format to Edit</code> |  | new | translated |
 | <code>Select Quantity</code> |  | new | missing |
 | <code>Select Report</code> |  | new | missing |
 | <code>Select Serial No</code> |  | new | missing |
 | <code>Select Serial and Batch</code> |  | new | missing |
-| <code>Select Shipping Address</code> |  | new | missing |
-| <code>Select Supplier Address</code> |  | new | missing |
+| <code>Select Shipping Address</code> |  | new | translated |
+| <code>Select Supplier Address</code> |  | new | translated |
 | <code>Select Supplier for Items</code> |  | new | missing |
 | <code>Select Table Columns for {0}</code> |  | new | translated |
 | <code>Select Target Warehouse</code> |  | new | missing |
@@ -12291,7 +12291,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Select a Default Priority.</code> |  | new | missing |
 | <code>Select a DocType to make a new format</code> |  | new | translated |
 | <code>Select a Payment Method.</code> |  | new | missing |
-| <code>Select a Supplier</code> |  | new | missing |
+| <code>Select a Supplier</code> |  | new | translated |
 | <code>Select a Supplier for Item {0}</code> |  | new | missing |
 | <code>Select a bank account to reconcile</code> |  | new | missing |
 | <code>Select a company</code> |  | new | missing |
@@ -12303,7 +12303,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Select all</code> |  | new | missing |
 | <code>Select an Image</code> |  | new | missing |
 | <code>Select an Item Group.</code> |  | new | missing |
-| <code>Select an account to print in account currency</code> |  | new | missing |
+| <code>Select an account to print in account currency</code> |  | new | translated |
 | <code>Select an existing format to edit or start a new format.</code> |  | new | translated |
 | <code>Select an image of approx width 150px with a transparent background for best results.</code> |  | new | translated |
 | <code>Select an invoice to load summary data</code> |  | new | missing |
@@ -12316,7 +12316,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Select company name first.</code> |  | new | missing |
 | <code>Select date</code> |  | new | missing |
 | <code>Select finance book for the item {0} at row {1}</code> |  | new | missing |
-| <code>Select item group</code> |  | new | missing |
+| <code>Select item group</code> |  | new | translated |
 | <code>Select list item</code> | Description of a list view shortcut | new | missing |
 | <code>Select multiple list items</code> | Description of a list view shortcut | new | missing |
 | <code>Select number of days</code> |  | new | missing |
@@ -12325,12 +12325,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Select records for removing assignment</code> |  | new | missing |
 | <code>Select row {0}</code> |  | new | missing |
 | <code>Select template item</code> |  | new | missing |
-| <code>Select the Bank Account to reconcile.</code> |  | new | missing |
+| <code>Select the Bank Account to reconcile.</code> |  | new | translated |
 | <code>Select the Default Workstation where the Operation will be performed. This will be fetched in BOMs and Work Orders.</code> |  | new | missing |
 | <code>Select the Item to be manufactured.</code> |  | new | missing |
 | <code>Select the Item to be manufactured. The Item name, UoM, Company, and Currency will be fetched automatically.</code> |  | new | missing |
 | <code>Select the Warehouse</code> |  | new | missing |
-| <code>Select the customer or supplier.</code> |  | new | missing |
+| <code>Select the customer or supplier.</code> |  | new | translated |
 | <code>Select the date</code> |  | new | missing |
 | <code>Select the date and your timezone</code> |  | new | missing |
 | <code>Select the group first to filter the applicable withholding categories below.</code> |  | new | missing |
@@ -12343,9 +12343,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Select which delivery events should trigger a delivery status notification (DSN) from the SMTP server.</code> |  | new | missing |
 | <code>Select your weekly off day</code> |  | new | missing |
 | <code>Select {0}</code> |  | new | translated |
-| <code>Select, to make the customer searchable with these fields</code> |  | new | missing |
-| <code>Selected POS Opening Entry should be open.</code> |  | new | missing |
-| <code>Selected Price List should have buying and selling fields checked.</code> |  | new | missing |
+| <code>Select, to make the customer searchable with these fields</code> |  | new | translated |
+| <code>Selected POS Opening Entry should be open.</code> |  | new | translated |
+| <code>Selected Price List should have buying and selling fields checked.</code> |  | new | translated |
 | <code>Selected Print Format does not exist.</code> |  | new | missing |
 | <code>Selected Serial and Batch Bundle entries have been fixed.</code> |  | new | missing |
 | <code>Selected Vouchers</code> |  | new | missing |
@@ -12353,19 +12353,19 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Selected document must be in submitted state</code> |  | new | missing |
 | <code>Self approval is not allowed</code> |  | new | translated |
 | <code>Self delivery</code> |  | new | missing |
-| <code>Sell</code> |  | new | missing |
+| <code>Sell</code> |  | new | translated |
 | <code>Sell Asset</code> |  | new | missing |
 | <code>Sell Qty</code> |  | new | missing |
 | <code>Sell quantity cannot exceed the asset quantity</code> |  | new | missing |
 | <code>Sell quantity cannot exceed the asset quantity. Asset {0} has only {1} item(s).</code> |  | new | missing |
 | <code>Sell quantity must be greater than zero</code> |  | new | missing |
-| <code>Selling</code> |  | new | missing |
-| <code>Selling Amount</code> |  | new | missing |
+| <code>Selling</code> |  | new | translated |
+| <code>Selling Amount</code> |  | new | translated |
 | <code>Selling Price List</code> |  | new | missing |
-| <code>Selling Rate</code> |  | new | missing |
-| <code>Selling Settings</code> |  | new | missing |
+| <code>Selling Rate</code> |  | new | translated |
+| <code>Selling Settings</code> |  | new | translated |
 | <code>Selling Setup</code> |  | new | missing |
-| <code>Selling must be checked, if Applicable For is selected as {0}</code> |  | new | missing |
+| <code>Selling must be checked, if Applicable For is selected as {0}</code> |  | new | translated |
 | <code>Semi Finished Good / Finished Good</code> |  | new | missing |
 | <code>Semi Finished Goods / Finished Goods</code> |  | new | missing |
 | <code>Send</code> |  | new | translated |
@@ -12373,18 +12373,18 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Send &lt;b&gt;at the earliest&lt;/b&gt; this number of minutes before or after the reference datetime. The actual sending may be delayed by up to 5 minutes due to the scheduler&#x27;s trigger cadence.</code> |  | new | missing |
 | <code>Send Acknowledgement Email</code> |  | new | missing |
 | <code>Send After</code> |  | new | translated |
-| <code>Send After (days)</code> |  | new | missing |
+| <code>Send After (days)</code> |  | new | translated |
 | <code>Send Alert On</code> |  | new | translated |
 | <code>Send As Raw HTML</code> |  | new | missing |
 | <code>Send Attached Files</code> |  | new | missing |
 | <code>Send Document Print</code> |  | new | missing |
-| <code>Send Email</code> |  | new | missing |
+| <code>Send Email</code> |  | new | translated |
 | <code>Send Email Alert</code> |  | new | translated |
 | <code>Send Email On State</code> |  | new | missing |
 | <code>Send Email Print Attachments as PDF (Recommended)</code> |  | new | translated |
 | <code>Send Email To Creator</code> |  | new | missing |
 | <code>Send Emails</code> |  | new | missing |
-| <code>Send Emails to Suppliers</code> |  | new | missing |
+| <code>Send Emails to Suppliers</code> |  | new | translated |
 | <code>Send Link</code> |  | new | missing |
 | <code>Send Me A Copy of Outgoing Emails</code> |  | new | translated |
 | <code>Send Notification to</code> |  | new | translated |
@@ -12393,11 +12393,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Send Now</code> |  | new | translated |
 | <code>Send Print as PDF</code> |  | new | translated |
 | <code>Send Read Receipt</code> |  | new | translated |
-| <code>Send SMS</code> |  | new | missing |
+| <code>Send SMS</code> |  | new | translated |
 | <code>Send System Notification</code> |  | new | translated |
-| <code>Send To</code> |  | new | missing |
+| <code>Send To</code> |  | new | translated |
 | <code>Send To All Assignees</code> |  | new | translated |
-| <code>Send To Primary Contact</code> |  | new | missing |
+| <code>Send To Primary Contact</code> |  | new | translated |
 | <code>Send Welcome Email</code> |  | new | translated |
 | <code>Send alert if date matches this field&#x27;s value</code> |  | new | translated |
 | <code>Send alert if datetime matches this field&#x27;s value</code> |  | new | missing |
@@ -12443,7 +12443,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Serial / Batch No</code> |  | new | missing |
 | <code>Serial / Batch Nos</code> |  | new | missing |
 | <code>Serial Item settings</code> |  | new | missing |
-| <code>Serial No</code> |  | new | missing |
+| <code>Serial No</code> |  | new | translated |
 | <code>Serial No (In/Out)</code> |  | new | missing |
 | <code>Serial No / Batch</code> |  | new | missing |
 | <code>Serial No Already Assigned</code> |  | new | missing |
@@ -12459,13 +12459,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Serial No and Batch Selector cannot be use when Use Serial / Batch Fields is enabled.</code> |  | new | missing |
 | <code>Serial No and Batch Traceability</code> |  | new | missing |
 | <code>Serial No is mandatory</code> |  | new | missing |
-| <code>Serial No is mandatory for Item {0}</code> |  | new | missing |
+| <code>Serial No is mandatory for Item {0}</code> |  | new | translated |
 | <code>Serial No status sync has been queued. Reload the report after a few minutes.</code> |  | new | missing |
 | <code>Serial No {0} already exists</code> |  | new | missing |
 | <code>Serial No {0} already scanned</code> |  | new | missing |
-| <code>Serial No {0} does not belong to Delivery Note {1}</code> |  | new | missing |
+| <code>Serial No {0} does not belong to Delivery Note {1}</code> |  | new | translated |
 | <code>Serial No {0} does not belong to Item {1}</code> |  | new | missing |
-| <code>Serial No {0} does not exist</code> |  | new | missing |
+| <code>Serial No {0} does not exist</code> |  | new | translated |
 | <code>Serial No {0} does not exists</code> |  | new | missing |
 | <code>Serial No {0} is already Delivered. You cannot use them again in Manufacture / Repack entry.</code> |  | new | missing |
 | <code>Serial No {0} is already added</code> |  | new | missing |
@@ -12475,7 +12475,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Serial No {0} is under maintenance contract upto {1}</code> |  | new | missing |
 | <code>Serial No {0} is under warranty upto {1}</code> |  | new | missing |
 | <code>Serial No {0} not found</code> |  | new | missing |
-| <code>Serial No: {0} has already been transacted into another POS Invoice.</code> |  | new | missing |
+| <code>Serial No: {0} has already been transacted into another POS Invoice.</code> |  | new | translated |
 | <code>Serial Nos</code> |  | new | missing |
 | <code>Serial Nos / Batch Nos</code> |  | new | missing |
 | <code>Serial Nos / Batches</code> |  | new | missing |
@@ -12500,13 +12500,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Serial and Batch Reservation</code> |  | new | missing |
 | <code>Serial and Batch Summary</code> |  | new | missing |
 | <code>Serial number {0} entered more than once</code> |  | new | missing |
-| <code>Serial numbers unavailable for Item {0} under warehouse {1}. Please try changing warehouse.</code> |  | new | missing |
+| <code>Serial numbers unavailable for Item {0} under warehouse {1}. Please try changing warehouse.</code> |  | new | translated |
 | <code>Series</code> |  | new | translated |
 | <code>Series List for this Transaction</code> |  | new | translated |
 | <code>Series Updated for {}</code> |  | new | missing |
 | <code>Series counter for {} updated to {} successfully</code> |  | new | missing |
 | <code>Series for Asset Depreciation Entry (Journal Entry)</code> |  | new | missing |
-| <code>Series is mandatory</code> |  | new | missing |
+| <code>Series is mandatory</code> |  | new | translated |
 | <code>Series {0} already used in {1}</code> |  | new | translated |
 | <code>Server Action</code> |  | new | translated |
 | <code>Server Error</code> |  | new | translated |
@@ -12522,7 +12522,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Service Address</code> |  | new | missing |
 | <code>Service Cost Per Qty</code> |  | new | missing |
 | <code>Service Day</code> |  | new | missing |
-| <code>Service End Date</code> |  | new | missing |
+| <code>Service End Date</code> |  | new | translated |
 | <code>Service Expense Account</code> |  | new | missing |
 | <code>Service Expense Total Amount</code> |  | new | missing |
 | <code>Service Expenses</code> |  | new | missing |
@@ -12544,12 +12544,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Service Level Name</code> |  | new | missing |
 | <code>Service Level Priority</code> |  | new | missing |
 | <code>Service Provider</code> |  | new | missing |
-| <code>Service Received But Not Billed</code> |  | new | missing |
-| <code>Service Start Date</code> |  | new | missing |
-| <code>Service Stop Date</code> |  | new | missing |
-| <code>Service Stop Date cannot be after Service End Date</code> |  | new | missing |
-| <code>Service Stop Date cannot be before Service Start Date</code> |  | new | missing |
-| <code>Services</code> |  | new | missing |
+| <code>Service Received But Not Billed</code> |  | new | translated |
+| <code>Service Start Date</code> |  | new | translated |
+| <code>Service Stop Date</code> |  | new | translated |
+| <code>Service Stop Date cannot be after Service End Date</code> |  | new | translated |
+| <code>Service Stop Date cannot be before Service Start Date</code> |  | new | translated |
+| <code>Services</code> |  | new | translated |
 | <code>Session Created</code> |  | new | missing |
 | <code>Session Default</code> |  | new | translated |
 | <code>Session Default Settings</code> |  | new | translated |
@@ -12561,8 +12561,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Sessions</code> |  | new | translated |
 | <code>Set</code> |  | new | translated |
 | <code>Set</code> | Field value is set | new | missing |
-| <code>Set Accepted Warehouse</code> |  | new | missing |
-| <code>Set Advances and Allocate (FIFO)</code> |  | new | missing |
+| <code>Set Accepted Warehouse</code> |  | new | translated |
+| <code>Set Advances and Allocate (FIFO)</code> |  | new | translated |
 | <code>Set Banner from Image</code> |  | new | translated |
 | <code>Set Basic Rate Manually</code> |  | new | missing |
 | <code>Set Chart</code> |  | new | translated |
@@ -12581,40 +12581,40 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Set Loyalty Program</code> |  | new | missing |
 | <code>Set Naming Series options on your transactions.</code> |  | new | missing |
 | <code>Set New Password</code> |  | new | translated |
-| <code>Set New Release Date</code> |  | new | missing |
+| <code>Set New Release Date</code> |  | new | translated |
 | <code>Set Number of Backups</code> |  | new | translated |
 | <code>Set Operating Cost / Secondary Items From Sub-assemblies</code> |  | new | missing |
 | <code>Set Operating Cost Based On BOM Quantity</code> |  | new | missing |
 | <code>Set Parent Row No in Items Table</code> |  | new | missing |
 | <code>Set Password</code> |  | new | translated |
 | <code>Set Permissions</code> |  | new | translated |
-| <code>Set Posting Date</code> |  | new | missing |
+| <code>Set Posting Date</code> |  | new | translated |
 | <code>Set Process Loss Item Quantity</code> |  | new | missing |
 | <code>Set Project Status</code> |  | new | missing |
 | <code>Set Project and all Tasks to status {0}?</code> |  | new | missing |
 | <code>Set Properties</code> |  | new | missing |
 | <code>Set Property After Alert</code> |  | new | translated |
 | <code>Set Quantity</code> |  | new | translated |
-| <code>Set Reserve Warehouse</code> |  | new | missing |
+| <code>Set Reserve Warehouse</code> |  | new | translated |
 | <code>Set Response Time for Priority {0} in row {1}.</code> |  | new | missing |
 | <code>Set Role For</code> |  | new | translated |
 | <code>Set Serial and Batch Bundle Naming Based on Naming Series</code> |  | new | missing |
-| <code>Set Source Warehouse</code> |  | new | missing |
+| <code>Set Source Warehouse</code> |  | new | translated |
 | <code>Set Supplier</code> |  | new | missing |
 | <code>Set Supplier for All Items</code> |  | new | missing |
-| <code>Set Target Warehouse</code> |  | new | missing |
+| <code>Set Target Warehouse</code> |  | new | translated |
 | <code>Set User Permissions</code> |  | new | translated |
 | <code>Set Valuation Rate Based on Source Warehouse</code> |  | new | missing |
 | <code>Set Value</code> |  | new | translated |
 | <code>Set Warehouse</code> |  | new | missing |
 | <code>Set all private</code> |  | new | missing |
 | <code>Set all public</code> |  | new | missing |
-| <code>Set as Closed</code> |  | new | missing |
+| <code>Set as Closed</code> |  | new | translated |
 | <code>Set as Completed</code> |  | new | missing |
 | <code>Set as Default</code> |  | new | translated |
 | <code>Set as Default Theme</code> |  | new | translated |
-| <code>Set as Lost</code> |  | new | missing |
-| <code>Set as Open</code> |  | new | missing |
+| <code>Set as Lost</code> |  | new | translated |
+| <code>Set as Open</code> |  | new | translated |
 | <code>Set by Item Tax Template</code> |  | new | missing |
 | <code>Set by user</code> |  | new | missing |
 | <code>Set closing balance as per bank statement</code> |  | new | missing |
@@ -12640,8 +12640,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Set up rules to automatically classify transactions. Drag and drop rules to reorder their priority.</code> |  | new | missing |
 | <code>Set valuation rate for rejected Materials</code> |  | new | missing |
 | <code>Set {0} in asset category {1} for company {2}</code> |  | new | missing |
-| <code>Set {0} in asset category {1} or company {2}</code> |  | new | missing |
-| <code>Set {0} in company {1}</code> |  | new | missing |
+| <code>Set {0} in asset category {1} or company {2}</code> |  | new | translated |
+| <code>Set {0} in company {1}</code> |  | new | translated |
 | <code>Sets &#x27;Accepted Warehouse&#x27; in each row of the Items table.</code> |  | new | missing |
 | <code>Sets &#x27;Rejected Warehouse&#x27; in each row of the Items table.</code> |  | new | missing |
 | <code>Sets &#x27;Reserve Warehouse&#x27; in each row of the Supplied Items table.</code> |  | new | missing |
@@ -12649,7 +12649,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Sets &#x27;Target Warehouse&#x27; in each row of the items table.</code> |  | new | missing |
 | <code>Sets &#x27;Warehouse&#x27; in each row of the Items table.</code> |  | new | missing |
 | <code>Setting</code> |  | new | missing |
-| <code>Setting Account Type helps in selecting this Account in transactions.</code> |  | new | missing |
+| <code>Setting Account Type helps in selecting this Account in transactions.</code> |  | new | translated |
 | <code>Setting Events to {0}, since the Employee attached to the below Sales Persons does not have a User ID{1}</code> |  | new | missing |
 | <code>Setting Item Locations...</code> |  | new | missing |
 | <code>Setting defaults</code> |  | new | missing |
@@ -12662,9 +12662,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Settings</code> |  | new | translated |
 | <code>Settings Dropdown</code> |  | new | translated |
 | <code>Settings for Contact Us Page</code> |  | new | translated |
-| <code>Settings for Selling Module</code> |  | new | missing |
+| <code>Settings for Selling Module</code> |  | new | translated |
 | <code>Settings for the About Us Page</code> |  | new | translated |
-| <code>Settled</code> |  | new | missing |
+| <code>Settled</code> |  | new | translated |
 | <code>Setup</code> |  | new | translated |
 | <code>Setup &gt; Customize Form</code> |  | new | translated |
 | <code>Setup &gt; User</code> |  | new | translated |
@@ -12683,17 +12683,17 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Setup failed</code> |  | new | missing |
 | <code>Setup your organization</code> |  | new | missing |
 | <code>Share</code> |  | new | translated |
-| <code>Share Balance</code> |  | new | missing |
-| <code>Share Ledger</code> |  | new | missing |
-| <code>Share Management</code> |  | new | missing |
-| <code>Share Transfer</code> |  | new | missing |
-| <code>Share Type</code> |  | new | missing |
+| <code>Share Balance</code> |  | new | translated |
+| <code>Share Ledger</code> |  | new | translated |
+| <code>Share Management</code> |  | new | translated |
+| <code>Share Transfer</code> |  | new | translated |
+| <code>Share Type</code> |  | new | translated |
 | <code>Share With</code> |  | new | translated |
 | <code>Share this document with</code> |  | new | translated |
 | <code>Share {0} with</code> |  | new | translated |
 | <code>Shared</code> |  | new | translated |
 | <code>Shared with the following Users with Read access:{0}</code> |  | new | translated |
-| <code>Shareholder</code> |  | new | missing |
+| <code>Shareholder</code> |  | new | translated |
 | <code>Shelf Life In Days</code> |  | new | missing |
 | <code>Shelf Life in Days</code> |  | new | missing |
 | <code>Shift</code> |  | new | missing |
@@ -12711,32 +12711,32 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Shipment details</code> |  | new | missing |
 | <code>Shipments</code> |  | new | missing |
 | <code>Shipping</code> |  | new | translated |
-| <code>Shipping Account</code> |  | new | missing |
+| <code>Shipping Account</code> |  | new | translated |
 | <code>Shipping Address</code> |  | new | translated |
 | <code>Shipping Address Details</code> |  | new | missing |
-| <code>Shipping Address Name</code> |  | new | missing |
+| <code>Shipping Address Name</code> |  | new | translated |
 | <code>Shipping Address Template</code> |  | new | missing |
 | <code>Shipping Address does not belong to the {0}</code> |  | new | missing |
-| <code>Shipping Address does not have country, which is required for this Shipping Rule</code> |  | new | missing |
-| <code>Shipping Amount</code> |  | new | missing |
-| <code>Shipping City</code> |  | new | missing |
-| <code>Shipping Country</code> |  | new | missing |
-| <code>Shipping County</code> |  | new | missing |
-| <code>Shipping Rule</code> |  | new | missing |
-| <code>Shipping Rule Condition</code> |  | new | missing |
-| <code>Shipping Rule Conditions</code> |  | new | missing |
-| <code>Shipping Rule Country</code> |  | new | missing |
-| <code>Shipping Rule Label</code> |  | new | missing |
-| <code>Shipping Rule Type</code> |  | new | missing |
-| <code>Shipping State</code> |  | new | missing |
-| <code>Shipping Zipcode</code> |  | new | missing |
-| <code>Shipping rule not applicable for country {0} in Shipping Address</code> |  | new | missing |
-| <code>Shipping rule only applicable for Buying</code> |  | new | missing |
-| <code>Shipping rule only applicable for Selling</code> |  | new | missing |
+| <code>Shipping Address does not have country, which is required for this Shipping Rule</code> |  | new | translated |
+| <code>Shipping Amount</code> |  | new | translated |
+| <code>Shipping City</code> |  | new | translated |
+| <code>Shipping Country</code> |  | new | translated |
+| <code>Shipping County</code> |  | new | translated |
+| <code>Shipping Rule</code> |  | new | translated |
+| <code>Shipping Rule Condition</code> |  | new | translated |
+| <code>Shipping Rule Conditions</code> |  | new | translated |
+| <code>Shipping Rule Country</code> |  | new | translated |
+| <code>Shipping Rule Label</code> |  | new | translated |
+| <code>Shipping Rule Type</code> |  | new | translated |
+| <code>Shipping State</code> |  | new | translated |
+| <code>Shipping Zipcode</code> |  | new | translated |
+| <code>Shipping rule not applicable for country {0} in Shipping Address</code> |  | new | translated |
+| <code>Shipping rule only applicable for Buying</code> |  | new | translated |
+| <code>Shipping rule only applicable for Selling</code> |  | new | translated |
 | <code>Shop</code> |  | new | translated |
-| <code>Shopping Cart</code> |  | new | missing |
+| <code>Shopping Cart</code> |  | new | translated |
 | <code>Short Name</code> |  | new | missing |
-| <code>Short Term Loan Account</code> |  | new | missing |
+| <code>Short Term Loan Account</code> |  | new | translated |
 | <code>Short biography for website and other publications.</code> |  | new | missing |
 | <code>Short keyboard patterns are easy to guess</code> |  | new | translated |
 | <code>Short-term Investments</code> |  | new | missing |
@@ -12754,10 +12754,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Show Auth Server Metadata</code> |  | new | missing |
 | <code>Show Board</code> |  | new | missing |
 | <code>Show Calendar</code> |  | new | translated |
-| <code>Show Cancelled Entries</code> |  | new | missing |
+| <code>Show Cancelled Entries</code> |  | new | translated |
 | <code>Show Completed</code> |  | new | missing |
 | <code>Show Credit / Debit in Company Currency</code> |  | new | missing |
-| <code>Show Cumulative Amount</code> |  | new | missing |
+| <code>Show Cumulative Amount</code> |  | new | translated |
 | <code>Show Currency Symbol on Right Side</code> |  | new | missing |
 | <code>Show Dashboard</code> |  | new | translated |
 | <code>Show Description on Click</code> |  | new | missing |
@@ -12767,14 +12767,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Show Document</code> |  | new | translated |
 | <code>Show Error</code> |  | new | missing |
 | <code>Show External Link Warning</code> |  | new | missing |
-| <code>Show Failed Logs</code> |  | new | missing |
+| <code>Show Failed Logs</code> |  | new | translated |
 | <code>Show Fieldname (click to copy on clipboard)</code> |  | new | missing |
 | <code>Show First Document Tour</code> |  | new | missing |
 | <code>Show Form Tour</code> |  | new | translated |
 | <code>Show Full Error and Allow Reporting of Issues to the Developer</code> |  | new | translated |
 | <code>Show Full Form?</code> |  | new | translated |
 | <code>Show Full Number</code> |  | new | missing |
-| <code>Show Future Payments</code> |  | new | missing |
+| <code>Show Future Payments</code> |  | new | translated |
 | <code>Show GL Balance</code> |  | new | missing |
 | <code>Show Group Accounts</code> |  | new | missing |
 | <code>Show In Website</code> |  | new | missing |
@@ -12785,16 +12785,16 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Show Latest Forum Posts</code> |  | new | missing |
 | <code>Show Ledger View</code> |  | new | missing |
 | <code>Show Line Breaks after Sections</code> |  | new | translated |
-| <code>Show Linked Delivery Notes</code> |  | new | missing |
+| <code>Show Linked Delivery Notes</code> |  | new | translated |
 | <code>Show Links</code> |  | new | missing |
 | <code>Show Net Values in Party Account</code> |  | new | missing |
 | <code>Show Only Exact Amount</code> |  | new | missing |
 | <code>Show Only Failed Logs</code> |  | new | missing |
 | <code>Show Open</code> |  | new | missing |
-| <code>Show Opening Entries</code> |  | new | missing |
+| <code>Show Opening Entries</code> |  | new | translated |
 | <code>Show Opening and Closing Balance</code> |  | new | missing |
 | <code>Show Operations</code> |  | new | missing |
-| <code>Show Payment Details</code> |  | new | missing |
+| <code>Show Payment Details</code> |  | new | translated |
 | <code>Show Payment Schedule in print</code> |  | new | missing |
 | <code>Show Percentage Stats</code> |  | new | translated |
 | <code>Show Permissions</code> |  | new | translated |
@@ -12804,8 +12804,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Show Protected Resource Metadata</code> |  | new | missing |
 | <code>Show Remarks</code> |  | new | missing |
 | <code>Show Report</code> |  | new | translated |
-| <code>Show Return Entries</code> |  | new | missing |
-| <code>Show Sales Person</code> |  | new | missing |
+| <code>Show Return Entries</code> |  | new | translated |
+| <code>Show Sales Person</code> |  | new | translated |
 | <code>Show Section Headings</code> |  | new | translated |
 | <code>Show Sidebar</code> |  | new | translated |
 | <code>Show Similar Errors</code> |  | new | missing |
@@ -12848,7 +12848,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Show negative values as positive (for expenses in P&amp;L)</code> |  | new | missing |
 | <code>Show net values in opening and closing columns</code> |  | new | missing |
 | <code>Show on Timeline</code> |  | new | missing |
-| <code>Show only POS</code> |  | new | missing |
+| <code>Show only POS</code> |  | new | translated |
 | <code>Show only the Immediate Upcoming Term</code> |  | new | missing |
 | <code>Show pay button in Purchase Order portal</code> |  | new | missing |
 | <code>Show pending entries</code> |  | new | missing |
@@ -12856,10 +12856,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Show sidebar</code> |  | new | missing |
 | <code>Show taxes as table in print</code> |  | new | missing |
 | <code>Show title in browser window as &quot;Prefix - title&quot;</code> |  | new | translated |
-| <code>Show unclosed fiscal year&#x27;s P&amp;L balances</code> |  | new | missing |
+| <code>Show unclosed fiscal year&#x27;s P&amp;L balances</code> |  | new | translated |
 | <code>Show with upcoming revenue/expense</code> |  | new | missing |
-| <code>Show zero values</code> |  | new | missing |
-| <code>Show {0}</code> |  | new | missing |
+| <code>Show zero values</code> |  | new | translated |
+| <code>Show {0}</code> |  | new | translated |
 | <code>Show {0} List</code> |  | new | missing |
 | <code>Showing only Numeric fields from Report</code> |  | new | translated |
 | <code>Showing only first {0} rows out of {1}</code> |  | new | translated |
@@ -12876,14 +12876,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Sign Up is disabled</code> |  | new | translated |
 | <code>Sign up</code> |  | new | translated |
 | <code>Sign ups</code> |  | new | missing |
-| <code>Signatory Position</code> |  | new | missing |
+| <code>Signatory Position</code> |  | new | translated |
 | <code>Signature</code> |  | new | translated |
-| <code>Signed</code> |  | new | missing |
-| <code>Signed By (Company)</code> |  | new | missing |
-| <code>Signed On</code> |  | new | missing |
-| <code>Signee</code> |  | new | missing |
-| <code>Signee (Company)</code> |  | new | missing |
-| <code>Signee Details</code> |  | new | missing |
+| <code>Signed</code> |  | new | translated |
+| <code>Signed By (Company)</code> |  | new | translated |
+| <code>Signed On</code> |  | new | translated |
+| <code>Signee</code> |  | new | translated |
+| <code>Signee (Company)</code> |  | new | translated |
+| <code>Signee Details</code> |  | new | translated |
 | <code>Signup Disabled</code> |  | new | translated |
 | <code>Signups have been disabled for this website.</code> |  | new | translated |
 | <code>Similar types of workstations where the same operations run in parallel.</code> |  | new | missing |
@@ -12891,7 +12891,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Simple Python Expression, Example: &lt;code class=&quot;language-python&quot;&gt;status == &#x27;Open&#x27; and issue_type == &#x27;Bug&#x27;&lt;/code&gt;</code> |  | new | missing |
 | <code>Simple Python Expression, Example: &lt;code class=&quot;language-python&quot;&gt;status in (&quot;Closed&quot;, &quot;Cancelled&quot;)&lt;/code&gt;</code> |  | new | missing |
 | <code>Simple Python Expression, Example: doc.status == &#x27;Open&#x27; and doc.issue_type == &#x27;Bug&#x27;</code> |  | new | missing |
-| <code>Simple Python Expression, Example: territory != &#x27;All Territories&#x27;</code> |  | new | missing |
+| <code>Simple Python Expression, Example: territory != &#x27;All Territories&#x27;</code> |  | new | translated |
 | <code>Simple Python formula applied on Reading fields.&lt;br&gt; Numeric eg. 1: &lt;b&gt;reading_1 &amp;gt; 0.2 and reading_1 &amp;lt; 0.5&lt;/b&gt;&lt;br&gt;<br>Numeric eg. 2: &lt;b&gt;mean &amp;gt; 3.5&lt;/b&gt; (mean of populated fields)&lt;br&gt;<br>Value based eg.:  &lt;b&gt;reading_value in (&quot;A&quot;, &quot;B&quot;, &quot;C&quot;)&lt;/b&gt;</code> |  | new | missing |
 | <code>Simultaneous</code> |  | new | missing |
 | <code>Simultaneous Sessions</code> |  | new | translated |
@@ -12902,7 +12902,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Single</code> |  | new | missing |
 | <code>Single Account</code> |  | new | missing |
 | <code>Single DocTypes cannot be customized.</code> |  | new | translated |
-| <code>Single Tier Program</code> |  | new | missing |
+| <code>Single Tier Program</code> |  | new | translated |
 | <code>Single Types have only one record no tables associated. Values are stored in tabSingles</code> |  | new | translated |
 | <code>Single Variant</code> |  | new | missing |
 | <code>Site</code> |  | new | missing |
@@ -12913,7 +12913,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Skip</code> |  | new | translated |
 | <code>Skip All</code> |  | new | missing |
 | <code>Skip Authorization</code> |  | new | translated |
-| <code>Skip Delivery Note</code> |  | new | missing |
+| <code>Skip Delivery Note</code> |  | new | translated |
 | <code>Skip Material Transfer</code> |  | new | missing |
 | <code>Skip Material Transfer to WIP</code> |  | new | missing |
 | <code>Skip Material Transfer to WIP Warehouse</code> |  | new | missing |
@@ -12926,7 +12926,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Skipping fixture syncing for doctype {0} from file {1}</code> |  | new | missing |
 | <code>Skipping {0} of {1}, {2}</code> |  | new | missing |
 | <code>Skype</code> |  | new | excepted |
-| <code>Skype ID</code> |  | new | missing |
+| <code>Skype ID</code> |  | new | translated |
 | <code>Slack</code> |  | new | excepted |
 | <code>Slack Channel</code> |  | new | translated |
 | <code>Slack Webhook Error</code> |  | new | translated |
@@ -12954,11 +12954,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>SocketIO Ping Check</code> |  | new | missing |
 | <code>SocketIO Transport Mode</code> |  | new | missing |
 | <code>Soft-Bounced</code> |  | new | translated |
-| <code>Software</code> |  | new | missing |
+| <code>Software</code> |  | new | translated |
 | <code>Software Developer</code> |  | new | missing |
 | <code>Software ID</code> |  | new | missing |
 | <code>Software Version</code> |  | new | missing |
-| <code>Sold</code> |  | new | missing |
+| <code>Sold</code> |  | new | translated |
 | <code>Sold by</code> |  | new | missing |
 | <code>Solid</code> |  | new | missing |
 | <code>Solvency Ratios</code> |  | new | missing |
@@ -12972,9 +12972,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Something went wrong.</code> |  | new | missing |
 | <code>Sorry! I could not find what you were looking for.</code> |  | new | translated |
 | <code>Sorry! You are not permitted to view this page.</code> |  | new | translated |
-| <code>Sorry, this coupon code is no longer valid</code> |  | new | missing |
-| <code>Sorry, this coupon code&#x27;s validity has expired</code> |  | new | missing |
-| <code>Sorry, this coupon code&#x27;s validity has not started</code> |  | new | missing |
+| <code>Sorry, this coupon code is no longer valid</code> |  | new | translated |
+| <code>Sorry, this coupon code&#x27;s validity has expired</code> |  | new | translated |
+| <code>Sorry, this coupon code&#x27;s validity has not started</code> |  | new | translated |
 | <code>Sort Ascending</code> |  | new | missing |
 | <code>Sort Descending</code> |  | new | missing |
 | <code>Sort Field</code> |  | new | translated |
@@ -12990,7 +12990,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Source Document Type</code> |  | new | translated |
 | <code>Source Exchange Rate</code> |  | new | missing |
 | <code>Source Fieldname</code> |  | new | missing |
-| <code>Source Location</code> |  | new | missing |
+| <code>Source Location</code> |  | new | translated |
 | <code>Source Manufacture Entry</code> |  | new | missing |
 | <code>Source Name</code> |  | new | translated |
 | <code>Source Stock Entry (Manufacture)</code> |  | new | missing |
@@ -12998,15 +12998,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Source Stock Entry {0} has no finished goods quantity</code> |  | new | missing |
 | <code>Source Text</code> |  | new | translated |
 | <code>Source Type</code> |  | new | missing |
-| <code>Source Warehouse</code> |  | new | missing |
+| <code>Source Warehouse</code> |  | new | translated |
 | <code>Source Warehouse Address</code> |  | new | missing |
 | <code>Source Warehouse Address Link</code> |  | new | missing |
 | <code>Source Warehouse is mandatory for the Item {0}.</code> |  | new | missing |
 | <code>Source Warehouse {0} must be same as Customer Warehouse {1} in the Subcontracting Inward Order.</code> |  | new | missing |
-| <code>Source and Target Location cannot be same</code> |  | new | missing |
+| <code>Source and Target Location cannot be same</code> |  | new | translated |
 | <code>Source and target warehouse cannot be same for row {0}</code> |  | new | missing |
 | <code>Source and target warehouse must be different</code> |  | new | missing |
-| <code>Source of Funds (Liabilities)</code> |  | new | missing |
+| <code>Source of Funds (Liabilities)</code> |  | new | translated |
 | <code>Source warehouse is mandatory for row {0}</code> |  | new | missing |
 | <code>Source warehouse required for stock item {0}</code> |  | new | missing |
 | <code>Sourced by Supplier</code> |  | new | missing |
@@ -13020,12 +13020,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Special Characters except &#x27;-&#x27;, &#x27;#&#x27;, &#x27;.&#x27;, &#x27;/&#x27;, &#x27;{{&#x27; and &#x27;}}&#x27; not allowed in naming series {0}</code> |  | new | translated |
 | <code>Specify Exchange Rate to convert one currency into another</code> |  | new | missing |
 | <code>Specify a custom timeout, default timeout is 1500 seconds</code> |  | new | missing |
-| <code>Specify conditions to calculate shipping amount</code> |  | new | missing |
+| <code>Specify conditions to calculate shipping amount</code> |  | new | translated |
 | <code>Specify the domains or origins that are permitted to embed this form. Enter one domain per line (e.g., https://example.com). If no domains are specified, the form can only be embedded on the same origin.</code> |  | new | missing |
 | <code>Spending for Account {0} ({1}) between {2} and {3} has already exceeded the new allocated budget. Spent: {4}, Budget: {5}</code> |  | new | missing |
 | <code>Spent</code> |  | new | missing |
 | <code>Splash Image</code> |  | new | missing |
-| <code>Split</code> |  | new | missing |
+| <code>Split</code> |  | new | translated |
 | <code>Split Asset</code> |  | new | missing |
 | <code>Split Batch</code> |  | new | missing |
 | <code>Split Early Payment Discount Loss into Income and Tax Loss</code> |  | new | missing |
@@ -13048,8 +13048,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Sr No.</code> |  | new | missing |
 | <code>Stack Trace</code> |  | new | missing |
 | <code>Stage</code> |  | new | missing |
-| <code>Stage Name</code> |  | new | missing |
-| <code>Stale Days</code> |  | new | missing |
+| <code>Stage Name</code> |  | new | translated |
+| <code>Stale Days</code> |  | new | translated |
 | <code>Stale Days should start from 1.</code> |  | new | missing |
 | <code>Standard</code> |  | new | translated |
 | <code>Standard Buying</code> |  | new | missing |
@@ -13077,13 +13077,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Standard tax template that can be applied to all Purchase Transactions. This template can contain a list of tax heads and also other expense heads like &quot;Shipping&quot;, &quot;Insurance&quot;, &quot;Handling&quot;, etc.</code> |  | new | missing |
 | <code>Standard tax template that can be applied to all Sales Transactions. This template can contain a list of tax heads and also other expense/income heads like &quot;Shipping&quot;, &quot;Insurance&quot;, &quot;Handling&quot; etc.</code> |  | new | missing |
 | <code>Standard user type {0} can not be deleted.</code> |  | new | missing |
-| <code>Standing Name</code> |  | new | missing |
+| <code>Standing Name</code> |  | new | translated |
 | <code>Start</code> |  | new | translated |
 | <code>Start / Resume</code> |  | new | missing |
 | <code>Start Date</code> |  | new | translated |
 | <code>Start Date Field</code> |  | new | translated |
 | <code>Start Date cannot be after End Date</code> |  | new | missing |
-| <code>Start Date cannot be before the current date</code> |  | new | missing |
+| <code>Start Date cannot be before the current date</code> |  | new | translated |
 | <code>Start Date should be lower than End Date</code> |  | new | missing |
 | <code>Start Import</code> |  | new | translated |
 | <code>Start Job</code> |  | new | missing |
@@ -13093,12 +13093,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Start Time</code> |  | new | translated |
 | <code>Start Time can&#x27;t be greater than or equal to End Time for {0}.</code> |  | new | missing |
 | <code>Start Timer</code> |  | new | missing |
-| <code>Start Year</code> |  | new | missing |
-| <code>Start Year and End Year are mandatory</code> |  | new | missing |
+| <code>Start Year</code> |  | new | translated |
+| <code>Start Year and End Year are mandatory</code> |  | new | translated |
 | <code>Start a new discussion</code> |  | new | missing |
-| <code>Start date of current invoice&#x27;s period</code> |  | new | missing |
+| <code>Start date of current invoice&#x27;s period</code> |  | new | translated |
 | <code>Start date should be less than end date for Item {0}</code> |  | new | missing |
-| <code>Start date should be less than end date for task {0}</code> |  | new | missing |
+| <code>Start date should be less than end date for task {0}</code> |  | new | translated |
 | <code>Start entering data below this line</code> |  | new | translated |
 | <code>Start new Format</code> |  | new | translated |
 | <code>StartTLS</code> |  | new | excepted |
@@ -13106,8 +13106,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Started At</code> |  | new | missing |
 | <code>Started a background job to create {1} {0}. {2}</code> |  | new | missing |
 | <code>Starting Frappe ...</code> |  | new | translated |
-| <code>Starting location from left edge</code> |  | new | missing |
-| <code>Starting position from top edge</code> |  | new | missing |
+| <code>Starting location from left edge</code> |  | new | translated |
+| <code>Starting position from top edge</code> |  | new | translated |
 | <code>Starts With</code> |  | new | missing |
 | <code>Starts on</code> |  | new | translated |
 | <code>Starts with</code> |  | new | missing |
@@ -13139,15 +13139,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Steps</code> |  | new | translated |
 | <code>Steps to verify your login</code> |  | new | translated |
 | <code>Sticky</code> |  | new | missing |
-| <code>Stock</code> |  | new | missing |
-| <code>Stock Adjustment</code> |  | new | missing |
+| <code>Stock</code> |  | new | translated |
+| <code>Stock Adjustment</code> |  | new | translated |
 | <code>Stock Adjustment Account</code> |  | new | missing |
 | <code>Stock Ageing</code> |  | new | missing |
 | <code>Stock Analytics</code> |  | new | missing |
 | <code>Stock Asset Account</code> |  | new | missing |
-| <code>Stock Assets</code> |  | new | missing |
+| <code>Stock Assets</code> |  | new | translated |
 | <code>Stock Available</code> |  | new | missing |
-| <code>Stock Balance</code> |  | new | missing |
+| <code>Stock Balance</code> |  | new | translated |
 | <code>Stock Balance Report</code> |  | new | missing |
 | <code>Stock Capacity</code> |  | new | missing |
 | <code>Stock Closing</code> |  | new | missing |
@@ -13160,9 +13160,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Stock Closing Entry {0} belongs to a closed accounting period. Cancel the Period Closing Voucher {1} first.</code> |  | new | missing |
 | <code>Stock Closing Entry {0} has been queued for processing, system will take sometime to complete it.</code> |  | new | missing |
 | <code>Stock Closing Log</code> |  | new | missing |
-| <code>Stock Details</code> |  | new | missing |
+| <code>Stock Details</code> |  | new | translated |
 | <code>Stock Entries already created for Work Order {0}: {1}</code> |  | new | missing |
-| <code>Stock Entry</code> |  | new | missing |
+| <code>Stock Entry</code> |  | new | translated |
 | <code>Stock Entry (Outward GIT)</code> |  | new | missing |
 | <code>Stock Entry Child</code> |  | new | missing |
 | <code>Stock Entry Detail</code> |  | new | missing |
@@ -13170,13 +13170,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Stock Entry Type</code> |  | new | missing |
 | <code>Stock Entry {0} created</code> |  | new | missing |
 | <code>Stock Entry {0} has created</code> |  | new | missing |
-| <code>Stock Entry {0} is not submitted</code> |  | new | missing |
+| <code>Stock Entry {0} is not submitted</code> |  | new | translated |
 | <code>Stock Expense</code> |  | new | missing |
 | <code>Stock Expense Accounting</code> |  | new | missing |
-| <code>Stock Expenses</code> |  | new | missing |
+| <code>Stock Expenses</code> |  | new | translated |
 | <code>Stock Frozen</code> |  | new | missing |
-| <code>Stock In Hand</code> |  | new | missing |
-| <code>Stock Items</code> |  | new | missing |
+| <code>Stock In Hand</code> |  | new | translated |
+| <code>Stock Items</code> |  | new | translated |
 | <code>Stock Ledger</code> |  | new | missing |
 | <code>Stock Ledger Entries and GL Entries are reposted for the selected Purchase Receipts</code> |  | new | missing |
 | <code>Stock Ledger Entry</code> |  | new | missing |
@@ -13186,16 +13186,16 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Stock Ledgers won’t be reposted.</code> |  | new | missing |
 | <code>Stock Levels</code> |  | new | missing |
 | <code>Stock Levels HTML</code> |  | new | missing |
-| <code>Stock Liabilities</code> |  | new | missing |
-| <code>Stock Manager</code> |  | new | missing |
+| <code>Stock Liabilities</code> |  | new | translated |
+| <code>Stock Manager</code> |  | new | translated |
 | <code>Stock Movement</code> |  | new | missing |
 | <code>Stock Partially Reserved</code> |  | new | missing |
 | <code>Stock Planning</code> |  | new | missing |
 | <code>Stock Projected Qty</code> |  | new | missing |
-| <code>Stock Qty</code> |  | new | missing |
+| <code>Stock Qty</code> |  | new | translated |
 | <code>Stock Qty vs Batch Qty</code> |  | new | missing |
 | <code>Stock Qty vs Serial No Count</code> |  | new | missing |
-| <code>Stock Received But Not Billed</code> |  | new | missing |
+| <code>Stock Received But Not Billed</code> |  | new | translated |
 | <code>Stock Reconciliation</code> |  | new | missing |
 | <code>Stock Reconciliation Item</code> |  | new | missing |
 | <code>Stock Reconciliations</code> |  | new | missing |
@@ -13213,15 +13213,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Stock Reserved</code> |  | new | missing |
 | <code>Stock Reserved Qty</code> |  | new | missing |
 | <code>Stock Reserved Qty (in Stock UOM)</code> |  | new | missing |
-| <code>Stock Settings</code> |  | new | missing |
+| <code>Stock Settings</code> |  | new | translated |
 | <code>Stock Setup</code> |  | new | missing |
 | <code>Stock Summary</code> |  | new | missing |
 | <code>Stock Transactions</code> |  | new | missing |
-| <code>Stock UOM</code> |  | new | missing |
+| <code>Stock UOM</code> |  | new | translated |
 | <code>Stock Unreservation</code> |  | new | missing |
-| <code>Stock Uom</code> |  | new | missing |
+| <code>Stock Uom</code> |  | new | translated |
 | <code>Stock Update Not Allowed</code> |  | new | missing |
-| <code>Stock User</code> |  | new | missing |
+| <code>Stock User</code> |  | new | translated |
 | <code>Stock Validations</code> |  | new | missing |
 | <code>Stock Value</code> |  | new | missing |
 | <code>Stock Value Mismatch</code> |  | new | missing |
@@ -13259,7 +13259,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Stores</code> |  | new | missing |
 | <code>Stores the JSON of last known versions of various installed apps. It is used to show release notes.</code> |  | new | translated |
 | <code>Stores the datetime when the last reset password key was generated.</code> |  | new | missing |
-| <code>Straight Line</code> |  | new | missing |
+| <code>Straight Line</code> |  | new | translated |
 | <code>Straight rows of keys are easy to guess</code> |  | new | translated |
 | <code>Strip EXIF tags from uploaded images</code> |  | new | missing |
 | <code>Strong</code> |  | new | missing |
@@ -13281,7 +13281,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Sub Procedure</code> |  | new | missing |
 | <code>Sub assembly item references are missing. Please fetch the sub assemblies and raw materials again.</code> |  | new | missing |
 | <code>Sub-assembly BOM Count</code> |  | new | missing |
-| <code>Sub-contracting</code> |  | new | missing |
+| <code>Sub-contracting</code> |  | new | translated |
 | <code>Sub-currency. For e.g. &quot;Cent&quot;</code> |  | new | translated |
 | <code>Sub-domain provided by erpnext.com</code> |  | new | translated |
 | <code>Subcontract</code> |  | new | missing |
@@ -13289,11 +13289,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Subcontract Order</code> |  | new | missing |
 | <code>Subcontract Order Summary</code> |  | new | missing |
 | <code>Subcontract Return</code> |  | new | missing |
-| <code>Subcontracted Item</code> |  | new | missing |
-| <code>Subcontracted Item To Be Received</code> |  | new | missing |
+| <code>Subcontracted Item</code> |  | new | translated |
+| <code>Subcontracted Item To Be Received</code> |  | new | translated |
 | <code>Subcontracted Purchase Order</code> |  | new | missing |
 | <code>Subcontracted Quantity</code> |  | new | missing |
-| <code>Subcontracted Raw Materials To Be Transferred</code> |  | new | missing |
+| <code>Subcontracted Raw Materials To Be Transferred</code> |  | new | translated |
 | <code>Subcontracting</code> |  | new | missing |
 | <code>Subcontracting BOM</code> |  | new | missing |
 | <code>Subcontracting Conversion Factor</code> |  | new | missing |
@@ -13355,46 +13355,46 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Submitted document cannot be converted back to draft while transitioning from &lt;b&gt;{0} State&lt;/b&gt; to &lt;b&gt;{1} State&lt;/b&gt;</code> |  | new | missing |
 | <code>Submitting</code> | Freeze message while submitting a document | new | missing |
 | <code>Submitting {0}</code> |  | new | translated |
-| <code>Subscription</code> |  | new | missing |
-| <code>Subscription End Date</code> |  | new | missing |
-| <code>Subscription End Date is mandatory to follow calendar months</code> |  | new | missing |
-| <code>Subscription End Date must be after {0} as per the subscription plan</code> |  | new | missing |
-| <code>Subscription Invoice</code> |  | new | missing |
-| <code>Subscription Management</code> |  | new | missing |
-| <code>Subscription Period</code> |  | new | missing |
-| <code>Subscription Plan</code> |  | new | missing |
-| <code>Subscription Plan Detail</code> |  | new | missing |
-| <code>Subscription Plans</code> |  | new | missing |
-| <code>Subscription Price Based On</code> |  | new | missing |
-| <code>Subscription Settings</code> |  | new | missing |
-| <code>Subscription Start Date</code> |  | new | missing |
+| <code>Subscription</code> |  | new | translated |
+| <code>Subscription End Date</code> |  | new | translated |
+| <code>Subscription End Date is mandatory to follow calendar months</code> |  | new | translated |
+| <code>Subscription End Date must be after {0} as per the subscription plan</code> |  | new | translated |
+| <code>Subscription Invoice</code> |  | new | translated |
+| <code>Subscription Management</code> |  | new | translated |
+| <code>Subscription Period</code> |  | new | translated |
+| <code>Subscription Plan</code> |  | new | translated |
+| <code>Subscription Plan Detail</code> |  | new | translated |
+| <code>Subscription Plans</code> |  | new | translated |
+| <code>Subscription Price Based On</code> |  | new | translated |
+| <code>Subscription Settings</code> |  | new | translated |
+| <code>Subscription Start Date</code> |  | new | translated |
 | <code>Subscription for Future dates cannot be processed.</code> |  | new | missing |
-| <code>Subscriptions</code> |  | new | missing |
+| <code>Subscriptions</code> |  | new | translated |
 | <code>Subsidiary</code> |  | new | translated |
 | <code>Subtle</code> |  | new | missing |
 | <code>Succeeded</code> |  | new | missing |
 | <code>Succeeded Entries</code> |  | new | missing |
 | <code>Success</code> |  | new | translated |
 | <code>Success Action</code> |  | new | translated |
-| <code>Success Redirect URL</code> |  | new | missing |
+| <code>Success Redirect URL</code> |  | new | translated |
 | <code>Success URI</code> |  | new | missing |
 | <code>Success URL</code> |  | new | translated |
 | <code>Success message</code> |  | new | missing |
 | <code>Success title</code> |  | new | missing |
-| <code>Successful</code> |  | new | missing |
+| <code>Successful</code> |  | new | translated |
 | <code>Successful Job Count</code> |  | new | missing |
 | <code>Successful Transactions</code> |  | new | translated |
 | <code>Successful: {0} to {1}</code> |  | new | translated |
-| <code>Successfully Reconciled</code> |  | new | missing |
-| <code>Successfully Set Supplier</code> |  | new | missing |
+| <code>Successfully Reconciled</code> |  | new | translated |
+| <code>Successfully Set Supplier</code> |  | new | translated |
 | <code>Successfully Updated</code> |  | new | translated |
 | <code>Successfully changed Stock UOM, please redefine conversion factors for new UOM.</code> |  | new | missing |
 | <code>Successfully imported {0}</code> |  | new | missing |
 | <code>Successfully imported {0} out of {1} records.</code> |  | new | missing |
-| <code>Successfully imported {0} record out of {1}. Click on Export Errored Rows, fix the errors and import again.</code> |  | new | missing |
-| <code>Successfully imported {0} record.</code> |  | new | missing |
-| <code>Successfully imported {0} records out of {1}. Click on Export Errored Rows, fix the errors and import again.</code> |  | new | missing |
-| <code>Successfully imported {0} records.</code> |  | new | missing |
+| <code>Successfully imported {0} record out of {1}. Click on Export Errored Rows, fix the errors and import again.</code> |  | new | translated |
+| <code>Successfully imported {0} record.</code> |  | new | translated |
+| <code>Successfully imported {0} records out of {1}. Click on Export Errored Rows, fix the errors and import again.</code> |  | new | translated |
+| <code>Successfully imported {0} records.</code> |  | new | translated |
 | <code>Successfully linked to Customer</code> |  | new | missing |
 | <code>Successfully linked to Supplier</code> |  | new | missing |
 | <code>Successfully merged {0} out of {1}.</code> |  | new | missing |
@@ -13403,17 +13403,17 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Successfully updated translations</code> |  | new | translated |
 | <code>Successfully updated {0}</code> |  | new | missing |
 | <code>Successfully updated {0} out of {1} records.</code> |  | new | missing |
-| <code>Successfully updated {0} record out of {1}. Click on Export Errored Rows, fix the errors and import again.</code> |  | new | missing |
-| <code>Successfully updated {0} record.</code> |  | new | missing |
-| <code>Successfully updated {0} records out of {1}. Click on Export Errored Rows, fix the errors and import again.</code> |  | new | missing |
-| <code>Successfully updated {0} records.</code> |  | new | missing |
+| <code>Successfully updated {0} record out of {1}. Click on Export Errored Rows, fix the errors and import again.</code> |  | new | translated |
+| <code>Successfully updated {0} record.</code> |  | new | translated |
+| <code>Successfully updated {0} records out of {1}. Click on Export Errored Rows, fix the errors and import again.</code> |  | new | translated |
+| <code>Successfully updated {0} records.</code> |  | new | translated |
 | <code>Suggest Optimizations</code> |  | new | missing |
 | <code>Suggest creating a</code> |  | new | missing |
 | <code>Suggested</code> |  | new | missing |
 | <code>Suggested Indexes</code> |  | new | missing |
 | <code>Suggested Transfer to {0}</code> |  | new | missing |
 | <code>Suggested Username: {0}</code> |  | new | translated |
-| <code>Suggestions</code> |  | new | missing |
+| <code>Suggestions</code> |  | new | translated |
 | <code>Sum</code> |  | new | translated |
 | <code>Sum of {0}</code> |  | new | translated |
 | <code>Summary</code> |  | new | translated |
@@ -13421,78 +13421,78 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Summary for this week and pending activities</code> |  | new | missing |
 | <code>Sunday</code> |  | new | translated |
 | <code>Supplied Item</code> |  | new | missing |
-| <code>Supplied Items</code> |  | new | missing |
-| <code>Supplied Qty</code> |  | new | missing |
-| <code>Supplier</code> |  | new | missing |
-| <code>Supplier &gt; Supplier Type</code> |  | new | missing |
-| <code>Supplier Address</code> |  | new | missing |
+| <code>Supplied Items</code> |  | new | translated |
+| <code>Supplied Qty</code> |  | new | translated |
+| <code>Supplier</code> |  | new | translated |
+| <code>Supplier &gt; Supplier Type</code> |  | new | translated |
+| <code>Supplier Address</code> |  | new | translated |
 | <code>Supplier Address Details</code> |  | new | missing |
-| <code>Supplier Addresses And Contacts</code> |  | new | missing |
+| <code>Supplier Addresses And Contacts</code> |  | new | translated |
 | <code>Supplier Contact</code> |  | new | missing |
 | <code>Supplier Defaults</code> |  | new | missing |
 | <code>Supplier Delivery Note</code> |  | new | missing |
-| <code>Supplier Details</code> |  | new | missing |
-| <code>Supplier Group</code> |  | new | missing |
+| <code>Supplier Details</code> |  | new | translated |
+| <code>Supplier Group</code> |  | new | translated |
 | <code>Supplier Group Item</code> |  | new | missing |
 | <code>Supplier Group Name</code> |  | new | missing |
 | <code>Supplier Info</code> |  | new | missing |
 | <code>Supplier Invoice</code> |  | new | missing |
-| <code>Supplier Invoice Date</code> |  | new | missing |
-| <code>Supplier Invoice No</code> |  | new | missing |
-| <code>Supplier Invoice No exists in Purchase Invoice {0}</code> |  | new | missing |
+| <code>Supplier Invoice Date</code> |  | new | translated |
+| <code>Supplier Invoice No</code> |  | new | translated |
+| <code>Supplier Invoice No exists in Purchase Invoice {0}</code> |  | new | translated |
 | <code>Supplier Item</code> |  | new | missing |
-| <code>Supplier Lead Time (days)</code> |  | new | missing |
+| <code>Supplier Lead Time (days)</code> |  | new | translated |
 | <code>Supplier Ledger</code> |  | new | missing |
-| <code>Supplier Ledger Summary</code> |  | new | missing |
-| <code>Supplier Name</code> |  | new | missing |
-| <code>Supplier Naming By</code> |  | new | missing |
+| <code>Supplier Ledger Summary</code> |  | new | translated |
+| <code>Supplier Name</code> |  | new | translated |
+| <code>Supplier Naming By</code> |  | new | translated |
 | <code>Supplier Number</code> |  | new | missing |
 | <code>Supplier Number At Customer</code> |  | new | missing |
 | <code>Supplier Numbers</code> |  | new | missing |
-| <code>Supplier Part No</code> |  | new | missing |
-| <code>Supplier Part Number</code> |  | new | missing |
+| <code>Supplier Part No</code> |  | new | translated |
+| <code>Supplier Part Number</code> |  | new | translated |
 | <code>Supplier Portal Users</code> |  | new | missing |
-| <code>Supplier Quotation</code> |  | new | missing |
-| <code>Supplier Quotation Comparison</code> |  | new | missing |
-| <code>Supplier Quotation Item</code> |  | new | missing |
-| <code>Supplier Quotation {0} Created</code> |  | new | missing |
+| <code>Supplier Quotation</code> |  | new | translated |
+| <code>Supplier Quotation Comparison</code> |  | new | translated |
+| <code>Supplier Quotation Item</code> |  | new | translated |
+| <code>Supplier Quotation {0} Created</code> |  | new | translated |
 | <code>Supplier Quotation {0} already exists against Request for Quotation {1}</code> |  | new | missing |
 | <code>Supplier Reference</code> |  | new | missing |
 | <code>Supplier Required</code> |  | new | missing |
-| <code>Supplier Score</code> |  | new | missing |
-| <code>Supplier Scorecard</code> |  | new | missing |
-| <code>Supplier Scorecard Criteria</code> |  | new | missing |
-| <code>Supplier Scorecard Period</code> |  | new | missing |
-| <code>Supplier Scorecard Scoring Criteria</code> |  | new | missing |
-| <code>Supplier Scorecard Scoring Standing</code> |  | new | missing |
-| <code>Supplier Scorecard Scoring Variable</code> |  | new | missing |
-| <code>Supplier Scorecard Setup</code> |  | new | missing |
-| <code>Supplier Scorecard Standing</code> |  | new | missing |
-| <code>Supplier Scorecard Variable</code> |  | new | missing |
-| <code>Supplier Type</code> |  | new | missing |
-| <code>Supplier Warehouse</code> |  | new | missing |
-| <code>Supplier delivers to Customer</code> |  | new | missing |
+| <code>Supplier Score</code> |  | new | translated |
+| <code>Supplier Scorecard</code> |  | new | translated |
+| <code>Supplier Scorecard Criteria</code> |  | new | translated |
+| <code>Supplier Scorecard Period</code> |  | new | translated |
+| <code>Supplier Scorecard Scoring Criteria</code> |  | new | translated |
+| <code>Supplier Scorecard Scoring Standing</code> |  | new | translated |
+| <code>Supplier Scorecard Scoring Variable</code> |  | new | translated |
+| <code>Supplier Scorecard Setup</code> |  | new | translated |
+| <code>Supplier Scorecard Standing</code> |  | new | translated |
+| <code>Supplier Scorecard Variable</code> |  | new | translated |
+| <code>Supplier Type</code> |  | new | translated |
+| <code>Supplier Warehouse</code> |  | new | translated |
+| <code>Supplier delivers to Customer</code> |  | new | translated |
 | <code>Supplier is required for all selected Items</code> |  | new | missing |
-| <code>Supplier of Goods or Services.</code> |  | new | missing |
-| <code>Supplier {0} not found in {1}</code> |  | new | missing |
+| <code>Supplier of Goods or Services.</code> |  | new | translated |
+| <code>Supplier {0} not found in {1}</code> |  | new | translated |
 | <code>Supplier&#x27;s tax identification number (e.g. PAN, VAT, GST)</code> |  | new | missing |
 | <code>Supplier(s)</code> |  | new | missing |
-| <code>Suppliers</code> |  | new | missing |
+| <code>Suppliers</code> |  | new | translated |
 | <code>Supplies subject to the reverse charge provision</code> |  | new | missing |
 | <code>Supply</code> |  | new | missing |
-| <code>Support</code> |  | new | missing |
+| <code>Support</code> |  | new | translated |
 | <code>Support Hour Distribution</code> |  | new | missing |
 | <code>Support Portal</code> |  | new | missing |
 | <code>Support Search Source</code> |  | new | missing |
 | <code>Support Settings</code> |  | new | missing |
 | <code>Support Team</code> |  | new | missing |
-| <code>Support Tickets</code> |  | new | missing |
+| <code>Support Tickets</code> |  | new | translated |
 | <code>Support without complexity, lock-in and per-user costs. Try it for free!</code> |  | new | missing |
 | <code>Supported Variables:</code> |  | new | missing |
 | <code>Suspected Discount Amount</code> |  | new | missing |
 | <code>Suspend Sending</code> |  | new | translated |
 | <code>Suspended</code> |  | new | missing |
-| <code>Switch Between Payment Modes</code> |  | new | missing |
+| <code>Switch Between Payment Modes</code> |  | new | translated |
 | <code>Switch Camera</code> |  | new | missing |
 | <code>Switch Theme</code> |  | new | missing |
 | <code>Switch To Desk</code> |  | new | translated |
@@ -13546,13 +13546,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>System managers are allowed by default</code> |  | new | translated |
 | <code>System will automatically create the serial numbers / batch for the Finished Good on submission of work order</code> |  | new | missing |
 | <code>System will do an implicit conversion using the pegged currency. &lt;br&gt;<br>Ex: Instead of AED -&amp;gt; INR, system will do AED -&amp;gt; USD -&amp;gt; INR using the pegged exchange rate of AED against USD.</code> |  | new | missing |
-| <code>System will fetch all the entries if limit value is zero.</code> |  | new | missing |
+| <code>System will fetch all the entries if limit value is zero.</code> |  | new | translated |
 | <code>System will not check over billing since amount for Item {0} in {1} is zero</code> |  | new | missing |
 | <code>System will notify to increase or decrease quantity or amount</code> |  | new | missing |
 | <code>System will use the latest saved Currency Exchange rate on or before the transaction date, however old it is. &lt;br&gt;<br>Uncheck to ignore rates older than Stale Days and fetch a fresh rate from the exchange rate provider instead.</code> |  | new | missing |
 | <code>T</code> | Number system | new | excepted |
 | <code>TDS / withholding tax category applied when paying this supplier</code> |  | new | missing |
-| <code>TDS Computation Summary</code> |  | new | missing |
+| <code>TDS Computation Summary</code> |  | new | translated |
 | <code>TDS Deducted</code> |  | new | missing |
 | <code>TDS Payable</code> |  | new | missing |
 | <code>TDS/TCS is calculated at the rate defined here on every payment from this customer.</code> |  | new | missing |
@@ -13581,7 +13581,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Take Photo</code> |  | new | translated |
 | <code>Target</code> |  | new | translated |
 | <code>Target  Amount</code> |  | new | missing |
-| <code>Target ({})</code> |  | new | missing |
+| <code>Target ({})</code> |  | new | translated |
 | <code>Target Asset</code> |  | new | missing |
 | <code>Target Asset {0} cannot be cancelled</code> |  | new | missing |
 | <code>Target Asset {0} cannot be submitted</code> |  | new | missing |
@@ -13589,7 +13589,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Target Asset {0} does not belong to company {1}</code> |  | new | missing |
 | <code>Target Asset {0} needs to be composite asset</code> |  | new | missing |
 | <code>Target Detail</code> |  | new | missing |
-| <code>Target Details</code> |  | new | missing |
+| <code>Target Details</code> |  | new | translated |
 | <code>Target Distribution</code> |  | new | missing |
 | <code>Target Exchange Rate</code> |  | new | missing |
 | <code>Target Fieldname (Stock Ledger Entry)</code> |  | new | missing |
@@ -13597,12 +13597,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Target Incoming Rate</code> |  | new | missing |
 | <code>Target Item Code</code> |  | new | missing |
 | <code>Target Item {0} must be a Fixed Asset item</code> |  | new | missing |
-| <code>Target Location</code> |  | new | missing |
+| <code>Target Location</code> |  | new | translated |
 | <code>Target Location is required for transferring Asset {0}</code> |  | new | missing |
 | <code>Target Location is required while receiving Asset {0}</code> |  | new | missing |
-| <code>Target On</code> |  | new | missing |
+| <code>Target On</code> |  | new | translated |
 | <code>Target Qty</code> |  | new | missing |
-| <code>Target Warehouse</code> |  | new | missing |
+| <code>Target Warehouse</code> |  | new | translated |
 | <code>Target Warehouse Address</code> |  | new | missing |
 | <code>Target Warehouse Address Link</code> |  | new | missing |
 | <code>Target Warehouse Reservation Error</code> |  | new | missing |
@@ -13618,7 +13618,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Task Completion</code> |  | new | missing |
 | <code>Task Depends On</code> |  | new | missing |
 | <code>Task Description</code> |  | new | missing |
-| <code>Task Name</code> |  | new | missing |
+| <code>Task Name</code> |  | new | translated |
 | <code>Task Progress</code> |  | new | missing |
 | <code>Task Type</code> |  | new | missing |
 | <code>Task Weight</code> |  | new | missing |
@@ -13627,59 +13627,59 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Tasks</code> |  | new | translated |
 | <code>Tasks Completed</code> |  | new | missing |
 | <code>Tasks Overdue</code> |  | new | missing |
-| <code>Tax</code> |  | new | missing |
+| <code>Tax</code> |  | new | translated |
 | <code>Tax Account</code> |  | new | missing |
 | <code>Tax Amount</code> |  | new | missing |
-| <code>Tax Amount After Discount Amount</code> |  | new | missing |
-| <code>Tax Amount After Discount Amount (Company Currency)</code> |  | new | missing |
+| <code>Tax Amount After Discount Amount</code> |  | new | translated |
+| <code>Tax Amount After Discount Amount (Company Currency)</code> |  | new | translated |
 | <code>Tax Amount will be rounded on a row(items) level</code> |  | new | missing |
-| <code>Tax Assets</code> |  | new | missing |
-| <code>Tax Breakup</code> |  | new | missing |
-| <code>Tax Category</code> |  | new | missing |
+| <code>Tax Assets</code> |  | new | translated |
+| <code>Tax Breakup</code> |  | new | translated |
+| <code>Tax Category</code> |  | new | translated |
 | <code>Tax Category has been changed to &quot;Total&quot; because all the Items are non-stock items</code> |  | new | missing |
 | <code>Tax Expense</code> |  | new | missing |
-| <code>Tax ID</code> |  | new | missing |
-| <code>Tax Id</code> |  | new | missing |
+| <code>Tax ID</code> |  | new | translated |
+| <code>Tax Id</code> |  | new | translated |
 | <code>Tax Id: {0}</code> |  | new | missing |
 | <code>Tax Identification</code> |  | new | missing |
 | <code>Tax Masters</code> |  | new | missing |
-| <code>Tax Rate</code> |  | new | missing |
+| <code>Tax Rate</code> |  | new | translated |
 | <code>Tax Rate %</code> |  | new | missing |
-| <code>Tax Rates</code> |  | new | missing |
+| <code>Tax Rates</code> |  | new | translated |
 | <code>Tax Refunds provided to Tourists under the Tax Refunds for Tourists Scheme</code> |  | new | missing |
 | <code>Tax Row</code> |  | new | missing |
-| <code>Tax Rule</code> |  | new | missing |
-| <code>Tax Rule Conflicts with {0}</code> |  | new | missing |
+| <code>Tax Rule</code> |  | new | translated |
+| <code>Tax Rule Conflicts with {0}</code> |  | new | translated |
 | <code>Tax Settings</code> |  | new | missing |
 | <code>Tax Template</code> |  | new | missing |
-| <code>Tax Template is mandatory.</code> |  | new | missing |
-| <code>Tax Total</code> |  | new | missing |
-| <code>Tax Type</code> |  | new | missing |
+| <code>Tax Template is mandatory.</code> |  | new | translated |
+| <code>Tax Total</code> |  | new | translated |
+| <code>Tax Type</code> |  | new | translated |
 | <code>Tax Withholding</code> |  | new | missing |
-| <code>Tax Withholding Account</code> |  | new | missing |
-| <code>Tax Withholding Category</code> |  | new | missing |
+| <code>Tax Withholding Account</code> |  | new | translated |
+| <code>Tax Withholding Category</code> |  | new | translated |
 | <code>Tax Withholding Details</code> |  | new | missing |
 | <code>Tax Withholding Entries</code> |  | new | missing |
 | <code>Tax Withholding Entry</code> |  | new | missing |
 | <code>Tax Withholding Group</code> |  | new | missing |
-| <code>Tax Withholding Rate</code> |  | new | missing |
-| <code>Tax Withholding Rates</code> |  | new | missing |
+| <code>Tax Withholding Rate</code> |  | new | translated |
+| <code>Tax Withholding Rates</code> |  | new | translated |
 | <code>Tax detail table fetched from item master as a string and stored in this field.<br>Used for Taxes and Charges</code> |  | new | missing |
 | <code>Tax withheld only for amount exceeding cumulative threshold</code> |  | new | missing |
-| <code>Taxable Amount</code> |  | new | missing |
+| <code>Taxable Amount</code> |  | new | translated |
 | <code>Taxable Date</code> |  | new | missing |
 | <code>Taxable Document Name</code> |  | new | missing |
 | <code>Taxable Document Type</code> |  | new | missing |
-| <code>Taxes</code> |  | new | missing |
-| <code>Taxes and Charges</code> |  | new | missing |
-| <code>Taxes and Charges Added</code> |  | new | missing |
-| <code>Taxes and Charges Added (Company Currency)</code> |  | new | missing |
-| <code>Taxes and Charges Calculation</code> |  | new | missing |
-| <code>Taxes and Charges Deducted</code> |  | new | missing |
-| <code>Taxes and Charges Deducted (Company Currency)</code> |  | new | missing |
+| <code>Taxes</code> |  | new | translated |
+| <code>Taxes and Charges</code> |  | new | translated |
+| <code>Taxes and Charges Added</code> |  | new | translated |
+| <code>Taxes and Charges Added (Company Currency)</code> |  | new | translated |
+| <code>Taxes and Charges Calculation</code> |  | new | translated |
+| <code>Taxes and Charges Deducted</code> |  | new | translated |
+| <code>Taxes and Charges Deducted (Company Currency)</code> |  | new | translated |
 | <code>Taxes row #{0}: {1} cannot be smaller than {2}</code> |  | new | missing |
 | <code>Team</code> |  | new | missing |
-| <code>Team Member</code> |  | new | missing |
+| <code>Team Member</code> |  | new | translated |
 | <code>Team Members</code> |  | new | translated |
 | <code>Team Members Heading</code> |  | new | translated |
 | <code>Team Members Subtitle</code> |  | new | missing |
@@ -13688,7 +13688,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Technology</code> |  | new | missing |
 | <code>Telecommunications</code> |  | new | missing |
 | <code>Telemetry</code> |  | new | missing |
-| <code>Telephone Expenses</code> |  | new | missing |
+| <code>Telephone Expenses</code> |  | new | translated |
 | <code>Telephony</code> |  | new | missing |
 | <code>Telephony Call Type</code> |  | new | missing |
 | <code>Television</code> |  | new | missing |
@@ -13697,34 +13697,34 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Template File</code> |  | new | missing |
 | <code>Template Item</code> |  | new | missing |
 | <code>Template Item Selected</code> |  | new | missing |
-| <code>Template Name</code> |  | new | missing |
+| <code>Template Name</code> |  | new | translated |
 | <code>Template Options</code> |  | new | translated |
 | <code>Template Task</code> |  | new | missing |
-| <code>Template Title</code> |  | new | missing |
+| <code>Template Title</code> |  | new | translated |
 | <code>Template Warnings</code> |  | new | translated |
 | <code>Templates</code> |  | new | missing |
 | <code>Temporarily Disabled</code> |  | new | translated |
-| <code>Temporarily on Hold</code> |  | new | missing |
-| <code>Temporary</code> |  | new | missing |
-| <code>Temporary Accounts</code> |  | new | missing |
-| <code>Temporary Opening</code> |  | new | missing |
-| <code>Temporary Opening Account</code> |  | new | missing |
-| <code>Term Details</code> |  | new | missing |
-| <code>Terms</code> |  | new | missing |
+| <code>Temporarily on Hold</code> |  | new | translated |
+| <code>Temporary</code> |  | new | translated |
+| <code>Temporary Accounts</code> |  | new | translated |
+| <code>Temporary Opening</code> |  | new | translated |
+| <code>Temporary Opening Account</code> |  | new | translated |
+| <code>Term Details</code> |  | new | translated |
+| <code>Terms</code> |  | new | translated |
 | <code>Terms &amp; Conditions</code> |  | new | missing |
 | <code>Terms Template</code> |  | new | missing |
-| <code>Terms and Conditions</code> |  | new | missing |
+| <code>Terms and Conditions</code> |  | new | translated |
 | <code>Terms and Conditions Content</code> |  | new | missing |
-| <code>Terms and Conditions Details</code> |  | new | missing |
+| <code>Terms and Conditions Details</code> |  | new | translated |
 | <code>Terms and Conditions Help</code> |  | new | missing |
-| <code>Terms and Conditions Template</code> |  | new | missing |
-| <code>Territory</code> |  | new | missing |
+| <code>Terms and Conditions Template</code> |  | new | translated |
+| <code>Territory</code> |  | new | translated |
 | <code>Territory Item</code> |  | new | missing |
 | <code>Territory Manager</code> |  | new | missing |
 | <code>Territory Name</code> |  | new | missing |
-| <code>Territory Target Variance Based On Item Group</code> |  | new | missing |
+| <code>Territory Target Variance Based On Item Group</code> |  | new | translated |
 | <code>Territory Targets</code> |  | new | missing |
-| <code>Territory-wise Sales</code> |  | new | missing |
+| <code>Territory-wise Sales</code> |  | new | translated |
 | <code>Tesla</code> |  | new | excepted |
 | <code>Test Data</code> |  | new | missing |
 | <code>Test Job ID</code> |  | new | missing |
@@ -13744,14 +13744,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Thank you for your message</code> |  | new | translated |
 | <code>Thanks</code> |  | new | missing |
 | <code>The &#x27;From Package No.&#x27; field must neither be empty nor it&#x27;s value less than 1.</code> |  | new | missing |
-| <code>The Access to Request for Quotation From Portal is Disabled. To Allow Access, Enable it in Portal Settings.</code> |  | new | missing |
+| <code>The Access to Request for Quotation From Portal is Disabled. To Allow Access, Enable it in Portal Settings.</code> |  | new | translated |
 | <code>The Auto Repeat for this document has been disabled.</code> |  | new | translated |
 | <code>The BOM which will be replaced</code> |  | new | missing |
 | <code>The Batch {0} has negative batch quantity {1}. To fix this, go to the batch and click on Recalculate Batch Qty. If the issue still persists, create an inward entry.</code> |  | new | missing |
 | <code>The Batch {0} of an item {1} has negative stock in the warehouse {2}{3}.<br>			Please add a stock quantity of {4} to proceed with this entry.<br>			If it is not possible to make an adjustment entry, please enable &#x27;Allow Negative Stock for Batch&#x27; in the batch {0} or in the Stock Settings to proceed.<br>			However, enabling this setting may lead to negative stock in the system.<br>			So please ensure the stock levels are adjusted as soon as possible to maintain the correct valuation rate.</code> |  | new | missing |
 | <code>The Bulk Update could not happen due to &lt;b&gt;{0}&lt;/b&gt;</code> |  | new | missing |
 | <code>The CSV format is case sensitive</code> |  | new | translated |
-| <code>The Campaign &#x27;{0}&#x27; already exists for the {1} &#x27;{2}&#x27;</code> |  | new | missing |
+| <code>The Campaign &#x27;{0}&#x27; already exists for the {1} &#x27;{2}&#x27;</code> |  | new | translated |
 | <code>The Client ID obtained from the Google Cloud Console under &lt;a href=&quot;https://console.cloud.google.com/apis/credentials&quot;&gt;<br>&quot;APIs &amp;amp; Services&quot; &amp;gt; &quot;Credentials&quot;<br>&lt;/a&gt;</code> |  | new | missing |
 | <code>The Company {0} of Sales Forecast {1} does not match with the Company {2} of Master Production Schedule {3}.</code> |  | new | missing |
 | <code>The Condition &#x27;{0}&#x27; is invalid</code> |  | new | translated |
@@ -13761,10 +13761,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>The GL Entries and closing balances will be processed in the background, it can take a few minutes.</code> |  | new | missing |
 | <code>The GL Entries will be cancelled in the background, it can take a few minutes.</code> |  | new | missing |
 | <code>The Job Card {0} has only {1} left to produce, but this entry books {2} ({3} finished goods and {4} process loss). Cancel or update its other manufacture entries first.</code> |  | new | missing |
-| <code>The Loyalty Program isn&#x27;t valid for the selected company</code> |  | new | missing |
+| <code>The Loyalty Program isn&#x27;t valid for the selected company</code> |  | new | translated |
 | <code>The Next Scheduled Date cannot be later than the End Date.</code> |  | new | missing |
 | <code>The Payment Request {0} is already paid, cannot process payment twice</code> |  | new | missing |
-| <code>The Payment Term at row {0} is possibly a duplicate.</code> |  | new | missing |
+| <code>The Payment Term at row {0} is possibly a duplicate.</code> |  | new | translated |
 | <code>The Pick List having Stock Reservation Entries cannot be updated. If you need to make changes, we recommend canceling the existing Stock Reservation Entries before updating the Pick List.</code> |  | new | missing |
 | <code>The Process Loss Qty has reset as per job cards Process Loss Qty</code> |  | new | missing |
 | <code>The Push Relay Server URL key (`push_relay_server_url`) is missing in your site config</code> |  | new | missing |
@@ -13775,11 +13775,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>The Stock Closing Entry for {0} is not completed yet. Wait for it to complete before submitting the Period Closing Voucher.</code> |  | new | missing |
 | <code>The Stock Entry of type &#x27;Manufacture&#x27; is known as backflush. Raw materials being consumed to manufacture finished goods is known as backflushing. &lt;br&gt;&lt;br&gt; When creating Manufacture Entry, raw-material items are backflushed based on BOM of production item. If you want raw-material items to be backflushed based on Material Transfer entry made against that Work Order instead, then you can set it under this field.</code> |  | new | missing |
 | <code>The User record for this request has been auto-deleted due to inactivity by system admins.</code> |  | new | missing |
-| <code>The account head under Liability or Equity, in which Profit/Loss will be booked</code> |  | new | missing |
+| <code>The account head under Liability or Equity, in which Profit/Loss will be booked</code> |  | new | translated |
 | <code>The account type of {0} cannot be changed from {1} because stock ledger entries exist against it.</code> |  | new | missing |
 | <code>The allocated amount is greater than the outstanding amount of Payment Request {0}</code> |  | new | missing |
 | <code>The amount format detected in the statement file. This is used to parse the deposit and withdrawal values from each row.</code> |  | new | missing |
-| <code>The amount of {0} set in this payment request is different from the calculated amount of all payment plans: {1}. Make sure this is correct before submitting the document.</code> |  | new | missing |
+| <code>The amount of {0} set in this payment request is different from the calculated amount of all payment plans: {1}. Make sure this is correct before submitting the document.</code> |  | new | translated |
 | <code>The application has been updated to a new version, please refresh this page</code> |  | new | translated |
 | <code>The application name will be used in the Login page.</code> |  | new | missing |
 | <code>The attachments could not be correctly linked to the new document</code> |  | new | translated |
@@ -13807,25 +13807,25 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>The default BOM for that item will be fetched by the system. You can also change the BOM.</code> |  | new | missing |
 | <code>The default value for the Check field {0} must be either &#x27;0&#x27; or &#x27;1&#x27;</code> |  | new | missing |
 | <code>The description of the transaction</code> |  | new | missing |
-| <code>The difference between from time and To Time must be a multiple of Appointment</code> |  | new | missing |
+| <code>The difference between from time and To Time must be a multiple of Appointment</code> |  | new | translated |
 | <code>The document could not be correctly assigned</code> |  | new | translated |
 | <code>The document has been assigned to {0}</code> |  | new | translated |
 | <code>The document has been created and reconciled. Uploading attachments...</code> |  | new | missing |
 | <code>The document type selected is a child table, so the parent document type is required.</code> |  | new | missing |
 | <code>The email button is enabled for the user in the document.</code> |  | new | missing |
-| <code>The field Asset Account cannot be blank</code> |  | new | missing |
-| <code>The field Equity/Liability Account cannot be blank</code> |  | new | missing |
-| <code>The field From Shareholder cannot be blank</code> |  | new | missing |
-| <code>The field To Shareholder cannot be blank</code> |  | new | missing |
+| <code>The field Asset Account cannot be blank</code> |  | new | translated |
+| <code>The field Equity/Liability Account cannot be blank</code> |  | new | translated |
+| <code>The field From Shareholder cannot be blank</code> |  | new | translated |
+| <code>The field To Shareholder cannot be blank</code> |  | new | translated |
 | <code>The field {0} in row {1} is not set</code> |  | new | missing |
 | <code>The field {0} in {1} does not allow ignoring user permissions</code> |  | new | missing |
 | <code>The field {0} in {1} links to {2} and not {3}</code> |  | new | missing |
 | <code>The fieldname you&#x27;ve specified in Attached To Field is invalid</code> |  | new | missing |
-| <code>The fields From Shareholder and To Shareholder cannot be blank</code> |  | new | missing |
+| <code>The fields From Shareholder and To Shareholder cannot be blank</code> |  | new | translated |
 | <code>The file should contain the following columns with a distinct header row. You can upload most bank statements as is without changing the columns.</code> |  | new | missing |
 | <code>The final item that will be produced using this BOM.</code> |  | new | missing |
 | <code>The fiscal year has been automatically created in a Disabled state to maintain consistency with the previous fiscal year&#x27;s status.</code> |  | new | missing |
-| <code>The folio numbers are not matching</code> |  | new | missing |
+| <code>The folio numbers are not matching</code> |  | new | translated |
 | <code>The following Assignment Days have been repeated: {0}</code> |  | new | missing |
 | <code>The following Header Script will add the current date to an element in &#x27;Header HTML&#x27; with class &#x27;header-content&#x27;</code> |  | new | missing |
 | <code>The following Items, having Putaway Rules, could not be accomodated:</code> |  | new | missing |
@@ -13864,14 +13864,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>The new BOM after replacement</code> |  | new | missing |
 | <code>The next tour will start from where the user left off.</code> |  | new | missing |
 | <code>The number of seconds until the request expires</code> |  | new | missing |
-| <code>The number of shares and the share numbers are inconsistent</code> |  | new | missing |
+| <code>The number of shares and the share numbers are inconsistent</code> |  | new | translated |
 | <code>The opening balance might not match your bank statement. Would you like to reconcile them?</code> |  | new | missing |
 | <code>The operation {0} can not add multiple times</code> |  | new | missing |
 | <code>The operation {0} can not be the sub operation</code> |  | new | missing |
 | <code>The original invoice should be consolidated before or along with the return invoice.</code> |  | new | missing |
 | <code>The outstanding amount {0} in {1} is lesser than {2}. Updating the outstanding to this invoice.</code> |  | new | missing |
-| <code>The parent account {0} does not exists in the uploaded template</code> |  | new | missing |
-| <code>The payment gateway account in plan {0} is different from the payment gateway account in this payment request</code> |  | new | missing |
+| <code>The parent account {0} does not exists in the uploaded template</code> |  | new | translated |
+| <code>The payment gateway account in plan {0} is different from the payment gateway account in this payment request</code> |  | new | translated |
 | <code>The percentage by which you are allowed to order more on a Purchase Order than the quantity requested on the originating Material Request. For example, if the Material Request has 100 units and the allowance is 10%, you can order up to 110 units</code> |  | new | missing |
 | <code>The percentage you are allowed to bill more against the amount ordered. For example, if the order value is $100 for an item and tolerance is set as 10%, then you are allowed to bill up to $110</code> |  | new | missing |
 | <code>The percentage you are allowed to pick more items in the pick list than the ordered quantity.</code> |  | new | missing |
@@ -13890,18 +13890,18 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>The reset password link has been expired</code> |  | new | missing |
 | <code>The reset password link has either been used before or is invalid</code> |  | new | missing |
 | <code>The resource you are looking for is not available</code> |  | new | translated |
-| <code>The root account {0} must be a group</code> |  | new | missing |
+| <code>The root account {0} must be a group</code> |  | new | translated |
 | <code>The selected BOMs are not for the same item</code> |  | new | missing |
-| <code>The selected change account {} doesn&#x27;t belongs to Company {}.</code> |  | new | missing |
+| <code>The selected change account {} doesn&#x27;t belongs to Company {}.</code> |  | new | translated |
 | <code>The selected document {0} is not a {1}.</code> |  | new | missing |
 | <code>The selected item cannot have Batch</code> |  | new | missing |
 | <code>The sell quantity is less than the total asset quantity. The remaining quantity will be split into a new asset. This action cannot be undone. &lt;br&gt;&lt;br&gt;&lt;b&gt;Do you want to continue?&lt;/b&gt;</code> |  | new | missing |
-| <code>The seller and the buyer cannot be the same</code> |  | new | missing |
+| <code>The seller and the buyer cannot be the same</code> |  | new | translated |
 | <code>The serial and batch bundle {0} not linked to {1} {2}</code> |  | new | missing |
 | <code>The serial no {0} does not belong to item {1}</code> |  | new | missing |
-| <code>The shareholder does not belong to this company</code> |  | new | missing |
-| <code>The shares already exist</code> |  | new | missing |
-| <code>The shares don&#x27;t exist with the {0}</code> |  | new | missing |
+| <code>The shareholder does not belong to this company</code> |  | new | translated |
+| <code>The shares already exist</code> |  | new | translated |
+| <code>The shares don&#x27;t exist with the {0}</code> |  | new | translated |
 | <code>The stock for the item {0} in the {1} warehouse was negative on the {2}. You should create a positive entry {3} before the date {4} and time {5} to post the correct valuation rate. For more details, please read the &lt;a href=&#x27;https://docs.erpnext.com/docs/user/manual/en/stock-adjustment-cogs-with-negative-stock&#x27;&gt;documentation&lt;a&gt;.</code> |  | new | missing |
 | <code>The stock has been reserved for the following Items and Warehouses, un-reserve the same to {0} the Stock Reconciliation: &lt;br /&gt;&lt;br /&gt; {1}</code> |  | new | missing |
 | <code>The sync has started in the background, please check the {0} list for new records.</code> |  | new | missing |
@@ -13948,10 +13948,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Theme Changed</code> |  | new | missing |
 | <code>Theme Configuration</code> |  | new | translated |
 | <code>Theme URL</code> |  | new | translated |
-| <code>Then Pricing Rules are filtered out based on Customer, Customer Group, Territory, Supplier, Supplier Type, Campaign, Sales Partner etc.</code> |  | new | missing |
-| <code>There are active maintenance or repairs against the asset. You must complete all of them before cancelling the asset.</code> |  | new | missing |
+| <code>Then Pricing Rules are filtered out based on Customer, Customer Group, Territory, Supplier, Supplier Type, Campaign, Sales Partner etc.</code> |  | new | translated |
+| <code>There are active maintenance or repairs against the asset. You must complete all of them before cancelling the asset.</code> |  | new | translated |
 | <code>There are documents which have workflow states that do not exist in this Workflow. It is recommended that you add these states to the Workflow and change their states before removing these states.</code> |  | new | translated |
-| <code>There are inconsistencies between the rate, no of shares and the amount calculated</code> |  | new | missing |
+| <code>There are inconsistencies between the rate, no of shares and the amount calculated</code> |  | new | translated |
 | <code>There are ledger entries against this account. Changing {0} to non-{1} in live system will cause incorrect output in &#x27;Accounts {2}&#x27; report</code> |  | new | missing |
 | <code>There are no Failed transactions</code> |  | new | missing |
 | <code>There are no accounting entries in the system for the selected account and dates.</code> |  | new | missing |
@@ -13965,11 +13965,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>There are {0} unreconciled transactions before {1}.</code> |  | new | missing |
 | <code>There are {0} with the same filters already in the queue:</code> |  | new | translated |
 | <code>There aren&#x27;t any item variants for the selected item</code> |  | new | missing |
-| <code>There can be multiple tiered collection factor based on the total spent. But the conversion factor for redemption will always be same for all the tier.</code> |  | new | missing |
+| <code>There can be multiple tiered collection factor based on the total spent. But the conversion factor for redemption will always be same for all the tier.</code> |  | new | translated |
 | <code>There can be only 9 Page Break fields in a Web Form</code> |  | new | missing |
 | <code>There can be only one Fold in a form</code> |  | new | translated |
-| <code>There can only be 1 Account per Company in {0} {1}</code> |  | new | missing |
-| <code>There can only be one Shipping Rule Condition with 0 or blank value for &quot;To Value&quot;</code> |  | new | missing |
+| <code>There can only be 1 Account per Company in {0} {1}</code> |  | new | translated |
+| <code>There can only be one Shipping Rule Condition with 0 or blank value for &quot;To Value&quot;</code> |  | new | translated |
 | <code>There is already a valid Lower Deduction Certificate {0} for Supplier {1} against category {2} for this time period.</code> |  | new | missing |
 | <code>There is already an active Subcontracting BOM {0} for the Finished Good {1}.</code> |  | new | missing |
 | <code>There is an error in your Address Template {0}</code> |  | new | translated |
@@ -14023,8 +14023,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>This Year</code> |  | new | translated |
 | <code>This action is irreversible. Do you wish to continue?</code> |  | new | missing |
 | <code>This action is only allowed for {}</code> |  | new | translated |
-| <code>This action will stop future billing. Are you sure you want to cancel this subscription?</code> |  | new | missing |
-| <code>This action will unlink this account from any external service integrating ERPNext with your bank accounts. It cannot be undone. Are you certain ?</code> |  | new | missing |
+| <code>This action will stop future billing. Are you sure you want to cancel this subscription?</code> |  | new | translated |
+| <code>This action will unlink this account from any external service integrating ERPNext with your bank accounts. It cannot be undone. Are you certain ?</code> |  | new | translated |
 | <code>This allows creation of sales orders from quotations that have passed their expiration date, providing flexibility in processing orders despite outdated quotes.</code> |  | new | missing |
 | <code>This asset category is marked as non-depreciable. Please disable depreciation calculation or choose a different category.</code> |  | new | missing |
 | <code>This can be enabled at specific Item level as well</code> |  | new | missing |
@@ -14033,7 +14033,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>This card is visible only to Administrator and System Managers by default. Set a DocType to share with users who have read access.</code> | Number Card | new | missing |
 | <code>This card will be available to all Users if this is set</code> |  | new | translated |
 | <code>This chart will be available to all Users if this is set</code> |  | new | translated |
-| <code>This covers all scorecards tied to this Setup</code> |  | new | missing |
+| <code>This covers all scorecards tied to this Setup</code> |  | new | translated |
 | <code>This doctype has no orphan fields to trim</code> |  | new | missing |
 | <code>This doctype has pending migrations, run &#x27;bench migrate&#x27; before modifying the doctype to avoid losing changes.</code> |  | new | missing |
 | <code>This document can not be deleted right now as it&#x27;s being modified by another user. Please try again after some time.</code> |  | new | missing |
@@ -14067,7 +14067,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>This is a location where raw materials are available.</code> |  | new | missing |
 | <code>This is a location where scraped materials are stored.</code> |  | new | missing |
 | <code>This is a preview of the email to be sent. A PDF of the document will automatically be attached with the email.</code> |  | new | missing |
-| <code>This is a root account and cannot be edited.</code> |  | new | missing |
+| <code>This is a root account and cannot be edited.</code> |  | new | translated |
 | <code>This is a root customer group and cannot be edited.</code> |  | new | missing |
 | <code>This is a root department and cannot be edited.</code> |  | new | missing |
 | <code>This is a root item group and cannot be edited.</code> |  | new | missing |
@@ -14085,7 +14085,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>This is based on the Time Sheets created against this project</code> |  | new | missing |
 | <code>This is based on transactions against this Sales Person. See timeline below for details</code> |  | new | missing |
 | <code>This is considered dangerous from accounting point of view.</code> |  | new | missing |
-| <code>This is done to handle accounting for cases when Purchase Receipt is created after Purchase Invoice</code> |  | new | missing |
+| <code>This is done to handle accounting for cases when Purchase Receipt is created after Purchase Invoice</code> |  | new | translated |
 | <code>This is enabled by default. If you want to plan materials for sub-assemblies of the Item you&#x27;re manufacturing leave this enabled. If you plan and manufacture the sub-assemblies separately, you can disable this checkbox.</code> |  | new | missing |
 | <code>This is for raw material Items that&#x27;ll be used to create finished goods. If the Item is an additional service like &#x27;washing&#x27; that&#x27;ll be used in the BOM, keep this unchecked.</code> |  | new | missing |
 | <code>This is not a valid formula. Check the variable used in the formula.</code> |  | new | missing |
@@ -14126,7 +14126,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>This schedule was created when Asset {0}&#x27;s Asset Value Adjustment {1} was cancelled.</code> |  | new | missing |
 | <code>This schedule was created when Asset {0}&#x27;s shifts were adjusted through Asset Shift Allocation {1}.</code> |  | new | missing |
 | <code>This screen is not supported on mobile devices.</code> |  | new | missing |
-| <code>This section allows the user to set the Body and Closing text of the Dunning Letter for the Dunning Type based on language, which can be used in Print.</code> |  | new | missing |
+| <code>This section allows the user to set the Body and Closing text of the Dunning Letter for the Dunning Type based on language, which can be used in Print.</code> |  | new | translated |
 | <code>This site is in read only mode, full functionality will be restored soon.</code> |  | new | missing |
 | <code>This site is running in developer mode. Any change made here will be updated in code.</code> |  | new | missing |
 | <code>This software is built on top of many open source packages.</code> |  | new | missing |
@@ -14156,13 +14156,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>This will update the warehouse and status of Serial Nos counted in {0} to match the stock ledger. Continue?</code> |  | new | missing |
 | <code>This {} will be treated as material transfer.</code> |  | new | missing |
 | <code>Threshold Exemption</code> |  | new | missing |
-| <code>Threshold for Suggestion</code> |  | new | missing |
+| <code>Threshold for Suggestion</code> |  | new | translated |
 | <code>Threshold for Suggestion (In Percentage)</code> |  | new | missing |
 | <code>Throttled</code> |  | new | translated |
 | <code>Thumbnail</code> |  | new | missing |
 | <code>Thumbnail URL</code> |  | new | translated |
 | <code>Thursday</code> |  | new | translated |
-| <code>Tier Name</code> |  | new | missing |
+| <code>Tier Name</code> |  | new | translated |
 | <code>Time</code> |  | new | translated |
 | <code>Time (In Mins)</code> |  | new | missing |
 | <code>Time Between Operations (Mins)</code> |  | new | missing |
@@ -14173,9 +14173,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Time Required (In Mins)</code> |  | new | missing |
 | <code>Time Series</code> |  | new | translated |
 | <code>Time Series Based On</code> |  | new | translated |
-| <code>Time Sheet</code> |  | new | missing |
-| <code>Time Sheet List</code> |  | new | missing |
-| <code>Time Sheets</code> |  | new | missing |
+| <code>Time Sheet</code> |  | new | translated |
+| <code>Time Sheet List</code> |  | new | translated |
+| <code>Time Sheets</code> |  | new | translated |
 | <code>Time Taken</code> |  | new | missing |
 | <code>Time Taken to Deliver</code> |  | new | missing |
 | <code>Time Tracking</code> |  | new | missing |
@@ -14208,9 +14208,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Timer</code> |  | new | missing |
 | <code>Timer exceeded the given hours.</code> |  | new | missing |
 | <code>Timeseries</code> |  | new | translated |
-| <code>Timesheet</code> |  | new | missing |
+| <code>Timesheet</code> |  | new | translated |
 | <code>Timesheet Billing Summary</code> |  | new | missing |
-| <code>Timesheet Detail</code> |  | new | missing |
+| <code>Timesheet Detail</code> |  | new | translated |
 | <code>Timesheet for tasks.</code> |  | new | missing |
 | <code>Timesheet {0} cannot be invoiced in its current state</code> |  | new | missing |
 | <code>Timesheets</code> |  | new | missing |
@@ -14228,44 +14228,44 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Title of the page</code> |  | new | translated |
 | <code>To</code> |  | new | translated |
 | <code>To</code> | Email Recipients | new | missing |
-| <code>To Bill</code> |  | new | missing |
+| <code>To Bill</code> |  | new | translated |
 | <code>To Currency</code> |  | new | missing |
 | <code>To Date</code> |  | new | translated |
 | <code>To Date Field</code> |  | new | translated |
 | <code>To Date cannot be before From Date</code> |  | new | missing |
-| <code>To Date cannot be before From Date.</code> |  | new | missing |
-| <code>To Date cannot be less than From Date</code> |  | new | missing |
+| <code>To Date cannot be before From Date.</code> |  | new | translated |
+| <code>To Date cannot be less than From Date</code> |  | new | translated |
 | <code>To Date is mandatory</code> |  | new | missing |
-| <code>To Date must be greater than From Date</code> |  | new | missing |
-| <code>To Date should be within the Fiscal Year. Assuming To Date = {0}</code> |  | new | missing |
+| <code>To Date must be greater than From Date</code> |  | new | translated |
+| <code>To Date should be within the Fiscal Year. Assuming To Date = {0}</code> |  | new | translated |
 | <code>To Datetime</code> |  | new | missing |
 | <code>To Delete list generated with {0} DocTypes</code> |  | new | missing |
-| <code>To Deliver</code> |  | new | missing |
-| <code>To Deliver and Bill</code> |  | new | missing |
+| <code>To Deliver</code> |  | new | translated |
+| <code>To Deliver and Bill</code> |  | new | translated |
 | <code>To Delivery Date</code> |  | new | missing |
 | <code>To Do</code> |  | new | translated |
 | <code>To Doctype</code> |  | new | missing |
 | <code>To Due Date</code> |  | new | missing |
-| <code>To Employee</code> |  | new | missing |
-| <code>To Fiscal Year</code> |  | new | missing |
-| <code>To Folio No</code> |  | new | missing |
-| <code>To Invoice Date</code> |  | new | missing |
-| <code>To No</code> |  | new | missing |
+| <code>To Employee</code> |  | new | translated |
+| <code>To Fiscal Year</code> |  | new | translated |
+| <code>To Folio No</code> |  | new | translated |
+| <code>To Invoice Date</code> |  | new | translated |
+| <code>To No</code> |  | new | translated |
 | <code>To Package No.</code> |  | new | missing |
 | <code>To Pay</code> |  | new | missing |
 | <code>To Payment Date</code> |  | new | missing |
 | <code>To Posting Date</code> |  | new | missing |
 | <code>To Produce</code> |  | new | missing |
 | <code>To Range</code> |  | new | missing |
-| <code>To Receive</code> |  | new | missing |
-| <code>To Receive and Bill</code> |  | new | missing |
+| <code>To Receive</code> |  | new | translated |
+| <code>To Receive and Bill</code> |  | new | translated |
 | <code>To Reference Date</code> |  | new | missing |
-| <code>To Rename</code> |  | new | missing |
-| <code>To Shareholder</code> |  | new | missing |
-| <code>To Time</code> |  | new | missing |
+| <code>To Rename</code> |  | new | translated |
+| <code>To Shareholder</code> |  | new | translated |
+| <code>To Time</code> |  | new | translated |
 | <code>To Time cannot be before from date</code> |  | new | missing |
 | <code>To Track inbound purchase</code> |  | new | missing |
-| <code>To Value</code> |  | new | missing |
+| <code>To Value</code> |  | new | translated |
 | <code>To Warehouse</code> |  | new | missing |
 | <code>To Warehouse (Optional)</code> |  | new | missing |
 | <code>To add Operations tick the &#x27;With Operations&#x27; checkbox.</code> |  | new | missing |
@@ -14282,7 +14282,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>To cancel a {} you need to cancel the POS Closing Entry {}.</code> |  | new | missing |
 | <code>To cancel this Sales Invoice you need to cancel the POS Closing Entry {}.</code> |  | new | missing |
 | <code>To configure Auto Repeat, enable &quot;Allow Auto Repeat&quot; from {0}.</code> |  | new | translated |
-| <code>To create a Payment Request reference document is required</code> |  | new | missing |
+| <code>To create a Payment Request reference document is required</code> |  | new | translated |
 | <code>To enable Capital Work in Progress Accounting,</code> |  | new | missing |
 | <code>To enable it follow the instructions in the following link: {0}</code> |  | new | translated |
 | <code>To enable server scripts, read the {0}.</code> |  | new | missing |
@@ -14290,11 +14290,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>To generate password click {0}</code> |  | new | missing |
 | <code>To include non-stock items in the material request planning. i.e. Items for which &#x27;Maintain Stock&#x27; checkbox is unticked.</code> |  | new | missing |
 | <code>To include sub-assembly costs and secondary items in Finished Goods on a work order without using a job card, when the &#x27;Use Multi-Level BOM&#x27; option is enabled.</code> |  | new | missing |
-| <code>To include tax in row {0} in Item rate, taxes in rows {1} must also be included</code> |  | new | missing |
+| <code>To include tax in row {0} in Item rate, taxes in rows {1} must also be included</code> |  | new | translated |
 | <code>To know more click {0}</code> |  | new | missing |
 | <code>To merge, following properties must be same for both items</code> |  | new | missing |
-| <code>To not apply Pricing Rule in a particular transaction, all applicable Pricing Rules should be disabled.</code> |  | new | missing |
-| <code>To overrule this, enable &#x27;{0}&#x27; in company {1}</code> |  | new | missing |
+| <code>To not apply Pricing Rule in a particular transaction, all applicable Pricing Rules should be disabled.</code> |  | new | translated |
+| <code>To overrule this, enable &#x27;{0}&#x27; in company {1}</code> |  | new | translated |
 | <code>To print output use &lt;code&gt;print(text)&lt;/code&gt;</code> |  | new | missing |
 | <code>To select more than one transaction at a time, press and hold the shift key.</code> |  | new | missing |
 | <code>To set the role {0} in the user {1}, kindly set the {2} field as {3} in one of the {4} record.</code> |  | new | missing |
@@ -14332,7 +14332,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Too Many Documents</code> |  | new | missing |
 | <code>Too Many Requests</code> |  | new | translated |
 | <code>Too many changes to database in single action.</code> |  | new | missing |
-| <code>Too many columns. Export the report and print it using a spreadsheet application.</code> |  | new | missing |
+| <code>Too many columns. Export the report and print it using a spreadsheet application.</code> |  | new | translated |
 | <code>Too many queued background jobs ({0}). Please retry after some time.</code> |  | new | missing |
 | <code>Too many requests. Please try again later.</code> |  | new | missing |
 | <code>Too many users signed up recently, so the registration is disabled. Please try back in an hour</code> |  | new | translated |
@@ -14348,25 +14348,25 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Topic</code> |  | new | translated |
 | <code>Torr</code> |  | new | missing |
 | <code>Total</code> |  | new | translated |
-| <code>Total (Company Currency)</code> |  | new | missing |
-| <code>Total (Credit)</code> |  | new | missing |
+| <code>Total (Company Currency)</code> |  | new | translated |
+| <code>Total (Credit)</code> |  | new | translated |
 | <code>Total (Without Tax)</code> |  | new | missing |
-| <code>Total Achieved</code> |  | new | missing |
+| <code>Total Achieved</code> |  | new | translated |
 | <code>Total Active Items</code> |  | new | missing |
-| <code>Total Actual</code> |  | new | missing |
+| <code>Total Actual</code> |  | new | translated |
 | <code>Total Additional Costs</code> |  | new | missing |
-| <code>Total Advance</code> |  | new | missing |
+| <code>Total Advance</code> |  | new | translated |
 | <code>Total Advance Paid</code> |  | new | missing |
 | <code>Total Advance Paid: {0}</code> |  | new | missing |
 | <code>Total Advance Received</code> |  | new | missing |
 | <code>Total Advance Received: {0}</code> |  | new | missing |
-| <code>Total Allocated Amount</code> |  | new | missing |
-| <code>Total Allocated Amount (Company Currency)</code> |  | new | missing |
+| <code>Total Allocated Amount</code> |  | new | translated |
+| <code>Total Allocated Amount (Company Currency)</code> |  | new | translated |
 | <code>Total Allocations</code> |  | new | missing |
-| <code>Total Amount</code> |  | new | missing |
-| <code>Total Amount Currency</code> |  | new | missing |
+| <code>Total Amount</code> |  | new | translated |
+| <code>Total Amount Currency</code> |  | new | translated |
 | <code>Total Amount Due</code> |  | new | missing |
-| <code>Total Amount in Words</code> |  | new | missing |
+| <code>Total Amount in Words</code> |  | new | translated |
 | <code>Total Applicable Charges in Purchase Receipt Items table must be same as Total Taxes and Charges</code> |  | new | missing |
 | <code>Total Asset</code> |  | new | missing |
 | <code>Total Asset Cost</code> |  | new | missing |
@@ -14377,11 +14377,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Total Billed Amount</code> |  | new | missing |
 | <code>Total Billed Amount (via Sales Invoice)</code> |  | new | missing |
 | <code>Total Billed Hours</code> |  | new | missing |
-| <code>Total Billing Amount</code> |  | new | missing |
+| <code>Total Billing Amount</code> |  | new | translated |
 | <code>Total Billing Hours</code> |  | new | missing |
-| <code>Total Budget</code> |  | new | missing |
-| <code>Total Characters</code> |  | new | missing |
-| <code>Total Commission</code> |  | new | missing |
+| <code>Total Budget</code> |  | new | translated |
+| <code>Total Characters</code> |  | new | translated |
+| <code>Total Commission</code> |  | new | translated |
 | <code>Total Completed Qty</code> |  | new | missing |
 | <code>Total Completed Qty ({0}), Process Loss Qty ({1}) and Pending Qty ({2}) must add up to the Qty to Manufacture ({3}).</code> |  | new | missing |
 | <code>Total Completed Qty is required for Job Card {0}, please start and complete the job card before submission</code> |  | new | missing |
@@ -14392,59 +14392,59 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Total Cost (Company Currency)</code> |  | new | missing |
 | <code>Total Costing Amount</code> |  | new | missing |
 | <code>Total Costing Amount (via Timesheet)</code> |  | new | missing |
-| <code>Total Credit</code> |  | new | missing |
+| <code>Total Credit</code> |  | new | translated |
 | <code>Total Credit Transactions</code> |  | new | missing |
-| <code>Total Credit/ Debit Amount should be same as linked Journal Entry</code> |  | new | missing |
+| <code>Total Credit/ Debit Amount should be same as linked Journal Entry</code> |  | new | translated |
 | <code>Total Credits</code> |  | new | missing |
-| <code>Total Debit</code> |  | new | missing |
+| <code>Total Debit</code> |  | new | translated |
 | <code>Total Debit Transactions</code> |  | new | missing |
-| <code>Total Debit must be equal to Total Credit. The difference is {0}</code> |  | new | missing |
+| <code>Total Debit must be equal to Total Credit. The difference is {0}</code> |  | new | translated |
 | <code>Total Debits</code> |  | new | missing |
 | <code>Total Delivered Amount</code> |  | new | missing |
 | <code>Total Demand (Past Data)</code> |  | new | missing |
 | <code>Total Equity</code> |  | new | missing |
 | <code>Total Errors (last 1 day)</code> |  | new | missing |
 | <code>Total Estimated Distance</code> |  | new | missing |
-| <code>Total Expense</code> |  | new | missing |
-| <code>Total Expense This Year</code> |  | new | missing |
+| <code>Total Expense</code> |  | new | translated |
+| <code>Total Expense This Year</code> |  | new | translated |
 | <code>Total Expenses booked through</code> |  | new | missing |
 | <code>Total Experience</code> |  | new | missing |
 | <code>Total Forecast (Future Data)</code> |  | new | missing |
 | <code>Total Forecast (Past Data)</code> |  | new | missing |
-| <code>Total Gain/Loss</code> |  | new | missing |
+| <code>Total Gain/Loss</code> |  | new | translated |
 | <code>Total Hold Time</code> |  | new | missing |
 | <code>Total Holidays</code> |  | new | missing |
 | <code>Total Images</code> |  | new | missing |
-| <code>Total Income</code> |  | new | missing |
-| <code>Total Income This Year</code> |  | new | missing |
+| <code>Total Income</code> |  | new | translated |
+| <code>Total Income This Year</code> |  | new | translated |
 | <code>Total Incoming Value (Receipt)</code> |  | new | missing |
 | <code>Total Interest</code> |  | new | missing |
-| <code>Total Invoiced Amount</code> |  | new | missing |
+| <code>Total Invoiced Amount</code> |  | new | translated |
 | <code>Total Issues</code> |  | new | missing |
 | <code>Total Items</code> |  | new | missing |
 | <code>Total Landed Cost</code> |  | new | missing |
 | <code>Total Landed Cost (Company Currency)</code> |  | new | missing |
 | <code>Total Ledgers</code> |  | new | missing |
 | <code>Total Liability</code> |  | new | missing |
-| <code>Total Message(s)</code> |  | new | missing |
+| <code>Total Message(s)</code> |  | new | translated |
 | <code>Total Monthly Sales</code> |  | new | missing |
-| <code>Total Net Weight</code> |  | new | missing |
+| <code>Total Net Weight</code> |  | new | translated |
 | <code>Total Number of Booked Depreciations</code> |  | new | missing |
-| <code>Total Number of Depreciations</code> |  | new | missing |
+| <code>Total Number of Depreciations</code> |  | new | translated |
 | <code>Total Only</code> |  | new | missing |
 | <code>Total Operating Cost</code> |  | new | missing |
 | <code>Total Operation Time</code> |  | new | missing |
-| <code>Total Order Considered</code> |  | new | missing |
-| <code>Total Order Value</code> |  | new | missing |
+| <code>Total Order Considered</code> |  | new | translated |
+| <code>Total Order Value</code> |  | new | translated |
 | <code>Total Other Charges</code> |  | new | missing |
 | <code>Total Outgoing</code> |  | new | missing |
 | <code>Total Outgoing Emails</code> |  | new | missing |
 | <code>Total Outgoing Value (Consumption)</code> |  | new | missing |
-| <code>Total Outstanding</code> |  | new | missing |
-| <code>Total Outstanding Amount</code> |  | new | missing |
-| <code>Total Paid Amount</code> |  | new | missing |
+| <code>Total Outstanding</code> |  | new | translated |
+| <code>Total Outstanding Amount</code> |  | new | translated |
+| <code>Total Paid Amount</code> |  | new | translated |
 | <code>Total Payment Amount in Payment Schedule must be equal to Grand / Rounded Total</code> |  | new | missing |
-| <code>Total Payment Request amount cannot be greater than {0} amount</code> |  | new | missing |
+| <code>Total Payment Request amount cannot be greater than {0} amount</code> |  | new | translated |
 | <code>Total Payments</code> |  | new | missing |
 | <code>Total Picked Quantity {0} is more than ordered qty {1}. You can set the Over Picking Allowance in Stock Settings.</code> |  | new | missing |
 | <code>Total Planned Qty</code> |  | new | missing |
@@ -14453,22 +14453,22 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Total Purchase Amount</code> |  | new | missing |
 | <code>Total Purchase Cost (via Purchase Invoice)</code> |  | new | missing |
 | <code>Total Qty</code> |  | new | missing |
-| <code>Total Quantity</code> |  | new | missing |
+| <code>Total Quantity</code> |  | new | translated |
 | <code>Total Received Amount</code> |  | new | missing |
 | <code>Total Repair Cost</code> |  | new | missing |
-| <code>Total Revenue</code> |  | new | missing |
+| <code>Total Revenue</code> |  | new | translated |
 | <code>Total Sales Amount</code> |  | new | missing |
 | <code>Total Sales Amount (via Sales Order)</code> |  | new | missing |
 | <code>Total Stock Summary</code> |  | new | missing |
 | <code>Total Stock Value</code> |  | new | missing |
 | <code>Total Subscribers</code> |  | new | translated |
 | <code>Total Supplied Qty</code> |  | new | missing |
-| <code>Total Target</code> |  | new | missing |
+| <code>Total Target</code> |  | new | translated |
 | <code>Total Tasks</code> |  | new | missing |
-| <code>Total Tax</code> |  | new | missing |
-| <code>Total Taxable Amount</code> |  | new | missing |
-| <code>Total Taxes and Charges</code> |  | new | missing |
-| <code>Total Taxes and Charges (Company Currency)</code> |  | new | missing |
+| <code>Total Tax</code> |  | new | translated |
+| <code>Total Taxable Amount</code> |  | new | translated |
+| <code>Total Taxes and Charges</code> |  | new | translated |
+| <code>Total Taxes and Charges (Company Currency)</code> |  | new | translated |
 | <code>Total Time (in Mins)</code> |  | new | missing |
 | <code>Total Time in Mins</code> |  | new | missing |
 | <code>Total Unpaid</code> |  | new | missing |
@@ -14476,25 +14476,25 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Total Users</code> |  | new | missing |
 | <code>Total Value</code> |  | new | missing |
 | <code>Total Value Difference (Incoming - Outgoing)</code> |  | new | missing |
-| <code>Total Variance</code> |  | new | missing |
+| <code>Total Variance</code> |  | new | translated |
 | <code>Total Vendor Invoices Cost (Company Currency)</code> |  | new | missing |
 | <code>Total Views</code> |  | new | missing |
 | <code>Total Warehouses</code> |  | new | missing |
-| <code>Total Weight</code> |  | new | missing |
+| <code>Total Weight</code> |  | new | translated |
 | <code>Total Weight (kg)</code> |  | new | missing |
 | <code>Total Working Hours</code> |  | new | missing |
 | <code>Total Working Time</code> |  | new | missing |
 | <code>Total Workstation Time (In Hours)</code> |  | new | missing |
 | <code>Total allocated percentage for sales team should be 100</code> |  | new | missing |
-| <code>Total contribution percentage should be equal to 100</code> |  | new | missing |
+| <code>Total contribution percentage should be equal to 100</code> |  | new | translated |
 | <code>Total distributed amount {0} must be equal to Budget Amount {1}</code> |  | new | missing |
 | <code>Total distribution percent must equal 100 (currently {0})</code> |  | new | missing |
 | <code>Total hours: {0}</code> |  | new | missing |
 | <code>Total number of emails to sync in initial sync process</code> |  | new | missing |
-| <code>Total payments amount can&#x27;t be greater than {}</code> |  | new | missing |
+| <code>Total payments amount can&#x27;t be greater than {}</code> |  | new | translated |
 | <code>Total percentage against cost centers should be 100</code> |  | new | missing |
 | <code>Total quantity in delivery schedule cannot be greater than the item quantity</code> |  | new | missing |
-| <code>Total {0} ({1})</code> |  | new | missing |
+| <code>Total {0} ({1})</code> |  | new | translated |
 | <code>Total {0} for all items is zero, may be you should change &#x27;Distribute Charges Based On&#x27;</code> |  | new | missing |
 | <code>Total(Amt)</code> |  | new | missing |
 | <code>Total(Qty)</code> |  | new | missing |
@@ -14517,15 +14517,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Track each unit with a unique serial number for warranty and return tracking. Cannot be changed after a stock transaction exists.</code> |  | new | missing |
 | <code>Track if your email has been opened by the recipient.<br>&lt;br&gt;<br>Note: If you&#x27;re sending to multiple recipients, even if 1 recipient reads the email, it&#x27;ll be considered &quot;Opened&quot;</code> |  | new | missing |
 | <code>Track milestones for any document</code> |  | new | translated |
-| <code>Track separate Income and Expense for product verticals or divisions.</code> |  | new | missing |
+| <code>Track separate Income and Expense for product verticals or divisions.</code> |  | new | translated |
 | <code>Track this item in batches. Cannot be changed after a stock transaction exists.</code> |  | new | missing |
 | <code>Tracking Status</code> |  | new | missing |
 | <code>Tracking Status Info</code> |  | new | missing |
 | <code>Tracking URL</code> |  | new | missing |
 | <code>Tracking URL generated and copied to clipboard</code> |  | new | missing |
 | <code>Transaction</code> |  | new | translated |
-| <code>Transaction Currency</code> |  | new | missing |
-| <code>Transaction Date</code> |  | new | missing |
+| <code>Transaction Currency</code> |  | new | translated |
+| <code>Transaction Date</code> |  | new | translated |
 | <code>Transaction Dates</code> |  | new | missing |
 | <code>Transaction Deletion Document {0} has been triggered for company {1}</code> |  | new | missing |
 | <code>Transaction Deletion Record</code> |  | new | missing |
@@ -14534,35 +14534,35 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Transaction Deletion Record To Delete</code> |  | new | missing |
 | <code>Transaction Deletion Record {0} is already running. {1}</code> |  | new | missing |
 | <code>Transaction Deletion Record {0} is currently deleting {1}. Cannot save documents until deletion completes.</code> |  | new | missing |
-| <code>Transaction Details</code> |  | new | missing |
+| <code>Transaction Details</code> |  | new | translated |
 | <code>Transaction Exchange Rate</code> |  | new | missing |
-| <code>Transaction ID</code> |  | new | missing |
+| <code>Transaction ID</code> |  | new | translated |
 | <code>Transaction Information</code> |  | new | missing |
 | <code>Transaction Matching Rules</code> |  | new | missing |
 | <code>Transaction Name</code> |  | new | missing |
 | <code>Transaction Qty</code> |  | new | missing |
 | <code>Transaction Settings</code> |  | new | missing |
 | <code>Transaction Threshold</code> |  | new | missing |
-| <code>Transaction Type</code> |  | new | missing |
+| <code>Transaction Type</code> |  | new | translated |
 | <code>Transaction Unreconciled</code> |  | new | missing |
 | <code>Transaction actions work when one or more unreconciled transactions are selected.</code> |  | new | missing |
-| <code>Transaction currency must be same as Payment Gateway currency</code> |  | new | missing |
+| <code>Transaction currency must be same as Payment Gateway currency</code> |  | new | translated |
 | <code>Transaction currency: {0} cannot be different from Bank Account({1}) currency: {2}</code> |  | new | missing |
 | <code>Transaction date can&#x27;t be earlier than previous movement date</code> |  | new | missing |
 | <code>Transaction for which tax is withheld</code> |  | new | missing |
 | <code>Transaction from which tax is withheld</code> |  | new | missing |
 | <code>Transaction not allowed against stopped Work Order {0}</code> |  | new | missing |
-| <code>Transaction reference no {0} dated {1}</code> |  | new | missing |
+| <code>Transaction reference no {0} dated {1}</code> |  | new | translated |
 | <code>Transaction type column has &quot;C&quot;/&quot;D&quot; values</code> |  | new | missing |
 | <code>Transaction type column has &quot;CR&quot;/&quot;DR&quot; values</code> |  | new | missing |
 | <code>Transaction type column has &quot;Deposit&quot;/&quot;Withdrawal&quot; values</code> |  | new | missing |
-| <code>Transactions</code> |  | new | missing |
+| <code>Transactions</code> |  | new | translated |
 | <code>Transactions Annual History</code> |  | new | missing |
 | <code>Transactions against the Company already exist! Chart of Accounts can only be imported for a Company with no transactions.</code> |  | new | missing |
 | <code>Transactions are blocked when the outstanding balance exceeds the credit limit. When Restrict Customer Over Billing is enabled, new invoices are also blocked when the customer&#x27;s overdue amount exceeds the Overdue Limit.</code> |  | new | missing |
 | <code>Transactions to be imported into the system</code> |  | new | missing |
 | <code>Transactions using Sales Invoice in POS are disabled.</code> |  | new | missing |
-| <code>Transfer</code> |  | new | missing |
+| <code>Transfer</code> |  | new | translated |
 | <code>Transfer Account</code> |  | new | missing |
 | <code>Transfer Asset</code> |  | new | missing |
 | <code>Transfer Extra Raw Materials to WIP (%)</code> |  | new | missing |
@@ -14572,13 +14572,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Transfer Materials For Warehouse {0}</code> |  | new | missing |
 | <code>Transfer Recorded</code> |  | new | missing |
 | <code>Transfer Status</code> |  | new | missing |
-| <code>Transfer Type</code> |  | new | missing |
+| <code>Transfer Type</code> |  | new | translated |
 | <code>Transfer and Issue</code> |  | new | missing |
 | <code>Transferred</code> |  | new | missing |
 | <code>Transferred Out</code> |  | new | missing |
 | <code>Transferred Qty</code> |  | new | missing |
 | <code>Transferred Qty (in Stock UOM)</code> |  | new | missing |
-| <code>Transferred Quantity</code> |  | new | missing |
+| <code>Transferred Quantity</code> |  | new | translated |
 | <code>Transferred Raw Materials</code> |  | new | missing |
 | <code>Transferred from</code> |  | new | missing |
 | <code>Transferred to</code> |  | new | missing |
@@ -14607,22 +14607,22 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Transporter Info</code> |  | new | missing |
 | <code>Transporter Name</code> |  | new | missing |
 | <code>Trash</code> |  | new | translated |
-| <code>Travel Expenses</code> |  | new | missing |
+| <code>Travel Expenses</code> |  | new | translated |
 | <code>Tree</code> |  | new | translated |
-| <code>Tree Details</code> |  | new | missing |
-| <code>Tree Type</code> |  | new | missing |
+| <code>Tree Details</code> |  | new | translated |
+| <code>Tree Type</code> |  | new | translated |
 | <code>Tree View</code> |  | new | missing |
 | <code>Tree of Procedures</code> |  | new | missing |
 | <code>Tree structures are implemented using Nested Set</code> |  | new | translated |
 | <code>Tree view is not available for {0}</code> |  | new | translated |
-| <code>Trial Balance</code> |  | new | missing |
-| <code>Trial Balance (Simple)</code> |  | new | missing |
-| <code>Trial Balance for Party</code> |  | new | missing |
+| <code>Trial Balance</code> |  | new | translated |
+| <code>Trial Balance (Simple)</code> |  | new | translated |
+| <code>Trial Balance for Party</code> |  | new | translated |
 | <code>Trial Balance requires {0} to be synced to DuckDB</code> |  | new | missing |
-| <code>Trial Period End Date</code> |  | new | missing |
-| <code>Trial Period End Date Cannot be before Trial Period Start Date</code> |  | new | missing |
-| <code>Trial Period Start Date</code> |  | new | missing |
-| <code>Trial Period Start date cannot be after Subscription Start Date</code> |  | new | missing |
+| <code>Trial Period End Date</code> |  | new | translated |
+| <code>Trial Period End Date Cannot be before Trial Period Start Date</code> |  | new | translated |
+| <code>Trial Period Start Date</code> |  | new | translated |
+| <code>Trial Period Start date cannot be after Subscription Start Date</code> |  | new | translated |
 | <code>Trialing</code> |  | new | missing |
 | <code>Trigger Method</code> |  | new | translated |
 | <code>Trigger caching</code> |  | new | missing |
@@ -14647,7 +14647,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Type Of Call</code> |  | new | missing |
 | <code>Type a reply / comment</code> |  | new | missing |
 | <code>Type of Material</code> |  | new | missing |
-| <code>Type of Payment</code> |  | new | missing |
+| <code>Type of Payment</code> |  | new | translated |
 | <code>Type of Transaction</code> |  | new | missing |
 | <code>Type of check</code> |  | new | missing |
 | <code>Type of document to rename.</code> |  | new | missing |
@@ -14667,13 +14667,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>UIDNEXT</code> |  | new | excepted |
 | <code>UIDVALIDITY</code> |  | new | excepted |
 | <code>UNSEEN</code> |  | new | excepted |
-| <code>UOM</code> |  | new | missing |
+| <code>UOM</code> |  | new | translated |
 | <code>UOM Category</code> |  | new | missing |
 | <code>UOM Conversion Detail</code> |  | new | missing |
 | <code>UOM Conversion Details</code> |  | new | missing |
-| <code>UOM Conversion Factor</code> |  | new | missing |
+| <code>UOM Conversion Factor</code> |  | new | translated |
 | <code>UOM Conversion factor ({0} -&gt; {1}) not found for item: {2}</code> |  | new | missing |
-| <code>UOM Conversion factor is required in row {0}</code> |  | new | missing |
+| <code>UOM Conversion factor is required in row {0}</code> |  | new | translated |
 | <code>UOM Defaults</code> |  | new | missing |
 | <code>UOM Name</code> |  | new | missing |
 | <code>UOM conversion factor required for UOM: {0} in Item: {1}</code> |  | new | missing |
@@ -14709,7 +14709,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Unable to find DocType {0}</code> |  | new | translated |
 | <code>Unable to find exchange rate for {0} to {1} for key date {2}. Please create a Currency Exchange record manually</code> |  | new | missing |
 | <code>Unable to find exchange rate for {0} to {1} for key date {2}. Please create a Currency Exchange record manually.</code> |  | new | missing |
-| <code>Unable to find score starting at {0}. You need to have standing scores covering 0 to 100</code> |  | new | missing |
+| <code>Unable to find score starting at {0}. You need to have standing scores covering 0 to 100</code> |  | new | translated |
 | <code>Unable to find the time slot in the next {0} days for the operation {1}. Please increase the &#x27;Capacity Planning For (Days)&#x27; in the {2}.</code> |  | new | missing |
 | <code>Unable to find variable:</code> |  | new | missing |
 | <code>Unable to load attachments.</code> |  | new | missing |
@@ -14721,14 +14721,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Unable to update event</code> |  | new | translated |
 | <code>Unable to write file format for {0}</code> |  | new | translated |
 | <code>Unallocated</code> |  | new | missing |
-| <code>Unallocated Amount</code> |  | new | missing |
+| <code>Unallocated Amount</code> |  | new | translated |
 | <code>Unassign Condition</code> |  | new | translated |
 | <code>Unassigned Qty</code> |  | new | missing |
 | <code>Unbilled Orders</code> |  | new | missing |
-| <code>Unblock Invoice</code> |  | new | missing |
+| <code>Unblock Invoice</code> |  | new | translated |
 | <code>Uncaught Exception</code> |  | new | missing |
 | <code>Unchanged</code> |  | new | translated |
-| <code>Unclosed Fiscal Years Profit / Loss (Credit)</code> |  | new | missing |
+| <code>Unclosed Fiscal Years Profit / Loss (Credit)</code> |  | new | translated |
 | <code>Under AMC</code> |  | new | missing |
 | <code>Under Graduate</code> |  | new | missing |
 | <code>Under Warranty</code> |  | new | missing |
@@ -14741,7 +14741,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Undo {}?</code> |  | new | missing |
 | <code>Unexpected Naming Series Pattern</code> |  | new | missing |
 | <code>Unfollow</code> |  | new | translated |
-| <code>Unfulfilled</code> |  | new | missing |
+| <code>Unfulfilled</code> |  | new | translated |
 | <code>Unhandled Email</code> |  | new | translated |
 | <code>Unhandled Emails</code> |  | new | missing |
 | <code>Unique</code> |  | new | translated |
@@ -14749,7 +14749,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Unit</code> |  | new | missing |
 | <code>Unit Of Measure</code> |  | new | missing |
 | <code>Unit Price</code> |  | new | missing |
-| <code>Unit of Measure</code> |  | new | missing |
+| <code>Unit of Measure</code> |  | new | translated |
 | <code>Unit of Measure (UOM)</code> |  | new | missing |
 | <code>Unit of Measure {0} has been entered more than once in Conversion Factor Table</code> |  | new | missing |
 | <code>Unknown</code> |  | new | translated |
@@ -14760,13 +14760,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Unknown file encoding. Tried to use: {0}</code> |  | new | missing |
 | <code>Unlink Advance Payment on cancellation of order</code> |  | new | missing |
 | <code>Unlink Payment on cancellation of invoice</code> |  | new | missing |
-| <code>Unlink external integrations</code> |  | new | missing |
+| <code>Unlink external integrations</code> |  | new | translated |
 | <code>Unlinked</code> |  | new | missing |
 | <code>Unlock Reference Document</code> |  | new | missing |
 | <code>Unmatch Transaction?</code> |  | new | missing |
 | <code>Unmatched</code> |  | new | missing |
-| <code>Unpaid</code> |  | new | missing |
-| <code>Unpaid and Discounted</code> |  | new | missing |
+| <code>Unpaid</code> |  | new | translated |
+| <code>Unpaid and Discounted</code> |  | new | translated |
 | <code>Unpin</code> |  | new | translated |
 | <code>Unplanned machine maintenance</code> |  | new | missing |
 | <code>Unpublish</code> |  | new | missing |
@@ -14781,7 +14781,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Unreconcile Payment</code> |  | new | missing |
 | <code>Unreconcile Payment Entries</code> |  | new | missing |
 | <code>Unreconcile Transaction</code> |  | new | missing |
-| <code>Unreconciled</code> |  | new | missing |
+| <code>Unreconciled</code> |  | new | translated |
 | <code>Unreconciled Amount</code> |  | new | missing |
 | <code>Unreconciled Entries</code> |  | new | missing |
 | <code>Unreconciled Transactions</code> |  | new | missing |
@@ -14790,14 +14790,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Unreserve for Raw Materials</code> |  | new | missing |
 | <code>Unreserve for Sub-assembly</code> |  | new | missing |
 | <code>Unreserving Stock...</code> |  | new | missing |
-| <code>Unresolved</code> |  | new | missing |
+| <code>Unresolved</code> |  | new | translated |
 | <code>Unsafe SQL query</code> |  | new | missing |
 | <code>Unscheduled</code> |  | new | missing |
-| <code>Unsecured Loans</code> |  | new | missing |
+| <code>Unsecured Loans</code> |  | new | translated |
 | <code>Unselect All</code> |  | new | translated |
 | <code>Unset Matched Payment Request</code> |  | new | missing |
 | <code>Unshared</code> |  | new | translated |
-| <code>Unsigned</code> |  | new | missing |
+| <code>Unsigned</code> |  | new | translated |
 | <code>Unsubscribe</code> |  | new | translated |
 | <code>Unsubscribe Method</code> |  | new | translated |
 | <code>Unsubscribe Params</code> |  | new | missing |
@@ -14808,7 +14808,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Unsupported function or operator: {0}</code> |  | new | missing |
 | <code>Unsupported {0}: {1}</code> |  | new | missing |
 | <code>Untitled Column</code> |  | new | translated |
-| <code>Unverified</code> |  | new | missing |
+| <code>Unverified</code> |  | new | translated |
 | <code>Unverified Webhook Data</code> |  | new | missing |
 | <code>Unzip</code> |  | new | translated |
 | <code>Unzipped {0} files</code> |  | new | translated |
@@ -14817,11 +14817,11 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Upcoming Calendar Events</code> |  | new | missing |
 | <code>Upcoming Events for Today</code> |  | new | translated |
 | <code>Update</code> |  | new | translated |
-| <code>Update Account Name / Number</code> |  | new | missing |
-| <code>Update Account Number / Name</code> |  | new | missing |
+| <code>Update Account Name / Number</code> |  | new | translated |
+| <code>Update Account Number / Name</code> |  | new | translated |
 | <code>Update Additional Information</code> |  | new | missing |
 | <code>Update Amendment Naming</code> |  | new | missing |
-| <code>Update Auto Repeat Reference</code> |  | new | missing |
+| <code>Update Auto Repeat Reference</code> |  | new | translated |
 | <code>Update Available</code> |  | new | missing |
 | <code>Update BOM Cost Automatically</code> |  | new | missing |
 | <code>Update BOM cost automatically via scheduler, based on the latest Valuation Rate/Price List Rate/Last Purchase Rate of raw materials</code> |  | new | missing |
@@ -14829,29 +14829,29 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Update Billed Amount in Delivery Note</code> |  | new | missing |
 | <code>Update Billed Amount in Purchase Order</code> |  | new | missing |
 | <code>Update Billed Amount in Purchase Receipt</code> |  | new | missing |
-| <code>Update Billed Amount in Sales Order</code> |  | new | missing |
-| <code>Update Clearance Date</code> |  | new | missing |
+| <code>Update Billed Amount in Sales Order</code> |  | new | translated |
+| <code>Update Clearance Date</code> |  | new | translated |
 | <code>Update Consumed Material Cost In Project</code> |  | new | missing |
 | <code>Update Cost</code> |  | new | missing |
-| <code>Update Cost Center Name / Number</code> |  | new | missing |
+| <code>Update Cost Center Name / Number</code> |  | new | translated |
 | <code>Update Costing and Billing</code> |  | new | missing |
 | <code>Update Current Stock</code> |  | new | missing |
 | <code>Update Existing Records</code> |  | new | translated |
 | <code>Update Field</code> |  | new | translated |
 | <code>Update Hooks Resolution Order</code> |  | new | missing |
-| <code>Update Items</code> |  | new | missing |
+| <code>Update Items</code> |  | new | translated |
 | <code>Update Order</code> |  | new | missing |
 | <code>Update Outstanding for Self</code> |  | new | missing |
 | <code>Update Password</code> |  | new | translated |
 | <code>Update Price List based on</code> |  | new | missing |
-| <code>Update Print Format</code> |  | new | missing |
+| <code>Update Print Format</code> |  | new | translated |
 | <code>Update Profile</code> |  | new | missing |
 | <code>Update Rate and Availability</code> |  | new | missing |
 | <code>Update Rate as per Last Purchase</code> |  | new | missing |
 | <code>Update Series Counter</code> |  | new | missing |
 | <code>Update Series Number</code> |  | new | translated |
 | <code>Update Settings</code> |  | new | translated |
-| <code>Update Stock</code> |  | new | missing |
+| <code>Update Stock</code> |  | new | translated |
 | <code>Update Translations</code> |  | new | translated |
 | <code>Update Type</code> |  | new | missing |
 | <code>Update Value</code> |  | new | translated |
@@ -14933,7 +14933,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Use a name that is different from previous project name</code> |  | new | missing |
 | <code>Use ampersand to match multiple terms</code> |  | new | missing |
 | <code>Use different Email ID</code> |  | new | missing |
-| <code>Use for Shopping Cart</code> |  | new | missing |
+| <code>Use for Shopping Cart</code> |  | new | translated |
 | <code>Use if the default settings don&#x27;t seem to detect your data correctly</code> |  | new | missing |
 | <code>Use legacy Budget Controller</code> |  | new | missing |
 | <code>Use legacy controller for Period Closing Voucher</code> |  | new | missing |
@@ -14947,7 +14947,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Use this, for example, if all sent emails should also be send to an archive.</code> |  | new | missing |
 | <code>Used</code> |  | new | translated |
 | <code>Used OAuth</code> |  | new | missing |
-| <code>Used for Production Plan</code> |  | new | missing |
+| <code>Used for Production Plan</code> |  | new | translated |
 | <code>Used for inter-company transactions</code> |  | new | missing |
 | <code>Used to balance the books when recording expenses added to stock</code> |  | new | missing |
 | <code>Used to balance the books when recording extra purchase costs like freight or customs</code> |  | new | missing |
@@ -14987,7 +14987,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>User Permissions</code> | Button in list view menu | new | missing |
 | <code>User Permissions are used to limit users to specific records.</code> |  | new | translated |
 | <code>User Permissions created successfully</code> |  | new | missing |
-| <code>User Remark</code> |  | new | missing |
+| <code>User Remark</code> |  | new | translated |
 | <code>User Resolution Time</code> |  | new | missing |
 | <code>User Role</code> |  | new | missing |
 | <code>User Role Profile</code> |  | new | missing |
@@ -15000,7 +15000,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>User can login using Email id or Mobile number</code> |  | new | translated |
 | <code>User can login using Email id or User Name</code> |  | new | translated |
 | <code>User don&#x27;t have permissions to select/read this account.</code> |  | new | missing |
-| <code>User has not applied rule on the invoice {0}</code> |  | new | missing |
+| <code>User has not applied rule on the invoice {0}</code> |  | new | translated |
 | <code>User is disabled</code> |  | new | missing |
 | <code>User is mandatory for Share</code> |  | new | translated |
 | <code>User must always select</code> |  | new | translated |
@@ -15015,7 +15015,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>User {0} does not have access to this document</code> |  | new | translated |
 | <code>User {0} does not have doctype access via role permission for document {1}</code> |  | new | translated |
 | <code>User {0} does not have the permission to create a Workspace.</code> |  | new | missing |
-| <code>User {0} doesn&#x27;t have any default POS Profile. Check Default at Row {1} for this User.</code> |  | new | missing |
+| <code>User {0} doesn&#x27;t have any default POS Profile. Check Default at Row {1} for this User.</code> |  | new | translated |
 | <code>User {0} has requested for data deletion</code> |  | new | translated |
 | <code>User {0} has started an impersonation session as you. &lt;br&gt;&lt;br&gt;&lt;b&gt;Reason provided:&lt;/b&gt; {1}</code> |  | new | missing |
 | <code>User {0} impersonated as {1}</code> |  | new | missing |
@@ -15025,7 +15025,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>User {0} is not permitted to access this document.</code> |  | new | missing |
 | <code>User {0}: Removed Employee Self Service role as there is no mapped employee.</code> |  | new | missing |
 | <code>User {0}: Removed Employee role as there is no mapped employee.</code> |  | new | missing |
-| <code>User {} is disabled. Please select valid user/cashier</code> |  | new | missing |
+| <code>User {} is disabled. Please select valid user/cashier</code> |  | new | translated |
 | <code>Userinfo URI</code> |  | new | missing |
 | <code>Username</code> |  | new | translated |
 | <code>Username {0} already exists</code> |  | new | translated |
@@ -15042,7 +15042,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Using negative stock disables FIFO/Moving average valuation when inventory is negative.</code> |  | new | missing |
 | <code>Using this console may allow attackers to impersonate you and steal your information. Do not enter or paste code that you do not understand.</code> |  | new | translated |
 | <code>Utilities</code> |  | new | missing |
-| <code>Utility Expenses</code> |  | new | missing |
+| <code>Utility Expenses</code> |  | new | translated |
 | <code>Utilization</code> |  | new | missing |
 | <code>Utilization %</code> |  | new | missing |
 | <code>VAT Accounts</code> |  | new | missing |
@@ -15051,19 +15051,19 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>VAT on Expenses and All Other Inputs</code> |  | new | missing |
 | <code>VAT on Sales and All Other Outputs</code> |  | new | missing |
 | <code>Valid</code> |  | new | translated |
-| <code>Valid From</code> |  | new | missing |
+| <code>Valid From</code> |  | new | translated |
 | <code>Valid From date not in Fiscal Year {0}</code> |  | new | missing |
 | <code>Valid From must be after {0} as last GL Entry against the cost center {1} posted on this date</code> |  | new | missing |
-| <code>Valid Till</code> |  | new | missing |
+| <code>Valid Till</code> |  | new | translated |
 | <code>Valid Up To</code> |  | new | missing |
 | <code>Valid Up To date cannot be before Valid From date</code> |  | new | missing |
 | <code>Valid Up To date not in Fiscal Year {0}</code> |  | new | missing |
 | <code>Valid Upto</code> |  | new | missing |
-| <code>Valid for Countries</code> |  | new | missing |
-| <code>Valid from and valid upto fields are mandatory for the cumulative</code> |  | new | missing |
-| <code>Valid till Date cannot be before Transaction Date</code> |  | new | missing |
-| <code>Valid till date cannot be before transaction date</code> |  | new | missing |
-| <code>Validate Applied Rule</code> |  | new | missing |
+| <code>Valid for Countries</code> |  | new | translated |
+| <code>Valid from and valid upto fields are mandatory for the cumulative</code> |  | new | translated |
+| <code>Valid till Date cannot be before Transaction Date</code> |  | new | translated |
+| <code>Valid till date cannot be before transaction date</code> |  | new | translated |
+| <code>Validate Applied Rule</code> |  | new | translated |
 | <code>Validate Components and Quantities Per BOM</code> |  | new | missing |
 | <code>Validate Field</code> |  | new | translated |
 | <code>Validate Frappe Mail Settings</code> |  | new | missing |
@@ -15077,14 +15077,14 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Validation Error</code> |  | new | translated |
 | <code>Validity</code> |  | new | translated |
 | <code>Validity Details</code> |  | new | missing |
-| <code>Validity and Usage</code> |  | new | missing |
-| <code>Validity in Days</code> |  | new | missing |
-| <code>Validity period of this quotation has ended.</code> |  | new | missing |
-| <code>Valuation</code> |  | new | missing |
+| <code>Validity and Usage</code> |  | new | translated |
+| <code>Validity in Days</code> |  | new | translated |
+| <code>Validity period of this quotation has ended.</code> |  | new | translated |
+| <code>Valuation</code> |  | new | translated |
 | <code>Valuation (I - K)</code> |  | new | missing |
 | <code>Valuation Field Type</code> |  | new | missing |
 | <code>Valuation Method</code> |  | new | missing |
-| <code>Valuation Rate</code> |  | new | missing |
+| <code>Valuation Rate</code> |  | new | translated |
 | <code>Valuation Rate (In / Out)</code> |  | new | missing |
 | <code>Valuation Rate Missing</code> |  | new | missing |
 | <code>Valuation Rate and Manual value this item on its own and deduct that cost from the raw material cost, like the pre-v16 scrap items. % of Component Cost allocates a percentage of the remaining raw material cost.</code> |  | new | missing |
@@ -15092,21 +15092,21 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Valuation Rate is mandatory if Opening Stock entered</code> |  | new | missing |
 | <code>Valuation Rate required for Item {0} at row {1}</code> |  | new | missing |
 | <code>Valuation Type</code> |  | new | missing |
-| <code>Valuation and Total</code> |  | new | missing |
+| <code>Valuation and Total</code> |  | new | translated |
 | <code>Valuation rate for customer provided items has been set to zero.</code> |  | new | missing |
 | <code>Valuation rate for the item as per Sales Invoice (Only for Internal Transfers)</code> |  | new | missing |
-| <code>Valuation type charges can not be marked as Inclusive</code> |  | new | missing |
+| <code>Valuation type charges can not be marked as Inclusive</code> |  | new | translated |
 | <code>Valuation type charges can not marked as Inclusive</code> |  | new | missing |
 | <code>Value</code> |  | new | translated |
 | <code>Value (G - D)</code> |  | new | missing |
 | <code>Value ({0})</code> |  | new | missing |
-| <code>Value After Depreciation</code> |  | new | missing |
+| <code>Value After Depreciation</code> |  | new | translated |
 | <code>Value Based Inspection</code> |  | new | missing |
 | <code>Value Based On</code> |  | new | translated |
 | <code>Value Change</code> |  | new | translated |
 | <code>Value Changed</code> |  | new | translated |
 | <code>Value Details</code> |  | new | missing |
-| <code>Value Or Qty</code> |  | new | missing |
+| <code>Value Or Qty</code> |  | new | translated |
 | <code>Value Proposition</code> |  | new | missing |
 | <code>Value To Be Set</code> |  | new | translated |
 | <code>Value Too Long</code> |  | new | missing |
@@ -15138,10 +15138,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Values Changed</code> |  | new | translated |
 | <code>Vara</code> |  | new | excepted |
 | <code>Variable</code> |  | new | missing |
-| <code>Variable Name</code> |  | new | missing |
-| <code>Variables</code> |  | new | missing |
-| <code>Variance</code> |  | new | missing |
-| <code>Variance ({})</code> |  | new | missing |
+| <code>Variable Name</code> |  | new | translated |
+| <code>Variables</code> |  | new | translated |
+| <code>Variance</code> |  | new | translated |
+| <code>Variance ({})</code> |  | new | translated |
 | <code>Variant</code> |  | new | missing |
 | <code>Variant Attribute Error</code> |  | new | missing |
 | <code>Variant Attributes</code> |  | new | missing |
@@ -15163,7 +15163,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Vehicle Value</code> |  | new | missing |
 | <code>Vendor Invoice</code> |  | new | missing |
 | <code>Vendor Invoices</code> |  | new | missing |
-| <code>Vendor Name</code> |  | new | missing |
+| <code>Vendor Name</code> |  | new | translated |
 | <code>Venture Capital</code> |  | new | missing |
 | <code>Verdana</code> |  | new | excepted |
 | <code>Verification</code> |  | new | translated |
@@ -15207,8 +15207,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>View File</code> |  | new | missing |
 | <code>View Full Log</code> |  | new | translated |
 | <code>View Instructions</code> |  | new | missing |
-| <code>View Leads</code> |  | new | missing |
-| <code>View Ledger</code> |  | new | missing |
+| <code>View Leads</code> |  | new | translated |
+| <code>View Ledger</code> |  | new | translated |
 | <code>View Ledgers</code> |  | new | missing |
 | <code>View List</code> |  | new | translated |
 | <code>View Log</code> |  | new | translated |
@@ -15226,7 +15226,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>View Stock Balance Report</code> |  | new | missing |
 | <code>View Stock Ledger</code> |  | new | missing |
 | <code>View Switcher</code> |  | new | missing |
-| <code>View Type</code> |  | new | missing |
+| <code>View Type</code> |  | new | translated |
 | <code>View Website</code> |  | new | translated |
 | <code>View Work Order Summary</code> |  | new | missing |
 | <code>View Work Order Summary Report</code> |  | new | missing |
@@ -15269,18 +15269,18 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Voucher</code> |  | new | missing |
 | <code>Voucher #</code> |  | new | missing |
 | <code>Voucher Created</code> |  | new | missing |
-| <code>Voucher Detail No</code> |  | new | missing |
+| <code>Voucher Detail No</code> |  | new | translated |
 | <code>Voucher Detail Reference</code> |  | new | missing |
 | <code>Voucher Details</code> |  | new | missing |
 | <code>Voucher Name</code> |  | new | missing |
-| <code>Voucher No</code> |  | new | missing |
+| <code>Voucher No</code> |  | new | translated |
 | <code>Voucher No is mandatory</code> |  | new | missing |
 | <code>Voucher Qty</code> |  | new | missing |
 | <code>Voucher Subtype</code> |  | new | missing |
-| <code>Voucher Type</code> |  | new | missing |
+| <code>Voucher Type</code> |  | new | translated |
 | <code>Voucher {0} is over-allocated by {1}</code> |  | new | missing |
 | <code>Voucher-wise Balance</code> |  | new | missing |
-| <code>Vouchers</code> |  | new | missing |
+| <code>Vouchers</code> |  | new | translated |
 | <code>WARNING: Exotel app has been separated from ERPNext, please install the app to continue using Exotel integration.</code> |  | new | missing |
 | <code>WIP Composite Asset</code> |  | new | missing |
 | <code>WIP WH</code> |  | new | missing |
@@ -15303,13 +15303,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Warehouse Settings</code> |  | new | missing |
 | <code>Warehouse Type</code> |  | new | missing |
 | <code>Warehouse Wise Stock Balance</code> |  | new | missing |
-| <code>Warehouse and Reference</code> |  | new | missing |
+| <code>Warehouse and Reference</code> |  | new | translated |
 | <code>Warehouse can not be deleted as stock ledger entry exists for this warehouse.</code> |  | new | missing |
 | <code>Warehouse cannot be changed for Serial No.</code> |  | new | missing |
 | <code>Warehouse is mandatory</code> |  | new | missing |
 | <code>Warehouse is required to get producible FG Items</code> |  | new | missing |
 | <code>Warehouse not found against the account {0}</code> |  | new | missing |
-| <code>Warehouse required for stock Item {0}</code> |  | new | missing |
+| <code>Warehouse required for stock Item {0}</code> |  | new | translated |
 | <code>Warehouse wise Item Balance Age and Value</code> |  | new | missing |
 | <code>Warehouse {0} can not be deleted as quantity exists for Item {1}</code> |  | new | missing |
 | <code>Warehouse {0} does not belong to Company {1}.</code> |  | new | missing |
@@ -15322,12 +15322,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Warehouses with child nodes cannot be converted to ledger</code> |  | new | missing |
 | <code>Warehouses with existing transaction can not be converted to group.</code> |  | new | missing |
 | <code>Warehouses with existing transaction can not be converted to ledger.</code> |  | new | missing |
-| <code>Warn</code> |  | new | missing |
-| <code>Warn POs</code> |  | new | missing |
-| <code>Warn Purchase Orders</code> |  | new | missing |
-| <code>Warn RFQs</code> |  | new | missing |
-| <code>Warn for new Purchase Orders</code> |  | new | missing |
-| <code>Warn for new Request for Quotations</code> |  | new | missing |
+| <code>Warn</code> |  | new | translated |
+| <code>Warn POs</code> |  | new | translated |
+| <code>Warn Purchase Orders</code> |  | new | translated |
+| <code>Warn RFQs</code> |  | new | translated |
+| <code>Warn for new Purchase Orders</code> |  | new | translated |
+| <code>Warn for new Request for Quotations</code> |  | new | translated |
 | <code>Warn or stop if Item rate is changed in Delivery Notes and Sales Invoices generated from a Sales Order.</code> |  | new | missing |
 | <code>Warn or stop if Item rate is changed in Purchase Invoice or Purchase Receipt generated from a Purchase Order.</code> |  | new | missing |
 | <code>Warning</code> |  | new | translated |
@@ -15335,12 +15335,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Warning on Negative Stock</code> |  | new | missing |
 | <code>Warning!</code> |  | new | missing |
 | <code>Warning: Account changed for warehouse</code> |  | new | missing |
-| <code>Warning: Another {0} # {1} exists against stock entry {2}</code> |  | new | missing |
+| <code>Warning: Another {0} # {1} exists against stock entry {2}</code> |  | new | translated |
 | <code>Warning: DATA LOSS IMMINENT! Proceeding will permanently delete following database columns from doctype {0}:</code> |  | new | missing |
 | <code>Warning: Material Requested Qty is less than Minimum Order Qty</code> |  | new | missing |
 | <code>Warning: Naming is not set</code> |  | new | missing |
 | <code>Warning: Quantity exceeds maximum producible quantity based on quantity of raw materials received through the Subcontracting Inward Order {0}.</code> |  | new | missing |
-| <code>Warning: Sales Order {0} already exists against Customer&#x27;s Purchase Order {1}</code> |  | new | missing |
+| <code>Warning: Sales Order {0} already exists against Customer&#x27;s Purchase Order {1}</code> |  | new | translated |
 | <code>Warning: This action cannot be undone!</code> |  | new | missing |
 | <code>Warning: Unable to find {0} in any table related to {1}</code> |  | new | translated |
 | <code>Warning: Updating counter may lead to document name conflicts if not done properly</code> |  | new | missing |
@@ -15349,7 +15349,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Warranty</code> |  | new | missing |
 | <code>Warranty / AMC Details</code> |  | new | missing |
 | <code>Warranty / AMC Status</code> |  | new | missing |
-| <code>Warranty Claim</code> |  | new | missing |
+| <code>Warranty Claim</code> |  | new | translated |
 | <code>Warranty Expiry (Serial)</code> |  | new | missing |
 | <code>Warranty Expiry Date</code> |  | new | missing |
 | <code>Warranty Period (Days)</code> |  | new | missing |
@@ -15446,10 +15446,10 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Weekly Time to send</code> |  | new | missing |
 | <code>Weight</code> |  | new | translated |
 | <code>Weight (kg)</code> |  | new | missing |
-| <code>Weight Per Unit</code> |  | new | missing |
-| <code>Weight UOM</code> |  | new | missing |
+| <code>Weight Per Unit</code> |  | new | translated |
+| <code>Weight UOM</code> |  | new | translated |
 | <code>Weighted Distribution</code> |  | new | missing |
-| <code>Weighting Function</code> |  | new | missing |
+| <code>Weighting Function</code> |  | new | translated |
 | <code>Welcome</code> |  | new | missing |
 | <code>Welcome Email Template</code> |  | new | translated |
 | <code>Welcome URL</code> |  | new | missing |
@@ -15465,7 +15465,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>What the recipient receives by email when this notification fires. Mirrors Title/Description by default; set these to make the email differ from the in-app text.</code> |  | new | missing |
 | <code>What will be deleted:</code> |  | new | missing |
 | <code>What&#x27;s New</code> |  | new | missing |
-| <code>WhatsApp</code> |  | new | missing |
+| <code>WhatsApp</code> |  | new | translated |
 | <code>Wheels</code> |  | new | missing |
 | <code>When a parent warehouse is chosen, the system conducts Project Qty checks against the associated child warehouses</code> |  | new | missing |
 | <code>When checked, only cumulative threshold will be applied</code> |  | new | missing |
@@ -15480,15 +15480,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>When uploading files, force the use of the web-based image capture. If this is unchecked, the default behavior is to use the mobile native camera when use from a mobile is detected.</code> |  | new | missing |
 | <code>When you pay for something upfront (like annual insurance), the cost is held here and recognized gradually over time</code> |  | new | missing |
 | <code>Which view of the associated DocType should this shortcut take you to?</code> |  | new | translated |
-| <code>While creating account for Child Company {0}, parent account {1} found as a ledger account.</code> |  | new | missing |
-| <code>While creating account for Child Company {0}, parent account {1} not found. Please create the parent account in corresponding COA</code> |  | new | missing |
+| <code>While creating account for Child Company {0}, parent account {1} found as a ledger account.</code> |  | new | translated |
+| <code>While creating account for Child Company {0}, parent account {1} not found. Please create the parent account in corresponding COA</code> |  | new | translated |
 | <code>While making Purchase Invoice from Purchase Order, use Exchange Rate on Invoice&#x27;s transaction date rather than inheriting it from Purchase Order. Only applies for Purchase Invoice.</code> |  | new | missing |
 | <code>White</code> |  | new | missing |
 | <code>Who are you setting this up for?</code> |  | new | missing |
 | <code>Widowed</code> |  | new | missing |
 | <code>Width</code> |  | new | translated |
 | <code>Width (cm)</code> |  | new | missing |
-| <code>Width of amount in word</code> |  | new | missing |
+| <code>Width of amount in word</code> |  | new | translated |
 | <code>Widths can be set in px or %.</code> |  | new | translated |
 | <code>Wildcard Filter</code> |  | new | translated |
 | <code>Will add &quot;%&quot; before and after the query</code> |  | new | translated |
@@ -15515,8 +15515,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Won Opportunities</code> |  | new | missing |
 | <code>Won Opportunity (Last 1 Month)</code> |  | new | missing |
 | <code>Work Done</code> |  | new | missing |
-| <code>Work In Progress</code> |  | new | missing |
-| <code>Work Order</code> |  | new | missing |
+| <code>Work In Progress</code> |  | new | translated |
+| <code>Work Order</code> |  | new | translated |
 | <code>Work Order / Subcontract PO</code> |  | new | missing |
 | <code>Work Order Additional Item</code> |  | new | missing |
 | <code>Work Order Analysis</code> |  | new | missing |
@@ -15524,7 +15524,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Work Order Item</code> |  | new | missing |
 | <code>Work Order Mismatch</code> |  | new | missing |
 | <code>Work Order Operation</code> |  | new | missing |
-| <code>Work Order Qty</code> |  | new | missing |
+| <code>Work Order Qty</code> |  | new | translated |
 | <code>Work Order Qty Analysis</code> |  | new | missing |
 | <code>Work Order Stock Report</code> |  | new | missing |
 | <code>Work Order Summary</code> |  | new | missing |
@@ -15534,12 +15534,12 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Work Order has been {0}</code> |  | new | missing |
 | <code>Work Order must reference a row in Production Plan {0}.</code> |  | new | missing |
 | <code>Work Order must reference only one Production Plan row.</code> |  | new | missing |
-| <code>Work Order not created</code> |  | new | missing |
+| <code>Work Order not created</code> |  | new | translated |
 | <code>Work Order {0} created</code> |  | new | missing |
 | <code>Work Order {0} has no produced qty</code> |  | new | missing |
 | <code>Work Order {0}: Job Card not found for the operation {1}</code> |  | new | missing |
 | <code>Work Orders</code> |  | new | missing |
-| <code>Work Orders Created: {0}</code> |  | new | missing |
+| <code>Work Orders Created: {0}</code> |  | new | translated |
 | <code>Work Orders in Progress</code> |  | new | missing |
 | <code>Work in Progress</code> |  | new | missing |
 | <code>Work-in-Progress Warehouse</code> |  | new | missing |
@@ -15606,18 +15606,18 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Would you like to unpublish this comment? This means it will no longer be visible to website/portal users.</code> |  | new | missing |
 | <code>Wrapping up</code> |  | new | translated |
 | <code>Write</code> |  | new | translated |
-| <code>Write Off</code> |  | new | missing |
-| <code>Write Off Account</code> |  | new | missing |
-| <code>Write Off Amount</code> |  | new | missing |
-| <code>Write Off Amount (Company Currency)</code> |  | new | missing |
-| <code>Write Off Based On</code> |  | new | missing |
-| <code>Write Off Cost Center</code> |  | new | missing |
-| <code>Write Off Difference Amount</code> |  | new | missing |
-| <code>Write Off Entry</code> |  | new | missing |
+| <code>Write Off</code> |  | new | translated |
+| <code>Write Off Account</code> |  | new | translated |
+| <code>Write Off Amount</code> |  | new | translated |
+| <code>Write Off Amount (Company Currency)</code> |  | new | translated |
+| <code>Write Off Based On</code> |  | new | translated |
+| <code>Write Off Cost Center</code> |  | new | translated |
+| <code>Write Off Difference Amount</code> |  | new | translated |
+| <code>Write Off Entry</code> |  | new | translated |
 | <code>Write Off Limit</code> |  | new | missing |
-| <code>Write Off Outstanding Amount</code> |  | new | missing |
-| <code>Writeoff</code> |  | new | missing |
-| <code>Written Down Value</code> |  | new | missing |
+| <code>Write Off Outstanding Amount</code> |  | new | translated |
+| <code>Writeoff</code> |  | new | translated |
+| <code>Written Down Value</code> |  | new | translated |
 | <code>Wrong Company</code> |  | new | missing |
 | <code>Wrong Fetch From value</code> |  | new | translated |
 | <code>Wrong Password</code> |  | new | missing |
@@ -15634,13 +15634,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Yandex.Mail</code> |  | new | excepted |
 | <code>Yard</code> |  | new | missing |
 | <code>Year</code> |  | new | translated |
-| <code>Year End Date</code> |  | new | missing |
-| <code>Year Name</code> |  | new | missing |
-| <code>Year Start Date</code> |  | new | missing |
+| <code>Year End Date</code> |  | new | translated |
+| <code>Year Name</code> |  | new | translated |
+| <code>Year Start Date</code> |  | new | translated |
 | <code>Year in 2 digits</code> |  | new | missing |
 | <code>Year in 4 digits</code> |  | new | missing |
 | <code>Year of Passing</code> |  | new | missing |
-| <code>Year start date or end date is overlapping with {0}. To avoid please set company</code> |  | new | missing |
+| <code>Year start date or end date is overlapping with {0}. To avoid please set company</code> |  | new | translated |
 | <code>Yearly</code> |  | new | translated |
 | <code>Yellow</code> |  | new | translated |
 | <code>Yes</code> |  | new | translated |
@@ -15669,9 +15669,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>You are not allowed to update as per the conditions set in {} Workflow.</code> |  | new | missing |
 | <code>You are not allowed to update attendance for another user.</code> |  | new | missing |
 | <code>You are not allowed to update this Web Form Document</code> |  | new | translated |
-| <code>You are not authorized to add or update entries before {0}</code> |  | new | missing |
+| <code>You are not authorized to add or update entries before {0}</code> |  | new | translated |
 | <code>You are not authorized to make/edit Stock Transactions for Item {0} under warehouse {1} before this time.</code> |  | new | missing |
-| <code>You are not authorized to set Frozen value</code> |  | new | missing |
+| <code>You are not authorized to set Frozen value</code> |  | new | translated |
 | <code>You are not authorized to undo this email</code> |  | new | missing |
 | <code>You are not connected to Internet. Retry after sometime.</code> |  | new | translated |
 | <code>You are not permitted to access this page without login.</code> |  | new | missing |
@@ -15691,24 +15691,24 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>You can also copy-paste this</code> |  | new | missing |
 | <code>You can also copy-paste this link in your browser</code> |  | new | missing |
 | <code>You can also copy-paste this {0} to your browser</code> |  | new | translated |
-| <code>You can also set default CWIP account in Company {}</code> |  | new | missing |
+| <code>You can also set default CWIP account in Company {}</code> |  | new | translated |
 | <code>You can also use variables in the series name by putting them between (.) dots</code> |  | new | missing |
 | <code>You can ask your team to resend the invitation if you&#x27;d still like to join.</code> |  | new | missing |
-| <code>You can change the parent account to a Balance Sheet account or select a different account.</code> |  | new | missing |
+| <code>You can change the parent account to a Balance Sheet account or select a different account.</code> |  | new | translated |
 | <code>You can change the retention policy from {0}.</code> |  | new | missing |
 | <code>You can continue with the onboarding after exploring this page</code> |  | new | missing |
 | <code>You can disable this {0} instead of deleting it.</code> |  | new | missing |
 | <code>You can increase the limit from System Settings.</code> |  | new | missing |
-| <code>You can not enter current voucher in &#x27;Against Journal Entry&#x27; column</code> |  | new | missing |
+| <code>You can not enter current voucher in &#x27;Against Journal Entry&#x27; column</code> |  | new | translated |
 | <code>You can only edit your own replies.</code> |  | new | missing |
-| <code>You can only have Plans with the same billing cycle in a Subscription</code> |  | new | missing |
+| <code>You can only have Plans with the same billing cycle in a Subscription</code> |  | new | translated |
 | <code>You can only insert images in Markdown fields</code> |  | new | missing |
 | <code>You can only print upto {0} documents at a time</code> |  | new | missing |
-| <code>You can only redeem max {0} points in this order.</code> |  | new | missing |
-| <code>You can only select one mode of payment as default</code> |  | new | missing |
+| <code>You can only redeem max {0} points in this order.</code> |  | new | translated |
+| <code>You can only select one mode of payment as default</code> |  | new | translated |
 | <code>You can only upload JPG, PNG, GIF, PDF, TXT, CSV or Microsoft documents.</code> |  | new | missing |
 | <code>You can only upload upto 5000 records in one go. (may be less in some cases)</code> |  | new | translated |
-| <code>You can redeem upto {0}.</code> |  | new | missing |
+| <code>You can redeem upto {0}.</code> |  | new | translated |
 | <code>You can reset the clearing dates of these entries here.</code> |  | new | missing |
 | <code>You can select one from the following,</code> |  | new | translated |
 | <code>You can set a high value here if multiple users will be logging in from the same network.</code> |  | new | missing |
@@ -15728,19 +15728,19 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>You cannot change the rate if BOM is mentioned against any Item.</code> |  | new | missing |
 | <code>You cannot create a dashboard chart from single DocTypes</code> |  | new | translated |
 | <code>You cannot create a {0} within the closed Accounting Period {1}</code> |  | new | missing |
-| <code>You cannot create or cancel any accounting entries with in the closed Accounting Period {0}</code> |  | new | missing |
+| <code>You cannot create or cancel any accounting entries with in the closed Accounting Period {0}</code> |  | new | translated |
 | <code>You cannot create/amend any accounting entries till this date.</code> |  | new | missing |
-| <code>You cannot credit and debit same account at the same time</code> |  | new | missing |
+| <code>You cannot credit and debit same account at the same time</code> |  | new | translated |
 | <code>You cannot delete Project Type &#x27;External&#x27;</code> |  | new | missing |
 | <code>You cannot edit root node.</code> |  | new | missing |
 | <code>You cannot enable both the settings &#x27;{0}&#x27; and &#x27;{1}&#x27;.</code> |  | new | missing |
 | <code>You cannot outward following {0} as either they are Delivered, Inactive or located in a different warehouse.</code> |  | new | missing |
-| <code>You cannot redeem more than {0}.</code> |  | new | missing |
+| <code>You cannot redeem more than {0}.</code> |  | new | translated |
 | <code>You cannot repost item valuation before {}</code> |  | new | missing |
-| <code>You cannot restart a Subscription that is not cancelled.</code> |  | new | missing |
+| <code>You cannot restart a Subscription that is not cancelled.</code> |  | new | translated |
 | <code>You cannot share `{0}` on {1} `{2}` as you do not have `{0}` permission on `{1}`</code> |  | new | missing |
-| <code>You cannot submit empty order.</code> |  | new | missing |
-| <code>You cannot submit the order without payment.</code> |  | new | missing |
+| <code>You cannot submit empty order.</code> |  | new | translated |
+| <code>You cannot submit the order without payment.</code> |  | new | translated |
 | <code>You cannot unset &#x27;Read Only&#x27; for field {0}</code> |  | new | translated |
 | <code>You cannot {0} this document because another Period Closing Entry {1} exists after {2}</code> |  | new | missing |
 | <code>You changed the value of {0}</code> |  | new | missing |
@@ -15767,8 +15767,8 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>You do not have permissions to cancel all linked documents.</code> |  | new | translated |
 | <code>You do not have permissions to {} items in a {}.</code> |  | new | missing |
 | <code>You don&#x27;t have access to Report: {0}</code> |  | new | translated |
-| <code>You don&#x27;t have enough Loyalty Points to redeem</code> |  | new | missing |
-| <code>You don&#x27;t have enough points to redeem.</code> |  | new | missing |
+| <code>You don&#x27;t have enough Loyalty Points to redeem</code> |  | new | translated |
+| <code>You don&#x27;t have enough points to redeem.</code> |  | new | translated |
 | <code>You don&#x27;t have permission to access the {0} DocType.</code> |  | new | missing |
 | <code>You don&#x27;t have permission to access this file</code> |  | new | translated |
 | <code>You don&#x27;t have permission to create Report records.</code> |  | new | missing |
@@ -15781,7 +15781,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>You don&#x27;t have permission to update Received Qty DocField for item {0}</code> |  | new | missing |
 | <code>You don&#x27;t have permission to update this document. Please contact your System Manager.</code> |  | new | missing |
 | <code>You don&#x27;t have the permissions to access this document</code> |  | new | translated |
-| <code>You had {} errors while creating opening invoices. Check {} for more details</code> |  | new | missing |
+| <code>You had {} errors while creating opening invoices. Check {} for more details</code> |  | new | translated |
 | <code>You have a new message from:</code> |  | new | missing |
 | <code>You have already selected items from {0} {1}</code> |  | new | missing |
 | <code>You have been invited to collaborate on the project {0}.</code> |  | new | missing |
@@ -15806,7 +15806,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>You must add atleast one link.</code> |  | new | missing |
 | <code>You must be logged in to use this form.</code> |  | new | missing |
 | <code>You must login to use this form</code> |  | new | missing |
-| <code>You must select a customer before adding an item.</code> |  | new | missing |
+| <code>You must select a customer before adding an item.</code> |  | new | translated |
 | <code>You need the &#x27;{0}&#x27; permission on {1} {2} to perform this action.</code> |  | new | missing |
 | <code>You need the Workspace Manager role to edit this workspace.</code> |  | new | missing |
 | <code>You need to be Workspace Manager to delete a public workspace.</code> |  | new | missing |
@@ -15910,7 +15910,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>as of {0}</code> |  | new | missing |
 | <code>ascending</code> |  | new | missing |
 | <code>at</code> |  | new | missing |
-| <code>based_on</code> |  | new | missing |
+| <code>based_on</code> |  | new | translated |
 | <code>blue</code> |  | new | translated |
 | <code>by Role</code> |  | new | translated |
 | <code>by {}</code> |  | new | missing |
@@ -15943,7 +15943,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>development</code> |  | new | excepted |
 | <code>discount applied</code> |  | new | missing |
 | <code>e.g.</code> |  | new | missing |
-| <code>e.g. &quot;Summer Holiday 2019 Offer 20&quot;</code> |  | new | missing |
+| <code>e.g. &quot;Summer Holiday 2019 Offer 20&quot;</code> |  | new | translated |
 | <code>e.g. &quot;Support&quot;, &quot;Sales&quot;, &quot;Jerry Yang&quot;</code> |  | new | translated |
 | <code>e.g. Bank Charges</code> |  | new | missing |
 | <code>e.g. Last 3 weeks, Q1, May 2025</code> |  | new | missing |
@@ -15956,7 +15956,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>email inbox</code> |  | new | translated |
 | <code>empty</code> |  | new | translated |
 | <code>empty</code> | Comparison value is empty | new | missing |
-| <code>example: Next Day Shipping</code> |  | new | missing |
+| <code>example: Next Day Shipping</code> |  | new | translated |
 | <code>exchangerate.host</code> |  | new | missing |
 | <code>export</code> |  | new | missing |
 | <code>facebook</code> |  | new | translated |
@@ -15981,7 +15981,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>is enabled</code> |  | new | missing |
 | <code>jane@example.com</code> |  | new | excepted |
 | <code>just now</code> |  | new | translated |
-| <code>lft</code> |  | new | missing |
+| <code>lft</code> |  | new | translated |
 | <code>light-blue</code> |  | new | missing |
 | <code>linkedin</code> |  | new | translated |
 | <code>logged in</code> |  | new | translated |
@@ -16028,7 +16028,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>quotation_item</code> |  | new | missing |
 | <code>ratings</code> |  | new | missing |
 | <code>read</code> |  | new | missing |
-| <code>received from</code> |  | new | missing |
+| <code>received from</code> |  | new | translated |
 | <code>red</code> |  | new | translated |
 | <code>removed {0} row(s) from {1}</code> |  | new | missing |
 | <code>renamed from {0} to {1}</code> |  | new | translated |
@@ -16038,7 +16038,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>result</code> |  | new | missing |
 | <code>results</code> |  | new | missing |
 | <code>returned</code> |  | new | missing |
-| <code>rgt</code> |  | new | missing |
+| <code>rgt</code> |  | new | translated |
 | <code>row</code> |  | new | missing |
 | <code>rows</code> |  | new | missing |
 | <code>s</code> | Seconds (Field: Duration) | new | excepted |
@@ -16081,7 +16081,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>transactions</code> |  | new | missing |
 | <code>transactions selected</code> |  | new | missing |
 | <code>twitter</code> |  | new | translated |
-| <code>unique e.g. SAVE20  To be used to get discount</code> |  | new | missing |
+| <code>unique e.g. SAVE20  To be used to get discount</code> |  | new | translated |
 | <code>updated delivered quantity for item {0} to {1}</code> |  | new | missing |
 | <code>updated to {0}</code> |  | new | translated |
 | <code>updated {0}</code> |  | new | missing |
@@ -16111,13 +16111,13 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>write</code> |  | new | missing |
 | <code>yellow</code> |  | new | translated |
 | <code>yesterday</code> |  | new | translated |
-| <code>you must select Capital Work in Progress Account in accounts table</code> |  | new | missing |
+| <code>you must select Capital Work in Progress Account in accounts table</code> |  | new | translated |
 | <code>yyyy-mm-dd</code> |  | new | excepted |
 | <code>{0}</code> |  | new | excepted |
 | <code>{0} ${skip_list ? &quot;&quot; : type}</code> |  | new | excepted |
 | <code>{0} ${type}</code> |  | new | excepted |
 | <code>{0} &#x27;{1}&#x27; is disabled</code> |  | new | missing |
-| <code>{0} &#x27;{1}&#x27; not in Fiscal Year {2}</code> |  | new | missing |
+| <code>{0} &#x27;{1}&#x27; not in Fiscal Year {2}</code> |  | new | translated |
 | <code>{0} ({1})</code> |  | new | excepted |
 | <code>{0} ({1}) (1 row mandatory)</code> |  | new | translated |
 | <code>{0} ({1}) - {2}%</code> |  | new | excepted |
@@ -16130,7 +16130,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>{0} Budget for Account {1} against {2} {3} is {4}. It will be exceeded by {5}.</code> |  | new | missing |
 | <code>{0} Calendar</code> |  | new | translated |
 | <code>{0} Chart</code> |  | new | translated |
-| <code>{0} Coupon used are {1}. Allowed quantity is exhausted</code> |  | new | missing |
+| <code>{0} Coupon used are {1}. Allowed quantity is exhausted</code> |  | new | translated |
 | <code>{0} Dashboard</code> |  | new | translated |
 | <code>{0} Digest</code> |  | new | missing |
 | <code>{0} Fields</code> |  | new | translated |
@@ -16144,7 +16144,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>{0} Name</code> |  | new | translated |
 | <code>{0} Naming Series</code> |  | new | missing |
 | <code>{0} Not allowed to change {1} after submission from {2} to {3}</code> |  | new | missing |
-| <code>{0} Number {1} is already used in {2} {3}</code> |  | new | missing |
+| <code>{0} Number {1} is already used in {2} {3}</code> |  | new | translated |
 | <code>{0} Operating Cost for operation {1}</code> |  | new | missing |
 | <code>{0} Operations: {1}</code> |  | new | missing |
 | <code>{0} Report</code> |  | new | translated |
@@ -16161,25 +16161,25 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>{0} added</code> |  | new | translated |
 | <code>{0} added 1 row to {1}</code> |  | new | missing |
 | <code>{0} added {1} rows to {2}</code> |  | new | missing |
-| <code>{0} against Bill {1} dated {2}</code> |  | new | missing |
-| <code>{0} against Purchase Order {1}</code> |  | new | missing |
-| <code>{0} against Sales Invoice {1}</code> |  | new | missing |
-| <code>{0} against Sales Order {1}</code> |  | new | missing |
+| <code>{0} against Bill {1} dated {2}</code> |  | new | translated |
+| <code>{0} against Purchase Order {1}</code> |  | new | translated |
+| <code>{0} against Sales Invoice {1}</code> |  | new | translated |
+| <code>{0} against Sales Order {1}</code> |  | new | translated |
 | <code>{0} already exists. Select another name</code> |  | new | translated |
 | <code>{0} already has a Parent Procedure {1}.</code> |  | new | missing |
 | <code>{0} already unsubscribed</code> |  | new | translated |
 | <code>{0} already unsubscribed for {1} {2}</code> |  | new | translated |
 | <code>{0} and {1}</code> |  | new | translated |
-| <code>{0} and {1} are mandatory</code> |  | new | missing |
+| <code>{0} and {1} are mandatory</code> |  | new | translated |
 | <code>{0} are currently {1}</code> |  | new | translated |
 | <code>{0} are required</code> |  | new | translated |
-| <code>{0} asset cannot be transferred</code> |  | new | missing |
+| <code>{0} asset cannot be transferred</code> |  | new | translated |
 | <code>{0} assigned a new task {1} {2} to you</code> |  | new | translated |
 | <code>{0} assigned {1}: {2}</code> |  | new | translated |
 | <code>{0} attached {1}</code> | Form timeline | new | missing |
 | <code>{0} can be either {1} or {2}.</code> |  | new | missing |
 | <code>{0} can not be more than {1}</code> |  | new | missing |
-| <code>{0} can not be negative</code> |  | new | missing |
+| <code>{0} can not be negative</code> |  | new | translated |
 | <code>{0} cancelled this document</code> |  | new | missing |
 | <code>{0} cancelled this document {1}</code> | Form timeline | new | missing |
 | <code>{0} cannot be amended because it is not cancelled. Please cancel the document before creating an amendment.</code> |  | new | missing |
@@ -16204,22 +16204,22 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>{0} created this document {1}</code> | Form timeline | new | missing |
 | <code>{0} creation for the following records will be skipped.</code> |  | new | missing |
 | <code>{0} currency must be same as company&#x27;s default currency. Please select another account.</code> |  | new | missing |
-| <code>{0} currently has a {1} Supplier Scorecard standing, and Purchase Orders to this supplier should be issued with caution.</code> |  | new | missing |
-| <code>{0} currently has a {1} Supplier Scorecard standing, and RFQs to this supplier should be issued with caution.</code> |  | new | missing |
+| <code>{0} currently has a {1} Supplier Scorecard standing, and Purchase Orders to this supplier should be issued with caution.</code> |  | new | translated |
+| <code>{0} currently has a {1} Supplier Scorecard standing, and RFQs to this supplier should be issued with caution.</code> |  | new | translated |
 | <code>{0} d</code> |  | new | translated |
 | <code>{0} days ago</code> |  | new | translated |
-| <code>{0} does not belong to Company {1}</code> |  | new | missing |
+| <code>{0} does not belong to Company {1}</code> |  | new | translated |
 | <code>{0} does not belong to the Company {1}.</code> |  | new | missing |
 | <code>{0} does not contain {1}</code> |  | new | missing |
 | <code>{0} does not exist</code> |  | new | missing |
 | <code>{0} does not exist in row {1}</code> |  | new | translated |
 | <code>{0} doesn&#x27;t belong to Company {1}. Please select a Cost Center that belongs to Company {1}.</code> |  | new | missing |
 | <code>{0} doesn&#x27;t belong to Company {1}. Please select an Income Account that belongs to Company {1}.</code> |  | new | missing |
-| <code>{0} entered twice in Item Tax</code> |  | new | missing |
+| <code>{0} entered twice in Item Tax</code> |  | new | translated |
 | <code>{0} entered twice {1} in Item Taxes</code> |  | new | missing |
 | <code>{0} equals {1}</code> |  | new | missing |
 | <code>{0} field cannot be set as unique in {1}, as there are non-unique existing values</code> |  | new | translated |
-| <code>{0} for {1}</code> |  | new | missing |
+| <code>{0} for {1}</code> |  | new | translated |
 | <code>{0} format could not be determined from the values in this column. Defaulting to {1}.</code> |  | new | missing |
 | <code>{0} from {1} to {2}</code> |  | new | missing |
 | <code>{0} from {1} to {2} in row #{3}</code> |  | new | missing |
@@ -16268,15 +16268,15 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>{0} is less than {1}</code> |  | new | missing |
 | <code>{0} is like {1}</code> |  | new | missing |
 | <code>{0} is mandatory</code> |  | new | translated |
-| <code>{0} is mandatory for Item {1}</code> |  | new | missing |
+| <code>{0} is mandatory for Item {1}</code> |  | new | translated |
 | <code>{0} is mandatory for account {1}</code> |  | new | missing |
 | <code>{0} is mandatory. Maybe Currency Exchange record is not created for {1} to {2}</code> |  | new | missing |
 | <code>{0} is mandatory. Maybe Currency Exchange record is not created for {1} to {2}.</code> |  | new | missing |
 | <code>{0} is not a CSV file.</code> |  | new | missing |
-| <code>{0} is not a company bank account</code> |  | new | missing |
+| <code>{0} is not a company bank account</code> |  | new | translated |
 | <code>{0} is not a descendant of {1}</code> |  | new | missing |
 | <code>{0} is not a field of doctype {1}</code> |  | new | missing |
-| <code>{0} is not a group node. Please select a group node as parent cost center</code> |  | new | missing |
+| <code>{0} is not a group node. Please select a group node as parent cost center</code> |  | new | translated |
 | <code>{0} is not a raw printing format.</code> |  | new | translated |
 | <code>{0} is not a stock Item</code> |  | new | missing |
 | <code>{0} is not a valid Accounting Dimension.</code> |  | new | missing |
@@ -16295,7 +16295,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>{0} is not a valid report format. Report format should one of the following {1}</code> |  | new | translated |
 | <code>{0} is not a valid {1} fieldname.</code> |  | new | missing |
 | <code>{0} is not a zip file</code> |  | new | missing |
-| <code>{0} is not added in the table</code> |  | new | missing |
+| <code>{0} is not added in the table</code> |  | new | translated |
 | <code>{0} is not an Income Account. Please select a valid Income Account.</code> |  | new | missing |
 | <code>{0} is not an allowed role for {1}</code> |  | new | missing |
 | <code>{0} is not an ancestor of {1}</code> |  | new | missing |
@@ -16308,7 +16308,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>{0} is not set</code> |  | new | missing |
 | <code>{0} is not the default supplier for any items.</code> |  | new | missing |
 | <code>{0} is now default print format for {1} doctype</code> |  | new | translated |
-| <code>{0} is on hold till {1}</code> |  | new | missing |
+| <code>{0} is on hold till {1}</code> |  | new | translated |
 | <code>{0} is on or after {1}</code> |  | new | missing |
 | <code>{0} is on or before {1}</code> |  | new | missing |
 | <code>{0} is one of {1}</code> |  | new | missing |
@@ -16361,7 +16361,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>{0} only.</code> | Money in words | new | missing |
 | <code>{0} or {1}</code> |  | new | translated |
 | <code>{0} parameter is invalid</code> |  | new | missing |
-| <code>{0} payment entries can not be filtered by {1}</code> |  | new | missing |
+| <code>{0} payment entries can not be filtered by {1}</code> |  | new | translated |
 | <code>{0} qty of Item {1} is being received into Warehouse {2} with capacity {3}.</code> |  | new | missing |
 | <code>{0} record deleted</code> |  | new | translated |
 | <code>{0} records are not automatically deleted.</code> |  | new | missing |
@@ -16427,51 +16427,51 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>{0} {1} cannot be &quot;{2}&quot;. It should be one of &quot;{3}&quot;</code> |  | new | translated |
 | <code>{0} {1} cannot be a leaf node as it has children</code> |  | new | translated |
 | <code>{0} {1} cannot be updated. If you need to make changes, we recommend canceling the existing entry and creating a new one.</code> |  | new | missing |
-| <code>{0} {1} created</code> |  | new | missing |
-| <code>{0} {1} does not exist</code> |  | new | missing |
+| <code>{0} {1} created</code> |  | new | translated |
+| <code>{0} {1} does not exist</code> |  | new | translated |
 | <code>{0} {1} does not exist, select a new target to merge</code> |  | new | translated |
-| <code>{0} {1} has accounting entries in currency {2} for company {3}. Please select a receivable or payable account with currency {2}.</code> |  | new | missing |
+| <code>{0} {1} has accounting entries in currency {2} for company {3}. Please select a receivable or payable account with currency {2}.</code> |  | new | translated |
 | <code>{0} {1} has already been fully paid.</code> |  | new | missing |
 | <code>{0} {1} has already been partly paid. Please use the &#x27;Get Outstanding Invoice&#x27; or the &#x27;Get Outstanding Orders&#x27; button to get the latest outstanding amounts.</code> |  | new | missing |
-| <code>{0} {1} has been modified. Please refresh.</code> |  | new | missing |
+| <code>{0} {1} has been modified. Please refresh.</code> |  | new | translated |
 | <code>{0} {1} has not been submitted so the action cannot be completed</code> |  | new | missing |
 | <code>{0} {1} is allocated twice in this Bank Transaction</code> |  | new | missing |
 | <code>{0} {1} is already linked to Common Code {2}.</code> |  | new | missing |
-| <code>{0} {1} is associated with {2}, but Party Account is {3}</code> |  | new | missing |
+| <code>{0} {1} is associated with {2}, but Party Account is {3}</code> |  | new | translated |
 | <code>{0} {1} is blocked and on hold until {2}.</code> |  | new | missing |
 | <code>{0} {1} is blocked.</code> |  | new | missing |
 | <code>{0} {1} is cancelled or closed</code> |  | new | missing |
 | <code>{0} {1} is cancelled or stopped</code> |  | new | missing |
 | <code>{0} {1} is cancelled so the action cannot be completed</code> |  | new | missing |
-| <code>{0} {1} is closed</code> |  | new | missing |
-| <code>{0} {1} is disabled</code> |  | new | missing |
-| <code>{0} {1} is frozen</code> |  | new | missing |
-| <code>{0} {1} is fully billed</code> |  | new | missing |
+| <code>{0} {1} is closed</code> |  | new | translated |
+| <code>{0} {1} is disabled</code> |  | new | translated |
+| <code>{0} {1} is frozen</code> |  | new | translated |
+| <code>{0} {1} is fully billed</code> |  | new | translated |
 | <code>{0} {1} is linked with the following submitted documents: {2}</code> |  | new | translated |
-| <code>{0} {1} is not active</code> |  | new | missing |
-| <code>{0} {1} is not associated with {2} {3}</code> |  | new | missing |
+| <code>{0} {1} is not active</code> |  | new | translated |
+| <code>{0} {1} is not associated with {2} {3}</code> |  | new | translated |
 | <code>{0} {1} is not in any active Fiscal Year</code> |  | new | missing |
-| <code>{0} {1} is not submitted</code> |  | new | missing |
+| <code>{0} {1} is not submitted</code> |  | new | translated |
 | <code>{0} {1} is on hold</code> |  | new | missing |
-| <code>{0} {1} must be submitted</code> |  | new | missing |
+| <code>{0} {1} must be submitted</code> |  | new | translated |
 | <code>{0} {1} not allowed to be reposted. You can enable it by adding it &#x27;{2}&#x27; table in {3}.</code> |  | new | missing |
 | <code>{0} {1} not found</code> |  | new | translated |
 | <code>{0} {1} status is {2}.</code> |  | new | missing |
 | <code>{0} {1} via CSV File</code> |  | new | missing |
 | <code>{0} {1} was submitted but could not be reconciled against Bank Transaction {2}. Match it manually from the Bank Reconciliation Tool.</code> |  | new | missing |
-| <code>{0} {1}: &#x27;Profit and Loss&#x27; type account {2} not allowed in Opening Entry</code> |  | new | missing |
-| <code>{0} {1}: Account {2} does not belong to Company {3}</code> |  | new | missing |
+| <code>{0} {1}: &#x27;Profit and Loss&#x27; type account {2} not allowed in Opening Entry</code> |  | new | translated |
+| <code>{0} {1}: Account {2} does not belong to Company {3}</code> |  | new | translated |
 | <code>{0} {1}: Account {2} is a Group Account and group accounts cannot be used in transactions</code> |  | new | missing |
-| <code>{0} {1}: Account {2} is inactive</code> |  | new | missing |
-| <code>{0} {1}: Accounting Entry for {2} can only be made in currency: {3}</code> |  | new | missing |
+| <code>{0} {1}: Account {2} is inactive</code> |  | new | translated |
+| <code>{0} {1}: Accounting Entry for {2} can only be made in currency: {3}</code> |  | new | translated |
 | <code>{0} {1}: Cost Center is mandatory for Item {2}</code> |  | new | missing |
 | <code>{0} {1}: Cost Center is required for &#x27;Profit and Loss&#x27; account {2}.</code> |  | new | missing |
-| <code>{0} {1}: Cost Center {2} does not belong to Company {3}</code> |  | new | missing |
+| <code>{0} {1}: Cost Center {2} does not belong to Company {3}</code> |  | new | translated |
 | <code>{0} {1}: Cost Center {2} is a group cost center and group cost centers cannot be used in transactions</code> |  | new | missing |
-| <code>{0} {1}: Customer is required against Receivable account {2}</code> |  | new | missing |
-| <code>{0} {1}: Either debit or credit amount is required for {2}</code> |  | new | missing |
+| <code>{0} {1}: Customer is required against Receivable account {2}</code> |  | new | translated |
+| <code>{0} {1}: Either debit or credit amount is required for {2}</code> |  | new | translated |
 | <code>{0} {1}: Submitted Record cannot be deleted. You must {2} Cancel {3} it first.</code> |  | new | translated |
-| <code>{0} {1}: Supplier is required against Payable account {2}</code> |  | new | missing |
+| <code>{0} {1}: Supplier is required against Payable account {2}</code> |  | new | translated |
 | <code>{0}%</code> |  | new | excepted |
 | <code>{0}% Billed</code> |  | new | missing |
 | <code>{0}% Delivered</code> |  | new | missing |
@@ -16521,7 +16521,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>{0}: {1} does not exist</code> |  | new | missing |
 | <code>{0}: {1} is a group account.</code> |  | new | missing |
 | <code>{0}: {1} is set to state {2}</code> |  | new | translated |
-| <code>{0}: {1} must be less than {2}</code> |  | new | missing |
+| <code>{0}: {1} must be less than {2}</code> |  | new | translated |
 | <code>{0}: {1} vs {2}</code> |  | new | translated |
 | <code>{0}:Fieldtype {1} for {2} cannot be indexed</code> |  | new | translated |
 | <code>{1} saved</code> |  | new | missing |
@@ -16539,7 +16539,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>{} Complete</code> |  | new | translated |
 | <code>{} Invalid python code on line {}</code> |  | new | missing |
 | <code>{} Possibly invalid python code. &lt;br&gt;{}</code> |  | new | missing |
-| <code>{} can&#x27;t be cancelled since the Loyalty Points earned has been redeemed. First cancel the {} No {}</code> |  | new | missing |
+| <code>{} can&#x27;t be cancelled since the Loyalty Points earned has been redeemed. First cancel the {} No {}</code> |  | new | translated |
 | <code>{} does not support automated log clearing.</code> |  | new | missing |
 | <code>{} field cannot be empty.</code> |  | new | missing |
 | <code>{} has been disabled. It can only be enabled if {} is checked.</code> |  | new | missing |

@@ -284,7 +284,7 @@ jobs:
           env/bin/python -m compileall -q apps/frappe_lt/frappe_lt
           ruff check apps/frappe_lt/frappe_lt
           ruff format --check apps/frappe_lt/frappe_lt
-          env/bin/python -m unittest frappe_lt.tests.test_verify frappe_lt.tests.test_inventory frappe_lt.tests.test_catalog_partition frappe_lt.tests.test_review_evidence frappe_lt.tests.test_v15_origin_import frappe_lt.tests.test_catalog_quality frappe_lt.tests.test_frappe_catalog frappe_lt.tests.test_runtime_validation frappe_lt.tests.test_ci_workflow
+          env/bin/python -m unittest frappe_lt.tests.test_verify frappe_lt.tests.test_inventory frappe_lt.tests.test_catalog_partition frappe_lt.tests.test_review_evidence frappe_lt.tests.test_v15_origin_import frappe_lt.tests.test_finance_origin_import frappe_lt.tests.test_catalog_quality frappe_lt.tests.test_frappe_catalog frappe_lt.tests.test_runtime_validation frappe_lt.tests.test_ci_workflow
           node --test apps/frappe_lt/cypress/support/*.test.js
           shopt -s globstar nullglob
           javascript=(apps/frappe_lt/cypress.config.js apps/frappe_lt/cypress/**/*.js)
@@ -374,17 +374,17 @@ jobs:
                           "punctuation_correction": 50,
                           "terminology_correction": 414,
                       }
-                      repeat_po = output / "frappe-repeat.po"
-                      repeat_report = output / "frappe-repeat.json"
-                      subprocess.run(
-                          [
-                              "bench", "catalog-quality-gate", "--candidate", "frappe",
-                              "--output", str(repeat_po), "--report", str(repeat_report),
-                          ],
-                          check=True,
-                      )
-                      assert candidate_po.read_bytes() == repeat_po.read_bytes()
-                      assert report_path.read_bytes() == repeat_report.read_bytes()
+                  repeat_po = output / f"{candidate}-repeat.po"
+                  repeat_report = output / f"{candidate}-repeat.json"
+                  subprocess.run(
+                      [
+                          "bench", "catalog-quality-gate", "--candidate", candidate,
+                          "--output", str(repeat_po), "--report", str(repeat_report),
+                      ],
+                      check=True,
+                  )
+                  assert candidate_po.read_bytes() == repeat_po.read_bytes()
+                  assert report_path.read_bytes() == repeat_report.read_bytes()
                   assert sentinel == {
                       path: state(path)
                       for path in sentinel
@@ -399,7 +399,7 @@ jobs:
               item_provenance = next(record for record in provenance["entries"] if record["key"] == item["key"])
               assert item_provenance == {
                   "key": item["key"],
-                  "origin": "new_ai",
+                  "origin": "inherited_v15",
                   "status": "translated",
                   "translation": "Prekė",
               }
@@ -413,12 +413,12 @@ jobs:
                   "flags": [],
                   "key": item["key"],
                   "provenance": {
-                      "origin": "new_ai",
+                      "origin": "inherited_v15",
                       "review": {
                           "agent": "ci-integration",
                           "explanation": None,
                           "model": "test/model",
-                          "reason": "new_translation",
+                          "reason": "accepted_as_is",
                           "run_id": "",
                           "status": "reviewed",
                       },

@@ -30,6 +30,19 @@ class CIWorkflowTest(TestCase):
 		):
 			self.assertIn(required, commands)
 
+	def test_finance_origin_is_exercised_by_ci_without_reverting_item_provenance(self):
+		steps = self.workflow["jobs"]["verify"]["steps"]
+		unit = next(step for step in steps if step["name"] == "Run static and unit tests")
+		integration = next(
+			step
+			for step in steps
+			if step["name"] == "Authenticate the production partition and run every registered candidate"
+		)
+		self.assertIn("frappe_lt.tests.test_finance_origin_import", unit["run"])
+		self.assertIn('"origin": "inherited_v15"', integration["run"])
+		self.assertIn('"reason": "accepted_as_is"', integration["run"])
+		self.assertNotIn('"origin": "new_ai"', integration["run"])
+
 	def test_runtime_browser_job_is_pinned_isolated_and_fail_closed(self):
 		job = self.workflow["jobs"]["runtime-browser"]
 		self.assertEqual(job["runs-on"], "ubuntu-24.04")

@@ -267,9 +267,12 @@ class V15OriginImportTest(TestCase):
 			result = v15_origin_import.run(self.root / "compatibility.json", *self.csvs)
 		self.assertEqual((result["inherited"], result["missing"]), (3346, 2998))
 		provenance = json.loads((self.root / "provenance.json").read_bytes())
+		frappe_keys = {(item["key"]["source"], item["key"]["context"]) for item in self.manifest["keys"]}
 		self.assertEqual(
 			sum(
-				record["origin"] == "inherited_v15" for record in provenance["entries"] if "origin" in record
+				record.get("origin") == "inherited_v15"
+				for record in provenance["entries"]
+				if (record["key"]["source"], record["key"]["context"]) in frappe_keys
 			),
 			3346,
 		)
