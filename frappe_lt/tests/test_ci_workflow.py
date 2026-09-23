@@ -22,6 +22,7 @@ class CIWorkflowTest(TestCase):
 		for required in (
 			"frappe_lt.tests.test_catalog_partition",
 			"frappe_lt.tests.test_review_evidence",
+			"frappe_lt.tests.test_v15_origin_import",
 			"frappe_lt.tests.test_runtime_validation",
 			"frappe_lt.tests.test_ci_workflow",
 			"node --test",
