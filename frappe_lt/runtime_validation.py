@@ -315,14 +315,28 @@ def _validate_fallback(
 	return value
 
 
-def _is_blocking_fallback(finding: dict) -> bool:
+def _is_blocking_fallback(finding: dict, approved_english=frozenset()) -> bool:
+	key = finding["key"]
+	approved_database_english = (
+		finding["source"] == "database" and (key["source"], key["context"] or "") in approved_english
+	)
 	return (
 		finding["active"]
 		and finding["render_status"] != "unrendered"
 		and finding["visible"]
 		and not finding["excluded"]
-		and (finding["source"] == "missing" or finding["effective"].strip() == finding["key"]["source"])
+		and (finding["source"] == "missing" or finding["effective"].strip() == key["source"])
+		and not approved_database_english
 	)
+
+
+def _approved_english(exception_path):
+	if exception_path is None:
+		return frozenset(), hashlib.sha256(b"").hexdigest()
+	from frappe_lt.legacy_migration import trusted_site_policy
+
+	allowed, digest = trusted_site_policy(exception_path)
+	return frozenset((source, context) for source, context, _ in allowed), digest
 
 
 def _is_inactive_inventory_lookup(finding: dict) -> bool:
@@ -498,6 +512,7 @@ def _validate_browser_results(
 	*,
 	diagnostic_sampling: bool = False,
 	diagnostic_key: str | None = None,
+	approved_english=frozenset(),
 ) -> list[dict]:
 	if not isinstance(diagnostic_sampling, bool):
 		raise ValueError("diagnostic_sampling must be boolean")
@@ -610,9 +625,21 @@ def _validate_browser_results(
 			raise ValueError(f"scenario {scenario_id!r} exceeds its evidence byte limit")
 		total_evidence += scenario_evidence
 		has_active_lookup = any(item["active"] for item in result["fallbacks"])
-		blocking_fallback = any(_is_blocking_fallback(item) for item in result["fallbacks"])
+		blocking_fallback = any(_is_blocking_fallback(item, approved_english) for item in result["fallbacks"])
 		blocking_inventory_lookup = any(_is_inactive_inventory_lookup(item) for item in result["fallbacks"])
 		blocking_layout = any(_is_functional_layout(item) for item in result["layouts"])
+		# Cypress has no authority to read site approvals. Normalize only its generic
+		# fallback verdict after checking every lookup against the trusted policy.
+		if (
+			result["status"] == "fail"
+			and result["error"] == "scenario produced blocking runtime findings"
+			and not (blocking_fallback or blocking_inventory_lookup or blocking_layout)
+			and result["ready"]
+		):
+			result["status"] = "pass"
+			result["error"] = None
+			result["attempts"][-1]["outcome"] = "pass"
+			result["attempts"][-1]["error"] = None
 		if result["status"] == "pass" and not result["ready"]:
 			result["status"] = "blocked"
 			result["blocked_reason"] = "scenario did not prove readiness"
@@ -649,9 +676,11 @@ def validate_browser_results(
 	*,
 	diagnostic_sampling: bool = False,
 	diagnostic_key: str | None = None,
+	site_exception_path: str | None = None,
 ) -> list[dict]:
 	evidence_root = run_root / "evidence"
 	try:
+		approved_english, _ = _approved_english(site_exception_path)
 		declares_inactive = _contains_inactive(value)
 		results = _validate_browser_results(
 			value,
@@ -659,6 +688,7 @@ def validate_browser_results(
 			run_root,
 			diagnostic_sampling=diagnostic_sampling,
 			diagnostic_key=diagnostic_key,
+			approved_english=approved_english,
 		)
 	except Exception:
 		_remove_evidence_tree(evidence_root)
@@ -795,13 +825,17 @@ def _validate_cleanup_failure(value: object, label: str = "report cleanup failur
 	return value
 
 
-def _report_summary(results: list[dict], coverage_result: dict, cleanup_failures: list[dict]) -> dict:
+def _report_summary(
+	results: list[dict], coverage_result: dict, cleanup_failures: list[dict], approved_english=frozenset()
+) -> dict:
 	return {
 		"blocked": sum(result["status"] == "blocked" for result in results),
 		"cleanup_failures": len(cleanup_failures),
 		"coverage_gaps": len(coverage_result["gaps"]),
 		"english_fallbacks": sum(
-			_is_blocking_fallback(finding) for result in results for finding in result["fallbacks"]
+			_is_blocking_fallback(finding, approved_english)
+			for result in results
+			for finding in result["fallbacks"]
 		),
 		"fail": sum(result["status"] == "fail" for result in results),
 		"functional_layout_defects": sum(
@@ -841,8 +875,11 @@ def _fact_blocking_causes(
 	return sorted(causes, key=lambda cause: (cause["type"], cause["detail"]))
 
 
-def validate_machine_report(value: object, scenario_contract: dict) -> dict:
+def validate_machine_report(
+	value: object, scenario_contract: dict, *, site_exception_path: str | None = None
+) -> dict:
 	"""Validate the complete public runtime report before it is published."""
+	approved_english, policy_digest = _approved_english(site_exception_path)
 	scenario_contract = _exact(
 		scenario_contract, {"scenarios", "schema_version"}, "Runtime Scenario Manifest"
 	)
@@ -897,11 +934,19 @@ def validate_machine_report(value: object, scenario_contract: dict) -> dict:
 		_validate_toolchain(value["toolchain"])
 	environment = value["environment"]
 	if environment is not None:
+		policy_recorded = "site_exception_sha256" in environment if isinstance(environment, dict) else False
 		environment = _exact(
 			environment,
-			{"babel", "installed_apps", "inventory_digest", "mo_sha256", "python", "upstream"},
+			{"babel", "installed_apps", "inventory_digest", "mo_sha256", "python", "upstream"}
+			| ({"site_exception_sha256"} if policy_recorded else set()),
 			"machine report environment",
 		)
+		if policy_recorded and environment["site_exception_sha256"] != policy_digest:
+			raise ValueError("site exception policy changed since runtime validation")
+		if site_exception_path is not None and not policy_recorded:
+			raise ValueError("runtime report did not authenticate the site exception policy")
+		if not policy_recorded:
+			approved_english = frozenset()
 		if environment["installed_apps"] != ["frappe", "erpnext", "frappe_lt"]:
 			raise ValueError("machine report environment installed apps are invalid")
 		if not isinstance(environment["inventory_digest"], str) or not SHA256.fullmatch(
@@ -928,6 +973,8 @@ def validate_machine_report(value: object, scenario_contract: dict) -> dict:
 				or not pin["version"]
 			):
 				raise ValueError("machine report environment upstream pin is invalid")
+	else:
+		approved_english = frozenset()
 	if value["status"] == "pass" and (environment is None or value["toolchain"] is None):
 		raise ValueError("machine report pass requires verified environment and toolchain facts")
 
@@ -1070,7 +1117,7 @@ def validate_machine_report(value: object, scenario_contract: dict) -> dict:
 			or result["error"] is not None
 			or result["blocked_reason"] is not None
 			or not any(finding["active"] for finding in result["fallbacks"])
-			or any(_is_blocking_fallback(finding) for finding in result["fallbacks"])
+			or any(_is_blocking_fallback(finding, approved_english) for finding in result["fallbacks"])
 			or any(_is_inactive_inventory_lookup(finding) for finding in result["fallbacks"])
 			or any(_is_functional_layout(finding) for finding in result["layouts"])
 		):
@@ -1135,7 +1182,7 @@ def validate_machine_report(value: object, scenario_contract: dict) -> dict:
 	)
 	if any(isinstance(count, bool) or not isinstance(count, int) or count < 0 for count in summary.values()):
 		raise ValueError("machine report summary counts are malformed")
-	expected = _report_summary(results, coverage_result, failures)
+	expected = _report_summary(results, coverage_result, failures, approved_english)
 	if any(summary[field] != count for field, count in expected.items()):
 		raise ValueError("machine report summary does not match report facts")
 
@@ -1242,6 +1289,8 @@ def _build_report(
 	toolchain: dict | None = None,
 	diagnostic_sampling: bool = False,
 	cypress_diagnostic_log: str | None = None,
+	approved_english=frozenset(),
+	site_policy_digest: str | None = None,
 ) -> dict:
 	results = [
 		{
@@ -1318,7 +1367,7 @@ def _build_report(
 		*({"detail": _redact(error), "type": "tool_error"} for error in tool_errors),
 		*_fact_blocking_causes(coverage_result, results, cleanup_failures),
 	]
-	summary = _report_summary(results, coverage_result, cleanup_failures)
+	summary = _report_summary(results, coverage_result, cleanup_failures, approved_english)
 	report_environment = None
 	if environment:
 		report_environment = {
@@ -1332,6 +1381,8 @@ def _build_report(
 				for app, value in sorted(environment["upstream"].items())
 			},
 		}
+		if site_policy_digest is not None:
+			report_environment["site_exception_sha256"] = site_policy_digest
 	return {
 		"blocking_causes": sorted(blocking_causes, key=lambda cause: (cause["type"], cause["detail"])),
 		"cleanup_failures": cleanup_failures,
@@ -1363,6 +1414,7 @@ def run(
 	clock=time.monotonic,
 	run_id: str | None = None,
 	diagnostic_sampling: bool = False,
+	site_exception_path: str | None = None,
 ) -> dict:
 	"""Run the reviewed runtime denominator and always attempt durable cleanup."""
 	if site != "development.localhost":
@@ -1395,6 +1447,8 @@ def run(
 	cypress_diagnostic_log = None
 	contracts = None
 	control = None
+	approved_english = frozenset()
+	policy_digest = None
 	try:
 		preflight_started = clock()
 		contracts = load_contracts()
@@ -1407,6 +1461,7 @@ def run(
 			require_active_catalog=True,
 			require_runtime_metadata=True,
 		)
+		approved_english, policy_digest = _approved_english(site_exception_path)
 		durations["preflight"] = int((clock() - preflight_started) * 1000)
 		discovery_started = clock()
 		discovery_result = discover(frappe)
@@ -1440,6 +1495,7 @@ def run(
 					run_root,
 					diagnostic_sampling=diagnostic_sampling,
 					diagnostic_key=prepared["evidence_key"],
+					site_exception_path=site_exception_path,
 				)
 				toolchain = _validate_toolchain(browser["toolchain"])
 				blocking_result = next((result for result in results if result["status"] != "pass"), None)
@@ -1508,10 +1564,18 @@ def run(
 		toolchain=toolchain,
 		diagnostic_sampling=diagnostic_sampling,
 		cypress_diagnostic_log=cypress_diagnostic_log,
+		approved_english=approved_english,
+		site_policy_digest=policy_digest if site_exception_path is not None else None,
 	)
 	if contracts is None:
 		raise ValueError("Runtime Scenario Manifest was not loaded")
-	validate_machine_report(report, contracts["scenarios"])
+	if policy_digest is not None and _approved_english(site_exception_path)[1] != policy_digest:
+		raise ValueError("site exception policy changed during runtime validation")
+	validate_machine_report(
+		report,
+		contracts["scenarios"],
+		site_exception_path=site_exception_path if policy_digest is not None else None,
+	)
 	machine = canonical_json(report)
 	if len(machine) > MAX_REPORT_BYTES:
 		raise ValueError(f"runtime machine report exceeds {MAX_REPORT_BYTES} bytes")
