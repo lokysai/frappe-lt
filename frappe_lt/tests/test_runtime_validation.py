@@ -826,6 +826,141 @@ class RuntimeReportTest(TestCase):
 				)
 			self.assertEqual(results[0]["status"], expected)
 
+	def test_site_approved_database_english_reconciles_browser_and_report(self):
+		inventory = json.loads((Path(__file__).parent.parent / "release_inventory.json").read_bytes())
+		digest = next(
+			entry["source_digest"]
+			for entry in inventory["entries"]
+			if entry["key"] == {"source": "Item", "context": None}
+		)
+		scenario_id = self.scenario["id"]
+		finding = deepcopy(_browser_result(scenario_id)["fallbacks"][0])
+		finding.update(
+			{
+				"effective": "Item",
+				"key": {"source": "Item", "context": None},
+				"raw_source": "Item",
+				"source": "database",
+			}
+		)
+		failed = _browser_result(
+			scenario_id,
+			fallbacks=[finding],
+			status="fail",
+			error="scenario produced blocking runtime findings",
+			attempts=[
+				{
+					"duration_ms": 12,
+					"error": "scenario produced blocking runtime findings",
+					"kind": "initial",
+					"number": 1,
+					"outcome": "assertion_failure",
+				}
+			],
+		)
+		browser = {
+			"harness_contract": _harness_contract(),
+			"scenarios": [failed],
+			"schema_version": 6,
+			"toolchain": _toolchain(),
+		}
+		with TemporaryDirectory() as directory:
+			policy_path = Path(directory) / "site.json"
+			policy = {
+				"schema_version": 1,
+				"entries": [
+					{
+						"key": {"source": "Item", "context": None},
+						"source_digest": digest,
+						"approver": "Reviewer",
+						"reason": "English by choice",
+						"revoked": False,
+					}
+				],
+			}
+			policy_path.write_text(json.dumps(policy))
+			results = validate_browser_results(
+				browser, self.report_contract, Path(directory), site_exception_path=str(policy_path)
+			)
+			self.assertEqual(results[0]["status"], "pass")
+			report = _build_report(
+				run_id="a" * 32,
+				site="development.localhost",
+				environment=_environment(),
+				discovery={
+					"candidates": [
+						{"app": "frappe", "id": "page:Covered", "identity": "Covered", "type": "page"}
+					],
+					"collector_counts": {"email": 1, "metadata": 1, "portal": 1, "print": 1},
+				},
+				coverage_result={"covered": ["page:Covered"], "gaps": [], "reviewed_exclusions": []},
+				results=results,
+				cleanup_failures=[],
+				stale_recoveries=[],
+				durations={"cleanup": 1, "discovery": 1, "preflight": 1, "scenarios": 1, "total": 4},
+				tool_errors=[],
+				toolchain=_toolchain(),
+				approved_english=frozenset({("Item", "")}),
+				site_policy_digest=hashlib.sha256(policy_path.read_bytes()).hexdigest(),
+			)
+			self.assertEqual(report["summary"]["english_fallbacks"], 0)
+			self.assertIs(
+				validate_machine_report(report, self.report_contract, site_exception_path=str(policy_path)),
+				report,
+			)
+			with self.assertRaisesRegex(ValueError, "site exception policy changed"):
+				validate_machine_report(report, self.report_contract)
+			for changed in ({"revoked": True}, {"source_digest": "0" * 64}):
+				policy["entries"][0].update(changed)
+				policy_path.write_text(json.dumps(policy))
+				if changed.get("revoked"):
+					self.assertEqual(
+						validate_browser_results(
+							browser,
+							self.report_contract,
+							Path(directory),
+							site_exception_path=str(policy_path),
+						)[0]["status"],
+						"fail",
+					)
+				else:
+					with self.assertRaisesRegex(ValueError, "stale site exception"):
+						validate_browser_results(
+							browser,
+							self.report_contract,
+							Path(directory),
+							site_exception_path=str(policy_path),
+						)
+				with self.assertRaises(ValueError):
+					validate_machine_report(
+						report, self.report_contract, site_exception_path=str(policy_path)
+					)
+			# Even an approved key cannot waive English from an application or missing lookup.
+			policy["entries"][0].update({"revoked": False, "source_digest": digest})
+			policy_path.write_text(json.dumps(policy))
+			for source in ("missing", "frappe_lt"):
+				unapproved = deepcopy(browser)
+				unapproved["scenarios"][0]["fallbacks"][0]["source"] = source
+				self.assertEqual(
+					validate_browser_results(
+						unapproved,
+						self.report_contract,
+						Path(directory),
+						site_exception_path=str(policy_path),
+					)[0]["status"],
+					"fail",
+				)
+			other_key = deepcopy(browser)
+			other_key["scenarios"][0]["fallbacks"][0].update(
+				{"key": {"source": "Save", "context": None}, "raw_source": "Save", "effective": "Save"}
+			)
+			self.assertEqual(
+				validate_browser_results(
+					other_key, self.report_contract, Path(directory), site_exception_path=str(policy_path)
+				)[0]["status"],
+				"fail",
+			)
+
 	def test_trusted_boundary_blocks_missing_readiness_lookups_and_timeout(self):
 		scenario_id = self.scenario["id"]
 		for changes, reason in (

@@ -85,6 +85,14 @@ _Vengti_: Morphology spėjimas, laisva blokuojanti regex
 A visible English **Source Phrase** produced when the effective highest-precedence translation lookup has no approved Lithuanian result, including an English database override that hides a valid application translation.
 _Avoid_: Translation Exception
 
+**Legacy Exact Match**:
+Lietuviškas duomenų bazės `Translation` įrašas, kurio kalba, source, normalizuotas **Frappe Context** ir Frappe saugoma išversta reikšmė sutampa su senojo 7 968 įrašų paketo fingerprint, nepriklausomai nuo to, kas jį įvedė.
+_Vengti_: Pagal įvedimo istoriją atpažintas importo įrašas
+
+**Site Translation Override**:
+Po senojo paketo migracijos išsaugomas svetainės duomenų bazės `Translation` įrašas, turintis aukštesnį prioritetą nei programėlės **Translation Catalog**.
+_Vengti_: Katalogo vertimas, savaime patvirtinta Translation Exception
+
 ### Running Interface Validation
 
 **Runtime Scenario Manifest**:
@@ -392,6 +400,9 @@ _Vengti_: Nekaitomas žodyno termino įterpimas
 - A **Source Phrase** can have many **Source Locations**
 - An approved **Translation Exception** counts toward **Translation Coverage** but is not an **English Fallback**
 - A failed translation lookup is an **English Fallback** only when it reaches rendered visible UI, print, or email output; unrendered misses remain diagnostic evidence
+- A **Legacy Exact Match** is removed during migration even if an administrator independently entered the same value; provenance cannot be inferred from an identical stored fingerprint
+- A **Site Translation Override** with broken tokens or markup blocks deployment even with a site-specific exception; an approved exception can waive only the English-text gate
+- An English-valued **Site Translation Override** outside the **Release Inventory** is reported without blocking unless it is observed in rendered output; an active key is checked proactively
 - A **Runtime Scenario Manifest** is the fixed denominator for one release, while every discovered but unreviewed route or output is reported as a **Runtime Coverage Gap**
 - Every **Runtime Coverage Gap** must be reviewed into the **Runtime Scenario Manifest** or explicitly classified out of scope before release
 - Every **Blocked Runtime Scenario** remains in the **Runtime Scenario Manifest** denominator and fails the release check
@@ -436,6 +447,9 @@ _Vengti_: Nekaitomas žodyno termino įterpimas
 - "All runtime scenarios" could mean every dynamically discovered route or output; resolved: the reviewed **Runtime Scenario Manifest** is the release denominator, while discovery records separate **Runtime Coverage Gaps** without silently expanding it.
 - "Expected exclusions" could mean accepted interface defects; resolved: an **Expected Runtime Exclusion** identifies only out-of-scope content and cannot waive standard-interface fallback or layout failures.
 - "Effective fallback" could include every observed lookup miss; resolved: only a miss tied to rendered visible UI, print, or email output is an **English Fallback**, while unrendered misses are diagnostic.
+- An identical site translation could have been entered by hand or imported; resolved: a **Legacy Exact Match** is identified by stored values, not unverifiable entry history, and is removed in either case.
+- A site-specific exception might be read as permission for broken formatting; resolved: it may only allow intentional English text, never broken tokens or markup.
+- An English-valued extra database record might be mistaken for an **English Fallback**; resolved: report unused extras, block active-key English values or English text observed in rendered output.
 - "Critical" could include any poor wording; resolved: a **Critical Translation Error** is defined by harmful action or blocked work, not by style alone.
 - "Item" could mean only a physical product; resolved: **Prekė** is the short interface name for the broader ERPNext record, including services and non-stock uses.
 - "Customer" could mean a buyer on one document or the long-lived ERP record; resolved: use **Klientas** for the ERPNext record and reserve "pirkėjas" for prose that explicitly describes the buyer's role.

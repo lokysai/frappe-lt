@@ -74,6 +74,25 @@ For release comparison, pass both `--previous-inventory` and `--previous-compati
 
 The [Frappe v15 origin baseline](docs/v15-frappe-origin-import.md) records exact-key inherited text before the Frappe segment's translation review. It does not register a reviewed Frappe catalog candidate.
 
+## Legacy database Translation migration
+
+Before enabling `frappe_lt`, supply the **original** `Fab@/LT_vertimas/output/lt-v16-translations.csv` from the old import (7,968 records, SHA-256 `490cf32b7d2e17406d012a993e7897659ef3fa7f71a4255721f947579e3aad0d`). The importer used `frappe.utils.sanitize_html` on `Translated Text` before storing it. Neither v15 source CSV nor reviewed catalog provenance is an acceptable replacement. Missing or altered CSV blocks migration.
+
+From the pinned Frappe bench, with ERPNext installed, run:
+
+```bash
+bench --site development.localhost preflight-legacy-translations --package /private/path/lt-v16-translations.csv
+bench --site development.localhost apply-legacy-translations --package /private/path/lt-v16-translations.csv --run-id RUN_ID_FROM_PREFLIGHT
+```
+
+Use `--site-exceptions /private/path/site-exceptions.json` on **both** commands when needed. The file has `{"schema_version":1,"entries":[{"key":{"source":"Exact English source","context":null},"source_digest":"<Release Inventory source digest>","approver":"Name","reason":"Why English is intentional","revoked":false}]}`. The policy is separate from catalog Translation Exceptions. It permits intentional English at an active key only; Preserved Tokens and HTML equivalence still apply. A revoked or stale entry cannot waive the gate. English-valued extras outside the Release Inventory are reported; English seen in actual rendered output must also pass runtime validation before deployment.
+
+Pass the same `--site-exceptions` path to `validate-lithuanian-runtime` to validate an approved, visible database-origin English value. The runtime report records the policy digest; a later verifier must pass `site_exception_path` to `validate_machine_report` with the same current policy. Revocation, a changed digest, unapproved English or English from an application still blocks validation.
+
+The preflight reads the site without deleting anything. Its private `*.planned.json` includes exact names and stored comparison values, the run ID, duplicate/override classification and blocked findings. Reports reside under `sites/<site>/private/frappe_lt_legacy_migration/` (mode `0700`; report mode `0600`), with a 16 MiB report limit and a 50,000-row scan limit. Only counts and status are printed to the console. A changed plan or conflicting duplicate requires a fresh preflight. Apply locks and rechecks the full snapshot, removes exact matches in one SQL transaction, and clears Translation/boot cache after commit. If final reporting or cache clearing fails after commit, apply exits `3`; rerun **the same run ID** to finish recovery before deployment. Exit `0` means success/no-op, `1` means blocked/stale, `2` DB failure and `3` report/cache or uncertain-commit failure. Preflight report errors fail the command. Keep the original package, the original site exception policy (if used) and the private plan until finalization completes. A policy change during recovery finishes cache/report work but requires a fresh preflight before deployment.
+
+Uninstall does **not** restore the deleted legacy database rows. Preserved site overrides continue to take precedence over application translations until explicitly changed by the site administrator.
+
 ## Catalog quality gate
 
 `frappe_lt.catalog_quality.run` is the sole candidate-generation path. The Bench transport accepts only a candidate authenticated by [`frappe_lt/catalog_segments.json`](frappe_lt/catalog_segments.json):
