@@ -615,7 +615,7 @@ class CatalogQualityGateTest(TestCase):
 			"malformed-printf": valid + " %q",
 			"malformed-brace": valid + " {broken",
 			"malformed-jinja": valid + " {{ broken",
-			"malformed-dollar": valid + " $1",
+			"malformed-dollar": valid + " $1x",
 			"lone-closing-brace": valid + " }",
 			"residual-closing-brace": valid + " name}",
 		}
@@ -752,7 +752,24 @@ class CatalogQualityGateTest(TestCase):
 				"{{{0}}} is not a valid fieldname pattern. It should be {{field_name}}.",
 				"{{{0}}} nėra tinkamas lauko pavadinimo šablonas. Turi būti {{field_name}}.",
 			),
+			(
+				"Only values between [0,1) are allowed. Like {0.00, 0.04, 0.09, ...}\n"
+				"Ex: If allowance is set at 0.07, accounts that have balance of 0.07 in either of the currencies will be considered as zero balance account",
+				"Leidžiamos tik reikšmės intervale [0,1), pavyzdžiui, {0.00, 0.04, 0.09, ...}\n"
+				"Pvz.: jei leistina paklaida yra 0.07, sąskaitos, kurių likutis bet kuria iš valiutų yra 0.07, bus laikomos nulinio likučio sąskaitomis",
+			),
+			(
+				"The percentage you are allowed to bill more against the amount ordered. For example, if the order value is $100 for an item and tolerance is set as 10%, then you are allowed to bill up to $110",
+				"Procentinė riba, kuria leidžiama viršyti užsakytą sumą išrašant sąskaitą faktūrą. Pavyzdžiui, jei prekės vertė užsakyme yra $100, o leistinas viršijimas yra 10%, sąskaitą faktūrą galima išrašyti iki $110 sumos",
+			),
 		)
+		for source, translation in pairs[-2:]:
+			self.assertEqual(_tokens(source), _tokens(translation))
+			self.assertFalse(_tokens(source)[1])
+		self.assertEqual(_tokens(pairs[-2][0])[0], Counter({("literal", "{0.00, 0.04, 0.09, ...}"): 1}))
+		self.assertEqual(_tokens(pairs[-1][0])[0], Counter({("literal", "$100"): 1, ("literal", "$110"): 1}))
+		self.assertTrue(_tokens("shell positional $1")[1])
+		self.assertTrue(_tokens("Pay $100..5 today")[1])
 		entries = [
 			{
 				"key": {"source": source, "context": None},
@@ -801,6 +818,10 @@ class CatalogQualityGateTest(TestCase):
 				"{{{1}}} nėra tinkamas šablonas. Turi būti {{field_name}}.",
 				"UNKNOWN_TOKEN_SYNTAX",
 			),
+			(pairs[-2][0], pairs[-2][1].replace("0.09", "0.08"), "PRESERVED_TOKEN_MISMATCH"),
+			(pairs[-1][0], pairs[-1][1].replace("$110", "$120"), "PRESERVED_TOKEN_MISMATCH"),
+			(pairs[-2][0], pairs[-2][1].replace("...}", "..."), "UNKNOWN_TOKEN_SYNTAX"),
+			(pairs[-1][0], pairs[-1][1].replace("$110", "$110x"), "UNKNOWN_TOKEN_SYNTAX"),
 		):
 			with self.subTest(source=source), TemporaryDirectory() as directory:
 				root = Path(directory)
@@ -822,6 +843,21 @@ class CatalogQualityGateTest(TestCase):
 					expected_code,
 					[error["code"] for error in result["errors"]],
 				)
+
+	def test_decimal_example_and_currency_amounts_reject_malformed_syntax(self):
+		self.assertEqual(_tokens("Pay $100.50."), (Counter({("literal", "$100.50"): 1}), False))
+		for malformed in (
+			"{0.00, 0.04, 0.09, ...",
+			"{0.00, 0.04, 0.09, ..}",
+			"{0.00, 0.04, bad, ...}",
+			"$100x",
+			"$100.5",
+			"$100.500",
+			"$1,00",
+			"$100${broken",
+		):
+			with self.subTest(malformed=malformed):
+				self.assertTrue(_tokens(malformed)[1])
 
 	def test_python_and_printf_tokens_preserve_space_and_dynamic_arguments(self):
 		value = "% d %*s %.*f %2$s %2$*3$s %2$.*3$f %2$*3$.*4$f %(count) d %*s"

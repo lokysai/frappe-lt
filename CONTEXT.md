@@ -193,6 +193,8 @@ Patvirtintas bendras vertimas konteksto neturinčiam raktui, kurį v16 naudoja i
 Release inventory generation applies this decision only when the pinned runtime metadata proves both `Account` and `Email Account.account_section` locations.
 _Vengti_: Paskyra
 
+<a id="glossary-bank-account"></a>
+
 **Banko sąskaita** (`Bank Account`):
 Įmonės, kliento arba tiekėjo sąskaita finansų įstaigoje.
 _Vengti_: Banko paskyra
@@ -200,6 +202,8 @@ _Vengti_: Banko paskyra
 **Pardavimo užsakymas** (`Sales Order`):
 ERPNext dokumentas, kuriame registruojamas kliento užsakymas įsigyti nurodytas prekes ar paslaugas.
 _Vengti_: Pardavimų užsakymas, užsakymas
+
+<a id="glossary-purchase-order"></a>
 
 **Pirkimo užsakymas** (`Purchase Order`):
 ERPNext dokumentas, kuriame registruojamas įmonės užsakymas įsigyti iš tiekėjo nurodytas prekes ar paslaugas.
@@ -228,6 +232,8 @@ _Vengti_: Mokesčio kursas, mokesčio norma
 **Valandinis įkainis** (`Hourly Rate`):
 Už vieną darbo valandą taikoma kaina.
 _Vengti_: Valandinis kursas
+
+<a id="glossary-valuation-rate"></a>
 
 **Apskaitinė vieneto vertė** (`Valuation Rate`):
 Atsargų apskaitoje vienam prekės vienetui priskirta vertė.
@@ -265,6 +271,8 @@ _Vengti_: Sandėlio knyga, atsargų žurnalas
 Tam tikru metu apskaitytas prekės kiekis ir vertė sandėlyje.
 _Vengti_: Sandėlio balansas, prekių balansas
 
+<a id="glossary-general-ledger"></a>
+
 **Didžioji knyga** (`General Ledger`):
 Pagrindinis apskaitos registras, kuriame operacijos sugrupuotos pagal apskaitos sąskaitas.
 _Vengti_: Bendrasis registras, pagrindinė knyga
@@ -273,25 +281,37 @@ _Vengti_: Bendrasis registras, pagrindinė knyga
 Vienos operacijos debeto arba kredito įrašas Didžiojoje knygoje.
 _Vengti_: GL įrašas, bendrojo registro įrašas
 
+<a id="glossary-journal-entry"></a>
+
 **Bendrojo žurnalo įrašas** (`Journal Entry`):
 Apskaitos dokumentas, kuriuo užregistruojama vienos ar daugiau sąskaitų debeto ir kredito korespondencija.
 _Vengti_: Žurnalo įrašas, buhalterinė pažyma
+
+<a id="glossary-cost-center"></a>
 
 **Sąnaudų centras** (`Cost Center`):
 Apskaitos dimensija, kuriai priskiriamos ir pagal kurią analizuojamos organizacijos pajamos bei sąnaudos.
 _Vengti_: Kaštų centras, išlaidų centras
 
+<a id="glossary-invoice"></a>
+
 **Sąskaita faktūra** (`Invoice`):
 Atsiskaitymo dokumentas, kuriame nurodytos parduotos arba įsigytos prekės, paslaugos ir mokėtina suma.
 _Vengti_: Sąskaita, PVM sąskaita faktūra
+
+<a id="glossary-sales-invoice"></a>
 
 **Pardavimo sąskaita faktūra** (`Sales Invoice`):
 Klientui išrašyta sąskaita faktūra už parduotas prekes arba paslaugas.
 _Vengti_: Pardavimų sąskaita, kliento sąskaita
 
+<a id="glossary-purchase-invoice"></a>
+
 **Pirkimo sąskaita faktūra** (`Purchase Invoice`):
 Iš tiekėjo gauta sąskaita faktūra už įsigytas prekes arba paslaugas.
 _Vengti_: Pirkimų sąskaita, tiekėjo sąskaita
+
+<a id="glossary-quotation"></a>
 
 **Komercinis pasiūlymas** (`Quotation`):
 Klientui pateiktas pasiūlymas su prekėmis, kainomis, terminais ir kitomis pardavimo sąlygomis.
@@ -309,9 +329,13 @@ _Vengti_: Medžiagų sąrašas, medžiagų žiniaraštis
 Patvirtinta techninė santrumpa, paliekama nepakeista, kai šaltinio frazėje nėra pilno `Bill of Materials` termino.
 _Vengti_: GS, GSpec
 
+<a id="glossary-lead"></a>
+
 **Potencialus klientas** (`Lead`):
 Asmuo arba organizacija, kuri gali tapti klientu, bet dar nėra įvertinta kaip konkretus galimas pardavimas.
 _Vengti_: Lidas, vedlys, susidomėjęs
+
+<a id="glossary-opportunity"></a>
 
 **Pardavimo galimybė** (`Opportunity`):
 Įvertintas galimas pardavimas potencialiam arba esamam klientui.

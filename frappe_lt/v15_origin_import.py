@@ -9,8 +9,11 @@ import hashlib
 import io
 import json
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
+from frappe_lt import inventory as inventory_module
 from frappe_lt.catalog_quality import registered_candidates
+from frappe_lt.catalog_quality import run as catalog_quality_gate
 from frappe_lt.inventory import (
 	build_report,
 	canonical_json,
@@ -26,6 +29,8 @@ CSV_SHA256 = {
 }
 EXPECTED_MATCHES = 3346
 FRAPPE_KEYS = 6344
+FINANCE_EXPECTED_MATCHES = 2592
+FINANCE_KEYS = 4907
 MAX_CSV_BYTES = 8 * 1024 * 1024
 
 
@@ -60,8 +65,33 @@ def _v15_translations(
 	return translations
 
 
-def run(compatibility_path: Path, frappe_csv: Path, erpnext_csv: Path) -> dict:
-	"""Verify the full release, import only exact Frappe matches, then re-authenticate."""
+def _gate_registered(candidates: list[str], compatibility_path: Path, compile_candidate) -> None:
+	with TemporaryDirectory(prefix="frappe-lt-origin-gate-") as directory:
+		for name in candidates:
+			result = catalog_quality_gate(
+				name,
+				Path(directory) / f"{name}.po",
+				Path(directory) / f"{name}.json",
+				compatibility_path=compatibility_path,
+				compile_candidate=compile_candidate,
+			)
+			if result["exit_code"]:
+				raise ValueError(
+					f"registered candidate {name!r} failed Catalog Quality Gate: {result['errors'][:1]}"
+				)
+
+
+def run(
+	compatibility_path: Path,
+	frappe_csv: Path,
+	erpnext_csv: Path,
+	*,
+	segment_id: str = "frappe",
+	compile_candidate=None,
+) -> dict:
+	"""Verify the release and import exact v15 originals for a frozen segment."""
+	if segment_id not in {"frappe", "erpnext-finance-commerce"}:
+		raise ValueError(f"unsupported v15 origin segment {segment_id!r}")
 	compatibility_path = Path(compatibility_path)
 	if compatibility_path.name != "compatibility.json" or compatibility_path.is_symlink():
 		raise ValueError("compatibility path must be the release's compatibility.json commit marker")
@@ -72,15 +102,21 @@ def run(compatibility_path: Path, frappe_csv: Path, erpnext_csv: Path) -> dict:
 	compatibility = verify_owned_artifacts(compatibility_path)
 	candidates = registered_candidates(compatibility_path)  # Full quality/partition/candidate trust boundary.
 	registry = json.loads((root / "catalog_segments.json").read_bytes())
-	if "frappe" in candidates or any(
-		candidate["segment_id"] == "frappe" for candidate in registry["candidates"]
+	if segment_id == "frappe" and (
+		"frappe" in candidates
+		or any(candidate["segment_id"] == "frappe" for candidate in registry["candidates"])
 	):
 		raise ValueError("Frappe origin import must precede Frappe candidate registration")
+	if segment_id == "erpnext-finance-commerce" and any(
+		candidate["segment_id"] == segment_id for candidate in registry["candidates"]
+	):
+		raise ValueError("finance origin import must precede finance candidate registration")
 	inventory = json.loads((root / "release_inventory.json").read_bytes())
 	provenance = json.loads((root / "provenance.json").read_bytes())
-	manifest = json.loads((root / "catalog_segments/frappe.json").read_bytes())
-	if len(manifest["keys"]) != FRAPPE_KEYS:
-		raise ValueError("frozen Frappe manifest has an unexpected key count")
+	manifest = json.loads((root / f"catalog_segments/{segment_id}.json").read_bytes())
+	expected_keys = FRAPPE_KEYS if segment_id == "frappe" else FINANCE_KEYS
+	if len(manifest["keys"]) != expected_keys:
+		raise ValueError(f"frozen {segment_id} manifest has an unexpected key count")
 	partition = json.loads((root / "catalog_partition.json").read_bytes())
 	frozen_names = ["release_inventory.json", "catalog_partition.json", "catalog_segments.json"]
 	frozen_names.extend(item["manifest"] for item in partition["segments"])
@@ -93,26 +129,51 @@ def run(compatibility_path: Path, frappe_csv: Path, erpnext_csv: Path) -> dict:
 	) or (root / "inventory_report.md").read_bytes() != generate_human_report(old_report).encode():
 		raise ValueError("authenticated inventory reports are inconsistent with provenance")
 	keys = {(item["key"]["source"], item["key"]["context"]) for item in manifest["keys"]}
+	reviewed_exceptions = {
+		((item["key"]["source"], item["key"]["context"]), item["source_digest"])
+		for item in json.loads((root / "translation_exceptions.json").read_bytes())["entries"]
+		if item["reviewed"]
+	}
+	segment_digests = {
+		(item["key"]["source"], item["key"]["context"]): item["source_digest"] for item in manifest["keys"]
+	}
 	translations = _v15_translations(paths, keys)
 	matches = {key: text for key in keys if (text := translations.get(key)) is not None and text.strip()}
-	if len(matches) != EXPECTED_MATCHES:
-		raise ValueError(f"expected {EXPECTED_MATCHES} nonempty exact Frappe matches; found {len(matches)}")
+	expected_matches = EXPECTED_MATCHES if segment_id == "frappe" else FINANCE_EXPECTED_MATCHES
+	if len(matches) != expected_matches:
+		raise ValueError(
+			f"expected {expected_matches} nonempty exact {segment_id} matches; found {len(matches)}"
+		)
+	inherited = 0
 	for record in provenance["entries"]:
 		key = (record["key"]["source"], record["key"]["context"])
 		if key not in keys:
 			continue
 		if key in matches:
-			if record["status"] == "missing":
+			if record["status"] == "missing" or (
+				segment_id == "erpnext-finance-commerce"
+				and record.get("origin") == "new_ai"
+				and record.get("translation") == matches[key]
+			):
 				record.update(status="translated", origin="inherited_v15", translation=matches[key])
 				record.pop("exception", None)
+			elif (
+				segment_id == "erpnext-finance-commerce"
+				and record["status"] == "excepted"
+				and record.get("origin") == "approved_exception"
+				and record.get("v15_original") == matches[key]
+				and (key, segment_digests[key]) in reviewed_exceptions
+			):
+				continue
 			elif not (
 				record["status"] == "translated"
 				and record.get("origin") == "inherited_v15"
 				and record.get("translation") == matches[key]
 			):
-				raise ValueError(f"conflicting existing Frappe provenance for {key!r}")
+				raise ValueError(f"conflicting existing {segment_id} provenance for {key!r}")
+			inherited += 1
 		elif record["status"] != "missing":
-			raise ValueError(f"unmatched Frappe key already has provenance: {key!r}")
+			raise ValueError(f"unmatched {segment_id} key already has provenance: {key!r}")
 	validate_provenance(inventory, provenance)
 	report = build_report(inventory, provenance, compatibility)
 	if report["inventory_digest"] != compatibility["inventory_digest"]:
@@ -127,12 +188,23 @@ def run(compatibility_path: Path, frappe_csv: Path, erpnext_csv: Path) -> dict:
 		updated["artifact_sha256"][name] = hashlib.sha256(content).hexdigest()
 	artifacts["compatibility.json"] = canonical_json(updated)
 	# Do not touch frozen inventories, manifests, candidates, or quality artifacts.
-	write_artifacts(root, artifacts)
-	verify_owned_artifacts(compatibility_path)
-	registered_candidates(compatibility_path)
-	if any((root / name).read_bytes() != content for name, content in frozen.items()):
-		raise ValueError("frozen Release Inventory or segment manifests changed")
-	return {"inherited": len(matches), "missing": len(keys) - len(matches), "artifacts": sorted(artifacts)}
+	if segment_id == "erpnext-finance-commerce":
+		_gate_registered(candidates, compatibility_path, compile_candidate)
+	previous = {name: (root / name).read_bytes() for name in artifacts}
+	try:
+		write_artifacts(root, artifacts)
+		verify_owned_artifacts(compatibility_path)
+		if registered_candidates(compatibility_path) != candidates:
+			raise ValueError("registered candidate set changed during v15 origin import")
+		if segment_id == "erpnext-finance-commerce":
+			_gate_registered(candidates, compatibility_path, compile_candidate)
+		if any((root / name).read_bytes() != content for name, content in frozen.items()):
+			raise ValueError("frozen Release Inventory or segment manifests changed")
+	except BaseException:
+		# Restore on catchable interruptions as well as publication/check failures.
+		inventory_module.write_artifacts(root, previous)
+		raise
+	return {"inherited": inherited, "missing": len(keys) - len(matches), "artifacts": sorted(artifacts)}
 
 
 def main() -> None:
@@ -140,8 +212,14 @@ def main() -> None:
 	parser.add_argument("compatibility", type=Path)
 	parser.add_argument("frappe_csv", type=Path)
 	parser.add_argument("erpnext_csv", type=Path)
+	parser.add_argument("--segment", choices=("frappe", "erpnext-finance-commerce"), default="frappe")
 	args = parser.parse_args()
-	print(json.dumps(run(args.compatibility, args.frappe_csv, args.erpnext_csv), sort_keys=True))
+	print(
+		json.dumps(
+			run(args.compatibility, args.frappe_csv, args.erpnext_csv, segment_id=args.segment),
+			sort_keys=True,
+		)
+	)
 
 
 if __name__ == "__main__":

@@ -24,11 +24,25 @@ class CIWorkflowTest(TestCase):
 			"frappe_lt.tests.test_review_evidence",
 			"frappe_lt.tests.test_v15_origin_import",
 			"frappe_lt.tests.test_runtime_validation",
+			"frappe_lt.tests.test_finance_catalog",
 			"frappe_lt.tests.test_ci_workflow",
 			"node --test",
 			"node --check",
 		):
 			self.assertIn(required, commands)
+
+	def test_finance_origin_is_exercised_by_ci_without_reverting_item_provenance(self):
+		steps = self.workflow["jobs"]["verify"]["steps"]
+		unit = next(step for step in steps if step["name"] == "Run static and unit tests")
+		integration = next(
+			step
+			for step in steps
+			if step["name"] == "Authenticate the production partition and run every registered candidate"
+		)
+		self.assertIn("frappe_lt.tests.test_finance_origin_import", unit["run"])
+		self.assertIn('"origin": "inherited_v15"', integration["run"])
+		self.assertIn('"reason": "accepted_as_is"', integration["run"])
+		self.assertNotIn('"origin": "new_ai"', integration["run"])
 
 	def test_runtime_browser_job_is_pinned_isolated_and_fail_closed(self):
 		job = self.workflow["jobs"]["runtime-browser"]
@@ -122,6 +136,8 @@ class CIWorkflowTest(TestCase):
 		commands = gate["run"]
 		for required in (
 			"from frappe_lt.catalog_quality import registered_candidates, run",
+			'expected_candidates = {"frappe", "erpnext-operations", "erpnext-finance-commerce"}',
+			"assert set(registered_candidates()) == expected_candidates",
 			"candidate_checks = 0",
 			"candidate_checks += 1",
 			"catalog_candidates/ci-integration.json",
@@ -130,9 +146,16 @@ class CIWorkflowTest(TestCase):
 			'assert "duration_seconds" not in first',
 			"assert first_report.read_bytes() == second_report.read_bytes()",
 			"assert not candidate_po.exists()",
-			"assert candidate_checks >= 1",
+			"assert candidate_checks == len(expected_candidates) + 1",
+			'assert summary["translation_coverage"] == {"covered": 4907, "total": 4907}',
+			"assert candidate_po.read_bytes() == repeat_po.read_bytes()",
+			"assert report_path.read_bytes() == repeat_report.read_bytes()",
 		):
 			self.assertIn(required, commands)
+		self.assertEqual(commands.count('"bench", "catalog-quality-gate", "--candidate", candidate'), 2)
+		self.assertNotIn("compile_candidate=", commands)
+		self.assertIn("active_mo", commands)
+		self.assertIn("assert sentinel ==", commands)
 
 	def test_runtime_browser_dependencies_are_fully_locked(self):
 		package = json.loads(UI_RUNNER_PACKAGE_PATH.read_text(encoding="utf-8"))

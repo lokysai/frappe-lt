@@ -428,12 +428,12 @@ class CatalogPartitionTest(TestCase):
 			"flags": [],
 			"key": item["key"],
 			"provenance": {
-				"origin": "new_ai",
+				"origin": "inherited_v15",
 				"review": {
 					"agent": "ci-test-agent",
 					"explanation": None,
 					"model": "test/model",
-					"reason": "new_translation",
+					"reason": "accepted_as_is",
 					"run_id": "",
 					"status": "reviewed",
 				},

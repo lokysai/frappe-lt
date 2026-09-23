@@ -73,7 +73,10 @@ TOKEN_PATTERNS = (
 		"brace",
 		re.compile(r"{(?:|\d+|[A-Za-z_]\w*(?:\.[A-Za-z_]\w*|\[[^\]\r\n{}]+\])*(?:![rsa])?)(?::[^{}\r\n]+)?}"),
 	),
+	("literal", re.compile(r"\{\d+\.\d{2}(?:, +\d+\.\d{2})+, +\.\.\.\}")),
 	("dollar", re.compile(r"\$[A-Za-z_]\w*")),
+	# Three-digit amounts in UI examples are not shell positional parameters such as $1.
+	("literal", re.compile(r"\$\d{3,}(?:\.\d{2})?(?!\w|[.,]\d|\.\.)")),
 )
 SAFE_SLUG = re.compile(r"[a-z0-9](?:[a-z0-9_-]{0,62}[a-z0-9])?")
 DIGEST = re.compile(r"[0-9a-f]{64}")
