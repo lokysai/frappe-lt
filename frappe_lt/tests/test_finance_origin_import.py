@@ -97,21 +97,60 @@ class CommittedFinanceOriginTest(TestCase):
 		self.assertEqual(selector["accepted_forms"], ["Potencialus klientas"])
 		self.assertIn("Vadovauti", selector["forbidden_forms"])
 
-	def test_reviewed_iban_exception_preserves_authenticated_v15_original(self):
+	def test_reviewed_finance_exceptions_bind_exact_originals_and_source_digests(self):
 		inventory = json.loads((ROOT / "release_inventory.json").read_bytes())
-		entry = next(
-			entry for entry in inventory["entries"] if entry["key"] == {"source": "IBAN", "context": None}
-		)
-		self.assertEqual(len(entry["source_locations"]), 8)
 		provenance = json.loads((ROOT / "provenance.json").read_bytes())
-		origin = next(record for record in provenance["entries"] if record["key"] == entry["key"])
-		self.assertEqual(origin["v15_original"], "IBAN")
-		self.assertEqual(origin["status"], "excepted")
-		self.assertEqual(origin["origin"], "approved_exception")
 		exceptions = json.loads((ROOT / "translation_exceptions.json").read_bytes())
-		review = next(record for record in exceptions["entries"] if record["key"] == entry["key"])
-		self.assertTrue(review["reviewed"])
-		self.assertEqual(review["source_digest"], entry["source_digest"])
+		for source, context, digest, original, explanation in (
+			(
+				"IBAN",
+				None,
+				"cc0b8c010029d86b7c834d7d31af70dc20c98e5bc8a87f2ff767cc4b52dfb829",
+				"IBAN",
+				"Reviewed standard international bank-account identifier; keep the IBAN label unchanged.",
+			),
+			(
+				"[{0}] {1}",
+				"Financial Report Template",
+				"92d53b9a2f162106f7b8911f2705b3233e092e987bf07616134ddc2111742a6a",
+				None,
+				"Techninis finansinės ataskaitos šablono formatas: abu parametrai ir jų skliaustai turi likti nepakeisti.",
+			),
+			(
+				"<li>{}</li>",
+				None,
+				"6c0ed09ffb9a28fd48a5c43252830bd20ea69081910ef1c46ce5d20a2910c78a",
+				None,
+				"Techninis HTML sąrašo fragmentas su vieninteliu parametru; žymos ir parametras turi likti nepakeisti.",
+			),
+			(
+				"BOM",
+				None,
+				"f5c12d2e2a1e4011937930f8a628cbef55db42b525bcf8be51bbb08b43687575",
+				"BOM",
+				"BOM yra patvirtinta techninė santrumpa pagal CONTEXT.md; paliekama nepakeista, išsaugant v15 originalą.",
+			),
+		):
+			with self.subTest(source=source):
+				key = {"source": source, "context": context}
+				entry = next(item for item in inventory["entries"] if item["key"] == key)
+				self.assertEqual(entry["source_digest"], digest)
+				if source == "IBAN":
+					self.assertEqual(len(entry["source_locations"]), 8)
+				origin = next(record for record in provenance["entries"] if record["key"] == key)
+				expected_origin = {
+					"key": key,
+					"origin": "approved_exception",
+					"status": "excepted",
+					"exception": explanation,
+				}
+				if original is not None:
+					expected_origin["v15_original"] = original
+				self.assertEqual(origin, expected_origin)
+				review = next(record for record in exceptions["entries"] if record["key"] == key)
+				self.assertTrue(review["reviewed"])
+				self.assertTrue(review["review"])
+				self.assertEqual(review["source_digest"], digest)
 
 	def test_complete_original_set_and_existing_candidates_stay_authenticated(self):
 		compatibility = verify_owned_artifacts(ROOT / "compatibility.json")
@@ -132,9 +171,17 @@ class CommittedFinanceOriginTest(TestCase):
 				for record in provenance["entries"]
 				if (record["key"]["source"], record["key"]["context"]) in keys
 			),
-			2591,
+			2590,
 		)
 		self.assertEqual(hashlib.sha256(canonical_json(originals)).hexdigest(), ORIGINALS_SHA256)
+		report = json.loads((ROOT / "inventory_report.json").read_bytes())
+		self.assertEqual(
+			report["summary"],
+			{
+				"coverage": {"excepted": 230, "missing": 10441, "translated": 5864},
+				"lifecycle": {"changed": 0, "new": 16535, "removed": 0, "unchanged": 0},
+			},
+		)
 		self.assertEqual(manifest["inventory_digest"], compatibility["inventory_digest"])
 		self.assertTrue(
 			{"erpnext-operations", "frappe"} <= set(registered_candidates(ROOT / "compatibility.json"))
@@ -253,7 +300,14 @@ class FinanceOriginImportTest(TestCase):
 			)
 		}
 		original = json.loads((self.root / "provenance.json").read_bytes())
-		result = self.run_import(digests, 2)
+		with patch.object(
+			v15_origin_import, "catalog_quality_gate", wraps=v15_origin_import.catalog_quality_gate
+		) as gate:
+			result = self.run_import(digests, 2)
+		self.assertEqual(
+			[call.args[0] for call in gate.call_args_list],
+			["erpnext-operations", "frappe"] * 2,
+		)
 		self.assertEqual((result["inherited"], result["missing"]), (2, len(self.keys) - 2))
 		provenance = json.loads((self.root / "provenance.json").read_bytes())
 
@@ -274,6 +328,7 @@ class FinanceOriginImportTest(TestCase):
 		before = {p.relative_to(self.root): p.read_bytes() for p in self.root.rglob("*") if p.is_file()}
 		for rows, count, error in (
 			([], 0, "unmatched"),
+			([("Item", "", "")], 1, "expected 1 nonempty exact"),
 			([("Item", "Prekė", ""), ("Item", "Kitas", "")], 1, "conflicting duplicate"),
 			([("Item", "Kita prekė", "")], 1, "conflicting existing"),
 		):
@@ -285,6 +340,21 @@ class FinanceOriginImportTest(TestCase):
 					before,
 					{p.relative_to(self.root): p.read_bytes() for p in self.root.rglob("*") if p.is_file()},
 				)
+
+	def test_same_source_in_wrong_context_is_not_imported_and_cross_csv_conflict_is_rejected(self):
+		key = next(item["key"] for item in self.manifest["keys"] if item["key"]["context"])
+		before = {name: (self.root / name).read_bytes() for name in ("provenance.json", "compatibility.json")}
+		digests = self.csv(erpnext=[(key["source"], "Wrong context", "")])
+		with self.assertRaisesRegex(ValueError, "expected 1 nonempty exact"):
+			self.run_import(digests, 1)
+		self.assertEqual(before, {name: (self.root / name).read_bytes() for name in before})
+		digests = self.csv(
+			frappe=[(key["source"], "First", key["context"])],
+			erpnext=[(key["source"], "Second", key["context"])],
+		)
+		with self.assertRaisesRegex(ValueError, "conflicting duplicate"):
+			self.run_import(digests, 1)
+		self.assertEqual(before, {name: (self.root / name).read_bytes() for name in before})
 
 	def test_interrupted_publish_restores_authenticated_release_and_can_retry(self):
 		digests = self.csv(erpnext=[("Item", "Prekė", "")])

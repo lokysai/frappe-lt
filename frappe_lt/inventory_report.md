@@ -11,9 +11,9 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 
 ## Coverage
 
-- Missing: 10443
-- Translated: 5865
-- Excepted: 227
+- Missing: 10441
+- Translated: 5864
+- Excepted: 230
 
 ## Active Translation Keys
 
@@ -206,7 +206,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>&lt;li&gt;Item {0} in row(s) {1} billed more than {2}&lt;/li&gt;</code> |  | new | missing |
 | <code>&lt;li&gt;Packed Item {0}: Required {1}, Available {2}&lt;/li&gt;</code> |  | new | missing |
 | <code>&lt;li&gt;Payment document required for row(s): {0}&lt;/li&gt;</code> |  | new | missing |
-| <code>&lt;li&gt;{}&lt;/li&gt;</code> |  | new | missing |
+| <code>&lt;li&gt;{}&lt;/li&gt;</code> |  | new | excepted |
 | <code>&lt;p&gt;&lt;strong&gt;{{ __(&quot;Condition Examples&quot;) }}:&lt;/strong&gt;&lt;/p&gt;<br>&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;doc.status==&quot;Open&quot;&lt;br&gt;doc.due_date==nowdate()&lt;br&gt;doc.total &amp;gt; 40000<br>&lt;/code&gt;&lt;/pre&gt;</code> |  | new | excepted |
 | <code>&lt;p&gt;&lt;strong&gt;{{ __(&quot;Condition Examples&quot;) }}:&lt;/strong&gt;&lt;/p&gt;<br>&lt;pre&gt;doc.status==&quot;Open&quot;&lt;br&gt;doc.due_date==nowdate()&lt;br&gt;doc.total &amp;gt; 40000<br>&lt;/pre&gt;</code> |  | new | excepted |
 | <code>&lt;p&gt;Cannot overbill for the following Items:&lt;/p&gt;</code> |  | new | missing |
@@ -1677,7 +1677,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>BCC</code> | Email Recipients | new | missing |
 | <code>BFS</code> |  | new | missing |
 | <code>BIN Qty</code> |  | new | missing |
-| <code>BOM</code> |  | new | translated |
+| <code>BOM</code> |  | new | excepted |
 | <code>BOM 1</code> |  | new | excepted |
 | <code>BOM 1 {0} and BOM 2 {1} should not be same</code> |  | new | missing |
 | <code>BOM 2</code> |  | new | excepted |
@@ -15892,7 +15892,7 @@ Inventory digest: `111b42527f63668b884a30a0ce421c9e4da9308760baf8a143b1b4349e110
 | <code>Zip file extracts to more than the maximum allowed size of {0} MB</code> |  | new | missing |
 | <code>[Action taken by {0}]</code> |  | new | missing |
 | <code>[Important] [ERPNext] Auto Reorder Errors</code> |  | new | missing |
-| <code>[{0}] {1}</code> | Financial Report Template | new | missing |
+| <code>[{0}] {1}</code> | Financial Report Template | new | excepted |
 | <code>`Allow Negative rates for Items`</code> |  | new | missing |
 | <code>`as_iterator` only works with `as_list=True` or `as_dict=True`</code> |  | new | missing |
 | <code>`doctype` and `fieldname` are required for deleting property setters.</code> |  | new | missing |
