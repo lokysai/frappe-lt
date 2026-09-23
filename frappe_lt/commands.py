@@ -121,8 +121,11 @@ def export_lithuanian_runtime_candidates(context, output_path):
 @click.command("validate-lithuanian-runtime")
 @click.option("--diagnostic-sampling", is_flag=True)
 @click.option("--output-dir", type=click.Path(file_okay=False, path_type=str))
+@click.option("--site-exceptions", "site_exception_path", type=click.Path(dir_okay=False))
 @pass_context
-def validate_lithuanian_runtime(context, diagnostic_sampling=False, output_dir=None):
+def validate_lithuanian_runtime(
+	context, diagnostic_sampling=False, output_dir=None, site_exception_path=None
+):
 	"""Validate the reviewed running-interface denominator."""
 	import frappe
 
@@ -132,12 +135,64 @@ def validate_lithuanian_runtime(context, diagnostic_sampling=False, output_dir=N
 	frappe.init(site=site)
 	frappe.connect()
 	try:
-		result = run(site, output_dir, diagnostic_sampling=diagnostic_sampling)
+		result = run(
+			site, output_dir, diagnostic_sampling=diagnostic_sampling, site_exception_path=site_exception_path
+		)
 		click.echo(json.dumps(result, ensure_ascii=False, sort_keys=True))
 		if result["exit_code"]:
 			raise click.exceptions.Exit(result["exit_code"])
 	finally:
 		frappe.destroy()
+
+
+def _legacy_command(context, operation, package_path, exception_path=None, run_id=None):
+	import frappe
+
+	from frappe_lt import legacy_migration
+
+	site = get_site(context)
+	frappe.init(site=site)
+	frappe.connect()
+	try:
+		try:
+			if operation == "preflight":
+				result = legacy_migration.preflight(site, package_path, exception_path)
+			else:
+				result = legacy_migration.apply(site, package_path, run_id, exception_path)
+		except Exception as error:
+			from filelock import Timeout
+
+			if isinstance(error, Timeout | ValueError):
+				result = {"exit_code": 1, "state": "blocked"}
+			elif isinstance(error, OSError):
+				result = {"exit_code": 3, "state": "report_failure"}
+			else:
+				result = {"exit_code": 2, "state": "db_failure"}
+		click.echo(json.dumps(result, ensure_ascii=False, sort_keys=True))
+		if result["exit_code"]:
+			raise click.exceptions.Exit(result["exit_code"])
+	finally:
+		frappe.db.rollback()
+		frappe.destroy()
+
+
+@click.command("preflight-legacy-translations")
+@click.option("--package", "package_path", required=True, type=click.Path(dir_okay=False))
+@click.option("--site-exceptions", "exception_path", type=click.Path(dir_okay=False))
+@pass_context
+def preflight_legacy_translations(context, package_path, exception_path):
+	"""Authenticate original package and publish private read-only removal plan."""
+	_legacy_command(context, "preflight", package_path, exception_path)
+
+
+@click.command("apply-legacy-translations")
+@click.option("--package", "package_path", required=True, type=click.Path(dir_okay=False))
+@click.option("--run-id", required=True)
+@click.option("--site-exceptions", "exception_path", type=click.Path(dir_okay=False))
+@pass_context
+def apply_legacy_translations(context, package_path, run_id, exception_path):
+	"""Apply a published plan or recover its postcommit finalization."""
+	_legacy_command(context, "apply", package_path, exception_path, run_id)
 
 
 commands = [
@@ -149,4 +204,6 @@ commands = [
 	leave_lithuanian_profile,
 	export_lithuanian_runtime_candidates,
 	validate_lithuanian_runtime,
+	preflight_legacy_translations,
+	apply_legacy_translations,
 ]
