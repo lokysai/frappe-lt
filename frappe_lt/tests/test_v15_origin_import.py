@@ -22,7 +22,7 @@ EXPECTED_BASELINE_SHA256 = "7c343b91fef46a7574c1f0e32397b39b06834be600b848b1355f
 
 
 class V15OriginImportTest(TestCase):
-	def test_committed_origin_baseline_is_authenticated_and_not_reviewed(self):
+	def test_committed_origin_baseline_remains_authenticated_after_review(self):
 		compatibility = verify_owned_artifacts(ROOT / "compatibility.json")
 		self.assertIn("erpnext-operations", registered_candidates(ROOT / "compatibility.json"))
 		manifest = json.loads((ROOT / "catalog_segments/frappe.json").read_bytes())
@@ -38,15 +38,17 @@ class V15OriginImportTest(TestCase):
 			if (record["key"]["source"], record["key"]["context"]) in keys
 		}
 		self.assertEqual(len(keys), len(records))
-		self.assertEqual(sum(record["status"] == "missing" for record in records.values()), 2998)
+		self.assertEqual(sum(record["status"] == "missing" for record in records.values()), 2902)
+		self.assertEqual(sum(record["status"] == "excepted" for record in records.values()), 168)
 		self.assertEqual(
 			sum(
-				record["status"] == "translated" and record.get("origin") == "inherited_v15"
+				(record["status"] == "translated" and record.get("origin") == "inherited_v15")
+				or (record["status"] == "excepted" and "v15_original" in record)
 				for record in records.values()
 			),
 			3346,
 		)
-		# These are original texts, not approved candidate translations.
+		# The original v15 text survives even for reviewed Translation Exceptions.
 		self.assertEqual(records[("User", None)]["translation"], "Vartotojas")
 		self.assertEqual(records[("Submit", None)]["translation"], "Pateikti")
 		self.assertEqual(records[("Account", None)]["translation"], "sąskaita")
@@ -54,10 +56,13 @@ class V15OriginImportTest(TestCase):
 			hashlib.sha256(
 				canonical_json(
 					[
-						{"key": record["key"], "translation": record["translation"]}
+						{
+							"key": record["key"],
+							"translation": record.get("v15_original", record.get("translation")),
+						}
 						for record in provenance["entries"]
 						if (record["key"]["source"], record["key"]["context"]) in keys
-						and record.get("origin") == "inherited_v15"
+						and (record.get("origin") == "inherited_v15" or "v15_original" in record)
 					]
 				)
 			).hexdigest(),

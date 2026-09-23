@@ -57,6 +57,7 @@ CANDIDATE_REGISTRATION_FIELDS = {
 	"segment_id",
 }
 TOKEN_PATTERNS = (
+	("javascript", re.compile(r'\$\{[A-Za-z_$][\w.$]*\s+\?\s+""\s+:\s+[A-Za-z_$][\w.$]*\}')),
 	("javascript", re.compile(r"\$\{[A-Za-z_$][\w.$]*(?:\[[^\]\r\n{}]+\])?}")),
 	("python", re.compile(r"%\([A-Za-z_]\w*\)[#0+ \-]*\d*(?:\.\d+)?[diouxXeEfFgGcrsa](?!\w)")),
 	(
@@ -613,9 +614,13 @@ def _validate_quality_records(artifacts: dict[str, dict], inventory: dict) -> No
 
 
 def _token_at(value: str, index: int) -> tuple[str | None, int, bool]:
+	if value.startswith("{{{0}}}", index):
+		return "literal", index + len("{{{0}}}"), False
+	if value.startswith("{{{0}}", index):
+		return None, index + len("{{{0}}"), True
 	quoted_literal_closing = {'"': '"', "'": "'", "„": "“"}.get(value[index - 1] if index else "")
 	if (
-		value.startswith("{{", index)
+		value.startswith(("{{", "}}"), index)
 		and quoted_literal_closing is not None
 		and index + 2 < len(value)
 		and value[index + 2] == quoted_literal_closing
@@ -628,9 +633,9 @@ def _token_at(value: str, index: int) -> tuple[str | None, int, bool]:
 	for prefix in ("http://", "https://", "ftp://", "mailto:"):
 		if value.startswith(prefix, index):
 			end = index + len(prefix)
-			while end < len(value) and value[end] not in "\t\r\n <>\"'":
+			while end < len(value) and value[end] not in "\t\r\n <>\"'„“":
 				end += 1
-			return ("url", end, end == index + len(prefix))
+			return "url", end, end == index + len(prefix) and prefix not in {"http://", "https://"}
 	for family, pattern in TOKEN_PATTERNS:
 		match = pattern.match(value, index)
 		if match:
@@ -642,6 +647,8 @@ def _token_at(value: str, index: int) -> tuple[str | None, int, bool]:
 		return None, index + 2, True
 	if character == "%" and index + 1 < len(value) and value[index + 1].isalpha():
 		return None, index + 2, True
+	if value.startswith("%.", index) and (index + 2 == len(value) or value[index + 2].isspace()):
+		return None, index + 1, False
 	if character == "%" and re.match(
 		r"%(?:[#0+\-'.*]|\d+\$|\d+(?:\.\d*)?[A-Za-z](?!\w)| +[A-Za-z](?!\w))",
 		value[index:],

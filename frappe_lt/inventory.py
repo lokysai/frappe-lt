@@ -341,6 +341,10 @@ def validate_provenance(inventory: dict, provenance: dict) -> dict[tuple[str, st
 				raise ValueError(f"excepted key {key!r} must use approved_exception origin")
 			if translation is not None:
 				raise ValueError(f"excepted key {key!r} cannot also have a translation")
+			if "v15_original" in record and (
+				not isinstance(record["v15_original"], str) or not record["v15_original"].strip()
+			):
+				raise ValueError(f"excepted key {key!r} has invalid authenticated v15 original")
 		elif status == "missing":
 			if translation is not None or exception is not None or origin is not None:
 				raise ValueError(f"missing key {key!r} cannot have translation provenance or exception")
