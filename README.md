@@ -72,6 +72,8 @@ The one public orchestration function is `frappe_lt.inventory.run`; the Bench co
 
 For release comparison, pass both `--previous-inventory` and `--previous-compatibility`. The prior manifest digest must match the exact prior inventory bytes.
 
+The [Frappe v15 origin baseline](docs/v15-frappe-origin-import.md) records exact-key inherited text before the Frappe segment's translation review. It does not register a reviewed Frappe catalog candidate.
+
 ## Catalog quality gate
 
 `frappe_lt.catalog_quality.run` is the sole candidate-generation path. The Bench transport accepts only a candidate authenticated by [`frappe_lt/catalog_segments.json`](frappe_lt/catalog_segments.json):
