@@ -1,6 +1,6 @@
 # #15 release-size and performance measurement protocol
 
-Status: **artifact bytes measured locally; pinned Bench latency evidence pending a CI run**. The `verify` GitHub Actions job now creates a pinned ERPNext-only baseline site beside its verified `frappe_lt` site and uploads `/tmp/frappe-lt-release-measurements.json` as a `release-measurements-*` artifact. The job fails when the paired warm p95 reaches 50 ms. Inspect the raw artifact, host load, pin and size data before recording a release decision; do not interpret a repository file size, the smoke MO digest, or a unit-test duration as release performance evidence.
+Status: **pinned Bench latency measured** in [the 2026-09-24 run](evidence/issue-15-35958794756.md), with all 80 durations retained. The `verify` GitHub Actions job creates a pinned ERPNext-only baseline site beside its verified `frappe_lt` site and uploads `/tmp/frappe-lt-release-measurements.json` as a `release-measurements-*` artifact. The job fails when the paired warm p95 reaches 50 ms. Inspect the raw artifact, host load, pin and size data before recording a release decision; do not interpret a repository file size, the smoke MO digest, or a unit-test duration as release performance evidence.
 
 ## Artifact size, in bytes
 
@@ -39,7 +39,7 @@ PY
 
 The #15 budget is **MO plus named metadata <= 5 MiB (5 × 1,048,576 bytes)**. If the measured total is above the limit, preserve the raw inventory and record a reviewed decision with evidence; do not silently redefine metadata, delete required provenance, or claim a pass. Capture a second inventory after any proposed optimization and rerun the full catalog gate/digest check.
 
-Local artifact inventory on 2026-09-23, using the pinned Babel 2.16.0 serializer (the pinned Frappe Bench compile still needs checking): generated MO **1,525,232 bytes**, SHA-256 `e83b10d7662fab60db1b34fff34f714899a17985abbe2d411d0bbed8dcde5085`, matching `release_catalog.json`; the named metadata files above total **31,736,907 bytes**. MO plus metadata is **33,262,139 bytes (31.72 MiB)**, exceeding 5 MiB by **28,019,259 bytes**. The separate shipped PO is **1,565,863 bytes**; including it raises the total to **34,828,002 bytes**. The largest contributors are the 16,064,185-byte Release Inventory and three candidate files totalling 8,102,685 bytes. A decision to change packaging or approve a measured exception remains pending pinned Bench size and latency evidence; this is not a size-gate pass.
+The pinned Bench on 2026-09-24 confirmed the MO is **1,525,232 bytes**, SHA-256 `e83b10d7662fab60db1b34fff34f714899a17985abbe2d411d0bbed8dcde5085`, matching `release_catalog.json`; the named metadata files above total **31,736,907 bytes**. MO plus metadata is **33,262,139 bytes (31.72 MiB)**, exceeding 5 MiB by **28,019,259 bytes**. The separate shipped PO is **1,565,863 bytes**; including it raises the total to **34,828,002 bytes**. The largest contributors are the 16,064,185-byte Release Inventory and three candidate files totalling 8,102,685 bytes. Optimization, repinning and remeasurement are still required; this is not a size-gate pass.
 
 ## Cold and warm load overhead
 
