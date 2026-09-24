@@ -4,6 +4,7 @@ import stat
 import tempfile
 import threading
 import unittest
+from contextlib import nullcontext
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -298,7 +299,9 @@ class InstallTests(unittest.TestCase):
 		mo = self.root / "frappe_lt.mo"
 		self.frappe.get_app_path = lambda *args: str(self.root / "lt.po")
 		with (
+			patch.object(install, "_mo_lock", return_value=nullcontext()),
 			patch.object(install, "_all_sites", return_value=["test.local"]),
+			patch.object(install, "_shared_ready"),
 			patch.object(install, "_mo_path", return_value=mo),
 			patch("frappe_lt.po.compile_po") as compile_po,
 			patch.object(install, "_verify_mo", side_effect=AssertionError("wrong compiled digest")),
@@ -324,7 +327,9 @@ class InstallTests(unittest.TestCase):
 			mo_path.write_bytes(b"compiled catalog")
 
 		with (
+			patch.object(install, "_mo_lock", return_value=nullcontext()),
 			patch.object(install, "_all_sites", return_value=["test.local"]),
+			patch.object(install, "_shared_ready"),
 			patch.object(install, "_mo_path", return_value=mo),
 			patch("frappe_lt.po.compile_po", side_effect=compile_isolated),
 			patch.object(install, "_verify_mo") as verified,
@@ -336,10 +341,12 @@ class InstallTests(unittest.TestCase):
 	def test_new_site_during_isolated_compile_blocks_publication(self):
 		mo = self.root / "frappe_lt.mo"
 		self.frappe.get_app_path = lambda *args: str(self.root / "lt.po")
-		sites = [["test.local"], ["test.local", "other.local"]]
 		expected = hashlib.sha256(b"compiled catalog").hexdigest()
 		with (
-			patch.object(install, "_all_sites", side_effect=lambda *_args: sites.pop(0)),
+			patch.object(install, "_mo_lock", return_value=nullcontext()),
+			patch.object(
+				install, "_shared_ready", side_effect=[None, install.InstallError("SHARED_MO_INCOMPATIBLE")]
+			),
 			patch.object(install, "_mo_path", return_value=mo),
 			patch(
 				"frappe_lt.po.compile_po",
@@ -349,6 +356,79 @@ class InstallTests(unittest.TestCase):
 			with self.assertRaisesRegex(install.InstallError, "SHARED_MO_INCOMPATIBLE"):
 				install._ensure_mo(self.frappe, expected)
 		self.assertFalse(mo.exists())
+
+	def test_two_prepared_sites_can_publish_only_matching_shared_mo(self):
+		sites = self.root / "bench" / "sites"
+		current = sites / "test.local"
+		other = sites / "other.local"
+		for site in (current, other):
+			(site / "private" / "frappe_lt_install").mkdir(parents=True)
+			(site / "private" / "frappe_lt_install").chmod(0o700)
+			(site / "site_config.json").write_text('{"maintenance_mode": 1}')
+			(site / "site_config.json").chmod(0o600)
+		self.frappe.get_site_path = lambda *parts: str(current.joinpath(*parts))
+		data = {
+			"schema_version": 1,
+			"site": "test.local",
+			"release_digest": self.release["release_digest"],
+			"inventory_digest": self.release["inventory_digest"],
+			"mo_sha256": hashlib.sha256(b"compiled catalog").hexdigest(),
+			"versions": {"frappe": "16.1.0", "erpnext": "16.1.0"},
+			"package": "/private/lt.csv",
+			"package_sha256": "a" * 64,
+			"exceptions": None,
+			"policy_sha256": "b" * 64,
+			"run_id": "c" * 32,
+		}
+		for site, name in ((current, "test.local"), (other, "other.local")):
+			path = site / "private" / "frappe_lt_install" / install.STATE_FILE
+			path.write_text(json.dumps({**data, "site": name}))
+			path.chmod(0o600)
+		mo = sites / "assets" / "locale" / "lt" / "LC_MESSAGES" / "frappe_lt.mo"
+		self.frappe.get_app_path = lambda *args: str(self.root / "lt.po")
+		with (
+			patch.object(install, "_saved", return_value=data),
+			patch.object(install, "_mo_path", return_value=mo),
+			patch.object(install, "_verify_mo"),
+			patch(
+				"frappe_lt.po.compile_po",
+				side_effect=lambda source, workspace, *, mo_path: mo_path.write_bytes(b"compiled catalog"),
+			) as compile_po,
+		):
+			install._ensure_mo(self.frappe, data["mo_sha256"])
+			self.assertEqual(mo.read_bytes(), b"compiled catalog")
+			self.assertEqual(compile_po.call_count, 1)
+			mo.unlink()
+			(other / "site_config.json").write_text('{"maintenance_mode": 0}')
+			with self.assertRaisesRegex(install.InstallError, "SHARED_MO_INCOMPATIBLE"):
+				install._ensure_mo(self.frappe, data["mo_sha256"])
+			self.assertFalse(mo.exists())
+			(other / "site_config.json").write_text('{"maintenance_mode": 1}')
+			path = other / "private" / "frappe_lt_install" / install.STATE_FILE
+			path.write_text(json.dumps({**data, "site": "other.local", "mo_sha256": "d" * 64}))
+			with self.assertRaisesRegex(install.InstallError, "SHARED_MO_INCOMPATIBLE"):
+				install._ensure_mo(self.frappe, data["mo_sha256"])
+			self.assertFalse(mo.exists())
+
+	def test_bench_mo_lock_rejects_parallel_publication(self):
+		site = self.root / "bench" / "sites" / "test.local"
+		site.mkdir(parents=True)
+		self.frappe.get_site_path = lambda *parts: str(site.joinpath(*parts))
+		result = []
+
+		def contend():
+			try:
+				with install._mo_lock(self.frappe):
+					pass
+			except install.InstallError as error:
+				result.append(str(error))
+
+		with install._mo_lock(self.frappe):
+			worker = threading.Thread(target=contend)
+			worker.start()
+			worker.join()
+		self.assertEqual(result, ["SHARED_MO_BUSY"])
+		self.assertEqual(stat.S_IMODE((site.parent / ".frappe_lt_mo.lock").stat().st_mode), 0o600)
 
 	def test_mo_verifier_receives_active_path_and_release_digest(self):
 		mo = self.root / "frappe_lt.mo"
@@ -612,6 +692,7 @@ class InstallTests(unittest.TestCase):
 		mo = self.root / "frappe_lt.mo"
 		mo.write_bytes(b"another release")
 		with (
+			patch.object(install, "_mo_lock", return_value=nullcontext()),
 			patch.object(install, "_all_sites", return_value=["test.local", "other.local"]),
 			patch.object(install, "_mo_path", return_value=mo),
 			patch.object(
@@ -726,6 +807,82 @@ class InstallTests(unittest.TestCase):
 		self.assertEqual(
 			events, ["migration", "mo", "profile", "release", "verify_mo", "cache", "site_cache"]
 		)
+
+	def test_phase_failures_keep_maintenance_and_resume_in_order(self):
+		data = {
+			**self.release,
+			"site": "test.local",
+			"package": "/private.csv",
+			"exceptions": None,
+			"run_id": "f" * 32,
+		}
+		self.frappe.get_installed_apps = lambda: ["frappe", "erpnext", "frappe_lt"]
+		self.frappe.get_app_path = lambda *args: str(self.root / "lt.po")
+		self.frappe.clear_cache = lambda: None
+		self.frappe._ = lambda *args, **kwargs: "Prekė"
+		catalog = SimpleNamespace(messages={("Item", None): "Prekė"})
+		profile_state = {"state_after": "ABSENT"}
+		profile = SimpleNamespace(
+			status=lambda: profile_state.copy(),
+			after_install=lambda: profile_state.update(state_after="APPLIED"),
+		)
+		translations = SimpleNamespace(
+			clear_cache=lambda: None,
+			get_translations_from_apps=lambda *args, **kwargs: {"Item": "Prekė"},
+		)
+		install._maintenance(self.frappe)
+		for stage in ("migration", "report", "cache", "mo", "profile", "verify", "final_cache"):
+			with self.subTest(stage=stage):
+				profile_state["state_after"] = "ABSENT"
+				attempt = {"failed": False}
+				migration_stage = stage if stage in ("migration", "report", "cache") else "migration"
+
+				def fail_once(name, result=None, *, _stage=stage, _attempt=attempt):
+					if name == _stage and not _attempt["failed"]:
+						_attempt["failed"] = True
+						if name in ("migration", "report", "cache"):
+							return {"exit_code": 3, "state": name + "_failure"}
+						raise OSError("private Translation content")
+					return result
+
+				with (
+					patch.dict(
+						"sys.modules",
+						{
+							"frappe.translate": SimpleNamespace(
+								clear_cache=lambda: fail_once("final_cache"),
+								get_translations_from_apps=translations.get_translations_from_apps,
+							),
+							"frappe_lt.po": SimpleNamespace(parse_po=lambda path: catalog),
+						},
+					),
+					patch.object(frappe_lt, "profile", profile, create=True),
+					patch.object(install, "_checked", return_value=data),
+					patch.object(
+						legacy_migration,
+						"apply",
+						side_effect=lambda *args, _migration_stage=migration_stage, **kwargs: fail_once(
+							_migration_stage, {"exit_code": 0, "state": "committed"}
+						),
+					),
+					patch.object(install, "_migration_state", return_value="committed"),
+					patch.object(install, "_ensure_mo", side_effect=lambda *args: fail_once("mo")),
+					patch.object(install, "_release", side_effect=lambda: fail_once("verify")),
+					patch.object(install, "_verify_mo"),
+					patch.object(install, "_inventory_keys", return_value=set(catalog.messages)),
+				):
+					if stage == "profile":
+						profile.after_install = lambda: fail_once("profile") or profile_state.update(
+							state_after="APPLIED"
+						)
+					with self.assertRaises(install.InstallError) as error:
+						install.after_install()
+					self.assertNotIn("private Translation content", str(error.exception))
+					self.assertTrue(install._in_maintenance(self.frappe))
+					if stage == "profile":
+						profile.after_install = lambda: profile_state.update(state_after="APPLIED")
+					self.assertEqual(install.resume()["state"], "verified")
+					self.assertTrue(install._in_maintenance(self.frappe))
 
 
 if __name__ == "__main__":
