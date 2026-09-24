@@ -20,7 +20,7 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 90
     env:
       BENCH_PATH: /home/runner/frappe-bench
       CI: "Yes"
@@ -121,7 +121,7 @@ jobs:
           env/bin/python -m compileall -q apps/frappe_lt/frappe_lt
           ruff check apps/frappe_lt/frappe_lt
           ruff format --check apps/frappe_lt/frappe_lt
-          env/bin/python -m unittest frappe_lt.tests.test_verify frappe_lt.tests.test_inventory frappe_lt.tests.test_catalog_partition frappe_lt.tests.test_review_evidence frappe_lt.tests.test_v15_origin_import frappe_lt.tests.test_finance_origin_import frappe_lt.tests.test_catalog_quality frappe_lt.tests.test_frappe_catalog frappe_lt.tests.test_finance_catalog frappe_lt.tests.test_install frappe_lt.tests.test_release_catalog frappe_lt.tests.test_legacy_migration frappe_lt.tests.test_runtime_validation frappe_lt.tests.test_ci_workflow
+          env/bin/python -m unittest frappe_lt.tests.test_verify frappe_lt.tests.test_inventory frappe_lt.tests.test_catalog_partition frappe_lt.tests.test_review_evidence frappe_lt.tests.test_v15_origin_import frappe_lt.tests.test_finance_origin_import frappe_lt.tests.test_catalog_quality frappe_lt.tests.test_frappe_catalog frappe_lt.tests.test_finance_catalog frappe_lt.tests.test_install frappe_lt.tests.test_measurements frappe_lt.tests.test_release_catalog frappe_lt.tests.test_legacy_migration frappe_lt.tests.test_runtime_validation frappe_lt.tests.test_ci_workflow
           node --test apps/frappe_lt/cypress/support/*.test.js
           shopt -s globstar nullglob
           javascript=(apps/frappe_lt/cypress.config.js apps/frappe_lt/cypress/**/*.js)
@@ -595,6 +595,52 @@ jobs:
         run: |
           bench --site test_site resume-lithuanian-install | python -c 'import json,sys; assert json.load(sys.stdin)["state"] == "verified"'
           bench --site test_site execute frappe_lt.verify.run --kwargs '{"site":"test_site","mode":"ci"}'
+
+      - name: Create matched baseline site for paired translation-load measurements
+        working-directory: /home/runner/frappe-bench
+        run: |
+          bench new-site baseline_site --db-host 127.0.0.1 --db-root-username root --db-root-password root --admin-password admin --mariadb-user-host-login-scope='%'
+          bench --site baseline_site install-app erpnext
+          bench --site baseline_site execute frappe.client.insert --kwargs '{"doc":{"doctype":"Translation","language":"lt","source_text":"Inventory Custom Probe","translated_text":"Bandymas"}}'
+          test "$(bench --site baseline_site list-apps --format json | python -c 'import json,sys; print(",".join(json.load(sys.stdin)["baseline_site"]))')" = "frappe,erpnext"
+
+      - name: Record paired cold and warm translation-load evidence
+        working-directory: /home/runner/frappe-bench/sites
+        run: |
+          ../env/bin/python -m frappe_lt.measurements baseline_site test_site /tmp/frappe-lt-release-measurements.json
+          ../env/bin/python - <<'PY'
+          import json
+          from pathlib import Path
+          evidence = json.loads(Path('/tmp/frappe-lt-release-measurements.json').read_text())
+          assert len(evidence['samples']) == 80
+          assert evidence['paired_warm_p95_overhead_ms'] < 50
+          print('Paired warm-load p95 overhead (ms):', evidence['paired_warm_p95_overhead_ms'])
+          print('MO + shipped metadata (bytes):', evidence['artifacts']['mo_and_metadata_bytes'])
+          print('Size review required:', evidence['size_review_required'])
+          PY
+
+      - name: Upload raw release measurement evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release-measurements-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: warn
+          retention-days: 14
+          path: /tmp/frappe-lt-release-measurements.json
+
+      - name: Install second site against the same verified bench MO
+        working-directory: /home/runner/frappe-bench
+        run: |
+          package="$FRAPPE_LT_PACKAGE_DIR/lt-v16-translations.csv"
+          mo=sites/assets/locale/lt/LC_MESSAGES/frappe_lt.mo
+          before="$(sha256sum "$mo")"
+          bench --site baseline_site preflight-lithuanian-install --package "$package"
+          bench --site baseline_site prepare-lithuanian-install --package "$package"
+          bench --site baseline_site install-app frappe_lt
+          bench --site baseline_site resume-lithuanian-install | python -c 'import json,sys; assert json.load(sys.stdin)["state"] == "verified"'
+          bench --site baseline_site show-lithuanian-install-status | python -c 'import json,sys; s=json.load(sys.stdin); assert s["maintenance_mode"] and s["mo"] == "matched" and s["profile"] == "APPLIED"'
+          test "$(sha256sum "$mo")" = "$before"
+          bench --site test_site resume-lithuanian-install | python -c 'import json,sys; assert json.load(sys.stdin)["state"] == "verified"'
 
       - name: Prove wrong release MO digest fails with diagnostics
         working-directory: /home/runner/frappe-bench

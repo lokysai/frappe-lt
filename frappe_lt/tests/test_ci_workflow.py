@@ -124,6 +124,7 @@ class CIWorkflowTest(TestCase):
 		commands = "\n".join(step.get("run", "") for step in verify["steps"])
 		for required in (
 			"frappe_lt.tests.test_install",
+			"frappe_lt.tests.test_measurements",
 			"frappe_lt.tests.test_release_catalog",
 			"frappe_lt.tests.test_legacy_migration",
 			"frappe_lt.tests.test_catalog_partition",
@@ -136,6 +137,27 @@ class CIWorkflowTest(TestCase):
 			"node --check",
 		):
 			self.assertIn(required, commands)
+
+	def test_paired_measurements_use_pinned_sites_and_upload_raw_evidence(self):
+		steps = self.workflow["jobs"]["verify"]["steps"]
+		create = next(step for step in steps if step["name"].startswith("Create matched baseline site"))
+		measure = next(step for step in steps if step["name"].startswith("Record paired cold"))
+		upload = next(step for step in steps if step["name"].startswith("Upload raw release"))
+		installed = next(step for step in steps if step["name"] == "Run integrated verification")
+		self.assertLess(steps.index(installed), steps.index(create))
+		self.assertLess(steps.index(create), steps.index(measure))
+		self.assertLess(steps.index(measure), steps.index(upload))
+		self.assertIn("bench --site baseline_site install-app erpnext", create["run"])
+		self.assertIn("-m frappe_lt.measurements baseline_site test_site", measure["run"])
+		self.assertIn("paired_warm_p95_overhead_ms", measure["run"])
+		self.assertEqual(upload["if"], "always()")
+		self.assertEqual(upload["with"]["path"], "/tmp/frappe-lt-release-measurements.json")
+		second = next(
+			step for step in steps if step["name"] == "Install second site against the same verified bench MO"
+		)
+		self.assertLess(steps.index(upload), steps.index(second))
+		self.assertIn("before=", second["run"])
+		self.assertIn('test "$(sha256sum "$mo")" = "$before"', second["run"])
 
 	def test_wrong_digest_diagnostic_uses_pinned_release_verifier(self):
 		steps = self.workflow["jobs"]["verify"]["steps"]

@@ -206,7 +206,14 @@ def _saved(frappe):
 		data = _read_private(_root(frappe) / STATE_FILE)
 	except (OSError, ValueError):
 		_fail("PREPARED_INPUTS_MISSING")
-	if (
+	if not _valid_saved(data, _site(frappe)):
+		_fail("PREPARED_INPUTS_INVALID")
+	return data
+
+
+def _valid_saved(data, site):
+	"""The same complete prepared-input schema applies to every shared-MO site."""
+	return not (
 		not isinstance(data, dict)
 		or set(data)
 		!= {
@@ -223,7 +230,7 @@ def _saved(frappe):
 			"run_id",
 		}
 		or data["schema_version"] != 1
-		or data["site"] != _site(frappe)
+		or data["site"] != site
 		or not all(
 			isinstance(data.get(key), str) and SHA256.fullmatch(data[key])
 			for key in ("release_digest", "inventory_digest", "mo_sha256", "package_sha256", "policy_sha256")
@@ -233,9 +240,7 @@ def _saved(frappe):
 		or not re.fullmatch("[0-9a-f]{32}", data["run_id"])
 		or not isinstance(data["package"], str)
 		or not (data["exceptions"] is None or isinstance(data["exceptions"], str))
-	):
-		_fail("PREPARED_INPUTS_INVALID")
-	return data
+	)
 
 
 @contextmanager
@@ -421,7 +426,74 @@ def _all_sites(frappe):
 	)
 
 
+def _shared_ready(frappe, expected):
+	"""An absent MO can be published only for one release under bench-wide maintenance."""
+	from frappe_lt.legacy_migration import _read_private
+
+	sites_dir = Path(frappe.get_site_path("site_config.json")).parent.parent
+	try:
+		current = _saved(frappe)
+	except InstallError:
+		_fail("SHARED_MO_INCOMPATIBLE")
+	for name in _all_sites(frappe):
+		if name == _site(frappe):
+			if not _in_maintenance(frappe) or current["mo_sha256"] != expected:
+				_fail("SHARED_MO_INCOMPATIBLE")
+			continue
+		root = sites_dir / name
+		config_path = root / "site_config.json"
+		private = root / "private" / "frappe_lt_install"
+		try:
+			if config_path.is_symlink() or config_path.stat().st_mode & 0o022:
+				_fail("SHARED_MO_INCOMPATIBLE")
+			if private.is_symlink() or stat.S_IMODE(private.stat().st_mode) != 0o700:
+				_fail("SHARED_MO_INCOMPATIBLE")
+			config = json.loads(config_path.read_bytes())
+			plan = _read_private(private / STATE_FILE)
+		except (OSError, ValueError):
+			_fail("SHARED_MO_INCOMPATIBLE")
+		if (
+			not isinstance(config, dict)
+			or config.get("maintenance_mode") != 1
+			or not _valid_saved(plan, name)
+			or any(
+				plan.get(key) != current[key] for key in ("release_digest", "inventory_digest", "mo_sha256")
+			)
+			or plan.get("mo_sha256") != expected
+		):
+			_fail("SHARED_MO_INCOMPATIBLE")
+
+
+@contextmanager
+def _mo_lock(frappe):
+	"""Serialize the shared asset publication across different site install locks."""
+	sites_dir = Path(frappe.get_site_path("site_config.json")).parent.parent
+	path = sites_dir / ".frappe_lt_mo.lock"
+	fd = os.open(path, os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
+	try:
+		if (
+			not stat.S_ISREG(os.fstat(fd).st_mode)
+			or stat.S_IMODE(os.fstat(fd).st_mode) != 0o600
+			or os.fstat(fd).st_ino != path.stat().st_ino
+		):
+			_fail("SHARED_MO_INCOMPATIBLE")
+		fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+		try:
+			yield
+		finally:
+			fcntl.flock(fd, fcntl.LOCK_UN)
+	except BlockingIOError:
+		_fail("SHARED_MO_BUSY")
+	finally:
+		os.close(fd)
+
+
 def _ensure_mo(frappe, expected):
+	with _mo_lock(frappe):
+		return _ensure_mo_locked(frappe, expected)
+
+
+def _ensure_mo_locked(frappe, expected):
 	path = _mo_path()
 	if path.is_symlink():
 		_fail("SHARED_MO_INCOMPATIBLE")
@@ -430,8 +502,9 @@ def _ensure_mo(frappe, expected):
 		return
 	# A shared MO may already be used by another site: never replace it without
 	# being able to prove every other site's compatibility.
-	if path.exists() or _all_sites(frappe) != [_site(frappe)]:
+	if path.exists():
 		_fail("SHARED_MO_INCOMPATIBLE")
+	_shared_ready(frappe, expected)
 	from frappe_lt.po import compile_po
 
 	with tempfile.TemporaryDirectory(prefix="frappe-lt-install-") as directory:
@@ -446,13 +519,8 @@ def _ensure_mo(frappe, expected):
 		if any(parent.is_symlink() for parent in (path.parent, *path.parent.parents)):
 			_fail("SHARED_MO_INCOMPATIBLE")
 		path.parent.mkdir(parents=True, exist_ok=True)
-		if (
-			_all_sites(frappe) != [_site(frappe)]
-			or path.exists()
-			or path.is_symlink()
-			or not path.parent.is_dir()
-			or path.parent.is_symlink()
-		):
+		_shared_ready(frappe, expected)
+		if path.exists() or path.is_symlink() or not path.parent.is_dir() or path.parent.is_symlink():
 			_fail("SHARED_MO_INCOMPATIBLE")
 		# The isolated build may be on another filesystem. Stage on the target
 		# filesystem and publish without replacing a concurrently-created MO.
