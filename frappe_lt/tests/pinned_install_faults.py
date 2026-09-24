@@ -5,6 +5,7 @@ durable #13 SQL marker/report/cache recovery against a real site database.
 """
 
 import hashlib
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -137,7 +138,11 @@ def run(site, package):
 				text=True,
 				check=False,
 			)
-		assert parallel.returncode != 0 and "INSTALL_ALREADY_RUNNING" in parallel.stderr
+		output = parallel.stdout + parallel.stderr
+		assert parallel.returncode != 0 and "INSTALL_ALREADY_RUNNING" in output, (
+			parallel.returncode,
+			re.findall(r"INSTALL_[A-Z_]+|[A-Za-z]+Error|No such command|Connection refused", output),
+		)
 		pending(installed=True, marker=[run_id], migration="committed")
 		print("Pinned install fault recovery verified:", site, run_id)
 	finally:
