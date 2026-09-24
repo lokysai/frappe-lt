@@ -321,10 +321,12 @@ def collect_standard_metadata(frappe) -> dict[str, dict[str, list[dict]]]:
 	return metadata
 
 
-def extract_runtime(frappe, metadata_sha256: dict) -> RuntimeExtraction:
+def extract_runtime(
+	frappe, metadata_sha256: dict, *, allow_deployment_site: bool = False
+) -> RuntimeExtraction:
 	"""Extract metadata from the clean pinned site without invoking mixed source helpers."""
 	site = getattr(frappe.local, "site", None)
-	if site == "development.localhost":
+	if site == "development.localhost" and not allow_deployment_site:
 		raise ValueError("runtime inventory must not use development.localhost")
 	installed_apps = frappe.get_installed_apps()
 	if installed_apps != EXPECTED_RUNTIME_APPS:

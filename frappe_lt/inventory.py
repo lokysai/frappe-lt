@@ -626,20 +626,6 @@ def _verify_upstream(frappe, manifest: dict) -> None:
 	verify_environment(frappe, site=frappe.local.site, require_clean_upstream=True)
 
 
-def _active_catalog_sha256() -> str:
-	from frappe.gettext.translate import get_mo_path
-
-	path = Path(get_mo_path("frappe_lt", "lt"))
-	digest = hashlib.sha256()
-	try:
-		with path.open("rb") as stream:
-			for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-				digest.update(chunk)
-	except OSError as error:
-		raise ValueError(f"could not read active frappe_lt.mo catalog {path}: {error}") from error
-	return digest.hexdigest()
-
-
 def verify_environment(
 	frappe,
 	*,
@@ -650,7 +636,7 @@ def verify_environment(
 	require_active_catalog: bool = False,
 	require_runtime_metadata: bool = False,
 ) -> dict:
-	"""Read-only verification of the site and pinned Compatibility environment."""
+	"""Read-only verification of the site, Compatibility pins and full release MO."""
 	import erpnext
 
 	if not site or getattr(frappe.local, "site", None) != site:
@@ -695,12 +681,11 @@ def verify_environment(
 		)
 	mo_sha256 = None
 	if require_active_catalog:
-		expected_mo_sha256 = manifest.get("mo_sha256")
-		if expected_mo_sha256 is None:
-			raise ValueError("Compatibility must authenticate the active frappe_lt.mo catalog")
-		mo_sha256 = _active_catalog_sha256()
-		if mo_sha256 != expected_mo_sha256:
-			raise ValueError(f"active frappe_lt.mo digest must be {expected_mo_sha256}; found {mo_sha256}")
+		from frappe_lt.release_catalog import verify_mo
+
+		# Compatibility's MO digest belongs to the historical Item-only smoke.
+		# verify_mo authenticates the independently pinned full release and active MO.
+		mo_sha256 = verify_mo()
 	if require_runtime_metadata:
 		from frappe_lt.runtime_extraction import verify_standard_metadata
 

@@ -354,7 +354,7 @@ def _validate_destinations(output_path: Path, report_path: Path) -> tuple[Path, 
 
 
 def _load_trusted(
-	candidate_name: str | None, compatibility_path: Path
+	candidate_name: str | None, compatibility_path: Path, *, all_candidates: bool = False
 ) -> tuple[dict, dict, dict | None, dict[str, dict]]:
 	root = compatibility_path.parent
 	budget = [0]
@@ -499,6 +499,8 @@ def _load_trusted(
 		raise ValueError(f"unregistered candidates: {', '.join(unregistered)}")
 	if candidate_name is None:
 		_validate_quality_records(artifacts, inventory_entries)
+		if all_candidates:
+			return inventory, registered_candidates_by_name, manifests, artifacts
 		return inventory, {}, None, artifacts
 	matches = [record for record in records if record.get("name") == candidate_name]
 	if len(matches) != 1:
@@ -1130,10 +1132,35 @@ def _run(
 	fsync=os.fsync,
 	replace=os.replace,
 	remove=lambda path: path.unlink(missing_ok=True),
+	release_manifest: dict | None = None,
+	mo_output_path: Path | None = None,
 ) -> dict:
 	"""Validate, compile, and atomically publish one registered candidate."""
 	compatibility_path = compatibility_path or Path(__file__).with_name("compatibility.json")
-	inventory, candidate, segment, artifacts = _load_trusted(candidate_name, Path(compatibility_path))
+	if release_manifest is None:
+		inventory, candidate, segment, artifacts = _load_trusted(candidate_name, Path(compatibility_path))
+	else:
+		from frappe_lt.release_catalog import validate_release_bindings
+
+		inventory, candidates, manifests, artifacts = _load_trusted(
+			None, Path(compatibility_path), all_candidates=True
+		)
+		records = artifacts["catalog_segments.json"]["candidates"]
+		validate_release_bindings(release_manifest, inventory, records)
+		if candidate_name != "release":
+			raise ValueError("full catalog candidate name must be release")
+		candidate = {"entries": []}
+		claimed = set()
+		for record in sorted(records, key=lambda record: record["segment_id"]):
+			selected, frozen = candidates[record["name"]], manifests[record["name"]]
+			segment_keys = {_key_tuple(item["key"]) for item in frozen["keys"]}
+			if claimed & segment_keys:
+				raise ValueError("release segments overlap")
+			claimed.update(segment_keys)
+			candidate["entries"].extend(selected["entries"])
+		if claimed != set(_validate_inventory(inventory)):
+			raise ValueError("release segments do not cover the exact Release Inventory")
+		segment = None
 	inventory_entries = _validate_inventory(inventory)
 	if segment is None:
 		expected = inventory_entries
@@ -1298,8 +1325,27 @@ def _run(
 		po_path = workspace / "apps" / "frappe_lt" / "frappe_lt" / "locale" / "lt.po"
 		po_path.parent.mkdir(parents=True)
 		po_path.write_bytes(po_bytes)
-		po_parser(po_path)
-		compile_po(po_path, workspace, compiler=compile_candidate)
+		parsed = po_parser(po_path)
+		if release_manifest is not None and parsed.messages != {
+			key: entry["translation"] for key, entry in actual.items()
+		}:
+			raise ValueError("assembled PO differs from authenticated candidate keys and contexts")
+		compiled_mo = compile_po(po_path, workspace, compiler=compile_candidate)
+		if release_manifest is not None:
+			mo_bytes = _read_bytes(compiled_mo)
+			if (
+				release_manifest["po_sha256"] is not None
+				and _digest(po_bytes) != release_manifest["po_sha256"]
+			):
+				raise ValueError("release PO digest mismatch")
+			if (
+				release_manifest["mo_sha256"] is not None
+				and _digest(mo_bytes) != release_manifest["mo_sha256"]
+			):
+				raise ValueError("release MO digest mismatch")
+			if mo_output_path is None:
+				raise ValueError("release MO staging path is required")
+			_replace_bytes(mo_output_path, mo_bytes)
 	result = _result(candidate_name, len(expected), [], notices, review_summary)
 	_validate_destinations(output_path, report_path)
 	_replace_bytes(report_path, _report_bytes(result))
@@ -1328,6 +1374,8 @@ def run(
 	fsync=os.fsync,
 	replace=os.replace,
 	remove=lambda path: path.unlink(missing_ok=True),
+	release_manifest: dict | None = None,
+	mo_output_path: Path | None = None,
 ) -> dict:
 	"""Run the public gate and convert trust/tool failures to canonical exit-2 reports."""
 	output_path = Path(output_path)
@@ -1365,6 +1413,8 @@ def run(
 			fsync=fsync,
 			replace=replace,
 			remove=remove,
+			release_manifest=release_manifest,
+			mo_output_path=mo_output_path,
 		)
 	except Exception as error:
 		failure = _error("UNTRUSTED_INPUT_OR_TOOL_FAILURE")

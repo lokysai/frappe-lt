@@ -265,7 +265,7 @@ class RuntimeContractTest(TestCase):
 	def test_public_environment_verifier_is_read_only_and_checks_site_cwd_pins_and_order(self):
 		manifest = {
 			"inventory_digest": "0" * 64,
-			"mo_sha256": "3" * 64,
+			"mo_sha256": "3" * 64,  # historical smoke, not the release MO
 			"runtime_metadata_sha256": {"page": "4" * 64},
 			"upstream": {
 				"erpnext": {"commit": "2" * 40, "version": "16.35.0"},
@@ -298,7 +298,7 @@ class RuntimeContractTest(TestCase):
 				return_value={"babel": "2.16.0", "python": "3.14"},
 			),
 			patch("frappe_lt.inventory._git_value", side_effect=git_value),
-			patch("frappe_lt.inventory._active_catalog_sha256", return_value="3" * 64),
+			patch("frappe_lt.release_catalog.verify_mo", return_value="4" * 64) as verify_mo,
 			patch("frappe_lt.runtime_extraction.verify_standard_metadata") as runtime_metadata,
 			patch("frappe_lt.inventory.Path.cwd", return_value=Path("/bench/sites")),
 		):
@@ -314,7 +314,8 @@ class RuntimeContractTest(TestCase):
 		self.assertEqual(result["active_directory"], "/bench/sites")
 		self.assertEqual(result["upstream"]["frappe"]["commit"], "1" * 40)
 		self.assertEqual(result["upstream"]["erpnext"]["version"], "16.35.0")
-		self.assertEqual(result["mo_sha256"], "3" * 64)
+		self.assertEqual(result["mo_sha256"], "4" * 64)
+		verify_mo.assert_called_once_with()
 		runtime_metadata.assert_called_once_with(frappe, manifest["runtime_metadata_sha256"])
 
 		frappe.get_installed_apps = lambda: ["frappe", "erpnext", "frappe_lt", "custom_app"]
@@ -343,9 +344,11 @@ class RuntimeContractTest(TestCase):
 				return_value={"babel": "2.16.0", "python": "3.14"},
 			),
 			patch("frappe_lt.inventory._git_value", side_effect=git_value),
-			patch("frappe_lt.inventory._active_catalog_sha256", return_value="4" * 64),
+			patch(
+				"frappe_lt.release_catalog.verify_mo", side_effect=ValueError("release MO digest mismatch")
+			) as verify_mo,
 			patch("frappe_lt.inventory.Path.cwd", return_value=Path("/bench/sites")),
-			self.assertRaisesRegex(ValueError, "active frappe_lt.mo digest"),
+			self.assertRaisesRegex(ValueError, "release MO digest mismatch"),
 		):
 			verify_environment(
 				frappe,
@@ -354,6 +357,7 @@ class RuntimeContractTest(TestCase):
 				require_exact_apps=True,
 				require_active_catalog=True,
 			)
+		verify_mo.assert_called_once_with()
 
 	def test_browser_capability_rejects_path_traversal_before_filesystem_access(self):
 		class PermissionError(Exception):

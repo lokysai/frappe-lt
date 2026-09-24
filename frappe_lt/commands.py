@@ -195,6 +195,61 @@ def apply_legacy_translations(context, package_path, run_id, exception_path):
 	_legacy_command(context, "apply", package_path, exception_path, run_id)
 
 
+def _install_command(context, operation, **kwargs):
+	import frappe
+
+	from frappe_lt import install
+
+	site = get_site(context)
+	frappe.init(site=site)
+	frappe.connect()
+	try:
+		try:
+			result = getattr(install, operation)(**kwargs)
+		except Exception as error:
+			frappe.db.rollback()
+			# Never expose private Translation values, file contents or upstream tracebacks.
+			code = str(error) if isinstance(error, install.InstallError) else "INSTALL_FAILED"
+			click.echo(json.dumps({"state": "blocked", "code": code}, sort_keys=True))
+			raise click.exceptions.Exit(1) from None
+		click.echo(json.dumps(result, ensure_ascii=False, sort_keys=True))
+	finally:
+		frappe.db.rollback()
+		frappe.destroy()
+
+
+@click.command("preflight-lithuanian-install")
+@click.option("--package", required=True, type=click.Path(dir_okay=False))
+@click.option("--site-exceptions", "exceptions", type=click.Path(dir_okay=False))
+@pass_context
+def preflight_lithuanian_install(context, package, exceptions):
+	"""Read-only bench preflight; run after get-app, before install-app."""
+	_install_command(context, "preflight", package=package, exceptions=exceptions)
+
+
+@click.command("prepare-lithuanian-install")
+@click.option("--package", required=True, type=click.Path(dir_okay=False))
+@click.option("--site-exceptions", "exceptions", type=click.Path(dir_okay=False))
+@pass_context
+def prepare_lithuanian_install(context, package, exceptions):
+	"""Publish the private migration plan, save inputs and enter maintenance."""
+	_install_command(context, "prepare", package=package, exceptions=exceptions)
+
+
+@click.command("resume-lithuanian-install")
+@pass_context
+def resume_lithuanian_install(context):
+	"""Resume committed migration recovery, MO, profile and final verification."""
+	_install_command(context, "resume")
+
+
+@click.command("show-lithuanian-install-status")
+@pass_context
+def show_lithuanian_install_status(context):
+	"""Show safe site install state without private Translation contents."""
+	_install_command(context, "status")
+
+
 commands = [
 	build_translation_inventory,
 	catalog_quality_gate,
@@ -206,4 +261,8 @@ commands = [
 	validate_lithuanian_runtime,
 	preflight_legacy_translations,
 	apply_legacy_translations,
+	preflight_lithuanian_install,
+	prepare_lithuanian_install,
+	resume_lithuanian_install,
+	show_lithuanian_install_status,
 ]

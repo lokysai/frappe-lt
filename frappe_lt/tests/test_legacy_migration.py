@@ -6,13 +6,91 @@ import threading
 import time
 import unittest
 import uuid
+from contextlib import nullcontext
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
+from frappe_lt import install, legacy_migration
 from frappe_lt.legacy_migration import PACKAGE_SHA256, _publish, _trusted_plan, authenticate_package, classify
 
 
 class LegacyPackageTests(unittest.TestCase):
+	def test_opted_in_preflight_and_apply_block_when_target_extraction_fails(self):
+		frappe = SimpleNamespace(db=SimpleNamespace(rollback=lambda: None))
+		run_id = "f" * 32
+		with (
+			patch.dict("sys.modules", {"frappe": frappe}),
+			patch.object(
+				legacy_migration, "_inputs", side_effect=install.InstallError("TARGET_EXTRACTION_FAILED")
+			) as inputs,
+			patch.object(legacy_migration, "_private_root", return_value=Path("/unused")),
+			patch.object(legacy_migration, "_trusted_plan", return_value={"inventory_digest": "a" * 64}),
+			patch.object(legacy_migration, "_check_lock"),
+			patch.object(legacy_migration, "_site_lock", return_value=nullcontext()),
+			patch.object(legacy_migration, "_marker", return_value=[]),
+			patch.object(legacy_migration, "_snapshot", side_effect=AssertionError("do not classify")),
+		):
+			self.assertEqual(
+				legacy_migration.preflight("test.local", "original.csv", allow_exact_inventory_patch=True),
+				{"exit_code": 1, "state": "blocked"},
+			)
+			self.assertEqual(
+				legacy_migration.apply(
+					"test.local", "original.csv", run_id, allow_exact_inventory_patch=True
+				),
+				{"exit_code": 1, "state": "blocked", "run_id": run_id},
+			)
+			self.assertEqual(inputs.call_count, 2)
+			inputs.assert_called_with("test.local", "original.csv", None, allow_exact_inventory_patch=True)
+
+	def test_opt_in_reauthenticates_install_target_without_bypassing_legacy_inputs(self):
+		frappe = SimpleNamespace(utils=SimpleNamespace(sanitize_html=str))
+		trusted = ({("Save", None): {"source_digest": "digest"}}, None, None, None)
+		with (
+			patch.dict("sys.modules", {"frappe": frappe}),
+			patch("frappe_lt.inventory.verify_environment") as strict,
+			patch.object(
+				install, "_preflight", return_value={"site": "test.local", "inventory_digest": "a" * 64}
+			) as gate,
+			patch.object(
+				legacy_migration, "authenticate_package", return_value={("Save", ""): "Saugoti"}
+			) as package,
+			patch("frappe_lt.catalog_quality._load_trusted", return_value=trusted),
+			patch("frappe_lt.catalog_quality._validate_inventory", return_value=trusted[0]),
+			patch("frappe_lt.inventory.load_compatibility", return_value={"inventory_digest": "a" * 64}),
+			patch.object(legacy_migration, "_site_policy", return_value=(set(), "b" * 64)) as policy,
+		):
+			legacy_migration._inputs("test.local", "original.csv", None)
+			strict.assert_called_once_with(frappe, site="test.local", require_clean_upstream=True)
+			gate.assert_not_called()
+			strict.reset_mock()
+			result = legacy_migration._inputs(
+				"test.local", "original.csv", None, allow_exact_inventory_patch=True
+			)
+			self.assertEqual(result[0], {("Save", ""): "Saugoti"})
+			self.assertEqual(result[1], {("Save", ""): {"source_digest": "digest"}})
+			gate.assert_called_once_with("original.csv", None, classify_site=False)
+			strict.assert_not_called()
+			self.assertEqual(package.call_count, 2)
+			self.assertEqual(policy.call_count, 2)
+			for ready in (
+				{"site": "other.local", "inventory_digest": "a" * 64},
+				{"site": "test.local", "inventory_digest": "c" * 64},
+			):
+				with patch.object(install, "_preflight", return_value=ready):
+					with self.assertRaises(ValueError):
+						legacy_migration._inputs(
+							"test.local", "original.csv", None, allow_exact_inventory_patch=True
+						)
+			with patch.object(
+				install, "_preflight", side_effect=install.InstallError("TARGET_EXTRACTION_FAILED")
+			):
+				with self.assertRaisesRegex(ValueError, "TARGET_EXTRACTION_FAILED"):
+					legacy_migration._inputs(
+						"test.local", "original.csv", None, allow_exact_inventory_patch=True
+					)
+
 	def test_original_package_is_required_before_fingerprints_are_generated(self):
 		with tempfile.TemporaryDirectory() as directory:
 			path = Path(directory) / "legacy.csv"
