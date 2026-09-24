@@ -169,6 +169,20 @@ class CIWorkflowTest(TestCase):
 		self.assertNotIn("first build:", gate["run"])
 		self.assertNotIn("second build:", gate["run"])
 
+	def test_pinned_bench_injects_install_faults_on_a_fresh_site(self):
+		steps = self.workflow["jobs"]["verify"]["steps"]
+		second = next(step for step in steps if step["name"].startswith("Install second site"))
+		faults = next(step for step in steps if step["name"].startswith("Inject install faults"))
+		self.assertLess(steps.index(second), steps.index(faults))
+		self.assertIn("bench new-site fault_site", faults["run"])
+		self.assertIn("bench --site fault_site install-app erpnext", faults["run"])
+		self.assertIn("-m frappe_lt.tests.pinned_install_faults fault_site", faults["run"])
+		self.assertIn(
+			'test "$(sha256sum sites/assets/locale/lt/LC_MESSAGES/frappe_lt.mo)" = "$before"',
+			faults["run"],
+		)
+		self.assertIn('s["maintenance_mode"] and s["installed"]', faults["run"])
+
 	def test_finance_origin_is_exercised_by_ci_without_reverting_item_provenance(self):
 		steps = self.workflow["jobs"]["verify"]["steps"]
 		unit = next(step for step in steps if step["name"] == "Run static and unit tests")

@@ -24,6 +24,7 @@ METADATA = (
 	"inventory_report.json",
 	"inventory_report.md",
 )
+SHIP_LIMIT_BYTES = 35 * 1024 * 1024
 
 
 def nearest_rank(values, percentile=0.95):
@@ -49,7 +50,8 @@ def artifact_sizes(root, mo):
 	return {
 		"files": results,
 		"mo_and_metadata_bytes": sum(item["bytes"] for item in results[:-1]),
-		"limit_bytes": 5 * 1024 * 1024,
+		"shipped_bytes": sum(item["bytes"] for item in results),
+		"limit_bytes": SHIP_LIMIT_BYTES,
 	}
 
 
@@ -168,7 +170,7 @@ def report(samples, *, root, mo, baseline, enabled):
 		"warm_pairs": differences,
 		"paired_warm_p95_overhead_ms": nearest_rank([entry["overhead_ms"] for entry in differences]),
 		"artifacts": artifacts,
-		"size_review_required": artifacts["mo_and_metadata_bytes"] > artifacts["limit_bytes"],
+		"size_review_required": artifacts["shipped_bytes"] > artifacts["limit_bytes"],
 	}
 
 

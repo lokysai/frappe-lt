@@ -616,7 +616,9 @@ jobs:
           assert evidence['paired_warm_p95_overhead_ms'] < 50
           print('Paired warm-load p95 overhead (ms):', evidence['paired_warm_p95_overhead_ms'])
           print('MO + shipped metadata (bytes):', evidence['artifacts']['mo_and_metadata_bytes'])
+          print('Total shipped including PO (bytes):', evidence['artifacts']['shipped_bytes'])
           print('Size review required:', evidence['size_review_required'])
+          assert not evidence['size_review_required'], 'shipped release exceeds reviewed 35 MiB limit'
           PY
 
       - name: Upload raw release measurement evidence
@@ -641,6 +643,16 @@ jobs:
           bench --site baseline_site show-lithuanian-install-status | python -c 'import json,sys; s=json.load(sys.stdin); assert s["maintenance_mode"] and s["mo"] == "matched" and s["profile"] == "APPLIED"'
           test "$(sha256sum "$mo")" = "$before"
           bench --site test_site resume-lithuanian-install | python -c 'import json,sys; assert json.load(sys.stdin)["state"] == "verified"'
+
+      - name: Inject install faults on a fresh pinned Bench site and resume from SQL state
+        working-directory: /home/runner/frappe-bench
+        run: |
+          bench new-site fault_site --db-host 127.0.0.1 --db-root-username root --db-root-password root --admin-password admin --mariadb-user-host-login-scope='%'
+          bench --site fault_site install-app erpnext
+          before="$(sha256sum sites/assets/locale/lt/LC_MESSAGES/frappe_lt.mo)"
+          (cd sites && ../env/bin/python -m frappe_lt.tests.pinned_install_faults fault_site "$FRAPPE_LT_PACKAGE_DIR/lt-v16-translations.csv")
+          test "$(sha256sum sites/assets/locale/lt/LC_MESSAGES/frappe_lt.mo)" = "$before"
+          bench --site fault_site show-lithuanian-install-status | python -c 'import json,sys; s=json.load(sys.stdin); assert s["maintenance_mode"] and s["installed"] and s["migration"] == "committed" and s["mo"] == "matched" and s["profile"] == "APPLIED", s'
 
       - name: Prove wrong release MO digest fails with diagnostics
         working-directory: /home/runner/frappe-bench
