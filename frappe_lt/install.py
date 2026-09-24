@@ -440,6 +440,12 @@ def _ensure_mo(frappe, expected):
 		compile_po(Path(frappe.get_app_path(APP, "locale", "lt.po")), workspace, mo_path=candidate)
 		if _digest(candidate) != expected:
 			_fail("MO_MISMATCH")
+		# A fresh --skip-assets bench has no locale directory yet. Build the
+		# destination only after isolated compilation succeeds, without following
+		# symlinked parents or changing an existing shared MO.
+		if any(parent.is_symlink() for parent in (path.parent, *path.parent.parents)):
+			_fail("SHARED_MO_INCOMPATIBLE")
+		path.parent.mkdir(parents=True, exist_ok=True)
 		if (
 			_all_sites(frappe) != [_site(frappe)]
 			or path.exists()

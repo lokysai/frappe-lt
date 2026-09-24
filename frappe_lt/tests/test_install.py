@@ -311,7 +311,7 @@ class InstallTests(unittest.TestCase):
 			self.assertFalse(mo.exists())
 
 	def test_single_site_mo_is_compiled_isolated_then_published(self):
-		mo = self.root / "frappe_lt.mo"
+		mo = self.root / "assets" / "locale" / "lt" / "LC_MESSAGES" / "frappe_lt.mo"
 		po = self.root / "lt.po"
 		po.write_text("source catalog")
 		self.frappe.get_app_path = lambda *args: str(po)
