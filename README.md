@@ -109,6 +109,8 @@ The default report is written below `sites/development.localhost/private/frappe_
 
 Runtime CI checks the validated report against its actual pass/fail and blocking findings, without assuming the old one-key catalog's English Fallback persists. [#16](https://github.com/lokysai/frappe-lt/issues/16) owns final running-interface release validation. Preserve raw evidence and resolve any English Fallback, Blocked Runtime Scenario or Runtime Coverage Gap before release.
 
+The final beta candidate uses the fail-stop [release-candidate validation runbook](docs/release-candidate-validation.md). `capture-lithuanian-release-candidate` binds one clean commit and the authenticated release/catalog/runtime contracts before mutation. `finalize-lithuanian-release-candidate` consumes the fixed #15/#10 artifacts, independently checks runtime residue, and publishes bounded `release-candidate.md` followed atomically by the canonical `release-candidate.json` completion marker. These commands do not replace the installer, migration classifier, Catalog Quality Gate, browser runner, or external operator backup.
+
 See the [one-time smoke report](docs/smoke-report.md) for the original one-key browser evidence, and [measurement protocol](docs/release-measurements.md) for metadata-size and performance evidence required by #15.
 
 ## Tests

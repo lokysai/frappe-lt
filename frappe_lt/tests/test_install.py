@@ -205,6 +205,7 @@ class InstallTests(unittest.TestCase):
 		plan = {
 			"inventory_digest": data["inventory_digest"],
 			"policy_sha256": data["policy_sha256"],
+			"package_sha256": "e" * 64,
 			"classification": {"delete": [], "blocked": []},
 			"rows": [{"name": "r"}],
 		}
@@ -216,14 +217,28 @@ class InstallTests(unittest.TestCase):
 		):
 			final.write_text(
 				json.dumps(
-					{"run_id": data["run_id"], "site": "test.local", "state": "committed", "deleted": 0}
+					{
+						"deleted": 0,
+						"package_sha256": "e" * 64,
+						"postcommit_drift": False,
+						"run_id": data["run_id"],
+						"site": "test.local",
+						"state": "committed",
+					}
 				)
 			)
 			final.chmod(0o600)
 			self.assertEqual(install._migration_state(self.frappe, data), "no_op")
 			final.write_text(
 				json.dumps(
-					{"run_id": data["run_id"], "site": "other.local", "state": "committed", "deleted": 0}
+					{
+						"deleted": 0,
+						"package_sha256": "e" * 64,
+						"postcommit_drift": False,
+						"run_id": data["run_id"],
+						"site": "other.local",
+						"state": "committed",
+					}
 				)
 			)
 			self.assertEqual(install._migration_state(self.frappe, data), "pending")
@@ -566,6 +581,88 @@ class InstallTests(unittest.TestCase):
 			applied.assert_called_once_with(
 				"test.local", str(package), "f" * 32, None, allow_exact_inventory_patch=True
 			)
+
+	def test_schema_v1_state_remains_compatible_off_release_site_only(self):
+		data = {
+			"exceptions": None,
+			"inventory_digest": "a" * 64,
+			"mo_sha256": "b" * 64,
+			"package": "/private/package.csv",
+			"package_sha256": "c" * 64,
+			"policy_sha256": "d" * 64,
+			"release_digest": "e" * 64,
+			"run_id": "f" * 32,
+			"schema_version": 1,
+			"site": "test.local",
+			"versions": {},
+		}
+		self.assertTrue(install._valid_saved(data, "test.local"))
+		self.assertFalse(
+			install._valid_saved({**data, "site": "development.localhost"}, "development.localhost")
+		)
+
+	def test_development_prepare_persists_candidate_capture_binding_before_maintenance(self):
+		self.frappe.local.site = "development.localhost"
+		package = self.root / "package.csv"
+		package.write_text("original")
+		binding = {
+			"candidate": {"clean": True, "commit": "a" * 40},
+			"capture_sha256": "b" * 64,
+			"schema_version": 1,
+		}
+		ready = {
+			**self.release,
+			"site": "development.localhost",
+			"versions": {"frappe": "16.1.0", "erpnext": "16.1.0"},
+		}
+		events = []
+		with (
+			patch.object(
+				install,
+				"_release_candidate_binding",
+				side_effect=lambda _frappe: events.append("binding") or binding,
+			),
+			patch.object(
+				install, "preflight", side_effect=lambda *_args: events.append("preflight") or ready
+			),
+			patch.object(
+				legacy_migration,
+				"preflight",
+				side_effect=lambda *_args, **_kwargs: events.append("legacy")
+				or {"exit_code": 0, "state": "planned", "run_id": "f" * 32},
+			),
+			patch.object(
+				install,
+				"_maintenance",
+				side_effect=lambda _frappe: events.append("maintenance"),
+			),
+		):
+			install.prepare(package)
+		saved = install._saved(self.frappe)
+		self.assertEqual(saved["schema_version"], 2)
+		self.assertEqual(saved["release_candidate"], binding)
+		self.assertEqual(events, ["binding", "preflight", "legacy", "maintenance"])
+
+	def test_bound_install_rechecks_candidate_capture_before_resume(self):
+		self.frappe.local.site = "development.localhost"
+		binding = {
+			"candidate": {"clean": True, "commit": "a" * 40},
+			"capture_sha256": "b" * 64,
+			"schema_version": 1,
+		}
+		data = {"release_candidate": binding, "schema_version": 2}
+		install._maintenance(self.frappe)
+		with (
+			patch.object(install, "_saved", return_value=data),
+			patch.object(
+				install,
+				"_release_candidate_binding",
+				return_value={**binding, "capture_sha256": "c" * 64},
+			),
+			patch.object(install, "_preflight", side_effect=AssertionError("must not continue")),
+			self.assertRaisesRegex(install.InstallError, "RELEASE_CANDIDATE_CHANGED"),
+		):
+			install._checked(self.frappe)
 
 	def test_prepare_does_not_save_or_enter_maintenance_when_legacy_blocks(self):
 		with (

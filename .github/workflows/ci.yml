@@ -121,7 +121,7 @@ jobs:
           env/bin/python -m compileall -q apps/frappe_lt/frappe_lt
           ruff check apps/frappe_lt/frappe_lt
           ruff format --check apps/frappe_lt/frappe_lt
-          env/bin/python -m unittest frappe_lt.tests.test_verify frappe_lt.tests.test_inventory frappe_lt.tests.test_catalog_partition frappe_lt.tests.test_review_evidence frappe_lt.tests.test_v15_origin_import frappe_lt.tests.test_finance_origin_import frappe_lt.tests.test_catalog_quality frappe_lt.tests.test_frappe_catalog frappe_lt.tests.test_finance_catalog frappe_lt.tests.test_install frappe_lt.tests.test_measurements frappe_lt.tests.test_release_catalog frappe_lt.tests.test_legacy_migration frappe_lt.tests.test_runtime_validation frappe_lt.tests.test_ci_workflow
+          env/bin/python -m unittest frappe_lt.tests.test_verify frappe_lt.tests.test_inventory frappe_lt.tests.test_catalog_partition frappe_lt.tests.test_review_evidence frappe_lt.tests.test_v15_origin_import frappe_lt.tests.test_finance_origin_import frappe_lt.tests.test_catalog_quality frappe_lt.tests.test_frappe_catalog frappe_lt.tests.test_finance_catalog frappe_lt.tests.test_install frappe_lt.tests.test_measurements frappe_lt.tests.test_release_candidate frappe_lt.tests.test_release_catalog frappe_lt.tests.test_legacy_migration frappe_lt.tests.test_runtime_validation frappe_lt.tests.test_ci_workflow
           node --test apps/frappe_lt/cypress/support/*.test.js
           shopt -s globstar nullglob
           javascript=(apps/frappe_lt/cypress.config.js apps/frappe_lt/cypress/**/*.js)
@@ -682,6 +682,53 @@ jobs:
             python -c 'import json,sys; status=json.load(sys.stdin); assert status["state_after"] == "APPLIED", status'
           test "$(bench --site test_site execute frappe.db.sql --args '["select count(*) from tabUser where name like '"'"'profile-%'"'"'"]')" = "[[0]]"
 
+      - name: Emit candidate-bound existing-test evidence
+        working-directory: /home/runner/frappe-bench
+        run: |
+          env/bin/python - <<'PY'
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+
+          commit = subprocess.run(
+              ["git", "rev-parse", "HEAD"], cwd="apps/frappe_lt", check=True,
+              capture_output=True, text=True,
+          ).stdout.strip()
+          assert len(commit) == 40 and all(character in "0123456789abcdef" for character in commit)
+          assert not subprocess.run(
+              ["git", "status", "--porcelain"], cwd="apps/frappe_lt", check=True,
+              capture_output=True, text=True,
+          ).stdout
+          repository = os.environ["GITHUB_REPOSITORY"]
+          run_id = int(os.environ["GITHUB_RUN_ID"])
+          run_attempt = int(os.environ["GITHUB_RUN_ATTEMPT"])
+          assert repository == "lokysai/frappe-lt"
+          assert run_id > 0 and run_attempt > 0
+          report = {
+              "candidate": {"clean": True, "commit": commit},
+              "categories": {"fault": "pass", "integration": "pass", "subprocess": "pass"},
+              "provenance": {
+                  "repository": repository,
+                  "run_attempt": run_attempt,
+                  "run_id": run_id,
+                  "workflow": ".github/workflows/ci.yml",
+              },
+              "schema_version": 2,
+          }
+          Path("/tmp/frappe-lt-tests.json").write_text(
+              json.dumps(report, ensure_ascii=False, separators=(",", ":"), sort_keys=True) + "\n"
+          )
+          PY
+
+      - name: Upload candidate-bound existing-test evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: candidate-tests-${{ github.sha }}-${{ github.run_attempt }}
+          if-no-files-found: error
+          retention-days: 14
+          path: /tmp/frappe-lt-tests.json
+
       - name: Prove uninstall guards remain active
         working-directory: /home/runner/frappe-bench
         run: |
@@ -883,6 +930,10 @@ jobs:
             curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --output "$package" "$FRAPPE_LT_ORIGINAL_CSV_URL"
           fi
           env/bin/python -c 'import hashlib,sys; from frappe_lt.legacy_migration import PACKAGE_SHA256; assert hashlib.sha256(open(sys.argv[1], "rb").read()).hexdigest() == PACKAGE_SHA256, "BLOCKED: original CSV digest mismatch"' "$package"
+          candidate_sha="$(git -C apps/frappe_lt rev-parse HEAD)"
+          candidate_root="$BENCH_PATH/sites/development.localhost/private/frappe_lt_release_candidate/$candidate_sha"
+          install -d -m 700 "$candidate_root"
+          bench --site development.localhost capture-lithuanian-release-candidate --output-dir "$candidate_root"
           bench --site development.localhost preflight-lithuanian-install --package "$package"
           bench --site development.localhost prepare-lithuanian-install --package "$package"
           bench --site development.localhost install-app frappe_lt
@@ -980,7 +1031,7 @@ jobs:
 
           assert runtime_exit in (0, 1), runtime_exit
           assert report["status"] == ("pass" if runtime_exit == 0 else "fail"), report["status"]
-          assert report["schema_version"] == 5, report["schema_version"]
+          assert report["schema_version"] == 8, report["schema_version"]
           assert summary["total"] == len(expected_ids), summary
           assert [result["id"] for result in scenario_results] == expected_ids, scenario_results
           assert summary["pass"] + summary["fail"] + summary["blocked"] == summary["total"], summary

@@ -12,11 +12,12 @@ import threading
 import time
 import uuid
 from contextlib import ExitStack
+from copy import deepcopy
 from itertools import pairwise
 from pathlib import Path
 from urllib.parse import quote, quote_plus
 
-from frappe_lt.inventory import _json_object, canonical_json, verify_environment
+from frappe_lt.inventory import _json_object, canonical_json, clean_candidate_identity, verify_environment
 from frappe_lt.runtime_contracts import SCHEMA_VERSION as RUNTIME_CONTRACT_SCHEMA_VERSION
 from frappe_lt.runtime_contracts import load_contracts, safe_relative_path
 from frappe_lt.runtime_control import (
@@ -25,9 +26,9 @@ from frappe_lt.runtime_control import (
 	_active_translation_keys,
 	redact_sensitive,
 )
-from frappe_lt.runtime_discovery import coverage, discover
+from frappe_lt.runtime_discovery import coverage, discover, runtime_site_state_digest
 
-REPORT_SCHEMA_VERSION = 5
+REPORT_SCHEMA_VERSION = 8
 BROWSER_SCHEMA_VERSION = 6
 MAX_REPORT_BYTES = 32 * 1024 * 1024
 MAX_EVIDENCE_PER_ARTIFACT = 2 * 1024 * 1024
@@ -315,10 +316,28 @@ def _validate_fallback(
 	return value
 
 
-def _is_blocking_fallback(finding: dict, approved_english=frozenset()) -> bool:
+def _preserved_token_status(source: str, effective: str) -> str:
+	from frappe_lt.catalog_quality import _tokens
+
+	source_tokens, source_unknown = _tokens(source)
+	effective_tokens, effective_unknown = _tokens(effective)
+	if source_unknown or effective_unknown:
+		return "unknown_syntax"
+	return "valid" if source_tokens == effective_tokens else "mismatch"
+
+
+def _is_blocking_fallback(
+	finding: dict,
+	approved_english=frozenset(),
+	approved_catalog_english=frozenset(),
+) -> bool:
 	key = finding["key"]
 	approved_database_english = (
 		finding["source"] == "database" and (key["source"], key["context"] or "") in approved_english
+	)
+	approved_catalog_value = (
+		finding["source"] in {"erpnext", "frappe", "frappe_lt", "merged"}
+		and (key["source"], key["context"]) in approved_catalog_english
 	)
 	return (
 		finding["active"]
@@ -327,6 +346,7 @@ def _is_blocking_fallback(finding: dict, approved_english=frozenset()) -> bool:
 		and not finding["excluded"]
 		and (finding["source"] == "missing" or finding["effective"].strip() == key["source"])
 		and not approved_database_english
+		and not approved_catalog_value
 	)
 
 
@@ -339,6 +359,12 @@ def _approved_english(exception_path):
 	return frozenset((source, context) for source, context, _ in allowed), digest
 
 
+def _approved_catalog_english():
+	from frappe_lt.catalog_quality import approved_translation_exceptions
+
+	return approved_translation_exceptions()
+
+
 def _is_inactive_inventory_lookup(finding: dict) -> bool:
 	return (
 		not finding["active"]
@@ -346,6 +372,10 @@ def _is_inactive_inventory_lookup(finding: dict) -> bool:
 		and finding["visible"]
 		and not finding["excluded"]
 	)
+
+
+def _is_blocking_preserved_token(finding: dict) -> bool:
+	return finding["active"] and finding["preserved_tokens"] != "valid"
 
 
 def _is_functional_layout(finding: dict) -> bool:
@@ -513,6 +543,7 @@ def _validate_browser_results(
 	diagnostic_sampling: bool = False,
 	diagnostic_key: str | None = None,
 	approved_english=frozenset(),
+	approved_catalog_english=frozenset(),
 ) -> list[dict]:
 	if not isinstance(diagnostic_sampling, bool):
 		raise ValueError("diagnostic_sampling must be boolean")
@@ -549,6 +580,7 @@ def _validate_browser_results(
 			},
 			"browser scenario result",
 		)
+		result = deepcopy(result)
 		scenario_id = result["id"]
 		if not isinstance(scenario_id, str) or scenario_id not in manifest or scenario_id in seen:
 			raise ValueError(f"unknown or duplicate browser scenario result {scenario_id!r}")
@@ -587,8 +619,16 @@ def _validate_browser_results(
 			raise ValueError("browser findings and evidence must be lists")
 		result["fallbacks"] = sorted(
 			(
-				_validate_fallback(item, manifest[scenario_id], active_keys, diagnostic_key_bytes)
+				{
+					**validated,
+					"preserved_tokens": _preserved_token_status(
+						validated["key"]["source"], validated["effective"]
+					),
+				}
 				for item in result["fallbacks"]
+				for validated in [
+					_validate_fallback(item, manifest[scenario_id], active_keys, diagnostic_key_bytes)
+				]
 			),
 			key=lambda item: (
 				item["key"]["source"],
@@ -625,15 +665,21 @@ def _validate_browser_results(
 			raise ValueError(f"scenario {scenario_id!r} exceeds its evidence byte limit")
 		total_evidence += scenario_evidence
 		has_active_lookup = any(item["active"] for item in result["fallbacks"])
-		blocking_fallback = any(_is_blocking_fallback(item, approved_english) for item in result["fallbacks"])
+		blocking_fallback = any(
+			_is_blocking_fallback(item, approved_english, approved_catalog_english)
+			for item in result["fallbacks"]
+		)
 		blocking_inventory_lookup = any(_is_inactive_inventory_lookup(item) for item in result["fallbacks"])
+		blocking_preserved_token = any(_is_blocking_preserved_token(item) for item in result["fallbacks"])
 		blocking_layout = any(_is_functional_layout(item) for item in result["layouts"])
 		# Cypress has no authority to read site approvals. Normalize only its generic
 		# fallback verdict after checking every lookup against the trusted policy.
 		if (
 			result["status"] == "fail"
 			and result["error"] == "scenario produced blocking runtime findings"
-			and not (blocking_fallback or blocking_inventory_lookup or blocking_layout)
+			and not (
+				blocking_fallback or blocking_inventory_lookup or blocking_preserved_token or blocking_layout
+			)
 			and result["ready"]
 		):
 			result["status"] = "pass"
@@ -645,7 +691,9 @@ def _validate_browser_results(
 			result["blocked_reason"] = "scenario did not prove readiness"
 			result["attempts"][-1]["outcome"] = "blocked"
 			result["attempts"][-1]["error"] = result["blocked_reason"]
-		if result["status"] == "pass" and (blocking_fallback or blocking_inventory_lookup or blocking_layout):
+		if result["status"] == "pass" and (
+			blocking_fallback or blocking_inventory_lookup or blocking_preserved_token or blocking_layout
+		):
 			result["status"] = "fail"
 			result["error"] = "scenario produced blocking runtime findings"
 			result["attempts"][-1]["outcome"] = "assertion_failure"
@@ -681,6 +729,7 @@ def validate_browser_results(
 	evidence_root = run_root / "evidence"
 	try:
 		approved_english, _ = _approved_english(site_exception_path)
+		approved_catalog_english = _approved_catalog_english()
 		declares_inactive = _contains_inactive(value)
 		results = _validate_browser_results(
 			value,
@@ -689,6 +738,7 @@ def validate_browser_results(
 			diagnostic_sampling=diagnostic_sampling,
 			diagnostic_key=diagnostic_key,
 			approved_english=approved_english,
+			approved_catalog_english=approved_catalog_english,
 		)
 	except Exception:
 		_remove_evidence_tree(evidence_root)
@@ -826,14 +876,20 @@ def _validate_cleanup_failure(value: object, label: str = "report cleanup failur
 
 
 def _report_summary(
-	results: list[dict], coverage_result: dict, cleanup_failures: list[dict], approved_english=frozenset()
+	results: list[dict],
+	coverage_result: dict,
+	cleanup_failures: list[dict],
+	approved_english=frozenset(),
+	approved_catalog_english=None,
 ) -> dict:
+	if approved_catalog_english is None:
+		approved_catalog_english = _approved_catalog_english()
 	return {
 		"blocked": sum(result["status"] == "blocked" for result in results),
 		"cleanup_failures": len(cleanup_failures),
 		"coverage_gaps": len(coverage_result["gaps"]),
 		"english_fallbacks": sum(
-			_is_blocking_fallback(finding, approved_english)
+			_is_blocking_fallback(finding, approved_english, approved_catalog_english)
 			for result in results
 			for finding in result["fallbacks"]
 		),
@@ -842,6 +898,9 @@ def _report_summary(
 			_is_functional_layout(finding) for result in results for finding in result["layouts"]
 		),
 		"pass": sum(result["status"] == "pass" for result in results),
+		"preserved_token_failures": sum(
+			_is_blocking_preserved_token(finding) for result in results for finding in result["fallbacks"]
+		),
 		"runtime_inventory_gaps": sum(
 			_is_inactive_inventory_lookup(finding) for result in results for finding in result["fallbacks"]
 		),
@@ -876,10 +935,15 @@ def _fact_blocking_causes(
 
 
 def validate_machine_report(
-	value: object, scenario_contract: dict, *, site_exception_path: str | None = None
+	value: object,
+	scenario_contract: dict,
+	*,
+	site_exception_path: str | None = None,
+	run_root: Path | None = None,
 ) -> dict:
 	"""Validate the complete public runtime report before it is published."""
 	approved_english, policy_digest = _approved_english(site_exception_path)
+	approved_catalog_english = _approved_catalog_english()
 	scenario_contract = _exact(
 		scenario_contract, {"scenarios", "schema_version"}, "Runtime Scenario Manifest"
 	)
@@ -902,6 +966,7 @@ def validate_machine_report(
 		value,
 		{
 			"blocking_causes",
+			"candidate",
 			"cleanup_failures",
 			"coverage",
 			"cypress_diagnostic_log",
@@ -916,14 +981,24 @@ def validate_machine_report(
 			"stale_recoveries",
 			"status",
 			"summary",
+			"site_state_sha256",
 			"toolchain",
 		},
 		"machine report",
 	)
 	if value["schema_version"] != REPORT_SCHEMA_VERSION:
 		raise ValueError("unsupported machine report schema")
+	candidate = _exact(value["candidate"], {"clean", "commit"}, "machine report candidate")
+	if (
+		candidate["clean"] is not True
+		or not isinstance(candidate["commit"], str)
+		or re.fullmatch(r"[0-9a-f]{40}", candidate["commit"]) is None
+	):
+		raise ValueError("machine report candidate identity is invalid")
 	if not isinstance(value["run_id"], str) or not re.fullmatch(r"[0-9a-f]{32}", value["run_id"]):
 		raise ValueError("machine report run_id is invalid")
+	if not isinstance(value["site_state_sha256"], str) or not SHA256.fullmatch(value["site_state_sha256"]):
+		raise ValueError("machine report site-state digest is invalid")
 	if value["site"] != "development.localhost" or value["status"] not in {"fail", "pass"}:
 		raise ValueError("machine report site or status is invalid")
 	if not isinstance(value["diagnostic_sampling"], bool):
@@ -1018,6 +1093,8 @@ def validate_machine_report(
 		left & right for index, left in enumerate(coverage_groups) for right in coverage_groups[index + 1 :]
 	) or set().union(*coverage_groups) != set(candidate_ids)
 
+	manifest = {scenario["id"]: scenario for scenario in scenario_contract["scenarios"]}
+	active_keys = _active_translation_keys()
 	results = value["scenario_results"]
 	if not isinstance(results, list):
 		raise ValueError("machine report scenario results must be a list")
@@ -1042,6 +1119,10 @@ def validate_machine_report(
 		)
 		if not isinstance(result["id"], str) or not result["id"]:
 			raise ValueError("machine report scenario result id is invalid")
+		if result["id"] not in manifest:
+			raise ValueError(
+				"machine report scenario results must exactly match the Runtime Scenario Manifest"
+			)
 		if result["status"] not in {"blocked", "fail", "pass"} or not isinstance(result["ready"], bool):
 			raise ValueError("machine report scenario result status is invalid")
 		if (
@@ -1068,6 +1149,7 @@ def validate_machine_report(
 					"key",
 					"raw_source",
 					"render_status",
+					"preserved_tokens",
 					"schema_version",
 					"scenario_id",
 					"source",
@@ -1087,6 +1169,7 @@ def validate_machine_report(
 					isinstance(fallback[field], str) for field in ("effective", "raw_source", "scenario_id")
 				)
 				or fallback["render_status"] not in {"ambiguous", "unique", "unrendered"}
+				or fallback["preserved_tokens"] not in {"mismatch", "unknown_syntax", "valid"}
 				or fallback["source"]
 				not in {"database", "erpnext", "frappe", "frappe_lt", "merged", "missing"}
 				or not isinstance(key["source"], str)
@@ -1102,10 +1185,23 @@ def validate_machine_report(
 				or not target["value"]
 			):
 				raise ValueError("machine report lookup evidence is malformed")
+			expected_tokens = _preserved_token_status(key["source"], fallback["effective"])
+			if fallback["preserved_tokens"] != expected_tokens:
+				raise ValueError("machine report preserved token verdict was tampered")
+			if fallback["active"] or value["status"] == "pass":
+				_validate_fallback(
+					{field: item for field, item in fallback.items() if field != "preserved_tokens"},
+					manifest[result["id"]],
+					active_keys,
+					None,
+				)
 		for layout in result["layouts"]:
 			_validate_layout(layout, result["id"])
 		for evidence in result["evidence"]:
-			_validate_evidence_structure(evidence, result["id"])
+			if run_root is None:
+				_validate_evidence_structure(evidence, result["id"])
+			else:
+				_validate_evidence(evidence, Path(run_root), result["id"])
 		if len({evidence["path"] for evidence in result["evidence"]}) != len(result["evidence"]):
 			raise ValueError(f"scenario {result['id']!r} contains duplicate evidence paths")
 		scenario_evidence = sum(evidence["bytes"] for evidence in result["evidence"])
@@ -1117,8 +1213,12 @@ def validate_machine_report(
 			or result["error"] is not None
 			or result["blocked_reason"] is not None
 			or not any(finding["active"] for finding in result["fallbacks"])
-			or any(_is_blocking_fallback(finding, approved_english) for finding in result["fallbacks"])
+			or any(
+				_is_blocking_fallback(finding, approved_english, approved_catalog_english)
+				for finding in result["fallbacks"]
+			)
 			or any(_is_inactive_inventory_lookup(finding) for finding in result["fallbacks"])
+			or any(_is_blocking_preserved_token(finding) for finding in result["fallbacks"])
 			or any(_is_functional_layout(finding) for finding in result["layouts"])
 		):
 			raise ValueError("machine report pass result contains blocking facts")
@@ -1175,6 +1275,7 @@ def validate_machine_report(
 			"fail",
 			"functional_layout_defects",
 			"pass",
+			"preserved_token_failures",
 			"runtime_inventory_gaps",
 			"total",
 		},
@@ -1182,7 +1283,7 @@ def validate_machine_report(
 	)
 	if any(isinstance(count, bool) or not isinstance(count, int) or count < 0 for count in summary.values()):
 		raise ValueError("machine report summary counts are malformed")
-	expected = _report_summary(results, coverage_result, failures, approved_english)
+	expected = _report_summary(results, coverage_result, failures, approved_english, approved_catalog_english)
 	if any(summary[field] != count for field, count in expected.items()):
 		raise ValueError("machine report summary does not match report facts")
 
@@ -1222,6 +1323,7 @@ def _human_report(report: dict) -> str:
 		f"{report['summary']['fail']} fail, {report['summary']['blocked']} blocked",
 		f"- Runtime Coverage Gaps: {report['summary']['coverage_gaps']}",
 		f"- English Fallback findings: {report['summary']['english_fallbacks']}",
+		f"- Preserved Token failures: {report['summary']['preserved_token_failures']}",
 		f"- Runtime Inventory Gaps: {report['summary']['runtime_inventory_gaps']}",
 		f"- Functional Layout Defects: {report['summary']['functional_layout_defects']}",
 		f"- Runtime Cleanup Failures: {report['summary']['cleanup_failures']}",
@@ -1276,6 +1378,7 @@ def _write_reports(run_root: Path, machine: bytes, human: bytes, replace=os.repl
 
 def _build_report(
 	*,
+	candidate: dict,
 	run_id: str,
 	site: str,
 	environment: dict | None,
@@ -1291,7 +1394,10 @@ def _build_report(
 	cypress_diagnostic_log: str | None = None,
 	approved_english=frozenset(),
 	site_policy_digest: str | None = None,
+	site_state_sha256: str | None = None,
 ) -> dict:
+	if site_state_sha256 is None and environment:
+		site_state_sha256 = environment.get("site_state_sha256")
 	results = [
 		{
 			**result,
@@ -1317,6 +1423,8 @@ def _build_report(
 						"source": redact_sensitive(finding["key"]["source"], max_chars=256 * 1024),
 					},
 					"raw_source": redact_sensitive(finding["raw_source"], max_chars=256 * 1024),
+					"preserved_tokens": finding.get("preserved_tokens")
+					or _preserved_token_status(finding["key"]["source"], finding["effective"]),
 					"target": {
 						**finding["target"],
 						"value": redact_sensitive(finding["target"]["value"], max_chars=4096),
@@ -1385,6 +1493,7 @@ def _build_report(
 			report_environment["site_exception_sha256"] = site_policy_digest
 	return {
 		"blocking_causes": sorted(blocking_causes, key=lambda cause: (cause["type"], cause["detail"])),
+		"candidate": candidate,
 		"cleanup_failures": cleanup_failures,
 		"coverage": coverage_result,
 		"cypress_diagnostic_log": redact_sensitive(cypress_diagnostic_log, max_chars=65 * 1024)
@@ -1398,6 +1507,7 @@ def _build_report(
 		"scenario_results": results,
 		"schema_version": REPORT_SCHEMA_VERSION,
 		"site": site,
+		"site_state_sha256": site_state_sha256,
 		"stale_recoveries": stale_recoveries,
 		"status": "fail" if blocking_causes else "pass",
 		"summary": summary,
@@ -1429,6 +1539,7 @@ def run(
 	run_id = run_id or uuid.uuid4().hex
 	if not re.fullmatch(r"[0-9a-f]{32}", run_id):
 		raise ValueError("run_id must be 32 lowercase hexadecimal characters")
+	candidate = clean_candidate_identity()
 	if output_dir:
 		run_root = Path(output_dir).resolve()
 	else:
@@ -1449,6 +1560,7 @@ def run(
 	control = None
 	approved_english = frozenset()
 	policy_digest = None
+	site_state_sha256 = hashlib.sha256(canonical_json({"available": False})).hexdigest()
 	try:
 		preflight_started = clock()
 		contracts = load_contracts()
@@ -1461,6 +1573,7 @@ def run(
 			require_active_catalog=True,
 			require_runtime_metadata=True,
 		)
+		site_state_sha256 = runtime_site_state_digest()
 		approved_english, policy_digest = _approved_english(site_exception_path)
 		durations["preflight"] = int((clock() - preflight_started) * 1000)
 		discovery_started = clock()
@@ -1543,7 +1656,14 @@ def run(
 				blocked_result(scenario["id"], str(error)) for scenario in contracts["scenarios"]["scenarios"]
 			]
 	durations["total"] = int((clock() - started) * 1000)
+	if site_state_sha256 is not None:
+		try:
+			if runtime_site_state_digest() != site_state_sha256:
+				tool_errors.append("runtime-relevant site state changed during validation")
+		except Exception as error:
+			tool_errors.append(f"runtime site-state verification failed: {error}")
 	report = _build_report(
+		candidate=candidate,
 		run_id=run_id,
 		site=site,
 		environment=environment,
@@ -1566,6 +1686,7 @@ def run(
 		cypress_diagnostic_log=cypress_diagnostic_log,
 		approved_english=approved_english,
 		site_policy_digest=policy_digest if site_exception_path is not None else None,
+		site_state_sha256=site_state_sha256,
 	)
 	if contracts is None:
 		raise ValueError("Runtime Scenario Manifest was not loaded")

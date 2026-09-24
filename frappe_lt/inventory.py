@@ -622,6 +622,17 @@ def _git_value(path: Path, *arguments: str) -> str:
 		raise ValueError(f"could not inspect upstream worktree {path}: {error.stderr.strip()}") from error
 
 
+def clean_candidate_identity(path: Path | None = None) -> dict:
+	"""Return the selected clean frappe_lt commit in its canonical public shape."""
+	repository = (path or Path(__file__).parent.parent).resolve()
+	commit = _git_value(repository, "rev-parse", "HEAD")
+	if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
+		raise ValueError("frappe_lt candidate commit is invalid")
+	if _git_value(repository, "status", "--porcelain"):
+		raise ValueError("frappe_lt candidate worktree must be clean")
+	return {"clean": True, "commit": commit}
+
+
 def _verify_upstream(frappe, manifest: dict) -> None:
 	verify_environment(frappe, site=frappe.local.site, require_clean_upstream=True)
 
@@ -635,6 +646,7 @@ def verify_environment(
 	require_exact_apps: bool = False,
 	require_active_catalog: bool = False,
 	require_runtime_metadata: bool = False,
+	require_active_directory: bool = True,
 ) -> dict:
 	"""Read-only verification of the site, Compatibility pins and full release MO."""
 	import erpnext
@@ -675,7 +687,7 @@ def verify_environment(
 		)
 	bench_path = bench_paths.pop()
 	active_directory = bench_path / "sites"
-	if Path.cwd().resolve() != active_directory:
+	if require_active_directory and Path.cwd().resolve() != active_directory:
 		raise ValueError(
 			f"active directory must be bench sites directory {active_directory}; found {Path.cwd().resolve()}"
 		)

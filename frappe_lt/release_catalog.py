@@ -5,6 +5,7 @@ The manifest's SHA-256 must be pinned by the release before assemble() may publi
 """
 
 import os
+import stat
 import tempfile
 from pathlib import Path
 
@@ -177,17 +178,41 @@ def verify_release(
 	}
 
 
-def verify_mo(mo_path: Path | None = None, **release_options) -> str:
+def verify_mo(mo_path: Path | None = None, *, with_size: bool = False, **release_options):
 	"""Check the active compiled MO against the authenticated release; never compile it."""
 	if mo_path is None:
 		from frappe.gettext.translate import get_mo_path
 
 		mo_path = get_mo_path("frappe_lt", "lt")
 	expected = verify_release(**release_options)["mo_sha256"]
-	actual = _digest(_active(mo_path, ".mo").read_bytes())
+	path = _active(mo_path, ".mo")
+	try:
+		descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+	except OSError as error:
+		raise ValueError("active .mo path must be a readable regular file") from error
+	try:
+		before = os.fstat(descriptor)
+		if not stat.S_ISREG(before.st_mode):
+			raise ValueError("active .mo path must be a readable regular file")
+		content = bytearray()
+		while True:
+			chunk = os.read(descriptor, 64 * 1024)
+			if not chunk:
+				break
+			content.extend(chunk)
+		after = os.fstat(descriptor)
+		if (before.st_dev, before.st_ino, before.st_size) != (
+			after.st_dev,
+			after.st_ino,
+			after.st_size,
+		) or len(content) != before.st_size:
+			raise ValueError("active .mo changed while being verified")
+	finally:
+		os.close(descriptor)
+	actual = _digest(bytes(content))
 	if actual != expected:
 		raise ValueError(f"release MO digest mismatch: expected {expected}; found {actual}")
-	return actual
+	return (actual, len(content)) if with_size else actual
 
 
 def _publish_pair(po_path: Path, mo_path: Path, po: bytes, mo: bytes) -> None:

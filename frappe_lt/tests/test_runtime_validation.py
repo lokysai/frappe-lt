@@ -392,6 +392,7 @@ class RuntimeContractTest(TestCase):
 class RuntimeDiscoveryTest(TestCase):
 	def test_candidate_snapshot_schema_rejects_unknown_fields_and_noncanonical_order(self):
 		snapshot = {
+			"candidate": {"clean": True, "commit": "a" * 40},
 			"coverage": {
 				"covered": ["page:a"],
 				"gaps": ["page:b"],
@@ -414,8 +415,9 @@ class RuntimeDiscoveryTest(TestCase):
 					"frappe": {"commit": "1" * 40, "version": "16.34.0"},
 				},
 			},
-			"schema_version": 1,
+			"schema_version": 3,
 			"site": "development.localhost",
+			"site_state_sha256": "4" * 64,
 		}
 		self.assertEqual(validate_candidate_snapshot(deepcopy(snapshot)), snapshot)
 		unknown = deepcopy(snapshot)
@@ -476,6 +478,11 @@ class RuntimeDiscoveryTest(TestCase):
 				patch("frappe_lt.runtime_discovery.load_contracts", return_value=contracts),
 				patch("frappe_lt.runtime_discovery.verify_environment", return_value=environment) as verifier,
 				patch("frappe_lt.runtime_discovery.discover", return_value=discovery),
+				patch(
+					"frappe_lt.runtime_discovery.clean_candidate_identity",
+					return_value={"clean": True, "commit": "a" * 40},
+				),
+				patch("frappe_lt.runtime_discovery.runtime_site_state_digest", return_value="4" * 64),
 			):
 				first_result = export_candidate_snapshot(
 					"development.localhost", str(first), frappe_module=frappe
@@ -495,7 +502,8 @@ class RuntimeDiscoveryTest(TestCase):
 			self.assertEqual(first.read_bytes(), second.read_bytes())
 			snapshot = json.loads(first.read_bytes())
 			self.assertEqual(first.read_bytes(), canonical_json(snapshot))
-			self.assertEqual(snapshot["schema_version"], 1)
+			self.assertEqual(snapshot["schema_version"], 3)
+			self.assertEqual(snapshot["candidate"], {"clean": True, "commit": "a" * 40})
 			self.assertEqual(snapshot["environment"]["upstream"]["frappe"]["commit"], "1" * 40)
 			self.assertEqual(snapshot["environment"]["upstream"]["erpnext"]["version"], "16.35.0")
 			self.assertNotIn("path", snapshot["environment"]["upstream"]["frappe"])
@@ -530,6 +538,11 @@ class RuntimeDiscoveryTest(TestCase):
 				patch("frappe_lt.runtime_discovery.load_contracts", return_value=contracts),
 				patch("frappe_lt.runtime_discovery.verify_environment", return_value=environment),
 				patch("frappe_lt.runtime_discovery.discover", return_value=discovery),
+				patch(
+					"frappe_lt.runtime_discovery.clean_candidate_identity",
+					return_value={"clean": True, "commit": "a" * 40},
+				),
+				patch("frappe_lt.runtime_discovery.runtime_site_state_digest", return_value="4" * 64),
 				self.assertRaisesRegex(OSError, "disk full"),
 			):
 				export_candidate_snapshot(
@@ -684,6 +697,7 @@ def _environment():
 		"inventory_digest": "b" * 64,
 		"mo_sha256": "e" * 64,
 		"python": "3.14.4",
+		"site_state_sha256": "4" * 64,
 		"upstream": {
 			"erpnext": {"commit": "c" * 40, "version": "16.0.0"},
 			"frappe": {"commit": "d" * 40, "version": "16.0.0"},
@@ -830,6 +844,160 @@ class RuntimeReportTest(TestCase):
 				)
 			self.assertEqual(results[0]["status"], expected)
 
+	def test_authenticated_catalog_translation_exception_is_not_an_english_fallback(self):
+		scenario_id = self.scenario["id"]
+		finding = deepcopy(_browser_result(scenario_id)["fallbacks"][0])
+		finding.update(
+			{
+				"effective": "#{0}",
+				"key": {"source": "#{0}", "context": None},
+				"raw_source": "#{0}",
+				"source": "frappe_lt",
+			}
+		)
+		failed = _browser_result(
+			scenario_id,
+			fallbacks=[finding],
+			status="fail",
+			error="scenario produced blocking runtime findings",
+			attempts=[
+				{
+					"duration_ms": 12,
+					"error": "scenario produced blocking runtime findings",
+					"kind": "initial",
+					"number": 1,
+					"outcome": "assertion_failure",
+				}
+			],
+		)
+		with TemporaryDirectory() as directory:
+			result = validate_browser_results(
+				{
+					"harness_contract": _harness_contract(),
+					"scenarios": [failed],
+					"schema_version": 6,
+					"toolchain": _toolchain(),
+				},
+				self.report_contract,
+				Path(directory),
+			)[0]
+		self.assertEqual(result["status"], "pass")
+		report = _build_report(
+			candidate={"clean": True, "commit": "a" * 40},
+			run_id="a" * 32,
+			site="development.localhost",
+			environment=_environment(),
+			discovery={
+				"candidates": [
+					{"app": "frappe", "id": "page:Covered", "identity": "Covered", "type": "page"}
+				],
+				"collector_counts": {"email": 1, "metadata": 1, "portal": 1, "print": 1},
+			},
+			coverage_result={"covered": ["page:Covered"], "gaps": [], "reviewed_exclusions": []},
+			results=[result],
+			cleanup_failures=[],
+			stale_recoveries=[],
+			durations={"cleanup": 1, "discovery": 1, "preflight": 1, "scenarios": 1, "total": 4},
+			tool_errors=[],
+			toolchain=_toolchain(),
+		)
+		self.assertEqual(report["summary"]["english_fallbacks"], 0)
+		self.assertIs(validate_machine_report(report, self.report_contract), report)
+
+	def test_rendered_interpolation_records_valid_preserved_tokens(self):
+		scenario_id = self.scenario["id"]
+		finding = deepcopy(_browser_result(scenario_id)["fallbacks"][0])
+		finding.update(
+			{
+				"effective": "Nerasta: {0}",
+				"key": {"source": "{0}: Not found", "context": None},
+				"raw_source": "{0}: Not found",
+			}
+		)
+		with TemporaryDirectory() as directory:
+			result = validate_browser_results(
+				{
+					"harness_contract": _harness_contract(),
+					"scenarios": [_browser_result(scenario_id, fallbacks=[finding])],
+					"schema_version": 6,
+					"toolchain": _toolchain(),
+				},
+				self.report_contract,
+				Path(directory),
+			)[0]
+		self.assertEqual(result["status"], "pass")
+		self.assertEqual(result["fallbacks"][0]["preserved_tokens"], "valid")
+		self.assertEqual(result["fallbacks"][0]["effective"].format("Dokumentas"), "Nerasta: Dokumentas")
+
+	def test_preserved_token_mismatch_blocks_runtime_and_is_counted(self):
+		scenario_id = self.scenario["id"]
+		finding = deepcopy(_browser_result(scenario_id)["fallbacks"][0])
+		finding.update(
+			{
+				"effective": "Nerasta: {1}",
+				"key": {"source": "{0}: Not found", "context": None},
+				"raw_source": "{0}: Not found",
+			}
+		)
+		with TemporaryDirectory() as directory:
+			result = validate_browser_results(
+				{
+					"harness_contract": _harness_contract(),
+					"scenarios": [_browser_result(scenario_id, fallbacks=[finding])],
+					"schema_version": 6,
+					"toolchain": _toolchain(),
+				},
+				self.report_contract,
+				Path(directory),
+			)[0]
+		self.assertEqual(result["status"], "fail")
+		self.assertEqual(result["fallbacks"][0]["preserved_tokens"], "mismatch")
+		report = _build_report(
+			candidate={"clean": True, "commit": "a" * 40},
+			run_id="a" * 32,
+			site="development.localhost",
+			environment=_environment(),
+			discovery={
+				"candidates": [
+					{"app": "frappe", "id": "page:Covered", "identity": "Covered", "type": "page"}
+				],
+				"collector_counts": {"email": 1, "metadata": 1, "portal": 1, "print": 1},
+			},
+			coverage_result={"covered": ["page:Covered"], "gaps": [], "reviewed_exclusions": []},
+			results=[result],
+			cleanup_failures=[],
+			stale_recoveries=[],
+			durations={"cleanup": 1, "discovery": 1, "preflight": 1, "scenarios": 1, "total": 4},
+			tool_errors=[],
+			toolchain=_toolchain(),
+		)
+		self.assertEqual(report["summary"]["preserved_token_failures"], 1)
+		self.assertIs(validate_machine_report(report, self.report_contract), report)
+
+	def test_unknown_preserved_token_syntax_blocks_runtime(self):
+		scenario_id = self.scenario["id"]
+		finding = deepcopy(_browser_result(scenario_id)["fallbacks"][0])
+		finding.update(
+			{
+				"effective": "Nerasta: {broken",
+				"key": {"source": "{0}: Not found", "context": None},
+				"raw_source": "{0}: Not found",
+			}
+		)
+		with TemporaryDirectory() as directory:
+			result = validate_browser_results(
+				{
+					"harness_contract": _harness_contract(),
+					"scenarios": [_browser_result(scenario_id, fallbacks=[finding])],
+					"schema_version": 6,
+					"toolchain": _toolchain(),
+				},
+				self.report_contract,
+				Path(directory),
+			)[0]
+		self.assertEqual(result["status"], "fail")
+		self.assertEqual(result["fallbacks"][0]["preserved_tokens"], "unknown_syntax")
+
 	def test_site_approved_database_english_reconciles_browser_and_report(self):
 		inventory = json.loads((Path(__file__).parent.parent / "release_inventory.json").read_bytes())
 		digest = next(
@@ -888,6 +1056,7 @@ class RuntimeReportTest(TestCase):
 			)
 			self.assertEqual(results[0]["status"], "pass")
 			report = _build_report(
+				candidate={"clean": True, "commit": "a" * 40},
 				run_id="a" * 32,
 				site="development.localhost",
 				environment=_environment(),
@@ -1659,6 +1828,7 @@ class RuntimeReportTest(TestCase):
 			],
 		)
 		report = _build_report(
+			candidate={"clean": True, "commit": "a" * 40},
 			run_id="a" * 32,
 			site="development.localhost",
 			environment=_environment(),
@@ -1702,7 +1872,7 @@ class RuntimeReportTest(TestCase):
 		)
 		self.assertIs(validate_machine_report(report, self.report_contract), report)
 		self.assertEqual(report["status"], "fail")
-		self.assertEqual(report["schema_version"], 5)
+		self.assertEqual(report["schema_version"], 8)
 		self.assertEqual(report["toolchain"], _toolchain())
 		self.assertTrue(report["diagnostic_sampling"])
 		self.assertNotIn("report-secret", report["cypress_diagnostic_log"])
@@ -1713,6 +1883,7 @@ class RuntimeReportTest(TestCase):
 			set(report),
 			{
 				"blocking_causes",
+				"candidate",
 				"cleanup_failures",
 				"coverage",
 				"cypress_diagnostic_log",
@@ -1724,6 +1895,7 @@ class RuntimeReportTest(TestCase):
 				"scenario_results",
 				"schema_version",
 				"site",
+				"site_state_sha256",
 				"stale_recoveries",
 				"status",
 				"summary",
@@ -1745,6 +1917,7 @@ class RuntimeReportTest(TestCase):
 
 	def test_machine_report_schema_rejects_unknown_missing_duplicate_and_inconsistent_data(self):
 		report = _build_report(
+			candidate={"clean": True, "commit": "a" * 40},
 			run_id="a" * 32,
 			site="development.localhost",
 			environment=_environment(),
@@ -1889,7 +2062,9 @@ class RuntimeReportTest(TestCase):
 			"tool_errors": [],
 			"toolchain": _toolchain(),
 		}
-		passing = _build_report(results=deepcopy(results), **arguments)
+		passing = _build_report(
+			candidate={"clean": True, "commit": "a" * 40}, results=deepcopy(results), **arguments
+		)
 		self.assertIs(
 			validate_machine_report(passing, self.contracts["scenarios"]),
 			passing,
@@ -1910,7 +2085,9 @@ class RuntimeReportTest(TestCase):
 				"status": "fail",
 			}
 		)
-		failing = _build_report(results=failing_results, **arguments)
+		failing = _build_report(
+			candidate={"clean": True, "commit": "a" * 40}, results=failing_results, **arguments
+		)
 		self.assertIs(
 			validate_machine_report(failing, self.contracts["scenarios"]),
 			failing,
@@ -1923,7 +2100,16 @@ class RuntimeReportTest(TestCase):
 				**passing,
 				"scenario_results": [
 					*passing["scenario_results"],
-					_browser_result("zz-extra-runtime-scenario"),
+					{
+						**_browser_result("zz-extra-runtime-scenario"),
+						"fallbacks": [
+							{
+								**finding,
+								"preserved_tokens": "valid",
+							}
+							for finding in _browser_result("zz-extra-runtime-scenario")["fallbacks"]
+						],
+					},
 				],
 			},
 		):
@@ -2007,6 +2193,7 @@ class RuntimeReportTest(TestCase):
 				)
 			result = next(item for item in results if item["id"] == scenario_id)
 			report = _build_report(
+				candidate={"clean": True, "commit": "a" * 40},
 				run_id="a" * 32,
 				site="development.localhost",
 				environment=_environment(),
@@ -2108,9 +2295,16 @@ class RuntimeReportTest(TestCase):
 			"candidates": [{"app": "frappe", "id": "page:Gap", "identity": "Gap", "type": "page"}],
 			"collector_counts": {"email": 1, "metadata": 1, "portal": 1, "print": 1},
 		}
-		with TemporaryDirectory() as directory:
+		with (
+			TemporaryDirectory() as directory,
+			patch("frappe_lt.runtime_validation.runtime_site_state_digest", return_value="4" * 64),
+		):
 			root = Path(directory)
 			with (
+				patch(
+					"frappe_lt.runtime_validation.clean_candidate_identity",
+					return_value={"clean": True, "commit": "a" * 40},
+				),
 				patch("frappe_lt.runtime_validation.load_contracts", return_value=contracts),
 				patch("frappe_lt.runtime_validation.verify_environment", return_value=environment),
 				patch("frappe_lt.runtime_validation.discover", return_value=discovery),
@@ -2135,6 +2329,10 @@ class RuntimeReportTest(TestCase):
 				self.assertEqual(report["toolchain"], _toolchain())
 
 			with (
+				patch(
+					"frappe_lt.runtime_validation.clean_candidate_identity",
+					return_value={"clean": True, "commit": "a" * 40},
+				),
 				patch("frappe_lt.runtime_validation.load_contracts", return_value=contracts),
 				patch("frappe_lt.runtime_validation.verify_environment", return_value=environment),
 				patch("frappe_lt.runtime_validation.discover", return_value=discovery),
@@ -2154,6 +2352,10 @@ class RuntimeReportTest(TestCase):
 				self.assertEqual(result["exit_code"], 1)
 
 			with (
+				patch(
+					"frappe_lt.runtime_validation.clean_candidate_identity",
+					return_value={"clean": True, "commit": "a" * 40},
+				),
 				patch("frappe_lt.runtime_validation.load_contracts", return_value=contracts),
 				patch("frappe_lt.runtime_validation.verify_environment", return_value=environment),
 				patch("frappe_lt.runtime_validation.discover", return_value=discovery),
@@ -2193,6 +2395,10 @@ class RuntimeReportTest(TestCase):
 				}
 			]
 			with (
+				patch(
+					"frappe_lt.runtime_validation.clean_candidate_identity",
+					return_value={"clean": True, "commit": "a" * 40},
+				),
 				patch("frappe_lt.runtime_validation.load_contracts", return_value=contracts),
 				patch("frappe_lt.runtime_validation.verify_environment", return_value=environment),
 				patch("frappe_lt.runtime_validation.discover", return_value=discovery),
@@ -2215,6 +2421,10 @@ class RuntimeReportTest(TestCase):
 				self.assertTrue(any(cause["type"] == "tool_error" for cause in report["blocking_causes"]))
 
 			with (
+				patch(
+					"frappe_lt.runtime_validation.clean_candidate_identity",
+					return_value={"clean": True, "commit": "a" * 40},
+				),
 				patch("frappe_lt.runtime_validation.load_contracts", return_value=contracts),
 				patch("frappe_lt.runtime_validation.verify_environment", return_value=environment),
 				patch("frappe_lt.runtime_validation.discover", return_value=discovery),
@@ -2238,6 +2448,10 @@ class RuntimeReportTest(TestCase):
 		fake_frappe = SimpleNamespace(local=SimpleNamespace(site="development.localhost"))
 		with TemporaryDirectory() as directory:
 			with (
+				patch(
+					"frappe_lt.runtime_validation.clean_candidate_identity",
+					return_value={"clean": True, "commit": "a" * 40},
+				),
 				patch(
 					"frappe_lt.runtime_validation.verify_environment",
 					side_effect=ValueError("runtime metadata differs from the pinned source"),

@@ -155,6 +155,10 @@ class ReleaseCatalogTest(TestCase):
 					},
 				)
 				self.assertEqual(release_catalog.verify_mo(mo, **options), result["mo_sha256"])
+				self.assertEqual(
+					release_catalog.verify_mo(mo, with_size=True, **options),
+					(result["mo_sha256"], len(original[1])),
+				)
 			self.assertEqual((po.read_bytes(), mo.read_bytes()), original)
 			self.assertNotEqual(json.loads(compatibility.read_bytes())["mo_sha256"], result["mo_sha256"])
 

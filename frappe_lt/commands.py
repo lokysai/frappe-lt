@@ -250,6 +250,49 @@ def show_lithuanian_install_status(context):
 	_install_command(context, "status")
 
 
+def _release_candidate_command(context, operation, **kwargs):
+	import frappe
+
+	from frappe_lt import release_candidate
+
+	site = get_site(context)
+	frappe.init(site=site)
+	frappe.connect()
+	try:
+		try:
+			result = getattr(release_candidate, operation)(site=site, frappe_module=frappe, **kwargs)
+		except Exception:
+			frappe.db.rollback()
+			click.echo(json.dumps({"state": "blocked", "code": "RELEASE_CANDIDATE_FAILED"}, sort_keys=True))
+			raise click.exceptions.Exit(1) from None
+		click.echo(json.dumps(result, ensure_ascii=False, sort_keys=True))
+	finally:
+		frappe.db.rollback()
+		frappe.destroy()
+
+
+@click.command("capture-lithuanian-release-candidate")
+@click.option("--output-dir", required=True, type=click.Path(file_okay=False, path_type=str))
+@pass_context
+def capture_lithuanian_release_candidate(context, output_dir):
+	"""Bind one clean candidate and its authenticated contracts before mutation."""
+	_release_candidate_command(context, "capture", output_dir=output_dir)
+
+
+@click.command("finalize-lithuanian-release-candidate")
+@click.option("--evidence-dir", required=True, type=click.Path(file_okay=False, path_type=str))
+@click.option("--site-exceptions", "site_exception_path", type=click.Path(dir_okay=False))
+@pass_context
+def finalize_lithuanian_release_candidate(context, evidence_dir, site_exception_path):
+	"""Validate existing release evidence and publish its immutable public index."""
+	_release_candidate_command(
+		context,
+		"finalize",
+		root=evidence_dir,
+		site_exception_path=site_exception_path,
+	)
+
+
 commands = [
 	build_translation_inventory,
 	catalog_quality_gate,
@@ -265,4 +308,6 @@ commands = [
 	prepare_lithuanian_install,
 	resume_lithuanian_install,
 	show_lithuanian_install_status,
+	capture_lithuanian_release_candidate,
+	finalize_lithuanian_release_candidate,
 ]
