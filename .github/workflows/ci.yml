@@ -896,8 +896,9 @@ jobs:
           done
           curl --fail --silent --show-error http://development.localhost:8000/api/method/ping > /dev/null
 
-      # #16 owns runtime release validation; do not assume the old one-key
-      # catalog's English fallback findings persist in the full release.
+      # #16 owns runtime release validation. Blocked scenarios and inventory
+      # gaps remain report facts; this job verifies the harness and publishes
+      # the failing report rather than treating it as release approval.
       - name: Validate runtime report against actual findings
         working-directory: /home/runner/frappe-bench
         run: |
@@ -925,18 +926,10 @@ jobs:
           assert summary["total"] == len(expected_ids), summary
           assert [result["id"] for result in scenario_results] == expected_ids, scenario_results
           assert summary["pass"] + summary["fail"] + summary["blocked"] == summary["total"], summary
-          assert summary["blocked"] == 0, summary
           assert summary["cleanup_failures"] == 0, summary
           assert summary["functional_layout_defects"] == 0, summary
           blocker_types = {cause["type"] for cause in report["blocking_causes"]}
           assert bool(blocker_types) == (runtime_exit == 1), report["blocking_causes"]
-          assert blocker_types <= {"runtime_coverage_gap", "scenario_fail"}, report["blocking_causes"]
-          assert all(
-              result["status"] in {"pass", "fail"}
-              and (result["status"] == "pass" or result["error"] == "scenario produced blocking runtime findings")
-              and not any(finding["severity"] == "functional" for finding in result["layouts"])
-              for result in scenario_results
-          ), scenario_results
           PY
 
       - name: Stop runtime web process

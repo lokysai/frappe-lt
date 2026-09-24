@@ -215,7 +215,6 @@ class CIWorkflowTest(TestCase):
 			'assert report["status"] == ("pass" if runtime_exit == 0 else "fail")',
 			'assert report["schema_version"] == 5',
 			'assert summary["total"] == len(expected_ids)',
-			'assert summary["blocked"] == 0',
 			'assert summary["cleanup_failures"] == 0',
 			'assert summary["functional_layout_defects"] == 0',
 			"validate_machine_report(report, scenario_contract)",
@@ -231,6 +230,7 @@ class CIWorkflowTest(TestCase):
 		self.assertIn("|| runtime_exit=$?", gate_commands[1])
 		self.assertNotIn('summary["total"] == 10', commands)
 		self.assertNotIn('assert summary["english_fallbacks"] > 0', commands)
+		self.assertNotIn('assert summary["blocked"] == 0', commands)
 		self.assertIn("*.evidence.json", commands)
 		self.assertIn(".*.evidence.json.*.tmp", commands)
 		self.assertTrue(
