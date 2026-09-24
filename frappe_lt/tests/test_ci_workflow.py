@@ -81,13 +81,18 @@ class CIWorkflowTest(TestCase):
 				install["env"]["FRAPPE_LT_ORIGINAL_CSV_URL"],
 				"${{ secrets.FRAPPE_LT_ORIGINAL_CSV_URL }}",
 			)
+			for part in range(1, 6):
+				name = f"FRAPPE_LT_ORIGINAL_CSV_PART_{part}"
+				self.assertEqual(install["env"][name], "${{ secrets." + name + " }}")
 			for required in (
 				f"bench --site {site} install-app frappe_lt",
 				"PREPARED_INPUTS_MISSING",
-				'if test -z "$FRAPPE_LT_ORIGINAL_CSV_URL"',
-				"BLOCKED: FRAPPE_LT_ORIGINAL_CSV_URL secret is missing",
+				'if test -z "$FRAPPE_LT_ORIGINAL_CSV_URL" && test -z "$FRAPPE_LT_ORIGINAL_CSV_PART_1"',
+				"BLOCKED: authenticated original CSV secret is missing",
 				'private_dir="$(mktemp -d)"',
 				'package="$private_dir/lt-v16-translations.csv"',
+				'base64.b64decode("".join(parts), validate=True)',
+				"gzip.decompress(",
 				"curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https'",
 				"PACKAGE_SHA256",
 				"exit 1",

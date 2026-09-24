@@ -314,6 +314,11 @@ jobs:
         working-directory: /home/runner/frappe-bench
         env:
           FRAPPE_LT_ORIGINAL_CSV_URL: ${{ secrets.FRAPPE_LT_ORIGINAL_CSV_URL }}
+          FRAPPE_LT_ORIGINAL_CSV_PART_1: ${{ secrets.FRAPPE_LT_ORIGINAL_CSV_PART_1 }}
+          FRAPPE_LT_ORIGINAL_CSV_PART_2: ${{ secrets.FRAPPE_LT_ORIGINAL_CSV_PART_2 }}
+          FRAPPE_LT_ORIGINAL_CSV_PART_3: ${{ secrets.FRAPPE_LT_ORIGINAL_CSV_PART_3 }}
+          FRAPPE_LT_ORIGINAL_CSV_PART_4: ${{ secrets.FRAPPE_LT_ORIGINAL_CSV_PART_4 }}
+          FRAPPE_LT_ORIGINAL_CSV_PART_5: ${{ secrets.FRAPPE_LT_ORIGINAL_CSV_PART_5 }}
         run: |
           set +e
           output="$(bench --site test_site install-app frappe_lt 2>&1)"
@@ -323,14 +328,30 @@ jobs:
           test "$status" -ne 0
           printf '%s\n' "$output" | grep --fixed-strings "PREPARED_INPUTS_MISSING"
           test "$(bench --site test_site list-apps --format json | python -c 'import json,sys; print(",".join(json.load(sys.stdin)["test_site"]))')" = "frappe,erpnext"
-          if test -z "$FRAPPE_LT_ORIGINAL_CSV_URL"
+          if test -z "$FRAPPE_LT_ORIGINAL_CSV_URL" && test -z "$FRAPPE_LT_ORIGINAL_CSV_PART_1"
           then
-            printf '%s\n' 'BLOCKED: FRAPPE_LT_ORIGINAL_CSV_URL secret is missing; original CSV is required for install integration.' >&2
+            printf '%s\n' 'BLOCKED: authenticated original CSV secret is missing; install integration requires the original package.' >&2
             exit 1
           fi
           private_dir="$(mktemp -d)"
           package="$private_dir/lt-v16-translations.csv"
-          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --output "$package" "$FRAPPE_LT_ORIGINAL_CSV_URL"
+          if test -n "$FRAPPE_LT_ORIGINAL_CSV_PART_1"
+          then
+            env/bin/python - "$package" <<'PY'
+          import base64
+          import gzip
+          import os
+          import sys
+          from pathlib import Path
+
+          parts = [os.environ.get(f"FRAPPE_LT_ORIGINAL_CSV_PART_{i}", "") for i in range(1, 6)]
+          if not all(parts):
+              raise SystemExit("BLOCKED: incomplete original CSV secret")
+          Path(sys.argv[1]).write_bytes(gzip.decompress(base64.b64decode("".join(parts), validate=True)))
+          PY
+          else
+            curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --output "$package" "$FRAPPE_LT_ORIGINAL_CSV_URL"
+          fi
           env/bin/python -c 'import hashlib,sys; from frappe_lt.legacy_migration import PACKAGE_SHA256; assert hashlib.sha256(open(sys.argv[1], "rb").read()).hexdigest() == PACKAGE_SHA256, "BLOCKED: original CSV digest mismatch"' "$package"
           bench --site test_site preflight-lithuanian-install --package "$package"
           bench --site test_site prepare-lithuanian-install --package "$package"
@@ -759,6 +780,11 @@ jobs:
         working-directory: /home/runner/frappe-bench
         env:
           FRAPPE_LT_ORIGINAL_CSV_URL: ${{ secrets.FRAPPE_LT_ORIGINAL_CSV_URL }}
+          FRAPPE_LT_ORIGINAL_CSV_PART_1: ${{ secrets.FRAPPE_LT_ORIGINAL_CSV_PART_1 }}
+          FRAPPE_LT_ORIGINAL_CSV_PART_2: ${{ secrets.FRAPPE_LT_ORIGINAL_CSV_PART_2 }}
+          FRAPPE_LT_ORIGINAL_CSV_PART_3: ${{ secrets.FRAPPE_LT_ORIGINAL_CSV_PART_3 }}
+          FRAPPE_LT_ORIGINAL_CSV_PART_4: ${{ secrets.FRAPPE_LT_ORIGINAL_CSV_PART_4 }}
+          FRAPPE_LT_ORIGINAL_CSV_PART_5: ${{ secrets.FRAPPE_LT_ORIGINAL_CSV_PART_5 }}
         run: |
           SETUP_KWARGS="$(python -c 'import datetime,json; year=datetime.date.today().year; print(json.dumps({"args":{"language":"English","email":"runtime@example.invalid","full_name":"Runtime Administrator","password":"admin","country":"Lithuania","timezone":"Europe/Vilnius","currency":"EUR","enable_telemetry":0,"company_name":"Frappe LT Runtime","company_abbr":"FLTR","chart_of_accounts":"Standard","fy_start_date":f"{year}-01-01","fy_end_date":f"{year}-12-31","setup_demo":0}}))')"
           bench --site development.localhost execute frappe.desk.page.setup_wizard.setup_wizard.setup_complete --kwargs "$SETUP_KWARGS"
@@ -773,15 +799,31 @@ jobs:
           test "$status" -ne 0
           printf '%s\n' "$output" | grep --fixed-strings "PREPARED_INPUTS_MISSING"
           test "$(bench --site development.localhost list-apps --format json | python -c 'import json,sys; print(",".join(json.load(sys.stdin)["development.localhost"]))')" = "frappe,erpnext"
-          if test -z "$FRAPPE_LT_ORIGINAL_CSV_URL"
+          if test -z "$FRAPPE_LT_ORIGINAL_CSV_URL" && test -z "$FRAPPE_LT_ORIGINAL_CSV_PART_1"
           then
-            printf '%s\n' 'BLOCKED: FRAPPE_LT_ORIGINAL_CSV_URL secret is missing; original CSV is required for runtime install.' >&2
+            printf '%s\n' 'BLOCKED: authenticated original CSV secret is missing; runtime install requires the original package.' >&2
             exit 1
           fi
           private_dir="$(mktemp -d)"
           trap 'rm -rf "$private_dir"' EXIT
           package="$private_dir/lt-v16-translations.csv"
-          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --output "$package" "$FRAPPE_LT_ORIGINAL_CSV_URL"
+          if test -n "$FRAPPE_LT_ORIGINAL_CSV_PART_1"
+          then
+            env/bin/python - "$package" <<'PY'
+          import base64
+          import gzip
+          import os
+          import sys
+          from pathlib import Path
+
+          parts = [os.environ.get(f"FRAPPE_LT_ORIGINAL_CSV_PART_{i}", "") for i in range(1, 6)]
+          if not all(parts):
+              raise SystemExit("BLOCKED: incomplete original CSV secret")
+          Path(sys.argv[1]).write_bytes(gzip.decompress(base64.b64decode("".join(parts), validate=True)))
+          PY
+          else
+            curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --output "$package" "$FRAPPE_LT_ORIGINAL_CSV_URL"
+          fi
           env/bin/python -c 'import hashlib,sys; from frappe_lt.legacy_migration import PACKAGE_SHA256; assert hashlib.sha256(open(sys.argv[1], "rb").read()).hexdigest() == PACKAGE_SHA256, "BLOCKED: original CSV digest mismatch"' "$package"
           bench --site development.localhost preflight-lithuanian-install --package "$package"
           bench --site development.localhost prepare-lithuanian-install --package "$package"
