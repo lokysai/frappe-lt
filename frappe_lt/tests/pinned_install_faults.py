@@ -104,8 +104,18 @@ def run(site, package):
 		pending(installed=True, marker=[run_id], migration="committed")
 		assert profile.status()["state_after"] != "APPLIED"
 
-		with patch.object(install, "_release", side_effect=OSError("private value")):
+		real_release = install._release
+		checks = {"count": 0}
+
+		def fail_final_release():
+			checks["count"] += 1
+			if checks["count"] == 2:
+				raise OSError("private value")
+			return real_release()
+
+		with patch.object(install, "_release", side_effect=fail_final_release):
 			fails(install.resume, "INSTALL_PHASE_FAILED")
+		assert checks["count"] == 2
 		pending(installed=True, marker=[run_id], migration="committed")
 		assert profile.status()["state_after"] == "APPLIED"
 
