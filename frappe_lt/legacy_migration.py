@@ -287,20 +287,32 @@ def trusted_site_policy(exception_path):
 	return _site_policy(exception_path, {(s, c or ""): e for (s, c), e in active.items()})
 
 
-def _inputs(site, package_path, exception_path):
+def _inputs(site, package_path, exception_path, *, allow_exact_inventory_patch=False):
 	import frappe
 
 	from frappe_lt.catalog_quality import _load_trusted, _validate_inventory
 	from frappe_lt.inventory import load_compatibility, verify_environment
 
 	# No site write (including the report directory) before full authentication.
-	verify_environment(frappe, site=site, require_clean_upstream=True)
+	if allow_exact_inventory_patch:
+		# The install gate authenticates tools, major, clean worktrees and the
+		# real target keys against the release before allowing unpinned patches.
+		# Import locally: install calls #13 for classification and apply.
+		from frappe_lt import install
+
+		ready = install._preflight(package_path, exception_path, classify_site=False)
+		if ready["site"] != site:
+			raise ValueError("install site does not match migration site")
+	else:
+		verify_environment(frappe, site=site, require_clean_upstream=True)
 	fingerprints = authenticate_package(Path(package_path), frappe.utils.sanitize_html)
 	compatibility_path = Path(__file__).with_name("compatibility.json")
 	inventory, _, _, _ = _load_trusted(None, compatibility_path)
 	active = _validate_inventory(inventory)
 	active = {(source, context or ""): entry for (source, context), entry in active.items()}
 	manifest = load_compatibility(compatibility_path)
+	if allow_exact_inventory_patch and ready["inventory_digest"] != manifest["inventory_digest"]:
+		raise ValueError("install inventory does not match migration inventory")
 	allowed, policy_digest = _site_policy(exception_path, active)
 	return fingerprints, active, allowed, manifest["inventory_digest"], policy_digest
 
@@ -326,11 +338,14 @@ def _snapshot(*, locked=False):
 		last = page[-1]["name"]
 
 
-def preflight(site, package_path, exception_path=None):
+def preflight(site, package_path, exception_path=None, *, allow_exact_inventory_patch=False):
 	"""Read-only DB classification; publish the complete private planned report."""
 	try:
 		fingerprints, active, allowed, inventory_digest, policy_digest = _inputs(
-			site, package_path, exception_path
+			site,
+			package_path,
+			exception_path,
+			allow_exact_inventory_patch=allow_exact_inventory_patch,
 		)
 	except (ValueError, OSError, csv.Error, UnicodeError):
 		return {"exit_code": 1, "state": "blocked"}
@@ -467,7 +482,7 @@ def _stale(root, run_id):
 	return {"exit_code": 1, "state": "stale", "run_id": run_id}
 
 
-def apply(site, package_path, run_id, exception_path=None):
+def apply(site, package_path, run_id, exception_path=None, *, allow_exact_inventory_patch=False):
 	"""Own the sole SQL transaction, with durable postcommit report/cache recovery."""
 	import frappe
 
@@ -528,7 +543,10 @@ def apply(site, package_path, run_id, exception_path=None):
 		# No committed marker: only freshly authenticated inputs may authorize mutation.
 		try:
 			fingerprints, active, allowed, inventory_digest, policy_digest = _inputs(
-				site, package_path, exception_path
+				site,
+				package_path,
+				exception_path,
+				allow_exact_inventory_patch=allow_exact_inventory_patch,
 			)
 		except (ValueError, OSError, csv.Error, UnicodeError):
 			frappe.db.rollback()

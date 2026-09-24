@@ -34,7 +34,7 @@ def build_po(entries: list[dict]) -> bytes:
 		catalog.add(key["source"], entry["translation"], context=key.get("context"))
 	output = BytesIO()
 	write_po(output, catalog, sort_output=True, width=None, omit_header=False)
-	return output.getvalue()
+	return output.getvalue().rstrip(b"\n") + b"\n"
 
 
 def parse_po(path: Path) -> ParsedPO:

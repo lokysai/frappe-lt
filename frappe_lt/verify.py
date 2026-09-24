@@ -1,19 +1,13 @@
-import hashlib
-import os
-import shutil
-import subprocess
+import platform
 from pathlib import Path
 
-from frappe_lt.inventory import load_compatibility, verify_environment, verify_owned_artifacts
-from frappe_lt.po import compile_po, parse_po
+from frappe_lt.inventory import _git_value, load_compatibility
+from frappe_lt.po import parse_po
+from frappe_lt.release_catalog import verify_mo, verify_release
 
 EXPECTED_APP_ORDER = ["frappe", "erpnext", "frappe_lt"]
 COMPATIBILITY = load_compatibility()
-EXPECTED_COMMITS = {app: pin["commit"] for app, pin in COMPATIBILITY["upstream"].items()}
-EXPECTED_VERSIONS = {app: pin["version"] for app, pin in COMPATIBILITY["upstream"].items()}
-EXPECTED_MO_SHA256 = COMPATIBILITY["mo_sha256"]
 SOURCE_DATE_EPOCH = str(COMPATIBILITY["source_date_epoch"])
-FIXED_PO_DATE = "2024-01-01 00:00+0000"
 
 
 def check_database_override(rows: list[dict], mode: str) -> str | None:
@@ -41,106 +35,36 @@ def validate_app_order(installed_apps: list[str], mode: str) -> list[str]:
 	return installed_apps
 
 
-def assert_digest(expected: str, first: str, second: str, environment: dict[str, str]) -> None:
-	if first == second == expected:
-		return
-
-	details = "\n".join(f"{name}: {value}" for name, value in environment.items())
-	raise ValueError(
-		f"MO digest mismatch\nexpected: {expected}\nfirst build: {first}\nsecond build: {second}\n{details}"
-	)
-
-
 def validate_po(path: Path) -> dict[str, str]:
-	source_lines = path.read_text(encoding="utf-8").splitlines()
-	if any(line.startswith("#~") for line in source_lines):
-		raise ValueError("PO catalog must not contain obsolete messages")
-	physical_messages = sum(line.startswith("msgid ") for line in source_lines) - 1
-	if physical_messages != 1:
-		raise ValueError(f"PO catalog must contain exactly one message; found {physical_messages}")
-
+	verify_release(po_path=path)
 	catalog = parse_po(path)
-	if catalog.locale != "lt":
-		raise ValueError("PO catalog language must be lt")
-	for field, actual in {
-		"POT-Creation-Date": catalog.creation_date,
-		"PO-Revision-Date": catalog.revision_date,
-	}.items():
-		if actual != FIXED_PO_DATE:
-			raise ValueError(f"{field} must be fixed at {FIXED_PO_DATE}")
-
-	if len(catalog.messages) != 1:
-		raise ValueError(f"PO catalog must resolve to exactly one message; found {len(catalog.messages)}")
-	if catalog.messages != {("Item", None): "Prekė"}:
-		raise ValueError("PO message must be exactly Item -> Prekė")
-
-	return {source: translation for (source, _context), translation in catalog.messages.items()}
-
-
-def _git_commit(path: Path) -> str:
-	return subprocess.run(
-		["git", "rev-parse", "HEAD"],
-		cwd=path,
-		check=True,
-		capture_output=True,
-		text=True,
-	).stdout.strip()
+	return catalog.messages
 
 
 def _environment(frappe) -> dict[str, str]:
-	verified = verify_environment(
-		frappe,
-		site=frappe.local.site,
-		required_apps=tuple(EXPECTED_APP_ORDER),
-	)
+	from frappe_lt import install
+	from frappe_lt.inventory import validate_tool_versions
+
+	# Share the same real target-inventory and v16 compatibility check as the
+	# bench and install-hook preflights, including unlisted patch versions.
+	plan = install._saved(frappe)
+	ready = install._preflight(plan["package"], plan["exceptions"], classify_site=False)
+	if ready["site"] != frappe.local.site:
+		raise ValueError("verification site differs from authenticated install inputs")
+	compatibility = load_compatibility()
+	tools = validate_tool_versions(compatibility)
 	return {
-		"frappe_commit": verified["upstream"]["frappe"]["commit"],
-		"erpnext_commit": verified["upstream"]["erpnext"]["commit"],
-		"frappe_version": verified["upstream"]["frappe"]["version"],
-		"erpnext_version": verified["upstream"]["erpnext"]["version"],
-		"python": verified["python"],
-		"babel": verified["babel"],
+		"frappe_commit": _git_value(Path(frappe.get_app_source_path("frappe")), "rev-parse", "HEAD"),
+		"erpnext_commit": _git_value(Path(frappe.get_app_source_path("erpnext")), "rev-parse", "HEAD"),
+		"frappe_version": ready["versions"]["frappe"],
+		"erpnext_version": ready["versions"]["erpnext"],
+		"python": platform.python_version(),
+		"babel": tools["babel"],
+		"warnings": ready["warnings"],
 	}
 
 
-def _run_bench(bench_path: Path, *arguments: str, env: dict[str, str] | None = None) -> None:
-	bench = shutil.which("bench") or str(bench_path / "env" / "bin" / "bench")
-	subprocess.run([bench, *arguments], cwd=bench_path, check=True, env=env)
-
-
-def _compile_twice(frappe, environment: dict[str, str], expected_digest: str) -> tuple[str, str, Path]:
-	from frappe.gettext.translate import get_mo_path
-	from frappe.utils import get_bench_path
-
-	bench_path = Path(get_bench_path())
-	po_path = Path(frappe.get_app_path("frappe_lt", "locale", "lt.po"))
-	mo_path = get_mo_path("frappe_lt", "lt")
-	compile_environment = os.environ.copy()
-	compile_environment["SOURCE_DATE_EPOCH"] = SOURCE_DATE_EPOCH
-	digests = []
-	for _build in range(2):
-		compile_po(
-			po_path,
-			bench_path,
-			mo_path=mo_path,
-			compiler=lambda _po_path, _workspace: _run_bench(
-				bench_path,
-				"compile-po-to-mo",
-				"--app",
-				"frappe_lt",
-				"--locale",
-				"lt",
-				"--force",
-				env=compile_environment,
-			),
-		)
-		digests.append(hashlib.sha256(mo_path.read_bytes()).hexdigest())
-
-	assert_digest(expected_digest, digests[0], digests[1], environment)
-	return digests[0], digests[1], mo_path
-
-
-def _assert_catalog_precedence(frappe) -> None:
+def _assert_catalog_precedence(frappe, installed_apps: list[str], messages: dict) -> None:
 	from frappe.gettext.translate import get_catalog
 	from frappe.translate import get_translations_from_apps
 
@@ -155,15 +79,17 @@ def _assert_catalog_precedence(frappe) -> None:
 	upstream = get_translations_from_apps("lt", apps=["frappe", "erpnext"])
 	if "Item" in upstream:
 		raise ValueError(f"upstream Lithuanian catalogs unexpectedly translate Item as {upstream['Item']!r}")
-	with_override = get_translations_from_apps("lt", apps=EXPECTED_APP_ORDER)
+	with_override = get_translations_from_apps("lt", apps=installed_apps)
+	for (source, context), translation in messages.items():
+		key = f"{source}:{context}" if context else source
+		if with_override.get(key) != translation:
+			raise ValueError("app precedence failed for a Release Inventory Translation Key")
 	if with_override.get("Item") != "Prekė":
-		raise ValueError(
-			"app precedence failed: frappe + erpnext must omit Item and frappe_lt must add Prekė"
-		)
+		raise ValueError("app precedence failed: the installed app catalog must resolve Item to Prekė")
 
 
 def run(site: str, mode: str = "local", expected_digest: str | None = None) -> dict:
-	"""Verify the pinned native PO override on an initialized Frappe site."""
+	"""Read-only verification of the pinned whole catalog on a Frappe site."""
 	if mode not in {"ci", "local"}:
 		raise ValueError("mode must be 'ci' or 'local'")
 	if not site:
@@ -171,21 +97,38 @@ def run(site: str, mode: str = "local", expected_digest: str | None = None) -> d
 
 	import frappe
 	import frappe.translate
-	from frappe.utils import get_bench_path
 
 	if frappe.local.site != site:
 		raise ValueError(f"command site {site!r} does not match initialized site {frappe.local.site!r}")
-	verify_owned_artifacts()
 	environment = _environment(frappe)
 	print("Verified pinned environment:", environment)
 	installed_apps = validate_app_order(frappe.get_installed_apps(), mode)
-	validate_po(Path(frappe.get_app_path("frappe_lt", "locale", "lt.po")))
-	expected_digest = expected_digest or EXPECTED_MO_SHA256
-	first_digest, second_digest, mo_path = _compile_twice(frappe, environment, expected_digest)
-	_assert_catalog_precedence(frappe)
+	po_path = Path(frappe.get_app_path("frappe_lt", "locale", "lt.po"))
+	release = verify_release(po_path=po_path)
+	from frappe_lt import install, profile
+
+	plan = install._checked(frappe)
+	if (plan["release_digest"], plan["inventory_digest"], plan["mo_sha256"]) != (
+		release["release_digest"],
+		release["inventory_digest"],
+		release["mo_sha256"],
+	):
+		raise ValueError("saved installation release differs from the authenticated catalog")
+	if install._migration_state(frappe, plan) not in {"committed", "no_op"}:
+		raise ValueError("legacy migration report or postcommit cache stage is incomplete")
+	if profile.status()["state_after"] != "APPLIED":
+		raise ValueError("Lithuanian profile is not applied")
+	if expected_digest is not None and expected_digest != release["mo_sha256"]:
+		raise ValueError("requested MO digest differs from authenticated release")
+	expected_digest = release["mo_sha256"]
+	from frappe.gettext.translate import get_mo_path
+
+	mo_path = Path(get_mo_path("frappe_lt", "lt"))
+	actual_digest = verify_mo(mo_path)
+	_assert_catalog_precedence(frappe, installed_apps, parse_po(po_path).messages)
 
 	rows = frappe.db.sql(
-		"""select name, translated_text
+		"""select name
 		from `tabTranslation`
 		where language = %s and source_text = %s and coalesce(context, '') = ''""",
 		("lt", "Item"),
@@ -195,7 +138,6 @@ def run(site: str, mode: str = "local", expected_digest: str | None = None) -> d
 	if warning:
 		print(warning)
 
-	_run_bench(Path(get_bench_path()), "--site", site, "clear-cache")
 	frappe.translate.clear_cache()
 	effective = frappe._("Item", lang="lt")
 	if effective != "Prekė":
@@ -208,8 +150,9 @@ def run(site: str, mode: str = "local", expected_digest: str | None = None) -> d
 		"app_order": installed_apps,
 		"source_date_epoch": SOURCE_DATE_EPOCH,
 		"expected_digest": expected_digest,
-		"first_digest": first_digest,
-		"second_digest": second_digest,
+		"release_digest": release["release_digest"],
+		"inventory_digest": release["inventory_digest"],
+		"mo_sha256": actual_digest,
 		"mo_path": str(mo_path),
 		"database_override": rows,
 		"database_override_warning": warning,

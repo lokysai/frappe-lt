@@ -1,5 +1,6 @@
 import json
 import re
+import subprocess
 from pathlib import Path
 from unittest import TestCase
 
@@ -16,10 +17,110 @@ class CIWorkflowTest(TestCase):
 	def setUpClass(cls):
 		cls.workflow = yaml.load(WORKFLOW_PATH.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
 
+	def test_all_workflow_shell_steps_parse(self):
+		for name, job in self.workflow["jobs"].items():
+			for step in job["steps"]:
+				if "run" in step:
+					with self.subTest(job=name, step=step["name"]):
+						result = subprocess.run(
+							["bash", "-n"], input=step["run"], text=True, capture_output=True, check=False
+						)
+						self.assertEqual(result.returncode, 0, result.stderr)
+
+	def test_release_gate_is_isolated_and_preserves_active_files_on_failure(self):
+		steps = self.workflow["jobs"]["verify"]["steps"]
+		gate = next(
+			step
+			for step in steps
+			if step["name"] == "Regenerate release in isolation and compare PO and MO digests"
+		)
+		run = gate["run"]
+		for required in (
+			"release_catalog.assemble(po, mo)",
+			"TemporaryDirectory(",
+			'assert manifest["inventory_digest"] == compatibility["inventory_digest"]',
+			'assert result["po_sha256"] == manifest["po_sha256"] == state(po)[1]',
+			'assert result["mo_sha256"] == manifest["mo_sha256"] == state(mo)[1]',
+			"finally:",
+			"assert tuple(state(path) for path in active) == before",
+		):
+			self.assertIn(required, run)
+		self.assertNotIn('manifest["mo_sha256"] == compatibility["mo_sha256"]', run)
+		self.assertLess(run.index("before ="), run.index("try:"))
+		self.assertLess(run.index("release_catalog.assemble"), run.index("finally:"))
+		self.assertLess(
+			steps.index(next(step for step in steps if step["name"] == "Run static and unit tests")),
+			steps.index(gate),
+		)
+
+	def test_install_jobs_check_predeployment_inventory_and_require_original_package(self):
+		for job_name, site, inventory_name, install_name in (
+			(
+				"verify",
+				"test_site",
+				"Compare predeployment target inventory with authenticated release",
+				"Prove mandatory install hook rejects an unprepared site and require original CSV",
+			),
+			(
+				"runtime-browser",
+				"development.localhost",
+				"Compare runtime target inventory before deployment",
+				"Prepare authenticated runtime install and configure site",
+			),
+		):
+			steps = self.workflow["jobs"][job_name]["steps"]
+			inventory = next(step for step in steps if step["name"] == inventory_name)
+			install = next(step for step in steps if step["name"] == install_name)
+			self.assertLess(steps.index(inventory), steps.index(install))
+			self.assertIn(
+				"_target_keys(frappe, verify_owned_artifacts()) == _inventory_keys()", inventory["run"]
+			)
+			self.assertIn("frappe.db.rollback()", inventory["run"])
+			run = install["run"]
+			self.assertEqual(
+				install["env"]["FRAPPE_LT_ORIGINAL_CSV_URL"],
+				"${{ secrets.FRAPPE_LT_ORIGINAL_CSV_URL }}",
+			)
+			for required in (
+				f"bench --site {site} install-app frappe_lt",
+				"PREPARED_INPUTS_MISSING",
+				'if test -z "$FRAPPE_LT_ORIGINAL_CSV_URL"',
+				"BLOCKED: FRAPPE_LT_ORIGINAL_CSV_URL secret is missing",
+				'private_dir="$(mktemp -d)"',
+				'package="$private_dir/lt-v16-translations.csv"',
+				"curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https'",
+				"PACKAGE_SHA256",
+				"exit 1",
+				f'bench --site {site} preflight-lithuanian-install --package "$package"',
+				f'bench --site {site} prepare-lithuanian-install --package "$package"',
+				f"bench --site {site} show-lithuanian-install-status",
+			):
+				self.assertIn(required, run)
+			if job_name == "verify":
+				self.assertIn('printf \'FRAPPE_LT_PACKAGE_DIR=%s\\n\' "$private_dir" >> "$GITHUB_ENV"', run)
+				self.assertIn('rm -rf "$FRAPPE_LT_PACKAGE_DIR"', steps[-1]["run"])
+				verify_step = next(step for step in steps if step["name"] == "Run integrated verification")
+				self.assertIn("resume-lithuanian-install", verify_step["run"])
+				self.assertLess(
+					steps.index(verify_step),
+					steps.index(
+						next(step for step in steps if "set-config maintenance_mode 0" in step.get("run", ""))
+					),
+				)
+			else:
+				self.assertIn("trap 'rm -rf \"$private_dir\"' EXIT", run)
+			self.assertNotIn("$GITHUB_WORKSPACE/frappe_lt/original_translations.csv", run)
+			self.assertLess(run.index("PACKAGE_SHA256"), run.index("preflight-lithuanian-install"))
+			self.assertLess(run.index("PREPARED_INPUTS_MISSING"), run.index("prepare-lithuanian-install"))
+			self.assertLess(run.index("prepare-lithuanian-install"), run.rindex("install-app frappe_lt"))
+
 	def test_workflow_parses_and_static_gate_runs_every_runtime_helper_test(self):
 		verify = self.workflow["jobs"]["verify"]
 		commands = "\n".join(step.get("run", "") for step in verify["steps"])
 		for required in (
+			"frappe_lt.tests.test_install",
+			"frappe_lt.tests.test_release_catalog",
+			"frappe_lt.tests.test_legacy_migration",
 			"frappe_lt.tests.test_catalog_partition",
 			"frappe_lt.tests.test_review_evidence",
 			"frappe_lt.tests.test_v15_origin_import",
@@ -30,6 +131,16 @@ class CIWorkflowTest(TestCase):
 			"node --check",
 		):
 			self.assertIn(required, commands)
+
+	def test_wrong_digest_diagnostic_uses_pinned_release_verifier(self):
+		steps = self.workflow["jobs"]["verify"]["steps"]
+		gate = next(
+			step for step in steps if step["name"] == "Prove wrong release MO digest fails with diagnostics"
+		)
+		self.assertIn("frappe_lt.verify.run", gate["run"])
+		self.assertIn("requested MO digest differs from authenticated release", gate["run"])
+		self.assertNotIn("first build:", gate["run"])
+		self.assertNotIn("second build:", gate["run"])
 
 	def test_finance_origin_is_exercised_by_ci_without_reverting_item_provenance(self):
 		steps = self.workflow["jobs"]["verify"]["steps"]
@@ -95,31 +206,26 @@ class CIWorkflowTest(TestCase):
 		self.assertIn("curl --fail", commands)
 		self.assertIn("google-chrome --version", commands)
 		for required in (
-			"assert runtime_exit == 1",
-			'assert report["status"] == "fail"',
+			"assert runtime_exit in (0, 1)",
+			'assert report["status"] == ("pass" if runtime_exit == 0 else "fail")',
 			'assert report["schema_version"] == 5',
 			'assert summary["total"] == len(expected_ids)',
 			'assert summary["blocked"] == 0',
 			'assert summary["cleanup_failures"] == 0',
-			'assert summary["coverage_gaps"] > 0',
-			'assert summary["english_fallbacks"] > 0',
 			'assert summary["functional_layout_defects"] == 0',
 			"validate_machine_report(report, scenario_contract)",
 			'blocker_types = {cause["type"] for cause in report["blocking_causes"]}',
-			'"runtime_coverage_gap"',
-			'"scenario_fail"',
+			"assert bool(blocker_types) == (runtime_exit == 1)",
 		):
 			self.assertIn(required, commands)
 		gate = next(
-			step
-			for step in steps
-			if step["name"] == "Assert harness detects expected catalog and coverage blockers"
+			step for step in steps if step["name"] == "Validate runtime report against actual findings"
 		)
 		gate_commands = [line.strip() for line in gate["run"].splitlines() if line.strip()]
 		self.assertEqual(gate_commands[0], "runtime_exit=0")
 		self.assertIn("|| runtime_exit=$?", gate_commands[1])
 		self.assertNotIn('summary["total"] == 10', commands)
-		self.assertIn('assert blocker_types == {"runtime_coverage_gap", "scenario_fail"}', commands)
+		self.assertNotIn('assert summary["english_fallbacks"] > 0', commands)
 		self.assertIn("*.evidence.json", commands)
 		self.assertIn(".*.evidence.json.*.tmp", commands)
 		self.assertTrue(

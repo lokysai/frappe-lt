@@ -5,7 +5,8 @@ import frappe
 import frappe.translate
 from frappe.tests import IntegrationTestCase
 
-from frappe_lt.inventory import load_compatibility, verify_environment
+from frappe_lt.inventory import verify_environment
+from frappe_lt.release_catalog import verify_mo
 from frappe_lt.runtime_contracts import load_contracts
 from frappe_lt.runtime_control import (
 	SiteControl,
@@ -80,7 +81,7 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 			require_runtime_metadata=True,
 		)
 		self.assertEqual(environment["installed_apps"], ["frappe", "erpnext", "frappe_lt"])
-		self.assertEqual(environment["mo_sha256"], load_compatibility()["mo_sha256"])
+		self.assertEqual(environment["mo_sha256"], verify_mo())
 
 	def test_prepare_owns_exact_portal_and_draft_print_fixtures_without_ledger_entries(self):
 		run_id = "b" * 32

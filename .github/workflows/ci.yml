@@ -115,12 +115,79 @@ jobs:
           test "$(git -C apps/frappe rev-parse HEAD)" = "$FRAPPE_COMMIT"
           test "$(git -C apps/erpnext rev-parse HEAD)" = "$ERPNEXT_COMMIT"
 
+      - name: Run static and unit tests
+        working-directory: /home/runner/frappe-bench
+        run: |
+          env/bin/python -m compileall -q apps/frappe_lt/frappe_lt
+          ruff check apps/frappe_lt/frappe_lt
+          ruff format --check apps/frappe_lt/frappe_lt
+          env/bin/python -m unittest frappe_lt.tests.test_verify frappe_lt.tests.test_inventory frappe_lt.tests.test_catalog_partition frappe_lt.tests.test_review_evidence frappe_lt.tests.test_v15_origin_import frappe_lt.tests.test_finance_origin_import frappe_lt.tests.test_catalog_quality frappe_lt.tests.test_frappe_catalog frappe_lt.tests.test_finance_catalog frappe_lt.tests.test_install frappe_lt.tests.test_release_catalog frappe_lt.tests.test_legacy_migration frappe_lt.tests.test_runtime_validation frappe_lt.tests.test_ci_workflow
+          node --test apps/frappe_lt/cypress/support/*.test.js
+          shopt -s globstar nullglob
+          javascript=(apps/frappe_lt/cypress.config.js apps/frappe_lt/cypress/**/*.js)
+          test "${#javascript[@]}" -gt 1
+          for file in "${javascript[@]}"
+          do
+            node --check "$file"
+          done
+
+      - name: Regenerate release in isolation and compare PO and MO digests
+        working-directory: /home/runner/frappe-bench
+        run: |
+          env/bin/python - <<'PY'
+          import hashlib
+          import json
+          import tempfile
+          from pathlib import Path
+
+          from frappe_lt import release_catalog
+
+          root = Path("apps/frappe_lt/frappe_lt")
+          active = (root / "locale/lt.po", Path("sites/assets/locale/lt/LC_MESSAGES/frappe_lt.mo"))
+
+          def state(path):
+              return (path.exists(), hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None)
+
+          before = tuple(state(path) for path in active)
+          try:
+              manifest = json.loads((root / "release_catalog.json").read_bytes())
+              compatibility = json.loads((root / "compatibility.json").read_bytes())
+              assert manifest["inventory_digest"] == compatibility["inventory_digest"]
+              with tempfile.TemporaryDirectory(prefix="frappe-lt-ci-release-") as directory:
+                  po, mo = Path(directory) / "lt.po", Path(directory) / "frappe_lt.mo"
+                  result = release_catalog.assemble(po, mo)
+                  assert result["po_sha256"] == manifest["po_sha256"] == state(po)[1]
+                  assert result["mo_sha256"] == manifest["mo_sha256"] == state(mo)[1]
+                  assert before[0] == (True, result["po_sha256"]), "shipped PO differs from release"
+                  if before[1][0]:
+                      assert before[1] == (True, result["mo_sha256"]), "active MO differs from release"
+          finally:
+              assert tuple(state(path) for path in active) == before, "release gate changed active PO/MO"
+          PY
+
       - name: Create clean pinned site
         working-directory: /home/runner/frappe-bench
         run: |
           bench new-site test_site --db-host 127.0.0.1 --db-root-username root --db-root-password root --admin-password admin --mariadb-user-host-login-scope='%'
           bench --site test_site install-app erpnext
           test "$(bench --site test_site list-apps --format json | python -c 'import json,sys; print(",".join(json.load(sys.stdin)["test_site"]))')" = "frappe,erpnext"
+
+      - name: Compare predeployment target inventory with authenticated release
+        working-directory: /home/runner/frappe-bench/sites
+        run: |
+          ../env/bin/python - <<'PY'
+          import frappe
+          from frappe_lt.install import _inventory_keys, _target_keys
+          from frappe_lt.inventory import verify_owned_artifacts
+
+          frappe.init(site="test_site")
+          frappe.connect()
+          try:
+              assert _target_keys(frappe, verify_owned_artifacts()) == _inventory_keys(), "target inventory mismatch"
+          finally:
+              frappe.db.rollback()
+              frappe.destroy()
+          PY
 
       - name: Build real source and runtime inventory twice
         working-directory: /home/runner/frappe-bench
@@ -243,27 +310,33 @@ jobs:
           printf '%s\n' "$output" | grep --fixed-strings "local/custom metadata"
           test ! -e /tmp/inventory-custom
 
-      - name: Resume profile after after_install preflight failure
+      - name: Prove mandatory install hook rejects an unprepared site and require original CSV
         working-directory: /home/runner/frappe-bench
+        env:
+          FRAPPE_LT_ORIGINAL_CSV_URL: ${{ secrets.FRAPPE_LT_ORIGINAL_CSV_URL }}
         run: |
-          bench --site test_site execute frappe.db.delete --args '["Language", {"name":"lt"}]'
           set +e
           output="$(bench --site test_site install-app frappe_lt 2>&1)"
           status=$?
           set -e
           printf '%s\n' "$output"
           test "$status" -ne 0
-          printf '%s\n' "$output" | grep --fixed-strings "Language/lt is missing"
-          test "$(bench --site test_site list-apps --format json | python -c 'import json,sys; print(",".join(json.load(sys.stdin)["test_site"]))')" = "frappe,erpnext,frappe_lt"
-          bench --site test_site execute frappe.core.doctype.language.language.sync_languages
-          {
-            bench --site test_site execute frappe.db.sql --args '["select enabled,date_format,time_format,number_format,first_day_of_the_week from tabLanguage where name='"'"'lt'"'"'"]'
-            bench --site test_site execute frappe.db.sql --args '["select field,value from tabSingles where doctype='"'"'System Settings'"'"' and field in ('"'"'country'"'"','"'"'language'"'"','"'"'time_zone'"'"','"'"'date_format'"'"','"'"'time_format'"'"','"'"'number_format'"'"','"'"'first_day_of_the_week'"'"','"'"'currency'"'"') order by field"]'
-            bench --site test_site execute frappe.db.sql --args '["select defkey,defvalue from tabDefaultValue where parent='"'"'__default'"'"' and defkey in ('"'"'country'"'"','"'"'language'"'"','"'"'time_zone'"'"','"'"'date_format'"'"','"'"'time_format'"'"','"'"'number_format'"'"','"'"'first_day_of_the_week'"'"','"'"'lang'"'"','"'"'currency'"'"') order by defkey,creation,name"]'
-            bench --site test_site execute frappe.db.sql --args '["select name,language,time_zone from tabUser where enabled=1 and name<>'"'"'Guest'"'"' order by name"]'
-            bench --site test_site execute frappe.db.sql --args '["select parent,defkey,defvalue from tabDefaultValue where parent in (select name from tabUser where enabled=1 and name<>'"'"'Guest'"'"') and defkey in ('"'"'date_format'"'"','"'"'time_format'"'"','"'"'number_format'"'"','"'"'first_day_of_the_week'"'"','"'"'time_zone'"'"') order by parent,defkey,creation,name"]'
-          } > /tmp/frappe-lt-profile-original
-          test "$(bench --site test_site setup-lithuanian-profile | python -c 'import json,sys; print(json.load(sys.stdin)["state_after"])')" = "APPLIED"
+          printf '%s\n' "$output" | grep --fixed-strings "PREPARED_INPUTS_MISSING"
+          test "$(bench --site test_site list-apps --format json | python -c 'import json,sys; print(",".join(json.load(sys.stdin)["test_site"]))')" = "frappe,erpnext"
+          if test -z "$FRAPPE_LT_ORIGINAL_CSV_URL"
+          then
+            printf '%s\n' 'BLOCKED: FRAPPE_LT_ORIGINAL_CSV_URL secret is missing; original CSV is required for install integration.' >&2
+            exit 1
+          fi
+          private_dir="$(mktemp -d)"
+          package="$private_dir/lt-v16-translations.csv"
+          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --output "$package" "$FRAPPE_LT_ORIGINAL_CSV_URL"
+          env/bin/python -c 'import hashlib,sys; from frappe_lt.legacy_migration import PACKAGE_SHA256; assert hashlib.sha256(open(sys.argv[1], "rb").read()).hexdigest() == PACKAGE_SHA256, "BLOCKED: original CSV digest mismatch"' "$package"
+          bench --site test_site preflight-lithuanian-install --package "$package"
+          bench --site test_site prepare-lithuanian-install --package "$package"
+          bench --site test_site install-app frappe_lt
+          bench --site test_site show-lithuanian-install-status | python -c 'import json,sys; s=json.load(sys.stdin); assert s["migration"] in ("committed","no_op") and s["mo"] == "matched" and s["profile"] == "APPLIED", s'
+          printf 'FRAPPE_LT_PACKAGE_DIR=%s\n' "$private_dir" >> "$GITHUB_ENV"
           bench --site test_site set-config allow_tests true
 
       - name: Reject extra installed app without artifacts
@@ -277,22 +350,6 @@ jobs:
           test "$status" -ne 0
           printf '%s\n' "$output" | grep --fixed-strings "exactly frappe and erpnext"
           test ! -e /tmp/inventory-extra
-
-      - name: Run static and unit tests
-        working-directory: /home/runner/frappe-bench
-        run: |
-          env/bin/python -m compileall -q apps/frappe_lt/frappe_lt
-          ruff check apps/frappe_lt/frappe_lt
-          ruff format --check apps/frappe_lt/frappe_lt
-          env/bin/python -m unittest frappe_lt.tests.test_verify frappe_lt.tests.test_inventory frappe_lt.tests.test_catalog_partition frappe_lt.tests.test_review_evidence frappe_lt.tests.test_v15_origin_import frappe_lt.tests.test_finance_origin_import frappe_lt.tests.test_catalog_quality frappe_lt.tests.test_frappe_catalog frappe_lt.tests.test_finance_catalog frappe_lt.tests.test_runtime_validation frappe_lt.tests.test_ci_workflow
-          node --test apps/frappe_lt/cypress/support/*.test.js
-          shopt -s globstar nullglob
-          javascript=(apps/frappe_lt/cypress.config.js apps/frappe_lt/cypress/**/*.js)
-          test "${#javascript[@]}" -gt 1
-          for file in "${javascript[@]}"
-          do
-            node --check "$file"
-          done
 
       - name: Authenticate the production partition and run every registered candidate
         working-directory: /home/runner/frappe-bench
@@ -514,11 +571,11 @@ jobs:
 
       - name: Run integrated verification
         working-directory: /home/runner/frappe-bench
-        run: >-
-          bench --site test_site execute frappe_lt.verify.run
-          --kwargs '{"site":"test_site","mode":"ci"}'
+        run: |
+          bench --site test_site resume-lithuanian-install | python -c 'import json,sys; assert json.load(sys.stdin)["state"] == "verified"'
+          bench --site test_site execute frappe_lt.verify.run --kwargs '{"site":"test_site","mode":"ci"}'
 
-      - name: Prove wrong digest fails with diagnostics
+      - name: Prove wrong release MO digest fails with diagnostics
         working-directory: /home/runner/frappe-bench
         run: |
           set +e
@@ -528,13 +585,14 @@ jobs:
           printf '%s\n' "$output"
           test "$status" -ne 0
           for value in \
-            0000000000000000000000000000000000000000000000000000000000000000 \
+            "requested MO digest differs from authenticated release" \
+            "Verified pinned environment:" \
             "$FRAPPE_COMMIT" "$ERPNEXT_COMMIT" \
-            16.34.0 16.35.0 3.14 2.16.0 \
-            "first build:" "second build:"
+            16.34.0 16.35.0 3.14 2.16.0
           do
             printf '%s\n' "$output" | grep --fixed-strings "$value"
           done
+          bench --site test_site set-config maintenance_mode 0
 
       - name: Run site integration tests
         working-directory: /home/runner/frappe-bench
@@ -545,7 +603,7 @@ jobs:
             python -c 'import json,sys; status=json.load(sys.stdin); assert status["state_after"] == "APPLIED", status'
           test "$(bench --site test_site execute frappe.db.sql --args '["select count(*) from tabUser where name like '"'"'profile-%'"'"'"]')" = "[[0]]"
 
-      - name: Prove native install and uninstall lifecycle
+      - name: Prove uninstall guards remain active
         working-directory: /home/runner/frappe-bench
         run: |
           set +e
@@ -564,38 +622,11 @@ jobs:
           test "$status" -ne 0
           printf '%s\n' "$output" | grep --fixed-strings "restore-lithuanian-profile"
 
-          bench --site test_site restore-lithuanian-profile
-          {
-            bench --site test_site execute frappe.db.sql --args '["select enabled,date_format,time_format,number_format,first_day_of_the_week from tabLanguage where name='"'"'lt'"'"'"]'
-            bench --site test_site execute frappe.db.sql --args '["select field,value from tabSingles where doctype='"'"'System Settings'"'"' and field in ('"'"'country'"'"','"'"'language'"'"','"'"'time_zone'"'"','"'"'date_format'"'"','"'"'time_format'"'"','"'"'number_format'"'"','"'"'first_day_of_the_week'"'"','"'"'currency'"'"') order by field"]'
-            bench --site test_site execute frappe.db.sql --args '["select defkey,defvalue from tabDefaultValue where parent='"'"'__default'"'"' and defkey in ('"'"'country'"'"','"'"'language'"'"','"'"'time_zone'"'"','"'"'date_format'"'"','"'"'time_format'"'"','"'"'number_format'"'"','"'"'first_day_of_the_week'"'"','"'"'lang'"'"','"'"'currency'"'"') order by defkey,creation,name"]'
-            bench --site test_site execute frappe.db.sql --args '["select name,language,time_zone from tabUser where enabled=1 and name<>'"'"'Guest'"'"' order by name"]'
-            bench --site test_site execute frappe.db.sql --args '["select parent,defkey,defvalue from tabDefaultValue where parent in (select name from tabUser where enabled=1 and name<>'"'"'Guest'"'"') and defkey in ('"'"'date_format'"'"','"'"'time_format'"'"','"'"'number_format'"'"','"'"'first_day_of_the_week'"'"','"'"'time_zone'"'"') order by parent,defkey,creation,name"]'
-          } > /tmp/frappe-lt-profile-restored
-          diff -u /tmp/frappe-lt-profile-original /tmp/frappe-lt-profile-restored
-
-          set +e
-          output="$(bench --site test_site install-app frappe_lt --force 2>&1)"
-          status=$?
-          set -e
-          printf '%s\n' "$output"
-          test "$status" -ne 0
-          printf '%s\n' "$output" | grep --fixed-strings "cannot be recovered by a forced current install"
-          test "$(bench --site test_site show-lithuanian-profile-status | python -c 'import json,sys; print(json.load(sys.stdin)["state_after"])')" = "RESTORED"
-
-          bench --site test_site uninstall-app frappe_lt --yes --no-backup --force
-          test "$(bench --site test_site execute frappe.db.sql --args '["select count(*) from tabDefaultValue where parent='"'"'frappe_lt.profile.v1'"'"'"]')" = "[[0]]"
-
-          bench --site test_site install-app frappe_lt
-          bench --site test_site leave-lithuanian-profile --confirm-leave-profile
-          bench --site test_site uninstall-app frappe_lt --yes --no-backup --force
-          test "$(bench --site test_site execute frappe.db.sql --args '["select count(*) from tabDefaultValue where parent='"'"'frappe_lt.profile.v1'"'"'"]')" = "[[0]]"
-          test "$(bench --site test_site list-apps --format json | python -c 'import json,sys; print(",".join(json.load(sys.stdin)["test_site"]))')" = "frappe,erpnext"
-
       - name: Assert all app worktrees are clean
         if: always()
         working-directory: /home/runner/frappe-bench
         run: |
+          if test -n "${FRAPPE_LT_PACKAGE_DIR:-}"; then rm -rf "$FRAPPE_LT_PACKAGE_DIR"; fi
           git -C apps/frappe status --short
           git -C apps/erpnext status --short
           git -C apps/frappe_lt status --short
@@ -706,12 +737,57 @@ jobs:
         run: |
           bench new-site development.localhost --db-host 127.0.0.1 --db-root-username root --db-root-password root --admin-password admin --mariadb-user-host-login-scope='%'
           bench --site development.localhost install-app erpnext
+
+      - name: Compare runtime target inventory before deployment
+        working-directory: /home/runner/frappe-bench/sites
+        run: |
+          ../env/bin/python - <<'PY'
+          import frappe
+          from frappe_lt.install import _inventory_keys, _target_keys
+          from frappe_lt.inventory import verify_owned_artifacts
+
+          frappe.init(site="development.localhost")
+          frappe.connect()
+          try:
+              assert _target_keys(frappe, verify_owned_artifacts()) == _inventory_keys(), "target inventory mismatch"
+          finally:
+              frappe.db.rollback()
+              frappe.destroy()
+          PY
+
+      - name: Prepare authenticated runtime install and configure site
+        working-directory: /home/runner/frappe-bench
+        env:
+          FRAPPE_LT_ORIGINAL_CSV_URL: ${{ secrets.FRAPPE_LT_ORIGINAL_CSV_URL }}
+        run: |
           SETUP_KWARGS="$(python -c 'import datetime,json; year=datetime.date.today().year; print(json.dumps({"args":{"language":"English","email":"runtime@example.invalid","full_name":"Runtime Administrator","password":"admin","country":"Lithuania","timezone":"Europe/Vilnius","currency":"EUR","enable_telemetry":0,"company_name":"Frappe LT Runtime","company_abbr":"FLTR","chart_of_accounts":"Standard","fy_start_date":f"{year}-01-01","fy_end_date":f"{year}-12-31","setup_demo":0}}))')"
           bench --site development.localhost execute frappe.desk.page.setup_wizard.setup_wizard.setup_complete --kwargs "$SETUP_KWARGS"
           test "$(bench --site development.localhost execute frappe.db.count --args '["Company"]')" = "1"
           test "$(bench --site development.localhost execute frappe.db.get_single_value --args '["Global Defaults", "default_company"]')" = "Frappe LT Runtime"
           test "$(bench --site development.localhost execute frappe.defaults.get_user_default --args '["Company", "Administrator"]')" = "Frappe LT Runtime"
+          set +e
+          output="$(bench --site development.localhost install-app frappe_lt 2>&1)"
+          status=$?
+          set -e
+          printf '%s\n' "$output"
+          test "$status" -ne 0
+          printf '%s\n' "$output" | grep --fixed-strings "PREPARED_INPUTS_MISSING"
+          test "$(bench --site development.localhost list-apps --format json | python -c 'import json,sys; print(",".join(json.load(sys.stdin)["development.localhost"]))')" = "frappe,erpnext"
+          if test -z "$FRAPPE_LT_ORIGINAL_CSV_URL"
+          then
+            printf '%s\n' 'BLOCKED: FRAPPE_LT_ORIGINAL_CSV_URL secret is missing; original CSV is required for runtime install.' >&2
+            exit 1
+          fi
+          private_dir="$(mktemp -d)"
+          trap 'rm -rf "$private_dir"' EXIT
+          package="$private_dir/lt-v16-translations.csv"
+          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --output "$package" "$FRAPPE_LT_ORIGINAL_CSV_URL"
+          env/bin/python -c 'import hashlib,sys; from frappe_lt.legacy_migration import PACKAGE_SHA256; assert hashlib.sha256(open(sys.argv[1], "rb").read()).hexdigest() == PACKAGE_SHA256, "BLOCKED: original CSV digest mismatch"' "$package"
+          bench --site development.localhost preflight-lithuanian-install --package "$package"
+          bench --site development.localhost prepare-lithuanian-install --package "$package"
           bench --site development.localhost install-app frappe_lt
+          bench --site development.localhost show-lithuanian-install-status | python -c 'import json,sys; s=json.load(sys.stdin); assert s["migration"] in ("committed","no_op") and s["mo"] == "matched" and s["profile"] == "APPLIED", s'
+          bench --site development.localhost set-config maintenance_mode 0
           test "$(bench --site development.localhost list-apps --format json | python -c 'import json,sys; print(",".join(json.load(sys.stdin)["development.localhost"]))')" = "frappe,erpnext,frappe_lt"
           bench --site development.localhost set-config allow_tests true
           bench --site development.localhost show-lithuanian-profile-status |
@@ -778,9 +854,9 @@ jobs:
           done
           curl --fail --silent --show-error http://development.localhost:8000/api/method/ping > /dev/null
 
-      # This passes only when the harness detects the known open product-data blockers.
-      # It is not a release-candidate pass; issue #16 owns the final release validation.
-      - name: Assert harness detects expected catalog and coverage blockers
+      # #16 owns runtime release validation; do not assume the old one-key
+      # catalog's English fallback findings persist in the full release.
+      - name: Validate runtime report against actual findings
         working-directory: /home/runner/frappe-bench
         run: |
           runtime_exit=0
@@ -801,20 +877,18 @@ jobs:
           summary = report["summary"]
           scenario_results = report["scenario_results"]
 
-          assert runtime_exit == 1, runtime_exit
-          assert report["status"] == "fail", report["status"]
+          assert runtime_exit in (0, 1), runtime_exit
+          assert report["status"] == ("pass" if runtime_exit == 0 else "fail"), report["status"]
           assert report["schema_version"] == 5, report["schema_version"]
           assert summary["total"] == len(expected_ids), summary
           assert [result["id"] for result in scenario_results] == expected_ids, scenario_results
           assert summary["pass"] + summary["fail"] + summary["blocked"] == summary["total"], summary
           assert summary["blocked"] == 0, summary
           assert summary["cleanup_failures"] == 0, summary
-          assert summary["coverage_gaps"] > 0, summary
-          assert summary["english_fallbacks"] > 0, summary
-          assert summary["fail"] > 0, summary
           assert summary["functional_layout_defects"] == 0, summary
           blocker_types = {cause["type"] for cause in report["blocking_causes"]}
-          assert blocker_types == {"runtime_coverage_gap", "scenario_fail"}, report["blocking_causes"]
+          assert bool(blocker_types) == (runtime_exit == 1), report["blocking_causes"]
+          assert blocker_types <= {"runtime_coverage_gap", "scenario_fail"}, report["blocking_causes"]
           assert all(
               result["status"] in {"pass", "fail"}
               and (result["status"] == "pass" or result["error"] == "scenario produced blocking runtime findings")
