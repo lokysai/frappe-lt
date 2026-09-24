@@ -77,7 +77,9 @@ def _target_keys(frappe, manifest):
 
 	# The extractor requires a pristine two-app site. The install app contributes
 	# no upstream metadata and is hidden only from its installed-app guard.
-	runtime = extract_runtime(ExtractionSite(), manifest["runtime_metadata_sha256"])
+	runtime = extract_runtime(
+		ExtractionSite(), manifest["runtime_metadata_sha256"], allow_deployment_site=True
+	)
 	events = [*runtime.events, *extract_sources(frappe)]
 	keys = set()
 	for event in events:

@@ -379,22 +379,20 @@ class InstallTests(unittest.TestCase):
 		self.assertNotIn("private Translation content", json.dumps(result))
 
 	def test_extraction_uses_real_source_and_standard_metadata_on_installed_site(self):
-		from frappe_lt import runtime_extraction, source_extraction
-
 		self.frappe.get_installed_apps = lambda: ["frappe", "erpnext", "frappe_lt"]
 		self.frappe.get_all = lambda *args, **kwargs: ["legacy override"]
 
-		def runtime(proxy, signatures):
+		def runtime(proxy, signatures, *, allow_deployment_site):
+			self.assertTrue(allow_deployment_site)
 			self.assertEqual(proxy.get_installed_apps(), ["frappe", "erpnext"])
 			self.assertEqual(proxy.get_all("Translation", filters=None, fields=["name"], limit=1), [])
 			self.assertEqual(proxy.get_all("DocType", fields=["name"]), ["legacy override"])
 			return SimpleNamespace(events=[SimpleNamespace(source=" Save ", context="Button")])
 
 		with (
-			patch.object(runtime_extraction, "extract_runtime", side_effect=runtime),
-			patch.object(
-				source_extraction,
-				"extract_sources",
+			patch("frappe_lt.runtime_extraction.extract_runtime", side_effect=runtime),
+			patch(
+				"frappe_lt.source_extraction.extract_sources",
 				return_value=[SimpleNamespace(source="Item", context=None)],
 			),
 		):
@@ -402,6 +400,18 @@ class InstallTests(unittest.TestCase):
 				install._target_keys(self.frappe, {"runtime_metadata_sha256": {}}),
 				{("Save", "Button"), ("Item", None)},
 			)
+
+	def test_deployment_site_opt_in_preserves_clean_inventory_extraction_guard(self):
+		from frappe_lt.runtime_extraction import extract_runtime
+
+		deployment = SimpleNamespace(
+			local=SimpleNamespace(site="development.localhost"),
+			get_installed_apps=lambda: ["frappe"],
+		)
+		with self.assertRaisesRegex(ValueError, "must not use development.localhost"):
+			extract_runtime(deployment, {})
+		with self.assertRaisesRegex(ValueError, "exactly frappe and erpnext"):
+			extract_runtime(deployment, {}, allow_deployment_site=True)
 
 	def test_unknown_patch_checks_tools_worktrees_and_real_target_keys(self):
 		from frappe_lt import inventory
