@@ -17,6 +17,7 @@ from frappe_lt.runtime_control import (
 	capture_print,
 	capture_welcome_email,
 	resolve_translation,
+	resolve_translations,
 )
 
 
@@ -411,6 +412,20 @@ class RuntimeSiteControlTest(IntegrationTestCase):
 				run_id, token, "integration-lookup", " Runtime Hello {0} ", "Greeting"
 			)
 			heading = resolve_translation(run_id, token, "integration-lookup", "Runtime Hello {0}", "Heading")
+			batch = resolve_translations(
+				run_id,
+				token,
+				"integration-lookup",
+				[
+					{"context": "Greeting", "source": " Runtime Hello {0} "},
+					{"context": None, "source": "Runtime dynamic value"},
+					{"context": None, "source": "Runtime dynamic value"},
+				],
+			)
+			self.assertEqual(batch[0]["effective"].format("Jonai"), "Sveiki, Jonai")
+			self.assertFalse(batch[1]["active"])
+			self.assertFalse(batch[2]["active"])
+			self.assertNotEqual(batch[1]["diagnostic_id"], batch[2]["diagnostic_id"])
 			self.assertEqual(greeting["source"], "database")
 			self.assertEqual(greeting["raw_source"], " Runtime Hello {0} ")
 			self.assertEqual(greeting["key"]["source"], "Runtime Hello {0}")

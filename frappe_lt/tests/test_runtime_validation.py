@@ -1156,6 +1156,43 @@ class RuntimeReportTest(TestCase):
 				self.assertEqual(result["status"], "blocked")
 				self.assertIn(reason, result["blocked_reason"])
 
+	def test_contextual_lookup_uses_the_selected_inventory_key_for_catalog_approval(self):
+		scenario_id = self.scenario["id"]
+		finding = deepcopy(_browser_result(scenario_id)["fallbacks"][0])
+		finding.update(
+			{
+				"effective": "yyyy-mm-dd",
+				"key": {"context": "System Settings", "source": "yyyy-mm-dd"},
+				"raw_source": "yyyy-mm-dd",
+				"source": "frappe_lt",
+			}
+		)
+		browser = {
+			"harness_contract": _harness_contract(),
+			"schema_version": 6,
+			"scenarios": [_browser_result(scenario_id, fallbacks=[finding])],
+			"toolchain": _toolchain(),
+		}
+		module = "frappe_lt.runtime_validation"
+		with (
+			TemporaryDirectory() as directory,
+			patch(f"{module}._active_translation_keys", return_value=frozenset({("yyyy-mm-dd", None)})),
+			patch(f"{module}._approved_catalog_english", return_value=frozenset({("yyyy-mm-dd", None)})),
+		):
+			result = validate_browser_results(browser, self.report_contract, Path(directory))[0]
+		self.assertEqual(result["status"], "pass")
+
+		with (
+			TemporaryDirectory() as directory,
+			patch(
+				f"{module}._active_translation_keys",
+				return_value=frozenset({("yyyy-mm-dd", None), ("yyyy-mm-dd", "System Settings")}),
+			),
+			patch(f"{module}._approved_catalog_english", return_value=frozenset({("yyyy-mm-dd", None)})),
+		):
+			result = validate_browser_results(browser, self.report_contract, Path(directory))[0]
+		self.assertEqual(result["status"], "fail")
+
 	def test_browser_runner_uses_absolute_paths_retains_exit_status_and_removes_transport_file(self):
 		with TemporaryDirectory() as directory:
 			root = Path(directory) / "run"
@@ -1477,10 +1514,32 @@ class RuntimeReportTest(TestCase):
 				Path(directory),
 				diagnostic_key=diagnostic_key,
 			)
-		self.assertEqual(results[0]["status"], "fail")
+		self.assertEqual(results[0]["status"], "pass")
 		inactive = next(item for item in results[0]["fallbacks"] if not item["active"])
 		self.assertEqual(inactive["key"]["source"], diagnostic_id)
 		self.assertNotIn("frappe-lt-dynamic-value", json.dumps(results[0]))
+		report = _build_report(
+			candidate={"clean": True, "commit": "a" * 40},
+			run_id="a" * 32,
+			site="development.localhost",
+			environment=_environment(),
+			discovery={
+				"candidates": [
+					{"app": "frappe", "id": "page:Covered", "identity": "Covered", "type": "page"}
+				],
+				"collector_counts": {"email": 1, "metadata": 1, "portal": 1, "print": 1},
+			},
+			coverage_result={"covered": ["page:Covered"], "gaps": [], "reviewed_exclusions": []},
+			results=[next(result for result in results if result["id"] == scenario_id)],
+			cleanup_failures=[],
+			stale_recoveries=[],
+			durations={"cleanup": 1, "discovery": 1, "preflight": 1, "scenarios": 1, "total": 4},
+			tool_errors=[],
+			toolchain=_toolchain(),
+		)
+		self.assertEqual(report["status"], "pass")
+		self.assertEqual(report["summary"]["runtime_inventory_gaps"], 1)
+		self.assertIs(validate_machine_report(report, self.report_contract), report)
 		with TemporaryDirectory() as directory:
 			inactive_only = validate_browser_results(
 				{
@@ -1493,7 +1552,8 @@ class RuntimeReportTest(TestCase):
 				Path(directory),
 				diagnostic_key=diagnostic_key,
 			)
-		self.assertEqual(inactive_only[0]["status"], "fail")
+		self.assertEqual(inactive_only[0]["status"], "blocked")
+		self.assertIn("no active effective translation lookup evidence", inactive_only[0]["blocked_reason"])
 		active_scenario = next(
 			item for item in self.contracts["scenarios"]["scenarios"] if item["id"] != scenario_id
 		)

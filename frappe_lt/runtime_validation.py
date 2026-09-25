@@ -297,16 +297,15 @@ def _validate_fallback(
 	):
 		raise ValueError("inactive lookup must contain only its trusted diagnostic identifier")
 	if not is_active:
-		if diagnostic_key is None:
-			raise ValueError("inactive lookup cannot be authenticated without its runtime evidence key")
-		nonce, signature = diagnostic_match.groups()
-		expected = hmac.new(
-			diagnostic_key,
-			f"{scenario_id}\0{nonce}".encode(),
-			hashlib.sha256,
-		).hexdigest()
-		if not hmac.compare_digest(signature, expected):
-			raise ValueError("inactive lookup diagnostic identifier failed authentication")
+		if diagnostic_key is not None:
+			nonce, signature = diagnostic_match.groups()
+			expected = hmac.new(
+				diagnostic_key,
+				f"{scenario_id}\0{nonce}".encode(),
+				hashlib.sha256,
+			).hexdigest()
+			if not hmac.compare_digest(signature, expected):
+				raise ValueError("inactive lookup diagnostic identifier failed authentication")
 		if (
 			target["type"] == "locator"
 			and not value["excluded"]
@@ -330,14 +329,20 @@ def _is_blocking_fallback(
 	finding: dict,
 	approved_english=frozenset(),
 	approved_catalog_english=frozenset(),
+	active_keys=None,
 ) -> bool:
 	key = finding["key"]
+	active_key = (
+		_active_translation_key(key["source"], key["context"], active_keys)
+		if active_keys is not None
+		else (key["source"], key["context"])
+	)
 	approved_database_english = (
 		finding["source"] == "database" and (key["source"], key["context"] or "") in approved_english
 	)
 	approved_catalog_value = (
 		finding["source"] in {"erpnext", "frappe", "frappe_lt", "merged"}
-		and (key["source"], key["context"]) in approved_catalog_english
+		and active_key in approved_catalog_english
 	)
 	return (
 		finding["active"]
@@ -666,10 +671,9 @@ def _validate_browser_results(
 		total_evidence += scenario_evidence
 		has_active_lookup = any(item["active"] for item in result["fallbacks"])
 		blocking_fallback = any(
-			_is_blocking_fallback(item, approved_english, approved_catalog_english)
+			_is_blocking_fallback(item, approved_english, approved_catalog_english, active_keys)
 			for item in result["fallbacks"]
 		)
-		blocking_inventory_lookup = any(_is_inactive_inventory_lookup(item) for item in result["fallbacks"])
 		blocking_preserved_token = any(_is_blocking_preserved_token(item) for item in result["fallbacks"])
 		blocking_layout = any(_is_functional_layout(item) for item in result["layouts"])
 		# Cypress has no authority to read site approvals. Normalize only its generic
@@ -677,9 +681,7 @@ def _validate_browser_results(
 		if (
 			result["status"] == "fail"
 			and result["error"] == "scenario produced blocking runtime findings"
-			and not (
-				blocking_fallback or blocking_inventory_lookup or blocking_preserved_token or blocking_layout
-			)
+			and not (blocking_fallback or blocking_preserved_token or blocking_layout)
 			and result["ready"]
 		):
 			result["status"] = "pass"
@@ -691,9 +693,7 @@ def _validate_browser_results(
 			result["blocked_reason"] = "scenario did not prove readiness"
 			result["attempts"][-1]["outcome"] = "blocked"
 			result["attempts"][-1]["error"] = result["blocked_reason"]
-		if result["status"] == "pass" and (
-			blocking_fallback or blocking_inventory_lookup or blocking_preserved_token or blocking_layout
-		):
+		if result["status"] == "pass" and (blocking_fallback or blocking_preserved_token or blocking_layout):
 			result["status"] = "fail"
 			result["error"] = "scenario produced blocking runtime findings"
 			result["attempts"][-1]["outcome"] = "assertion_failure"
@@ -731,6 +731,8 @@ def validate_browser_results(
 		approved_english, _ = _approved_english(site_exception_path)
 		approved_catalog_english = _approved_catalog_english()
 		declares_inactive = _contains_inactive(value)
+		if declares_inactive and diagnostic_key is None:
+			raise ValueError("inactive lookup cannot be authenticated without its runtime evidence key")
 		results = _validate_browser_results(
 			value,
 			scenarios,
@@ -884,12 +886,13 @@ def _report_summary(
 ) -> dict:
 	if approved_catalog_english is None:
 		approved_catalog_english = _approved_catalog_english()
+	active_keys = _active_translation_keys()
 	return {
 		"blocked": sum(result["status"] == "blocked" for result in results),
 		"cleanup_failures": len(cleanup_failures),
 		"coverage_gaps": len(coverage_result["gaps"]),
 		"english_fallbacks": sum(
-			_is_blocking_fallback(finding, approved_english, approved_catalog_english)
+			_is_blocking_fallback(finding, approved_english, approved_catalog_english, active_keys)
 			for result in results
 			for finding in result["fallbacks"]
 		),
@@ -1188,13 +1191,12 @@ def validate_machine_report(
 			expected_tokens = _preserved_token_status(key["source"], fallback["effective"])
 			if fallback["preserved_tokens"] != expected_tokens:
 				raise ValueError("machine report preserved token verdict was tampered")
-			if fallback["active"] or value["status"] == "pass":
-				_validate_fallback(
-					{field: item for field, item in fallback.items() if field != "preserved_tokens"},
-					manifest[result["id"]],
-					active_keys,
-					None,
-				)
+			_validate_fallback(
+				{field: item for field, item in fallback.items() if field != "preserved_tokens"},
+				manifest[result["id"]],
+				active_keys,
+				None,
+			)
 		for layout in result["layouts"]:
 			_validate_layout(layout, result["id"])
 		for evidence in result["evidence"]:
@@ -1214,10 +1216,9 @@ def validate_machine_report(
 			or result["blocked_reason"] is not None
 			or not any(finding["active"] for finding in result["fallbacks"])
 			or any(
-				_is_blocking_fallback(finding, approved_english, approved_catalog_english)
+				_is_blocking_fallback(finding, approved_english, approved_catalog_english, active_keys)
 				for finding in result["fallbacks"]
 			)
-			or any(_is_inactive_inventory_lookup(finding) for finding in result["fallbacks"])
 			or any(_is_blocking_preserved_token(finding) for finding in result["fallbacks"])
 			or any(_is_functional_layout(finding) for finding in result["layouts"])
 		):

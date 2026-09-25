@@ -1005,40 +1005,37 @@ jobs:
           done
           curl --fail --silent --show-error http://development.localhost:8000/api/method/ping > /dev/null
 
-      # #16 owns runtime release validation. Blocked scenarios and inventory
-      # gaps remain report facts; this job verifies the harness and publishes
-      # the failing report rather than treating it as release approval.
-      - name: Validate runtime report against actual findings
+      - name: Require a passing runtime report
         working-directory: /home/runner/frappe-bench
         run: |
-          runtime_exit=0
-          bench --site development.localhost validate-lithuanian-runtime --output-dir "$RUNTIME_ARTIFACT_DIR/run" || runtime_exit=$?
-          RUNTIME_EXIT="$runtime_exit" env/bin/python - <<'PY'
+          bench --site development.localhost validate-lithuanian-runtime --output-dir "$RUNTIME_ARTIFACT_DIR/run"
+          env/bin/python - <<'PY'
           import json
-          import os
           from pathlib import Path
 
           from frappe_lt.runtime_contracts import load_contracts
           from frappe_lt.runtime_validation import validate_machine_report
 
-          runtime_exit = int(os.environ["RUNTIME_EXIT"])
-          report = json.loads(Path(os.environ["RUNTIME_ARTIFACT_DIR"], "run", "runtime-report.json").read_text())
+          report = json.loads(Path("/tmp/frappe-lt-runtime-artifacts/run/runtime-report.json").read_text())
           scenario_contract = load_contracts()["scenarios"]
           expected_ids = [scenario["id"] for scenario in scenario_contract["scenarios"]]
           validate_machine_report(report, scenario_contract)
           summary = report["summary"]
           scenario_results = report["scenario_results"]
 
-          assert runtime_exit in (0, 1), runtime_exit
-          assert report["status"] == ("pass" if runtime_exit == 0 else "fail"), report["status"]
+          assert report["status"] == "pass", report["status"]
           assert report["schema_version"] == 8, report["schema_version"]
           assert summary["total"] == len(expected_ids), summary
           assert [result["id"] for result in scenario_results] == expected_ids, scenario_results
-          assert summary["pass"] + summary["fail"] + summary["blocked"] == summary["total"], summary
+          assert summary["pass"] == summary["total"], summary
+          assert summary["fail"] == 0, summary
+          assert summary["blocked"] == 0, summary
+          assert summary["coverage_gaps"] == 0, summary
           assert summary["cleanup_failures"] == 0, summary
+          assert summary["english_fallbacks"] == 0, summary
+          assert summary["preserved_token_failures"] == 0, summary
           assert summary["functional_layout_defects"] == 0, summary
-          blocker_types = {cause["type"] for cause in report["blocking_causes"]}
-          assert bool(blocker_types) == (runtime_exit == 1), report["blocking_causes"]
+          assert report["blocking_causes"] == [], report["blocking_causes"]
           PY
 
       - name: Stop runtime web process
@@ -1077,11 +1074,15 @@ jobs:
           ! compgen -G 'sites/development.localhost/private/frappe_lt_runtime/.*.browser.json.*.tmp' > /dev/null
           ! compgen -G 'sites/development.localhost/private/frappe_lt_runtime/.*.evidence.json.*.tmp' > /dev/null
           test ! -e "$RUNTIME_ARTIFACT_DIR/run/browser-results.json"
-          bench --site development.localhost execute frappe_lt.runtime_control.assert_no_runtime_residue
+          bench --site development.localhost execute frappe_lt.runtime_control.assert_no_runtime_residue > /tmp/frappe-lt-runtime-residue.json
           python - <<'PY'
           import json
           from pathlib import Path
 
+          residue = json.loads(Path("/tmp/frappe-lt-runtime-residue.json").read_text())
+          assert set(residue) == {"findings", "schema_version"}
+          assert residue["findings"] == []
+          assert type(residue["schema_version"]) is int and residue["schema_version"] == 1
           backup_root = Path("sites/development.localhost/private/backups")
           before = json.loads(Path("/tmp/frappe-lt-runtime-backups-before.json").read_text())
           after = sorted(path.relative_to(backup_root).as_posix() for path in backup_root.rglob("*") if path.is_file()) if backup_root.is_dir() else []

@@ -306,46 +306,53 @@ function collectLookups(scenario, result) {
 		for (const lookup of window.__frappeLtLookups || []) {
 			unique.set(`${lookup.raw_source}\u0000${lookup.context || ""}\u0000${lookup.rendered}`, lookup);
 		}
-		return cy.wrap([...unique.values()], { log: false }).each((lookup) => {
-			scenarioResults.get(scenario.id).resolvingLookup = true;
-			cy.runtimeCall("frappe_lt.runtime_control.resolve_translation", {
-				context: lookup.context,
+		const lookups = [...unique.values()];
+		if (!lookups.length) return cy.wrap(null, { log: false });
+		scenarioResults.get(scenario.id).resolvingLookup = true;
+		return cy
+			.runtimeCall("frappe_lt.runtime_control.resolve_translations", {
+				lookups: lookups.map((lookup) => ({ context: lookup.context, source: lookup.raw_source })),
 				lookup_path: "client",
 				run_id: plan.run_id,
 				scenario_id: scenario.id,
-				source: lookup.raw_source,
 				token: plan.token,
-			}).then((response) => {
+			})
+			.then((response) => {
 				scenarioResults.get(scenario.id).resolvingLookup = false;
-				const resolved = response.body.message;
-				const location = locateRenderedLookup(window.document, lookup.rendered, scenario);
-				if (!resolved.active) scenarioResults.get(scenario.id).artifacts = [];
-				if (resolved.effective !== lookup.effective) {
-					throw new Error("loaded dictionary disagrees with effective translation lookup");
+				const resolvedLookups = response.body.message;
+				if (!Array.isArray(resolvedLookups) || resolvedLookups.length !== lookups.length) {
+					throw new Error("runtime translation batch response is malformed");
 				}
-				const evidence = lookupEvidence(resolved);
-				result.fallbacks.push({
-					active: resolved.active,
-					effective: evidence.effective,
-					excluded: location?.excluded || false,
-					exclusion_id: location?.exclusionId || null,
-					key: evidence.key,
-					raw_source: evidence.raw_source,
-					render_status: location.renderStatus,
-					schema_version: 1,
-					scenario_id: scenario.id,
-					source: evidence.source,
-					target: {
-						type: "locator",
-						value:
-							!resolved.active && !location.excluded
-								? `diagnostic:${resolved.diagnostic_id}`
-								: location.target,
-					},
-					visible: location.renderStatus !== "unrendered",
+				lookups.forEach((lookup, index) => {
+					const resolved = resolvedLookups[index];
+					const location = locateRenderedLookup(window.document, lookup.rendered, scenario);
+					if (!resolved.active) scenarioResults.get(scenario.id).artifacts = [];
+					if (resolved.effective !== lookup.effective) {
+						throw new Error("loaded dictionary disagrees with effective translation lookup");
+					}
+					const evidence = lookupEvidence(resolved);
+					result.fallbacks.push({
+						active: resolved.active,
+						effective: evidence.effective,
+						excluded: location?.excluded || false,
+						exclusion_id: location?.exclusionId || null,
+						key: evidence.key,
+						raw_source: evidence.raw_source,
+						render_status: location.renderStatus,
+						schema_version: 1,
+						scenario_id: scenario.id,
+						source: evidence.source,
+						target: {
+							type: "locator",
+							value:
+								!resolved.active && !location.excluded
+									? `diagnostic:${resolved.diagnostic_id}`
+									: location.target,
+						},
+						visible: location.renderStatus !== "unrendered",
+					});
 				});
 			});
-		});
 	});
 }
 
@@ -377,52 +384,59 @@ function collectServerLookups(scenario, result, lookups, targetType, output) {
 	for (const lookup of lookups) {
 		unique.set(`${lookup.raw_source}\u0000${lookup.key.context || ""}\u0000${lookup.effective}`, lookup);
 	}
-	return cy.wrap([...unique.values()], { log: false }).each((lookup) => {
-		scenarioResults.get(scenario.id).resolvingLookup = true;
-		cy.runtimeCall("frappe_lt.runtime_control.resolve_translation", {
-			context: lookup.key.context,
+	const captured = [...unique.values()];
+	if (!captured.length) return cy.wrap(null, { log: false });
+	scenarioResults.get(scenario.id).resolvingLookup = true;
+	return cy
+		.runtimeCall("frappe_lt.runtime_control.resolve_translations", {
+			lookups: captured.map((lookup) => ({ context: lookup.key.context, source: lookup.raw_source })),
 			lookup_path: "server",
 			run_id: plan.run_id,
 			scenario_id: scenario.id,
-			source: lookup.raw_source,
 			token: plan.token,
-		}).then((response) => {
+		})
+		.then((response) => {
 			scenarioResults.get(scenario.id).resolvingLookup = false;
-			const resolved = response.body.message;
-			const correlation = correlateOutput(output, resolved.effective);
-			const exclusion = exactOutputExclusion(
-				output,
-				correlation,
-				scenario.expected_exclusions,
-				approvedValues
-			);
-			if (!resolved.active) scenarioResults.get(scenario.id).artifacts = [];
-			if (resolved.effective !== lookup.effective) {
-				throw new Error("server output disagrees with effective translation lookup");
+			const resolvedLookups = response.body.message;
+			if (!Array.isArray(resolvedLookups) || resolvedLookups.length !== captured.length) {
+				throw new Error("runtime translation batch response is malformed");
 			}
-			const evidence = lookupEvidence(resolved);
-			result.fallbacks.push({
-				active: resolved.active,
-				effective: evidence.effective,
-				excluded: Boolean(exclusion),
-				exclusion_id: exclusion?.id || null,
-				key: evidence.key,
-				raw_source: evidence.raw_source,
-				render_status: correlation.renderStatus,
-				schema_version: 1,
-				scenario_id: scenario.id,
-				source: evidence.source,
-				target: {
-					type: "output_interval",
-					value:
-						correlation.renderStatus === "unique"
-							? `${targetType}:${correlation.interval.start}-${correlation.interval.end}`
-							: `${targetType}:${correlation.renderStatus}`,
-				},
-				visible: correlation.renderStatus !== "unrendered",
+			captured.forEach((lookup, index) => {
+				const resolved = resolvedLookups[index];
+				const correlation = correlateOutput(output, resolved.effective);
+				const exclusion = exactOutputExclusion(
+					output,
+					correlation,
+					scenario.expected_exclusions,
+					approvedValues
+				);
+				if (!resolved.active) scenarioResults.get(scenario.id).artifacts = [];
+				if (resolved.effective !== lookup.effective) {
+					throw new Error("server output disagrees with effective translation lookup");
+				}
+				const evidence = lookupEvidence(resolved);
+				result.fallbacks.push({
+					active: resolved.active,
+					effective: evidence.effective,
+					excluded: Boolean(exclusion),
+					exclusion_id: exclusion?.id || null,
+					key: evidence.key,
+					raw_source: evidence.raw_source,
+					render_status: correlation.renderStatus,
+					schema_version: 1,
+					scenario_id: scenario.id,
+					source: evidence.source,
+					target: {
+						type: "output_interval",
+						value:
+							correlation.renderStatus === "unique"
+								? `${targetType}:${correlation.interval.start}-${correlation.interval.end}`
+								: `${targetType}:${correlation.renderStatus}`,
+					},
+					visible: correlation.renderStatus !== "unrendered",
+				});
 			});
 		});
-	});
 }
 
 function loginFor(scenario) {

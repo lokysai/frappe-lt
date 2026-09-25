@@ -284,26 +284,29 @@ class CIWorkflowTest(TestCase):
 		self.assertIn("curl --fail", commands)
 		self.assertIn("google-chrome --version", commands)
 		for required in (
-			"assert runtime_exit in (0, 1)",
-			'assert report["status"] == ("pass" if runtime_exit == 0 else "fail")',
+			'assert report["status"] == "pass"',
 			'assert report["schema_version"] == 8',
 			'assert summary["total"] == len(expected_ids)',
+			'assert summary["pass"] == summary["total"]',
+			'assert summary["fail"] == 0',
+			'assert summary["blocked"] == 0',
+			'assert summary["coverage_gaps"] == 0',
 			'assert summary["cleanup_failures"] == 0',
+			'assert summary["english_fallbacks"] == 0',
+			'assert summary["preserved_token_failures"] == 0',
 			'assert summary["functional_layout_defects"] == 0',
 			"validate_machine_report(report, scenario_contract)",
-			'blocker_types = {cause["type"] for cause in report["blocking_causes"]}',
-			"assert bool(blocker_types) == (runtime_exit == 1)",
+			'assert report["blocking_causes"] == []',
+			'assert set(residue) == {"findings", "schema_version"}',
 		):
 			self.assertIn(required, commands)
-		gate = next(
-			step for step in steps if step["name"] == "Validate runtime report against actual findings"
-		)
+		gate = next(step for step in steps if step["name"] == "Require a passing runtime report")
 		gate_commands = [line.strip() for line in gate["run"].splitlines() if line.strip()]
-		self.assertEqual(gate_commands[0], "runtime_exit=0")
-		self.assertIn("|| runtime_exit=$?", gate_commands[1])
+		self.assertTrue(
+			gate_commands[0].startswith("bench --site development.localhost validate-lithuanian-runtime")
+		)
 		self.assertNotIn('summary["total"] == 10', commands)
 		self.assertNotIn('assert summary["english_fallbacks"] > 0', commands)
-		self.assertNotIn('assert summary["blocked"] == 0', commands)
 		self.assertIn("*.evidence.json", commands)
 		self.assertIn(".*.evidence.json.*.tmp", commands)
 		self.assertTrue(

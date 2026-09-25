@@ -48,6 +48,7 @@ CAPTURE_ARTIFACTS = {
 	"frappe_lt/runtime_scenarios.json": SCENARIOS_PATH,
 }
 MAX_CAPTURE_BYTES = 64 * 1024
+CLEAN_RESIDUE_REPORT = {"findings": [], "schema_version": 1}
 MAX_INPUT_BYTES = 32 * 1024 * 1024
 MAX_TOTAL_INPUT_BYTES = 64 * 1024 * 1024
 MAX_FINAL_BYTES = 256 * 1024
@@ -76,6 +77,18 @@ MOBILE_MAX_WIDTH = 768
 GITHUB_REPOSITORY = "lokysai/frappe-lt"
 GITHUB_WORKFLOW = ".github/workflows/ci.yml"
 MAX_GITHUB_RESPONSE_BYTES = 64 * 1024
+
+
+def _validate_residue_report(value: object) -> dict:
+	if (
+		not isinstance(value, dict)
+		or set(value) != {"findings", "schema_version"}
+		or value["findings"] != []
+		or type(value["schema_version"]) is not int
+		or value["schema_version"] != 1
+	):
+		raise ValueError("independent runtime residue evidence is not empty or malformed")
+	return value
 
 
 def _exact(value, fields, label):
@@ -1005,8 +1018,7 @@ def _validate_final_index(
 				expected_sites={"baseline": BASELINE_SITE, "enabled": ENABLED_SITE},
 				root=ROOT,
 			)
-			if rooted["runtime-residue.json"] != []:
-				raise ValueError("rooted runtime residue is not empty")
+			_validate_residue_report(rooted["runtime-residue.json"])
 			if source_performance["upstream_pins"] != capture["environment"]["upstream"]:
 				raise ValueError("rooted performance upstream pins differ from capture")
 			if (
@@ -1254,9 +1266,8 @@ def finalize(
 		run_root=root / "runtime",
 	)
 	captured_artifacts = {item["path"]: item for item in capture_value["artifacts"]}
-	if values["runtime-residue.json"] != []:
-		raise ValueError("independent runtime residue evidence is not empty")
-	if assert_no_runtime_residue() != []:
+	_validate_residue_report(values["runtime-residue.json"])
+	if _validate_residue_report(assert_no_runtime_residue()) != CLEAN_RESIDUE_REPORT:
 		raise ValueError("current independent runtime residue check is not empty")
 	from frappe_lt import install as install_module
 	from frappe_lt import verify as verify_module

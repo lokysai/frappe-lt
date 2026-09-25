@@ -285,7 +285,7 @@ class ReleaseCandidateTest(unittest.TestCase):
 			"preflight.json": preflight,
 			"prepare.json": {**preflight, "run_id": "b" * 32, "state": "prepared"},
 			"runtime-candidates.json": snapshot,
-			"runtime-residue.json": [],
+			"runtime-residue.json": {"findings": [], "schema_version": 1},
 			"runtime/runtime-report.json": runtime,
 			"tests.json": {
 				"candidate": CANDIDATE,
@@ -331,7 +331,11 @@ class ReleaseCandidateTest(unittest.TestCase):
 			},
 		}
 		with (
-			patch.object(release_candidate, "assert_no_runtime_residue", return_value=[]),
+			patch.object(
+				release_candidate,
+				"assert_no_runtime_residue",
+				return_value={"findings": [], "schema_version": 1},
+			),
 			patch.object(release_candidate, "clean_candidate_identity", return_value=CANDIDATE),
 			patch.object(release_candidate, "release_quality_summary", return_value=capture["quality"]),
 			patch.object(release_candidate, "verify_environment", return_value=current),
@@ -518,6 +522,11 @@ class ReleaseCandidateTest(unittest.TestCase):
 		for relative, mutate, message in (
 			("tests.json", lambda value: value["candidate"].update(commit="f" * 40), "test evidence"),
 			("preflight.json", lambda value: value["warnings"].append("attacker text"), "warnings"),
+			(
+				"runtime-residue.json",
+				lambda value: value.update(schema_version=True),
+				"residue",
+			),
 			(
 				"runtime-candidates.json",
 				lambda value: value["discovery"]["candidates"].pop(),
