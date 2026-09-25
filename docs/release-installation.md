@@ -1,6 +1,6 @@
 # Full-catalog release and installation (#15)
 
-This is the operator sequence for the Frappe v16 Lithuanian Translation Catalog. Run commands from the **bench root**, replace `SITE` and `OTHER_SITE` with real site names, and pin `frappe_lt` to a reviewed release commit/tag rather than a moving branch. `docs/smoke-report.md` records the earlier one-`Item` smoke; the current `frappe_lt.verify.run` checks the full pinned catalog without compiling it.
+This is the operator sequence for the Frappe v16 Lithuanian Translation Catalog. Run commands from the **bench root** in Bash initialized with `set -euo pipefail`, replace `SITE` and `OTHER_SITE` with real site names, and pin `frappe_lt` to a reviewed release commit/tag rather than a moving branch. Stop after any nonzero command or failed assertion. `docs/smoke-report.md` records the earlier one-`Item` smoke; the current `frappe_lt.verify.run` checks the full pinned catalog without compiling it.
 
 ## Release pin and catalog build
 
@@ -75,6 +75,58 @@ Prerequisites: ERPNext is already installed on `SITE`; all sites sharing this be
    bench --site SITE clear-cache
    bench --site SITE set-config maintenance_mode 0 --parse
    ```
+
+## v0.0.1 environment promotion and updates
+
+`v0.0.1` is the first supported beta and resolves to
+`420d722ca38d20bd066fa817d1334976066beeaa`. Use that tag in the `bench get-app`
+command above for every environment. A local evaluation must use an isolated Bench;
+staging must use production-equivalent Frappe/ERPNext pins and a representative backup;
+production must promote the same tag, Release Inventory and MO digest that passed staging.
+Never rebuild the PO/MO, regenerate the Release Inventory, or promote a moving branch
+between environments.
+
+This first release has no supported in-place predecessor. For a later version, do not
+use an unpinned `bench update` or replace the bench-wide MO by hand. Before mutation,
+fetch the new tag, verify its documented commit, check that Frappe and ERPNext are at
+the release's exact pins, and run `preflight-lithuanian-install` for every site sharing
+the MO. Take and independently verify normal site backups, quiesce all affected sites,
+then follow the new release's guarded update procedure. If that release does not
+document a coordinated shared-MO transition, the update is unsupported and must stop
+before mutation. Finish only after PO/MO digest verification,
+`frappe_lt.verify.run`, `clear-cache`, and a fresh-session runtime check pass on every
+site.
+
+## Profile restore and uninstall
+
+Uninstall is blocked while the Lithuanian profile is applied. The reversible path is:
+
+```bash
+bench --site SITE show-lithuanian-profile-status
+bench --site SITE restore-lithuanian-profile
+bench --site SITE show-lithuanian-profile-status
+bench --site SITE uninstall-app frappe_lt
+```
+
+Restore is guarded by the captured profile state and refuses conflicting changes.
+Resolve a refusal from trusted site evidence or restore a verified site backup; do not
+force profile values. If operators intentionally retain the Lithuanian profile values,
+the only alternative is the explicit irreversible path:
+
+```bash
+bench --site SITE leave-lithuanian-profile --confirm-leave-profile
+bench --site SITE uninstall-app frappe_lt
+```
+
+Neither path recreates legacy database Translation rows deleted during migration.
+Recovering those rows requires the independently verified pre-install site backup.
+
+## Corrections
+
+Translation corrections must be reviewed, pass the Catalog Quality Gate and runtime
+validation, and ship in a new semantic version. A production-only `Translation`
+override may be used for diagnosis or an explicitly governed temporary exception, but
+must not become the permanent correction path or replace a versioned release.
 
 ## Two sites, one MO
 
