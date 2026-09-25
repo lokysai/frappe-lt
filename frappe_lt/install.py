@@ -212,25 +212,42 @@ def _saved(frappe):
 
 
 def _valid_saved(data, site):
-	"""The same complete prepared-input schema applies to every shared-MO site."""
+	"""Accept legacy state off the release site and bound state everywhere."""
+	base_fields = {
+		"schema_version",
+		"site",
+		"release_digest",
+		"inventory_digest",
+		"mo_sha256",
+		"versions",
+		"package",
+		"package_sha256",
+		"exceptions",
+		"policy_sha256",
+		"run_id",
+	}
+	if not isinstance(data, dict) or data.get("schema_version") not in {1, 2}:
+		return False
+	fields = base_fields | ({"release_candidate"} if data["schema_version"] == 2 else set())
+	if set(data) != fields or (site == "development.localhost" and data["schema_version"] != 2):
+		return False
+	if data.get("schema_version", 1) == 2:
+		binding = data["release_candidate"]
+		if (
+			not isinstance(binding, dict)
+			or set(binding) != {"candidate", "capture_sha256", "schema_version"}
+			or binding["schema_version"] != 1
+			or not isinstance(binding["candidate"], dict)
+			or set(binding["candidate"]) != {"clean", "commit"}
+			or binding["candidate"].get("clean") is not True
+			or not isinstance(binding["candidate"].get("commit"), str)
+			or re.fullmatch(r"[0-9a-f]{40}", binding["candidate"]["commit"]) is None
+			or not isinstance(binding["capture_sha256"], str)
+			or SHA256.fullmatch(binding["capture_sha256"]) is None
+		):
+			return False
 	return not (
-		not isinstance(data, dict)
-		or set(data)
-		!= {
-			"schema_version",
-			"site",
-			"release_digest",
-			"inventory_digest",
-			"mo_sha256",
-			"versions",
-			"package",
-			"package_sha256",
-			"exceptions",
-			"policy_sha256",
-			"run_id",
-		}
-		or data["schema_version"] != 1
-		or data["site"] != site
+		data["site"] != site
 		or not all(
 			isinstance(data.get(key), str) and SHA256.fullmatch(data[key])
 			for key in ("release_digest", "inventory_digest", "mo_sha256", "package_sha256", "policy_sha256")
@@ -272,6 +289,37 @@ def _digest(path):
 	if path.is_symlink() or not path.is_file() or path.stat().st_size > 16 * 1024 * 1024:
 		_fail("INPUT_CHANGED")
 	return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _release_candidate_binding(frappe):
+	"""Authenticate the fixed pre-install capture without following its path components."""
+	from frappe_lt.inventory import canonical_json, clean_candidate_identity
+	from frappe_lt.release_candidate import _candidate_root, _read_input, validate_capture
+
+	try:
+		candidate = clean_candidate_identity(Path(__file__).parent.parent)
+		root = Path(
+			frappe.get_site_path("private", "frappe_lt_release_candidate", candidate["commit"])
+		).absolute()
+		_candidate_root(frappe, root, candidate["commit"])
+		descriptor = os.open(
+			root,
+			os.O_RDONLY | os.O_DIRECTORY | getattr(os, "O_NOFOLLOW", 0),
+		)
+		try:
+			value, content = _read_input(descriptor, "candidate.json")
+		finally:
+			os.close(descriptor)
+		capture = validate_capture(value)
+		if capture["candidate"] != candidate or content != canonical_json(capture):
+			raise ValueError("candidate capture does not match the clean commit")
+	except (OSError, ValueError):
+		_fail("RELEASE_CANDIDATE_INVALID")
+	return {
+		"candidate": candidate,
+		"capture_sha256": hashlib.sha256(content).hexdigest(),
+		"schema_version": 1,
+	}
 
 
 def _maintenance(frappe):
@@ -343,6 +391,7 @@ def prepare(package, exceptions=None):
 			):
 				_fail("EXISTING_PLAN_USE_RESUME")
 			return {"site": previous["site"], "state": "prepared", "run_id": previous["run_id"]}
+		binding = _release_candidate_binding(frappe) if _site(frappe) == "development.localhost" else None
 		ready = preflight(package, exceptions)
 		# #13 authenticates CSV and policy before publishing its private report.
 		planned = legacy_migration.preflight(
@@ -351,7 +400,7 @@ def prepare(package, exceptions=None):
 		if planned["exit_code"] or planned["state"] != "planned":
 			_fail("LEGACY_PREFLIGHT_BLOCKED")
 		data = {
-			"schema_version": 1,
+			"schema_version": 2 if binding is not None else 1,
 			"site": ready["site"],
 			"release_digest": ready["release_digest"],
 			"inventory_digest": ready["inventory_digest"],
@@ -363,6 +412,8 @@ def prepare(package, exceptions=None):
 			"policy_sha256": _digest(exceptions) if exceptions else hashlib.sha256(b"").hexdigest(),
 			"run_id": planned["run_id"],
 		}
+		if binding is not None:
+			data["release_candidate"] = binding
 		from frappe_lt.legacy_migration import _publish
 
 		_maintenance(frappe)
@@ -373,6 +424,11 @@ def prepare(package, exceptions=None):
 def _checked(frappe):
 	data = _saved(frappe)
 	_assert_maintenance(frappe)
+	if data.get("schema_version", 1) == 2:
+		if _release_candidate_binding(frappe) != data["release_candidate"]:
+			_fail("RELEASE_CANDIDATE_CHANGED")
+	elif _site(frappe) == "development.localhost":
+		_fail("RELEASE_CANDIDATE_BINDING_REQUIRED")
 	if (
 		_digest(data["package"]) != data["package_sha256"]
 		or (_digest(data["exceptions"]) if data["exceptions"] else hashlib.sha256(b"").hexdigest())
@@ -578,7 +634,15 @@ def _migration_state(frappe, data):
 	elif not marker and not plan["classification"]["delete"]:
 		final = legacy_migration._read_private(root / (run_id + ".final.json"))
 		if (
-			final == {"run_id": run_id, "site": site, "state": "committed", "deleted": 0}
+			final
+			== {
+				"deleted": 0,
+				"package_sha256": plan["package_sha256"],
+				"postcommit_drift": False,
+				"run_id": run_id,
+				"site": site,
+				"state": "committed",
+			}
 			and legacy_migration._snapshot() == plan["rows"]
 		):
 			return "no_op"

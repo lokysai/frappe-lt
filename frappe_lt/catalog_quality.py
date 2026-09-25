@@ -517,6 +517,27 @@ def registered_candidates(compatibility_path: Path | None = None) -> list[str]:
 	return sorted(record["name"] for record in artifacts["catalog_segments.json"]["candidates"])
 
 
+def approved_translation_exceptions(
+	compatibility_path: Path | None = None,
+) -> frozenset[tuple[str, str | None]]:
+	"""Return exact keys whose source digests passed the authenticated quality boundary."""
+	compatibility_path = compatibility_path or Path(__file__).with_name("compatibility.json")
+	_inventory, _candidate, _segment, artifacts = _load_trusted(None, compatibility_path)
+	return frozenset(
+		_key_tuple(entry["key"]) for entry in artifacts["translation_exceptions.json"]["entries"]
+	)
+
+
+def release_quality_summary(compatibility_path: Path | None = None) -> dict:
+	"""Return release totals through the authenticated candidate and review validators."""
+	compatibility_path = compatibility_path or Path(__file__).with_name("compatibility.json")
+	inventory, candidates, _manifests, _artifacts = _load_trusted(
+		None, compatibility_path, all_candidates=True
+	)
+	entries = [entry for name in sorted(candidates) for entry in candidates[name]["entries"]]
+	return evidence_summary(entries, _validate_inventory(inventory))
+
+
 def _validate_quality_records(artifacts: dict[str, dict], inventory: dict) -> None:
 	exceptions = artifacts["translation_exceptions.json"].get("entries")
 	resolutions = artifacts["collision_resolutions.json"].get("entries")

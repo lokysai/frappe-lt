@@ -1,6 +1,6 @@
 # Full-catalog release and installation (#15)
 
-This is the operator sequence for the Frappe v16 Lithuanian Translation Catalog. Run commands from the **bench root**, replace `SITE` and `OTHER_SITE` with real site names, and pin `frappe_lt` to a reviewed release commit/tag rather than a moving branch. `docs/smoke-report.md` records the earlier one-`Item` smoke; the current `frappe_lt.verify.run` checks the full pinned catalog without compiling it.
+This is the operator sequence for the Frappe v16 Lithuanian Translation Catalog. Run commands from the **bench root** in Bash initialized with `set -euo pipefail`, replace `SITE` and `OTHER_SITE` with real site names, and pin `frappe_lt` to a reviewed release commit/tag rather than a moving branch. Stop after any nonzero command or failed assertion. `docs/smoke-report.md` records the earlier one-`Item` smoke; the current `frappe_lt.verify.run` checks the full pinned catalog without compiling it.
 
 ## Release pin and catalog build
 
@@ -76,6 +76,58 @@ Prerequisites: ERPNext is already installed on `SITE`; all sites sharing this be
    bench --site SITE set-config maintenance_mode 0 --parse
    ```
 
+## v0.0.1 environment promotion and updates
+
+`v0.0.1` is the first supported beta and resolves to
+`420d722ca38d20bd066fa817d1334976066beeaa`. Use that tag in the `bench get-app`
+command above for every environment. A local evaluation must use an isolated Bench;
+staging must use production-equivalent Frappe/ERPNext pins and a representative backup;
+production must promote the same tag, Release Inventory and MO digest that passed staging.
+Never rebuild the PO/MO, regenerate the Release Inventory, or promote a moving branch
+between environments.
+
+This first release has no supported in-place predecessor. For a later version, do not
+use an unpinned `bench update` or replace the bench-wide MO by hand. Before mutation,
+fetch the new tag, verify its documented commit, check that Frappe and ERPNext are at
+the release's exact pins, and run `preflight-lithuanian-install` for every site sharing
+the MO. Take and independently verify normal site backups, quiesce all affected sites,
+then follow the new release's guarded update procedure. If that release does not
+document a coordinated shared-MO transition, the update is unsupported and must stop
+before mutation. Finish only after PO/MO digest verification,
+`frappe_lt.verify.run`, `clear-cache`, and a fresh-session runtime check pass on every
+site.
+
+## Profile restore and uninstall
+
+Uninstall is blocked while the Lithuanian profile is applied. The reversible path is:
+
+```bash
+bench --site SITE show-lithuanian-profile-status
+bench --site SITE restore-lithuanian-profile
+bench --site SITE show-lithuanian-profile-status
+bench --site SITE uninstall-app frappe_lt
+```
+
+Restore is guarded by the captured profile state and refuses conflicting changes.
+Resolve a refusal from trusted site evidence or restore a verified site backup; do not
+force profile values. If operators intentionally retain the Lithuanian profile values,
+the only alternative is the explicit irreversible path:
+
+```bash
+bench --site SITE leave-lithuanian-profile --confirm-leave-profile
+bench --site SITE uninstall-app frappe_lt
+```
+
+Neither path recreates legacy database Translation rows deleted during migration.
+Recovering those rows requires the independently verified pre-install site backup.
+
+## Corrections
+
+Translation corrections must be reviewed, pass the Catalog Quality Gate and runtime
+validation, and ship in a new semantic version. A production-only `Translation`
+override may be used for diagnosis or an explicitly governed temporary exception, but
+must not become the permanent correction path or replace a versioned release.
+
 ## Two sites, one MO
 
 For `SITE` and `OTHER_SITE` on one bench, preflight both separately: their site overrides and migration plans can differ. Prepare both and remove both from traffic before the first install. The desired release manifest and digest must agree for every site. If the shared MO already has the pinned digest, install/verify the first site, then install/verify the second. If absent, the first install publishes it only after its own #13 migration completes and both sites' saved pins and maintenance state match. If it differs, stop and coordinate a compatible bench-wide release (or isolate the sites in separate benches); a site-specific `--force` compile is not safe. Final cache clear and verify are site-specific; return traffic for each only after it individually passes.
@@ -94,6 +146,6 @@ For `SITE` and `OTHER_SITE` on one bench, preflight both separately: their site 
 
 The CLI emits statuses and error codes without private Translation values. Keep migration reports under the site's private directory; do not paste private plans, CSV rows, or site exception contents into public logs. A policy change after migration recovery requires a new safe plan before deployment. Removing the app does **not** restore migrated database Translation rows.
 
-## Current checkout blockers
+## Private deployment input and verified release evidence
 
-As inspected on 2026-09-23, Compatibility contains the one-`Item` smoke MO digest (`056750…`), while the full-catalog manifest expects `e83b10…`. The release gate and active-catalog checks use the independently pinned full release MO. The original private CSV is **not in this repository** (the locally available original has the pinned #13 SHA-256). CI accepts either the `FRAPPE_LT_ORIGINAL_CSV_URL` Actions secret with a private HTTPS download URL, or five encrypted `FRAPPE_LT_ORIGINAL_CSV_PART_1` through `_5` secrets containing consecutive chunks of the gzip-compressed, base64-encoded original file. CI combines the chunks in order, decompresses to a temporary private path, authenticates the SHA-256 against `frappe_lt.legacy_migration.PACKAGE_SHA256`, and removes the temporary file after verification. Never log or commit the chunks. Missing/incomplete secrets or wrong bytes block preflight/prepare. [The pinned-Bench Actions run](https://github.com/lokysai/frappe-lt/actions/runs/35958794756) passed, including two-site MO verification; its [measurement evidence](evidence/issue-15-35958794756.md) confirms warm-load latency below 50 ms. MO plus the named metadata still exceeds 5 MiB, so the packaging optimization and remeasurement remain open.
+Compatibility contains the one-`Item` smoke MO digest (`056750…`), while the full-catalog manifest expects `e83b10…`. The release gate and active-catalog checks use the independently pinned full release MO. The original private CSV is **not in this repository** (the locally available original has the pinned #13 SHA-256). CI accepts either the `FRAPPE_LT_ORIGINAL_CSV_URL` Actions secret with a private HTTPS download URL, or five encrypted `FRAPPE_LT_ORIGINAL_CSV_PART_1` through `_5` secrets containing consecutive chunks of the gzip-compressed, base64-encoded original file. CI combines the chunks in order, decompresses to a temporary private path, authenticates the SHA-256 against `frappe_lt.legacy_migration.PACKAGE_SHA256`, and removes the temporary file after verification. Never log or commit the chunks. Missing/incomplete secrets or wrong bytes block preflight/prepare. [The successful pinned-Bench run](https://github.com/lokysai/frappe-lt/actions/runs/35973885985) verifies two-site MO reuse and third-site fault recovery through preflight, SQL commit, report/cache, MO, profile and final verification, including a parallel resume attempt. Its [per-sample and per-file evidence](evidence/issue-15-35973885985.md) records a paired warm p95 of 2.126167 ms and 34,828,002 shipped bytes. The original 5 MiB metadata target was missed; the reviewed [size decision](release-measurements.md) caps **all named metadata + MO + PO at 35 MiB**, enforced by CI.

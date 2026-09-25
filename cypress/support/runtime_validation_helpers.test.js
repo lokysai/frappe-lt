@@ -6,7 +6,6 @@ const {
 	exactOutputExclusion,
 	finalizeScenarioResult,
 	isBlockingFallback,
-	isBlockingInventoryLookup,
 	isClippedByAncestor,
 	isDisabledControl,
 	isUnusableControl,
@@ -269,19 +268,6 @@ test("rendered missing translations block even when their target is ambiguous", 
 	assert.equal(isBlockingFallback({ ...finding, active: false }), false);
 });
 
-test("rendered inactive lookups fail closed as inventory gaps", () => {
-	const finding = {
-		active: false,
-		excluded: false,
-		render_status: "ambiguous",
-		visible: true,
-	};
-	assert.equal(isBlockingInventoryLookup(finding), true);
-	assert.equal(isBlockingInventoryLookup({ ...finding, active: true }), false);
-	assert.equal(isBlockingInventoryLookup({ ...finding, excluded: true }), false);
-	assert.equal(isBlockingInventoryLookup({ ...finding, render_status: "unrendered", visible: false }), false);
-});
-
 test("scenario outcome contract blocks missing readiness and elapsed scenario timeout", () => {
 	const scenario = { scenario_timeout_ms: 100 };
 	const base = {
@@ -293,6 +279,20 @@ test("scenario outcome contract blocks missing readiness and elapsed scenario ti
 		ready: true,
 		status: "pass",
 	};
+	const withInactiveDiagnostic = finalizeScenarioResult(
+		scenario,
+		{
+			...base,
+			attempts: base.attempts.map((item) => ({ ...item })),
+			fallbacks: [
+				...base.fallbacks,
+				{ active: false, excluded: false, render_status: "ambiguous", visible: true },
+			],
+		},
+		20
+	);
+	assert.equal(withInactiveDiagnostic.status, "pass");
+
 	const unavailable = finalizeScenarioResult(scenario, { ...base, attempts: base.attempts.map((item) => ({ ...item })), ready: false }, 20);
 	assert.equal(unavailable.status, "blocked");
 	assert.match(unavailable.blocked_reason, /readiness/);

@@ -1,4 +1,6 @@
+import io
 import sys
+from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import ModuleType, SimpleNamespace
@@ -8,7 +10,6 @@ from unittest.mock import patch
 import frappe_lt
 from frappe_lt.verify import (
 	_assert_catalog_precedence,
-	_environment,
 	check_database_override,
 	run,
 	validate_app_order,
@@ -17,34 +18,6 @@ from frappe_lt.verify import (
 
 
 class CatalogTest(TestCase):
-	def test_verifier_environment_reuses_matching_target_inventory_preflight_for_new_v16_patch(self):
-		from frappe_lt import install
-
-		frappe = SimpleNamespace(
-			local=SimpleNamespace(site="test.site"), get_app_source_path=lambda app: f"/apps/{app}"
-		)
-		compatibility = {"upstream": {"frappe": {}, "erpnext": {}}}
-		with (
-			patch.object(
-				install, "_saved", return_value={"package": "/private/original.csv", "exceptions": None}
-			),
-			patch.object(
-				install,
-				"_preflight",
-				return_value={
-					"site": "test.site",
-					"versions": {"frappe": "16.36.0", "erpnext": "16.37.0"},
-					"warnings": ["UNKNOWN_V16_PATCH_EXACT_INVENTORY_MATCH"],
-				},
-			) as preflight,
-			patch("frappe_lt.verify.load_compatibility", return_value=compatibility),
-			patch("frappe_lt.inventory.validate_tool_versions", return_value={"babel": "2.16.0"}),
-			patch("frappe_lt.verify._git_value", return_value="a" * 40),
-		):
-			result = _environment(frappe)
-		self.assertEqual(result["warnings"], ["UNKNOWN_V16_PATCH_EXACT_INVENTORY_MATCH"])
-		preflight.assert_called_once_with("/private/original.csv", None, classify_site=False)
-
 	def test_runtime_verifier_uses_shared_po_parse_boundary(self):
 		catalog = Path(__file__).parents[1] / "locale" / "lt.po"
 		parsed = SimpleNamespace(
@@ -98,7 +71,6 @@ class CatalogTest(TestCase):
 						"frappe.translate": runtime_translate,
 					},
 				),
-				patch("frappe_lt.verify._environment", return_value={}),
 				patch(
 					"frappe_lt.verify.verify_release",
 					return_value={
@@ -107,7 +79,7 @@ class CatalogTest(TestCase):
 						"release_digest": "c" * 64,
 					},
 				) as release,
-				patch("frappe_lt.verify.verify_mo", return_value="a" * 64) as mo,
+				patch("frappe_lt.verify.verify_mo", return_value=("a" * 64, len(b"active MO"))) as mo,
 				patch(
 					"frappe_lt.install._checked",
 					return_value={
@@ -115,7 +87,7 @@ class CatalogTest(TestCase):
 						"inventory_digest": "b" * 64,
 						"mo_sha256": "a" * 64,
 					},
-				),
+				) as checked,
 				patch("frappe_lt.install._migration_state", return_value="committed"),
 				patch.object(
 					frappe_lt,
@@ -132,9 +104,11 @@ class CatalogTest(TestCase):
 				result = run("test.site", mode="ci")
 
 			self.assertEqual(result["release_digest"], "c" * 64)
+			self.assertEqual(result["mo_bytes"], len(b"active MO"))
+			checked.assert_called_once_with(frappe_module)
 			self.assertEqual(mo_path.read_bytes(), b"active MO")
 			release.assert_called_once()
-			mo.assert_called_once_with(mo_path)
+			mo.assert_called_once_with(mo_path, with_size=True)
 			precedence.assert_called_once_with(
 				frappe_module, ["frappe", "erpnext", "frappe_lt"], {("Item", None): "Prekė"}
 			)
@@ -146,7 +120,6 @@ class CatalogTest(TestCase):
 		frappe.get_app_path = lambda *_args: "lt.po"
 		with (
 			patch.dict(sys.modules, {"frappe": frappe, "frappe.translate": ModuleType("frappe.translate")}),
-			patch("frappe_lt.verify._environment", return_value={}),
 			patch(
 				"frappe_lt.verify.verify_release",
 				return_value={
@@ -171,6 +144,53 @@ class CatalogTest(TestCase):
 			self.assertRaisesRegex(ValueError, "legacy migration report or postcommit cache stage"),
 		):
 			run("test.site")
+
+	def test_wrong_mo_diagnostic_is_authenticated_stderr_and_stdout_stays_machine_safe(self):
+		frappe = ModuleType("frappe")
+		frappe.local = SimpleNamespace(site="test.site")
+		frappe.get_installed_apps = lambda: ["frappe", "erpnext", "frappe_lt"]
+		frappe.get_app_path = lambda *_args: "lt.po"
+		runtime_translate = ModuleType("frappe.translate")
+		environment = {
+			"babel": "2.16.0",
+			"python": "3.14.4",
+			"upstream": {
+				"erpnext": {"commit": "b" * 40, "version": "16.35.0"},
+				"frappe": {"commit": "a" * 40, "version": "16.34.0"},
+			},
+		}
+		stdout, stderr = io.StringIO(), io.StringIO()
+		with (
+			patch.dict(sys.modules, {"frappe": frappe, "frappe.translate": runtime_translate}),
+			patch(
+				"frappe_lt.verify.verify_release",
+				return_value={
+					"inventory_digest": "b" * 64,
+					"mo_sha256": "a" * 64,
+					"release_digest": "c" * 64,
+				},
+			),
+			patch(
+				"frappe_lt.install._checked",
+				return_value={
+					"inventory_digest": "b" * 64,
+					"mo_sha256": "a" * 64,
+					"release_digest": "c" * 64,
+				},
+			),
+			patch("frappe_lt.install._migration_state", return_value="committed"),
+			patch.object(
+				frappe_lt, "profile", SimpleNamespace(status=lambda: {"state_after": "APPLIED"}), create=True
+			),
+			patch("frappe_lt.inventory.verify_environment", return_value=environment),
+			redirect_stdout(stdout),
+			redirect_stderr(stderr),
+			self.assertRaisesRegex(ValueError, "requested MO digest differs"),
+		):
+			run("test.site", mode="ci", expected_digest="0" * 64)
+		self.assertEqual(stdout.getvalue(), "")
+		for expected in ("Verified pinned environment:", "16.34.0", "16.35.0", "3.14.4", "2.16.0"):
+			self.assertIn(expected, stderr.getvalue())
 
 	def test_catalog_rejects_non_native_entry_shapes(self):
 		catalog = Path(__file__).parents[1] / "locale" / "lt.po"

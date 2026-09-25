@@ -1,13 +1,10 @@
-import platform
+import sys
 from pathlib import Path
 
-from frappe_lt.inventory import _git_value, load_compatibility
 from frappe_lt.po import parse_po
 from frappe_lt.release_catalog import verify_mo, verify_release
 
 EXPECTED_APP_ORDER = ["frappe", "erpnext", "frappe_lt"]
-COMPATIBILITY = load_compatibility()
-SOURCE_DATE_EPOCH = str(COMPATIBILITY["source_date_epoch"])
 
 
 def check_database_override(rows: list[dict], mode: str) -> str | None:
@@ -39,29 +36,6 @@ def validate_po(path: Path) -> dict[str, str]:
 	verify_release(po_path=path)
 	catalog = parse_po(path)
 	return catalog.messages
-
-
-def _environment(frappe) -> dict[str, str]:
-	from frappe_lt import install
-	from frappe_lt.inventory import validate_tool_versions
-
-	# Share the same real target-inventory and v16 compatibility check as the
-	# bench and install-hook preflights, including unlisted patch versions.
-	plan = install._saved(frappe)
-	ready = install._preflight(plan["package"], plan["exceptions"], classify_site=False)
-	if ready["site"] != frappe.local.site:
-		raise ValueError("verification site differs from authenticated install inputs")
-	compatibility = load_compatibility()
-	tools = validate_tool_versions(compatibility)
-	return {
-		"frappe_commit": _git_value(Path(frappe.get_app_source_path("frappe")), "rev-parse", "HEAD"),
-		"erpnext_commit": _git_value(Path(frappe.get_app_source_path("erpnext")), "rev-parse", "HEAD"),
-		"frappe_version": ready["versions"]["frappe"],
-		"erpnext_version": ready["versions"]["erpnext"],
-		"python": platform.python_version(),
-		"babel": tools["babel"],
-		"warnings": ready["warnings"],
-	}
 
 
 def _assert_catalog_precedence(frappe, installed_apps: list[str], messages: dict) -> None:
@@ -100,8 +74,6 @@ def run(site: str, mode: str = "local", expected_digest: str | None = None) -> d
 
 	if frappe.local.site != site:
 		raise ValueError(f"command site {site!r} does not match initialized site {frappe.local.site!r}")
-	environment = _environment(frappe)
-	print("Verified pinned environment:", environment)
 	installed_apps = validate_app_order(frappe.get_installed_apps(), mode)
 	po_path = Path(frappe.get_app_path("frappe_lt", "locale", "lt.po"))
 	release = verify_release(po_path=po_path)
@@ -119,12 +91,35 @@ def run(site: str, mode: str = "local", expected_digest: str | None = None) -> d
 	if profile.status()["state_after"] != "APPLIED":
 		raise ValueError("Lithuanian profile is not applied")
 	if expected_digest is not None and expected_digest != release["mo_sha256"]:
+		try:
+			from frappe_lt.inventory import verify_environment
+
+			environment = verify_environment(
+				frappe,
+				site=site,
+				require_active_catalog=True,
+				require_clean_upstream=True,
+				require_exact_apps=True,
+				required_apps=("frappe", "erpnext", "frappe_lt"),
+				require_active_directory=False,
+			)
+			pins = environment["upstream"]
+			print(
+				"Verified pinned environment: "
+				f"frappe {pins['frappe']['version']} {pins['frappe']['commit']}; "
+				f"erpnext {pins['erpnext']['version']} {pins['erpnext']['commit']}; "
+				f"Python {environment['python']}; Babel {environment['babel']}",
+				file=sys.stderr,
+			)
+		except Exception:
+			# Diagnostics are secondary; never replace the authenticated mismatch.
+			pass
 		raise ValueError("requested MO digest differs from authenticated release")
 	expected_digest = release["mo_sha256"]
 	from frappe.gettext.translate import get_mo_path
 
 	mo_path = Path(get_mo_path("frappe_lt", "lt"))
-	actual_digest = verify_mo(mo_path)
+	actual_digest, mo_bytes = verify_mo(mo_path, with_size=True)
 	_assert_catalog_precedence(frappe, installed_apps, parse_po(po_path).messages)
 
 	rows = frappe.db.sql(
@@ -134,9 +129,8 @@ def run(site: str, mode: str = "local", expected_digest: str | None = None) -> d
 		("lt", "Item"),
 		as_dict=True,
 	)
-	warning = check_database_override(rows, mode)
-	if warning:
-		print(warning)
+	if check_database_override(rows, mode):
+		print("Warning: a contextless Item database override is present", file=sys.stderr)
 
 	frappe.translate.clear_cache()
 	effective = frappe._("Item", lang="lt")
@@ -144,17 +138,11 @@ def run(site: str, mode: str = "local", expected_digest: str | None = None) -> d
 		raise ValueError(f"effective runtime translation must be 'Prekė'; found {effective!r}")
 
 	return {
-		"site": site,
-		"mode": mode,
-		"environment": environment,
-		"app_order": installed_apps,
-		"source_date_epoch": SOURCE_DATE_EPOCH,
-		"expected_digest": expected_digest,
-		"release_digest": release["release_digest"],
-		"inventory_digest": release["inventory_digest"],
-		"mo_sha256": actual_digest,
-		"mo_path": str(mo_path),
-		"database_override": rows,
-		"database_override_warning": warning,
 		"effective_translation": effective,
+		"inventory_digest": release["inventory_digest"],
+		"mo_bytes": mo_bytes,
+		"mo_sha256": actual_digest,
+		"release_digest": release["release_digest"],
+		"site": site,
+		"state": "verified",
 	}

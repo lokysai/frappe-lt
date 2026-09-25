@@ -114,6 +114,10 @@ class CIWorkflowTest(TestCase):
 				)
 			else:
 				self.assertIn("trap 'rm -rf \"$private_dir\"' EXIT", run)
+				self.assertIn("capture-lithuanian-release-candidate", run)
+				self.assertLess(
+					run.index("capture-lithuanian-release-candidate"), run.index("prepare-lithuanian-install")
+				)
 			self.assertNotIn("$GITHUB_WORKSPACE/frappe_lt/original_translations.csv", run)
 			self.assertLess(run.index("PACKAGE_SHA256"), run.index("preflight-lithuanian-install"))
 			self.assertLess(run.index("PREPARED_INPUTS_MISSING"), run.index("prepare-lithuanian-install"))
@@ -125,6 +129,7 @@ class CIWorkflowTest(TestCase):
 		for required in (
 			"frappe_lt.tests.test_install",
 			"frappe_lt.tests.test_measurements",
+			"frappe_lt.tests.test_release_candidate",
 			"frappe_lt.tests.test_release_catalog",
 			"frappe_lt.tests.test_legacy_migration",
 			"frappe_lt.tests.test_catalog_partition",
@@ -168,6 +173,52 @@ class CIWorkflowTest(TestCase):
 		self.assertIn("requested MO digest differs from authenticated release", gate["run"])
 		self.assertNotIn("first build:", gate["run"])
 		self.assertNotIn("second build:", gate["run"])
+
+	def test_pinned_bench_injects_install_faults_on_a_fresh_site(self):
+		steps = self.workflow["jobs"]["verify"]["steps"]
+		second = next(step for step in steps if step["name"].startswith("Install second site"))
+		faults = next(step for step in steps if step["name"].startswith("Inject install faults"))
+		self.assertLess(steps.index(second), steps.index(faults))
+		self.assertIn("bench new-site fault_site", faults["run"])
+		self.assertIn("bench --site fault_site install-app erpnext", faults["run"])
+		self.assertIn("-m frappe_lt.tests.pinned_install_faults fault_site", faults["run"])
+		self.assertIn(
+			'test "$(sha256sum sites/assets/locale/lt/LC_MESSAGES/frappe_lt.mo)" = "$before"',
+			faults["run"],
+		)
+		self.assertIn('s["maintenance_mode"] and s["installed"]', faults["run"])
+
+	def test_existing_test_report_is_candidate_bound_and_uploaded_only_after_required_paths(self):
+		steps = self.workflow["jobs"]["verify"]["steps"]
+		unit = next(step for step in steps if step["name"] == "Run static and unit tests")
+		fault = next(step for step in steps if step["name"].startswith("Inject install faults"))
+		integration = next(step for step in steps if step["name"] == "Run site integration tests")
+		emit = next(step for step in steps if step["name"] == "Emit candidate-bound existing-test evidence")
+		upload = next(
+			step for step in steps if step["name"] == "Upload candidate-bound existing-test evidence"
+		)
+		for prerequisite in (unit, fault, integration):
+			self.assertLess(steps.index(prerequisite), steps.index(emit))
+		self.assertLess(steps.index(emit), steps.index(upload))
+		for required in (
+			'"candidate": {"clean": True, "commit": commit}',
+			'"fault": "pass"',
+			'"integration": "pass"',
+			'"subprocess": "pass"',
+			'["git", "status", "--porcelain"]',
+			'"repository": repository',
+			'"run_attempt": run_attempt',
+			'"run_id": run_id',
+			'"workflow": ".github/workflows/ci.yml"',
+			'"schema_version": 2',
+		):
+			self.assertIn(required, emit["run"])
+		self.assertEqual(
+			upload["with"]["name"],
+			"candidate-tests-${{ github.sha }}-${{ github.run_attempt }}",
+		)
+		self.assertEqual(upload["with"]["path"], "/tmp/frappe-lt-tests.json")
+		self.assertEqual(upload["with"]["if-no-files-found"], "error")
 
 	def test_finance_origin_is_exercised_by_ci_without_reverting_item_provenance(self):
 		steps = self.workflow["jobs"]["verify"]["steps"]
@@ -233,26 +284,29 @@ class CIWorkflowTest(TestCase):
 		self.assertIn("curl --fail", commands)
 		self.assertIn("google-chrome --version", commands)
 		for required in (
-			"assert runtime_exit in (0, 1)",
-			'assert report["status"] == ("pass" if runtime_exit == 0 else "fail")',
-			'assert report["schema_version"] == 5',
+			'assert report["status"] == "pass"',
+			'assert report["schema_version"] == 8',
 			'assert summary["total"] == len(expected_ids)',
+			'assert summary["pass"] == summary["total"]',
+			'assert summary["fail"] == 0',
+			'assert summary["blocked"] == 0',
+			'assert summary["coverage_gaps"] == 0',
 			'assert summary["cleanup_failures"] == 0',
+			'assert summary["english_fallbacks"] == 0',
+			'assert summary["preserved_token_failures"] == 0',
 			'assert summary["functional_layout_defects"] == 0',
 			"validate_machine_report(report, scenario_contract)",
-			'blocker_types = {cause["type"] for cause in report["blocking_causes"]}',
-			"assert bool(blocker_types) == (runtime_exit == 1)",
+			'assert report["blocking_causes"] == []',
+			'assert set(residue) == {"findings", "schema_version"}',
 		):
 			self.assertIn(required, commands)
-		gate = next(
-			step for step in steps if step["name"] == "Validate runtime report against actual findings"
-		)
+		gate = next(step for step in steps if step["name"] == "Require a passing runtime report")
 		gate_commands = [line.strip() for line in gate["run"].splitlines() if line.strip()]
-		self.assertEqual(gate_commands[0], "runtime_exit=0")
-		self.assertIn("|| runtime_exit=$?", gate_commands[1])
+		self.assertTrue(
+			gate_commands[0].startswith("bench --site development.localhost validate-lithuanian-runtime")
+		)
 		self.assertNotIn('summary["total"] == 10', commands)
 		self.assertNotIn('assert summary["english_fallbacks"] > 0', commands)
-		self.assertNotIn('assert summary["blocked"] == 0', commands)
 		self.assertIn("*.evidence.json", commands)
 		self.assertIn(".*.evidence.json.*.tmp", commands)
 		self.assertTrue(

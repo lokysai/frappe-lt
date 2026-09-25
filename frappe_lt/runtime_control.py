@@ -1141,7 +1141,7 @@ class SiteControl:
 		return [unique[key] for key in sorted(unique)]
 
 
-def assert_no_runtime_residue() -> list:
+def assert_no_runtime_residue() -> dict:
 	"""Fail CI when any run-marked record, setting, session, or secret remains."""
 	import frappe
 
@@ -1149,7 +1149,7 @@ def assert_no_runtime_residue() -> list:
 	findings = control.residue_scan(marker=RUN_MARKER_PREFIX)
 	if findings:
 		raise RuntimeError(f"runtime cleanup residue remains: {findings}")
-	return []
+	return {"findings": [], "schema_version": 1}
 
 
 def _authorized_browser_plan(frappe, run_id: str, token: str) -> dict:
@@ -1313,6 +1313,7 @@ def _resolve_effective(
 	*,
 	lookup_path: str = "server",
 	active_keys: frozenset[tuple[str, str | None]] | None = None,
+	translations: tuple[dict, dict[str, dict], dict] | None = None,
 ) -> dict:
 	from frappe.translate import get_all_translations, get_translations_from_apps, get_user_translations
 
@@ -1322,17 +1323,22 @@ def _resolve_effective(
 		raise ValueError("source must be nonempty and context must be nonempty or null")
 	lookup_source = raw_source if lookup_path == "client" else normalized_source
 	contextual_key = f"{lookup_source}:{context}" if context else None
-	merged = get_all_translations("lt")
+	if translations is None:
+		merged = get_all_translations("lt")
+		apps = {
+			app: get_translations_from_apps("lt", apps=[app]) for app in ("frappe", "erpnext", "frappe_lt")
+		}
+		database = get_user_translations("lt")
+	else:
+		merged, apps, database = translations
 	selected_key = contextual_key if contextual_key and merged.get(contextual_key) else None
 	if selected_key is None and merged.get(lookup_source):
 		selected_key = lookup_source
 	effective = merged[selected_key] if selected_key is not None else raw_source
 	origin = "merged" if selected_key is not None else "missing"
-	for app in ("frappe", "erpnext", "frappe_lt"):
-		dictionary = get_translations_from_apps("lt", apps=[app])
+	for app, dictionary in apps.items():
 		if selected_key is not None and dictionary.get(selected_key) == effective:
 			origin = app
-	database = get_user_translations("lt")
 	if selected_key is not None and database.get(selected_key) == effective:
 		origin = "database"
 	active_key = _active_translation_key(
@@ -1349,6 +1355,80 @@ def _resolve_effective(
 	}
 
 
+def _resolve_translations(
+	frappe,
+	control: SiteControl,
+	plan: dict,
+	scenario_id: str,
+	lookups: list[dict],
+	lookup_path: str,
+) -> list[dict]:
+	from frappe.translate import get_all_translations, get_translations_from_apps, get_user_translations
+
+	if (
+		not isinstance(lookups, list)
+		or not lookups
+		or len(lookups) > MAX_CAPTURE_LOOKUPS
+		or lookup_path not in {"client", "server"}
+	):
+		raise ValueError("translation lookup batch is invalid")
+	if scenario_id not in {scenario["id"] for scenario in plan["scenarios"]}:
+		raise frappe.PermissionError
+	scenario = next(scenario for scenario in plan["scenarios"] if scenario["id"] == scenario_id)
+	_authorized_scenario(frappe, plan, scenario_id, scenario["kind"])
+	for lookup in lookups:
+		if not isinstance(lookup, dict) or set(lookup) != {"context", "source"}:
+			raise ValueError("translation lookup batch item is invalid")
+		source = lookup["source"]
+		context = lookup["context"]
+		if not isinstance(source, str) or not source.strip() or len(source.encode()) > 256 * 1024:
+			raise ValueError("translation source exceeds its input limit")
+		if context is not None and (
+			not isinstance(context, str) or not context or len(context.encode()) > 4096
+		):
+			raise ValueError("translation context exceeds its input limit")
+	if len(canonical_json({"lookups": lookups, "lookup_path": lookup_path})) > MAX_CAPTURE_BYTES:
+		raise ValueError("translation lookup batch exceeds its aggregate limit")
+	translations = (
+		get_all_translations("lt"),
+		{app: get_translations_from_apps("lt", apps=[app]) for app in ("frappe", "erpnext", "frappe_lt")},
+		get_user_translations("lt"),
+	)
+	active_keys = _active_translation_keys()
+	evidence_key = _runtime_evidence_key(control)
+	results = []
+	for lookup in lookups:
+		result = _resolve_effective(
+			frappe,
+			lookup["source"],
+			lookup["context"],
+			lookup_path=lookup_path,
+			active_keys=active_keys,
+			translations=translations,
+		)
+		if not result["active"]:
+			result["diagnostic_id"] = _diagnostic_id(evidence_key, scenario_id)
+		results.append(result)
+	_validate_capture(results)
+	return results
+
+
+def resolve_translations(
+	run_id: str,
+	token: str,
+	scenario_id: str,
+	lookups: list[dict],
+	lookup_path: str = "server",
+) -> list[dict]:
+	"""Resolve one bounded batch against a single authenticated translation snapshot."""
+	import frappe
+
+	control = SiteControl(frappe, frappe.local.site, run_id)
+	with control.operation():
+		plan = _authorized_browser_plan(frappe, run_id, token)
+		return _resolve_translations(frappe, control, plan, scenario_id, lookups, lookup_path)
+
+
 def resolve_translation(
 	run_id: str,
 	token: str,
@@ -1363,23 +1443,14 @@ def resolve_translation(
 	control = SiteControl(frappe, frappe.local.site, run_id)
 	with control.operation():
 		plan = _authorized_browser_plan(frappe, run_id, token)
-		if not isinstance(source, str) or not source.strip() or len(source.encode()) > 256 * 1024:
-			raise ValueError("translation source exceeds its input limit")
-		if context is not None and (
-			not isinstance(context, str) or not context or len(context.encode()) > 4096
-		):
-			raise ValueError("translation context exceeds its input limit")
-		if lookup_path not in {"client", "server"}:
-			raise ValueError("translation lookup_path is invalid")
-		if scenario_id not in {scenario["id"] for scenario in plan["scenarios"]}:
-			raise frappe.PermissionError
-		scenario = next(scenario for scenario in plan["scenarios"] if scenario["id"] == scenario_id)
-		_authorized_scenario(frappe, plan, scenario_id, scenario["kind"])
-		result = _resolve_effective(frappe, source, context, lookup_path=lookup_path)
-		if not result["active"]:
-			result["diagnostic_id"] = _diagnostic_id(_runtime_evidence_key(control), scenario_id)
-		_validate_capture([result])
-		return result
+		return _resolve_translations(
+			frappe,
+			control,
+			plan,
+			scenario_id,
+			[{"context": context, "source": source}],
+			lookup_path,
+		)[0]
 
 
 def runtime_login(run_id: str, token: str, scenario_id: str) -> dict:
@@ -1786,6 +1857,7 @@ except ImportError:
 
 if _frappe is not None:
 	resolve_translation = _frappe.whitelist(methods=["POST"])(resolve_translation)
+	resolve_translations = _frappe.whitelist(methods=["POST"])(resolve_translations)
 	runtime_login = _frappe.whitelist(allow_guest=True, methods=["POST"])(runtime_login)
 	capture_portal = _frappe.whitelist(methods=["POST"])(capture_portal)
 	capture_welcome_email = _frappe.whitelist(methods=["POST"])(capture_welcome_email)

@@ -121,7 +121,7 @@ jobs:
           env/bin/python -m compileall -q apps/frappe_lt/frappe_lt
           ruff check apps/frappe_lt/frappe_lt
           ruff format --check apps/frappe_lt/frappe_lt
-          env/bin/python -m unittest frappe_lt.tests.test_verify frappe_lt.tests.test_inventory frappe_lt.tests.test_catalog_partition frappe_lt.tests.test_review_evidence frappe_lt.tests.test_v15_origin_import frappe_lt.tests.test_finance_origin_import frappe_lt.tests.test_catalog_quality frappe_lt.tests.test_frappe_catalog frappe_lt.tests.test_finance_catalog frappe_lt.tests.test_install frappe_lt.tests.test_measurements frappe_lt.tests.test_release_catalog frappe_lt.tests.test_legacy_migration frappe_lt.tests.test_runtime_validation frappe_lt.tests.test_ci_workflow
+          env/bin/python -m unittest frappe_lt.tests.test_verify frappe_lt.tests.test_inventory frappe_lt.tests.test_catalog_partition frappe_lt.tests.test_review_evidence frappe_lt.tests.test_v15_origin_import frappe_lt.tests.test_finance_origin_import frappe_lt.tests.test_catalog_quality frappe_lt.tests.test_frappe_catalog frappe_lt.tests.test_finance_catalog frappe_lt.tests.test_install frappe_lt.tests.test_measurements frappe_lt.tests.test_release_candidate frappe_lt.tests.test_release_catalog frappe_lt.tests.test_legacy_migration frappe_lt.tests.test_runtime_validation frappe_lt.tests.test_ci_workflow
           node --test apps/frappe_lt/cypress/support/*.test.js
           shopt -s globstar nullglob
           javascript=(apps/frappe_lt/cypress.config.js apps/frappe_lt/cypress/**/*.js)
@@ -616,7 +616,9 @@ jobs:
           assert evidence['paired_warm_p95_overhead_ms'] < 50
           print('Paired warm-load p95 overhead (ms):', evidence['paired_warm_p95_overhead_ms'])
           print('MO + shipped metadata (bytes):', evidence['artifacts']['mo_and_metadata_bytes'])
+          print('Total shipped including PO (bytes):', evidence['artifacts']['shipped_bytes'])
           print('Size review required:', evidence['size_review_required'])
+          assert not evidence['size_review_required'], 'shipped release exceeds reviewed 35 MiB limit'
           PY
 
       - name: Upload raw release measurement evidence
@@ -641,6 +643,16 @@ jobs:
           bench --site baseline_site show-lithuanian-install-status | python -c 'import json,sys; s=json.load(sys.stdin); assert s["maintenance_mode"] and s["mo"] == "matched" and s["profile"] == "APPLIED"'
           test "$(sha256sum "$mo")" = "$before"
           bench --site test_site resume-lithuanian-install | python -c 'import json,sys; assert json.load(sys.stdin)["state"] == "verified"'
+
+      - name: Inject install faults on a fresh pinned Bench site and resume from SQL state
+        working-directory: /home/runner/frappe-bench
+        run: |
+          bench new-site fault_site --db-host 127.0.0.1 --db-root-username root --db-root-password root --admin-password admin --mariadb-user-host-login-scope='%'
+          bench --site fault_site install-app erpnext
+          before="$(sha256sum sites/assets/locale/lt/LC_MESSAGES/frappe_lt.mo)"
+          (cd sites && ../env/bin/python -m frappe_lt.tests.pinned_install_faults fault_site "$FRAPPE_LT_PACKAGE_DIR/lt-v16-translations.csv")
+          test "$(sha256sum sites/assets/locale/lt/LC_MESSAGES/frappe_lt.mo)" = "$before"
+          bench --site fault_site show-lithuanian-install-status | python -c 'import json,sys; s=json.load(sys.stdin); assert s["maintenance_mode"] and s["installed"] and s["migration"] == "committed" and s["mo"] == "matched" and s["profile"] == "APPLIED", s'
 
       - name: Prove wrong release MO digest fails with diagnostics
         working-directory: /home/runner/frappe-bench
@@ -669,6 +681,53 @@ jobs:
           bench --site test_site show-lithuanian-profile-status |
             python -c 'import json,sys; status=json.load(sys.stdin); assert status["state_after"] == "APPLIED", status'
           test "$(bench --site test_site execute frappe.db.sql --args '["select count(*) from tabUser where name like '"'"'profile-%'"'"'"]')" = "[[0]]"
+
+      - name: Emit candidate-bound existing-test evidence
+        working-directory: /home/runner/frappe-bench
+        run: |
+          env/bin/python - <<'PY'
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+
+          commit = subprocess.run(
+              ["git", "rev-parse", "HEAD"], cwd="apps/frappe_lt", check=True,
+              capture_output=True, text=True,
+          ).stdout.strip()
+          assert len(commit) == 40 and all(character in "0123456789abcdef" for character in commit)
+          assert not subprocess.run(
+              ["git", "status", "--porcelain"], cwd="apps/frappe_lt", check=True,
+              capture_output=True, text=True,
+          ).stdout
+          repository = os.environ["GITHUB_REPOSITORY"]
+          run_id = int(os.environ["GITHUB_RUN_ID"])
+          run_attempt = int(os.environ["GITHUB_RUN_ATTEMPT"])
+          assert repository == "lokysai/frappe-lt"
+          assert run_id > 0 and run_attempt > 0
+          report = {
+              "candidate": {"clean": True, "commit": commit},
+              "categories": {"fault": "pass", "integration": "pass", "subprocess": "pass"},
+              "provenance": {
+                  "repository": repository,
+                  "run_attempt": run_attempt,
+                  "run_id": run_id,
+                  "workflow": ".github/workflows/ci.yml",
+              },
+              "schema_version": 2,
+          }
+          Path("/tmp/frappe-lt-tests.json").write_text(
+              json.dumps(report, ensure_ascii=False, separators=(",", ":"), sort_keys=True) + "\n"
+          )
+          PY
+
+      - name: Upload candidate-bound existing-test evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: candidate-tests-${{ github.sha }}-${{ github.run_attempt }}
+          if-no-files-found: error
+          retention-days: 14
+          path: /tmp/frappe-lt-tests.json
 
       - name: Prove uninstall guards remain active
         working-directory: /home/runner/frappe-bench
@@ -871,6 +930,10 @@ jobs:
             curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --output "$package" "$FRAPPE_LT_ORIGINAL_CSV_URL"
           fi
           env/bin/python -c 'import hashlib,sys; from frappe_lt.legacy_migration import PACKAGE_SHA256; assert hashlib.sha256(open(sys.argv[1], "rb").read()).hexdigest() == PACKAGE_SHA256, "BLOCKED: original CSV digest mismatch"' "$package"
+          candidate_sha="$(git -C apps/frappe_lt rev-parse HEAD)"
+          candidate_root="$BENCH_PATH/sites/development.localhost/private/frappe_lt_release_candidate/$candidate_sha"
+          install -d -m 700 "$candidate_root"
+          bench --site development.localhost capture-lithuanian-release-candidate --output-dir "$candidate_root"
           bench --site development.localhost preflight-lithuanian-install --package "$package"
           bench --site development.localhost prepare-lithuanian-install --package "$package"
           bench --site development.localhost install-app frappe_lt
@@ -942,40 +1005,37 @@ jobs:
           done
           curl --fail --silent --show-error http://development.localhost:8000/api/method/ping > /dev/null
 
-      # #16 owns runtime release validation. Blocked scenarios and inventory
-      # gaps remain report facts; this job verifies the harness and publishes
-      # the failing report rather than treating it as release approval.
-      - name: Validate runtime report against actual findings
+      - name: Require a passing runtime report
         working-directory: /home/runner/frappe-bench
         run: |
-          runtime_exit=0
-          bench --site development.localhost validate-lithuanian-runtime --output-dir "$RUNTIME_ARTIFACT_DIR/run" || runtime_exit=$?
-          RUNTIME_EXIT="$runtime_exit" env/bin/python - <<'PY'
+          bench --site development.localhost validate-lithuanian-runtime --output-dir "$RUNTIME_ARTIFACT_DIR/run"
+          env/bin/python - <<'PY'
           import json
-          import os
           from pathlib import Path
 
           from frappe_lt.runtime_contracts import load_contracts
           from frappe_lt.runtime_validation import validate_machine_report
 
-          runtime_exit = int(os.environ["RUNTIME_EXIT"])
-          report = json.loads(Path(os.environ["RUNTIME_ARTIFACT_DIR"], "run", "runtime-report.json").read_text())
+          report = json.loads(Path("/tmp/frappe-lt-runtime-artifacts/run/runtime-report.json").read_text())
           scenario_contract = load_contracts()["scenarios"]
           expected_ids = [scenario["id"] for scenario in scenario_contract["scenarios"]]
           validate_machine_report(report, scenario_contract)
           summary = report["summary"]
           scenario_results = report["scenario_results"]
 
-          assert runtime_exit in (0, 1), runtime_exit
-          assert report["status"] == ("pass" if runtime_exit == 0 else "fail"), report["status"]
-          assert report["schema_version"] == 5, report["schema_version"]
+          assert report["status"] == "pass", report["status"]
+          assert report["schema_version"] == 8, report["schema_version"]
           assert summary["total"] == len(expected_ids), summary
           assert [result["id"] for result in scenario_results] == expected_ids, scenario_results
-          assert summary["pass"] + summary["fail"] + summary["blocked"] == summary["total"], summary
+          assert summary["pass"] == summary["total"], summary
+          assert summary["fail"] == 0, summary
+          assert summary["blocked"] == 0, summary
+          assert summary["coverage_gaps"] == 0, summary
           assert summary["cleanup_failures"] == 0, summary
+          assert summary["english_fallbacks"] == 0, summary
+          assert summary["preserved_token_failures"] == 0, summary
           assert summary["functional_layout_defects"] == 0, summary
-          blocker_types = {cause["type"] for cause in report["blocking_causes"]}
-          assert bool(blocker_types) == (runtime_exit == 1), report["blocking_causes"]
+          assert report["blocking_causes"] == [], report["blocking_causes"]
           PY
 
       - name: Stop runtime web process
@@ -1014,11 +1074,15 @@ jobs:
           ! compgen -G 'sites/development.localhost/private/frappe_lt_runtime/.*.browser.json.*.tmp' > /dev/null
           ! compgen -G 'sites/development.localhost/private/frappe_lt_runtime/.*.evidence.json.*.tmp' > /dev/null
           test ! -e "$RUNTIME_ARTIFACT_DIR/run/browser-results.json"
-          bench --site development.localhost execute frappe_lt.runtime_control.assert_no_runtime_residue
+          bench --site development.localhost execute frappe_lt.runtime_control.assert_no_runtime_residue > /tmp/frappe-lt-runtime-residue.json
           python - <<'PY'
           import json
           from pathlib import Path
 
+          residue = json.loads(Path("/tmp/frappe-lt-runtime-residue.json").read_text())
+          assert set(residue) == {"findings", "schema_version"}
+          assert residue["findings"] == []
+          assert type(residue["schema_version"]) is int and residue["schema_version"] == 1
           backup_root = Path("sites/development.localhost/private/backups")
           before = json.loads(Path("/tmp/frappe-lt-runtime-backups-before.json").read_text())
           after = sorted(path.relative_to(backup_root).as_posix() for path in backup_root.rglob("*") if path.is_file()) if backup_root.is_dir() else []

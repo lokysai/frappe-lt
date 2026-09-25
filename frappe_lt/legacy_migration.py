@@ -581,7 +581,14 @@ def apply(site, package_path, run_id, exception_path=None, *, allow_exact_invent
 				try:
 					_publish(
 						root / (run_id + ".final.json"),
-						{"run_id": run_id, "site": site, "state": "committed", "deleted": 0},
+						{
+							"deleted": 0,
+							"package_sha256": plan["package_sha256"],
+							"postcommit_drift": False,
+							"run_id": run_id,
+							"site": site,
+							"state": "committed",
+						},
 						replace=True,
 					)
 				except Exception:

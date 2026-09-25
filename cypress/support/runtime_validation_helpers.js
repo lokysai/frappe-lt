@@ -156,10 +156,6 @@ function isBlockingFallback(finding) {
 	);
 }
 
-function isBlockingInventoryLookup(finding) {
-	return !finding.active && finding.render_status !== "unrendered" && finding.visible && !finding.excluded;
-}
-
 function finalizeScenarioResult(scenario, result, durationMs) {
 	result.duration_ms = durationMs;
 	if (!result.ready && result.status === "pass") {
@@ -172,9 +168,8 @@ function finalizeScenarioResult(scenario, result, durationMs) {
 	}
 	if (result.status === "pass") {
 		const blockingFallback = result.fallbacks.some(isBlockingFallback);
-		const blockingInventoryLookup = result.fallbacks.some(isBlockingInventoryLookup);
 		const blockingLayout = result.layouts.some((finding) => finding.severity === "functional");
-		if (blockingFallback || blockingInventoryLookup || blockingLayout) {
+		if (blockingFallback || blockingLayout) {
 			result.status = "fail";
 			result.error = "scenario produced blocking runtime findings";
 		}
@@ -195,7 +190,6 @@ module.exports = {
 	exactOutputExclusion,
 	finalizeScenarioResult,
 	isBlockingFallback,
-	isBlockingInventoryLookup,
 	isClippedByAncestor,
 	isDisabledControl,
 	isUnusableControl,

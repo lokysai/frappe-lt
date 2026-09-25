@@ -6,14 +6,29 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from urllib.parse import quote
 
-from frappe_lt.inventory import canonical_json, verify_environment
+from frappe_lt.inventory import canonical_json, clean_candidate_identity, verify_environment
 from frappe_lt.runtime_contracts import load_contracts
 from frappe_lt.runtime_extraction import EXPECTED_RUNTIME_APPS, collect_standard_metadata
 
-CANDIDATE_SNAPSHOT_SCHEMA_VERSION = 1
+CANDIDATE_SNAPSHOT_SCHEMA_VERSION = 3
 MAX_CANDIDATE_SNAPSHOT_BYTES = 16 * 1024 * 1024
 SHA256 = re.compile(r"[0-9a-f]{64}")
 COMMIT = re.compile(r"[0-9a-f]{40}")
+
+
+def runtime_site_state_digest() -> str:
+	"""Hash runtime-relevant mutable state without publishing private row values."""
+	from frappe_lt import install, profile
+	from frappe_lt.legacy_migration import _snapshot
+
+	install_state = install.status()
+	install_state.pop("maintenance_mode", None)
+	state = {
+		"install": install_state,
+		"profile": profile.status(),
+		"translations": _snapshot(),
+	}
+	return hashlib.sha256(canonical_json(state)).hexdigest()
 
 
 @dataclass(frozen=True)
@@ -206,13 +221,30 @@ def validate_candidate_snapshot(value: object) -> dict:
 	"""Validate the complete, versioned candidate-export boundary."""
 	value = _exact(
 		value,
-		{"coverage", "discovery", "environment", "schema_version", "site"},
+		{
+			"candidate",
+			"coverage",
+			"discovery",
+			"environment",
+			"schema_version",
+			"site",
+			"site_state_sha256",
+		},
 		"candidate snapshot",
 	)
 	if value["schema_version"] != CANDIDATE_SNAPSHOT_SCHEMA_VERSION:
 		raise ValueError("unsupported candidate snapshot schema")
 	if value["site"] != "development.localhost":
 		raise ValueError("candidate snapshot site must be development.localhost")
+	if not isinstance(value["site_state_sha256"], str) or not SHA256.fullmatch(value["site_state_sha256"]):
+		raise ValueError("candidate snapshot site-state digest is invalid")
+	candidate = _exact(value["candidate"], {"clean", "commit"}, "candidate snapshot candidate")
+	if (
+		candidate["clean"] is not True
+		or not isinstance(candidate["commit"], str)
+		or not COMMIT.fullmatch(candidate["commit"])
+	):
+		raise ValueError("candidate snapshot candidate identity is invalid")
 
 	environment = _exact(
 		value["environment"],
@@ -311,6 +343,7 @@ def export_candidate_snapshot(
 	coverage_result = coverage(discovery_result, contracts["scenarios"], contracts["classifications"])
 	snapshot = validate_candidate_snapshot(
 		{
+			"candidate": clean_candidate_identity(),
 			"coverage": coverage_result,
 			"discovery": discovery_result,
 			"environment": {
@@ -325,6 +358,7 @@ def export_candidate_snapshot(
 			},
 			"schema_version": CANDIDATE_SNAPSHOT_SCHEMA_VERSION,
 			"site": site,
+			"site_state_sha256": runtime_site_state_digest(),
 		}
 	)
 	content = canonical_json(snapshot)
