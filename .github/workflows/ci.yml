@@ -14,23 +14,15 @@ permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.repository }}
-  cancel-in-progress: false
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  select-runner:
-    uses: lokysai/CI/.github/workflows/select-runner.yml@main
-    with:
-      primary: ${{ vars.CI_RUNNER || '["self-hosted","linux","lokys-shop"]' }}
-      fallback: ubuntu-24.04
-    secrets:
-      runner-token: ${{ secrets.CI_RUNNER_READ_TOKEN }}
-
   verify:
-    needs: select-runner
-    runs-on: ${{ fromJSON(needs.select-runner.outputs.runner) }}
+    runs-on: ubuntu-24.04
     timeout-minutes: 90
     env:
+      BENCH_PATH: /home/runner/frappe-bench
       CI: "Yes"
     services:
       mariadb:
@@ -40,7 +32,6 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --memory=512m
           --health-cmd="mariadb-admin ping -proot"
           --health-interval=5s
           --health-timeout=3s
@@ -50,20 +41,12 @@ jobs:
         ports:
           - 6379:6379
         options: >-
-          --memory=128m
           --health-cmd="redis-cli ping"
           --health-interval=5s
           --health-timeout=3s
           --health-retries=20
 
     steps:
-      - name: Initialize isolated job directory
-        env:
-          JOB_TEMP: ${{ runner.temp }}/frappe-lt-${{ github.run_id }}-${{ github.run_attempt }}-verify
-        run: |
-          mkdir -p "$JOB_TEMP"
-          printf 'JOB_TEMP=%s\nTMPDIR=%s\nBENCH_PATH=%s\n' "$JOB_TEMP" "$JOB_TEMP" "$JOB_TEMP/frappe-bench" >> "$GITHUB_ENV"
-
       - name: Check out frappe_lt
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
@@ -92,29 +75,21 @@ jobs:
           package-manager-cache: false
 
       - name: Install bench prerequisites
-        if: runner.environment == 'github-hosted'
         run: |
           sudo apt-get update
-          sudo apt-get install --yes mariadb-client libmariadb-dev pkg-config build-essential
-
-      - name: Install bench tools
-        run: |
-          python -m venv "$JOB_TEMP/tools-venv"
-          printf '%s\n' "$JOB_TEMP/tools-venv/bin" >> "$GITHUB_PATH"
-          npm install --prefix "$JOB_TEMP/tools" --no-package-lock --no-save "yarn@1.22.22"
-          printf '%s\n' "$JOB_TEMP/tools/node_modules/.bin" >> "$GITHUB_PATH"
-          "$JOB_TEMP/tools-venv/bin/python" -m pip install --disable-pip-version-check "frappe-bench==5.31.0" "ruff==0.13.0"
+          sudo apt-get install --yes mariadb-client libmariadb-dev pkg-config
+          python -m pip install --disable-pip-version-check "frappe-bench==5.31.0" "ruff==0.13.0"
 
       - name: Fetch pinned Frappe
         run: |
-          git init "$JOB_TEMP/frappe"
-          git -C "$JOB_TEMP/frappe" remote add origin https://github.com/frappe/frappe.git
-          git -C "$JOB_TEMP/frappe" fetch --depth 1 origin "$FRAPPE_COMMIT"
-          git -C "$JOB_TEMP/frappe" checkout --detach FETCH_HEAD
-          bench init --skip-assets --skip-redis-config-generation --python "$(which python)" --frappe-path "$JOB_TEMP/frappe" "$BENCH_PATH"
+          git init /home/runner/frappe
+          git -C /home/runner/frappe remote add origin https://github.com/frappe/frappe.git
+          git -C /home/runner/frappe fetch --depth 1 origin "$FRAPPE_COMMIT"
+          git -C /home/runner/frappe checkout --detach FETCH_HEAD
+          bench init --skip-assets --skip-redis-config-generation --python "$(which python)" --frappe-path /home/runner/frappe "$BENCH_PATH"
 
       - name: Configure bench services
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           bench set-config -g db_host 127.0.0.1
           bench set-config -g redis_cache redis://127.0.0.1:6379/0
@@ -123,25 +98,25 @@ jobs:
 
       - name: Fetch pinned ERPNext before frappe_lt
         run: |
-          git init "$JOB_TEMP/erpnext"
-          git -C "$JOB_TEMP/erpnext" remote add origin https://github.com/frappe/erpnext.git
-          git -C "$JOB_TEMP/erpnext" fetch --depth 1 origin "$ERPNEXT_COMMIT"
-          git -C "$JOB_TEMP/erpnext" checkout --detach FETCH_HEAD
-          bench get-app --skip-assets erpnext "$JOB_TEMP/erpnext"
+          git init /home/runner/erpnext
+          git -C /home/runner/erpnext remote add origin https://github.com/frappe/erpnext.git
+          git -C /home/runner/erpnext fetch --depth 1 origin "$ERPNEXT_COMMIT"
+          git -C /home/runner/erpnext checkout --detach FETCH_HEAD
+          bench get-app --skip-assets erpnext /home/runner/erpnext
           test "$(git -C apps/erpnext status --porcelain)" = " M banking/yarn.lock"
           git -C apps/erpnext restore --source="$ERPNEXT_COMMIT" --staged --worktree -- banking/yarn.lock
           bench get-app --skip-assets frappe_lt "$GITHUB_WORKSPACE"
           bench setup requirements --dev --python
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
 
       - name: Assert upstream commits
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           test "$(git -C apps/frappe rev-parse HEAD)" = "$FRAPPE_COMMIT"
           test "$(git -C apps/erpnext rev-parse HEAD)" = "$ERPNEXT_COMMIT"
 
       - name: Run static and unit tests
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           env/bin/python -m compileall -q apps/frappe_lt/frappe_lt
           ruff check apps/frappe_lt/frappe_lt
@@ -157,7 +132,7 @@ jobs:
           done
 
       - name: Regenerate release in isolation and compare PO and MO digests
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           env/bin/python - <<'PY'
           import hashlib
@@ -191,14 +166,14 @@ jobs:
           PY
 
       - name: Create clean pinned site
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           bench new-site test_site --db-host 127.0.0.1 --db-root-username root --db-root-password root --admin-password admin --mariadb-user-host-login-scope='%'
           bench --site test_site install-app erpnext
           test "$(bench --site test_site list-apps --format json | python -c 'import json,sys; print(",".join(json.load(sys.stdin)["test_site"]))')" = "frappe,erpnext"
 
       - name: Compare predeployment target inventory with authenticated release
-        working-directory: ${{ env.BENCH_PATH }}/sites
+        working-directory: /home/runner/frappe-bench/sites
         run: |
           ../env/bin/python - <<'PY'
           import frappe
@@ -215,21 +190,21 @@ jobs:
           PY
 
       - name: Build real source and runtime inventory twice
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
-          bench --site test_site build-translation-inventory --output-dir "$JOB_TEMP/inventory-first"
-          bench --site test_site build-translation-inventory --output-dir "$JOB_TEMP/inventory-second"
+          bench --site test_site build-translation-inventory --output-dir /tmp/inventory-first
+          bench --site test_site build-translation-inventory --output-dir /tmp/inventory-second
           for artifact in compatibility.json provenance.json release_inventory.json inventory_report.json inventory_report.md catalog_partition.json catalog_segment_ownership_overrides.json catalog_segments.json collision_resolutions.json glossary_selectors.json translation_exceptions.json catalog_segments/frappe.json catalog_segments/erpnext-finance-commerce.json catalog_segments/erpnext-operations.json
           do
-            cmp "$JOB_TEMP/inventory-first/$artifact" "$JOB_TEMP/inventory-second/$artifact"
-            cmp "$JOB_TEMP/inventory-first/$artifact" "$GITHUB_WORKSPACE/frappe_lt/$artifact"
+            cmp "/tmp/inventory-first/$artifact" "/tmp/inventory-second/$artifact"
+            cmp "/tmp/inventory-first/$artifact" "$GITHUB_WORKSPACE/frappe_lt/$artifact"
           done
           python - <<'PY'
           import hashlib
           import json
           from pathlib import Path
 
-          inventory = json.loads(Path("${{ env.JOB_TEMP }}/inventory-first/release_inventory.json").read_text())
+          inventory = json.loads(Path("/tmp/inventory-first/release_inventory.json").read_text())
           assert inventory["entries"]
           assert any(entry["extraction_origin"] in {"runtime", "both"} for entry in inventory["entries"])
           expected_runtime_categories = {
@@ -299,44 +274,44 @@ jobs:
               "frappe.gettext.extractors.workspace",
               "frappe.gettext.extractors.workspace_sidebar",
           } <= extractors
-          manifest = json.loads(Path("${{ env.JOB_TEMP }}/inventory-first/compatibility.json").read_text())
-          report = json.loads(Path("${{ env.JOB_TEMP }}/inventory-first/inventory_report.json").read_text())
+          manifest = json.loads(Path("/tmp/inventory-first/compatibility.json").read_text())
+          report = json.loads(Path("/tmp/inventory-first/inventory_report.json").read_text())
           assert manifest["runtime_metadata_sha256"]["navbar"] == "cc77f1af258ebbb42d2c9cc0fe13541bae0e11426611089bc95317f6c01f2946"
           assert manifest["inventory_digest"] == report["inventory_digest"]
           for name, expected in manifest["artifact_sha256"].items():
-            assert hashlib.sha256(Path("${{ env.JOB_TEMP }}/inventory-first", name).read_bytes()).hexdigest() == expected
+            assert hashlib.sha256(Path("/tmp/inventory-first", name).read_bytes()).hexdigest() == expected
           assert manifest["artifact_sha256"]["release_inventory.json"] == manifest["inventory_digest"]
           PY
 
       - name: Reject spoofed standard metadata without artifacts
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           bench --site test_site execute frappe.db.set_value --args '["Page","setup-wizard","title","Spoofed Setup Wizard"]'
           set +e
-          output="$(bench --site test_site build-translation-inventory --output-dir "$JOB_TEMP/inventory-spoofed" 2>&1)"
+          output="$(bench --site test_site build-translation-inventory --output-dir /tmp/inventory-spoofed 2>&1)"
           status=$?
           set -e
           printf '%s\n' "$output"
           test "$status" -ne 0
           printf '%s\n' "$output" | grep --fixed-strings "runtime metadata differs from the pinned clean-install source"
-          test ! -e "$JOB_TEMP/inventory-spoofed"
+          test ! -e /tmp/inventory-spoofed
           bench --site test_site execute frappe.db.set_value --args '["Page","setup-wizard","title","Setup Wizard"]'
 
       - name: Reject custom runtime metadata without artifacts
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           bench --site test_site execute frappe.client.insert --kwargs '{"doc":{"doctype":"Translation","language":"lt","source_text":"Inventory Custom Probe","translated_text":"Bandymas"}}'
           set +e
-          output="$(bench --site test_site build-translation-inventory --output-dir "$JOB_TEMP/inventory-custom" 2>&1)"
+          output="$(bench --site test_site build-translation-inventory --output-dir /tmp/inventory-custom 2>&1)"
           status=$?
           set -e
           printf '%s\n' "$output"
           test "$status" -ne 0
           printf '%s\n' "$output" | grep --fixed-strings "local/custom metadata"
-          test ! -e "$JOB_TEMP/inventory-custom"
+          test ! -e /tmp/inventory-custom
 
       - name: Prove mandatory install hook rejects an unprepared site and require original CSV
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         env:
           FRAPPE_LT_ORIGINAL_CSV_URL: ${{ secrets.FRAPPE_LT_ORIGINAL_CSV_URL }}
           FRAPPE_LT_ORIGINAL_CSV_PART_1: ${{ secrets.FRAPPE_LT_ORIGINAL_CSV_PART_1 }}
@@ -358,7 +333,7 @@ jobs:
             printf '%s\n' 'BLOCKED: authenticated original CSV secret is missing; install integration requires the original package.' >&2
             exit 1
           fi
-          private_dir="$(mktemp -d "$JOB_TEMP/private.XXXXXX")"
+          private_dir="$(mktemp -d)"
           package="$private_dir/lt-v16-translations.csv"
           if test -n "$FRAPPE_LT_ORIGINAL_CSV_PART_1"
           then
@@ -386,19 +361,19 @@ jobs:
           bench --site test_site set-config allow_tests true
 
       - name: Reject extra installed app without artifacts
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           set +e
-          output="$(bench --site test_site build-translation-inventory --output-dir "$JOB_TEMP/inventory-extra" 2>&1)"
+          output="$(bench --site test_site build-translation-inventory --output-dir /tmp/inventory-extra 2>&1)"
           status=$?
           set -e
           printf '%s\n' "$output"
           test "$status" -ne 0
           printf '%s\n' "$output" | grep --fixed-strings "exactly frappe and erpnext"
-          test ! -e "$JOB_TEMP/inventory-extra"
+          test ! -e /tmp/inventory-extra
 
       - name: Authenticate the production partition and run every registered candidate
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           env/bin/python - <<'PY'
           import hashlib
@@ -616,13 +591,13 @@ jobs:
           PY
 
       - name: Run integrated verification
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           bench --site test_site resume-lithuanian-install | python -c 'import json,sys; assert json.load(sys.stdin)["state"] == "verified"'
           bench --site test_site execute frappe_lt.verify.run --kwargs '{"site":"test_site","mode":"ci"}'
 
       - name: Create matched baseline site for paired translation-load measurements
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           bench new-site baseline_site --db-host 127.0.0.1 --db-root-username root --db-root-password root --admin-password admin --mariadb-user-host-login-scope='%'
           bench --site baseline_site install-app erpnext
@@ -630,13 +605,13 @@ jobs:
           test "$(bench --site baseline_site list-apps --format json | python -c 'import json,sys; print(",".join(json.load(sys.stdin)["baseline_site"]))')" = "frappe,erpnext"
 
       - name: Record paired cold and warm translation-load evidence
-        working-directory: ${{ env.BENCH_PATH }}/sites
+        working-directory: /home/runner/frappe-bench/sites
         run: |
-          ../env/bin/python -m frappe_lt.measurements baseline_site test_site "$JOB_TEMP/frappe-lt-release-measurements.json"
+          ../env/bin/python -m frappe_lt.measurements baseline_site test_site /tmp/frappe-lt-release-measurements.json
           ../env/bin/python - <<'PY'
           import json
           from pathlib import Path
-          evidence = json.loads(Path('${{ env.JOB_TEMP }}/frappe-lt-release-measurements.json').read_text())
+          evidence = json.loads(Path('/tmp/frappe-lt-release-measurements.json').read_text())
           assert len(evidence['samples']) == 80
           assert evidence['paired_warm_p95_overhead_ms'] < 50
           print('Paired warm-load p95 overhead (ms):', evidence['paired_warm_p95_overhead_ms'])
@@ -653,10 +628,10 @@ jobs:
           name: release-measurements-${{ github.run_id }}-${{ github.run_attempt }}
           if-no-files-found: warn
           retention-days: 14
-          path: ${{ env.JOB_TEMP }}/frappe-lt-release-measurements.json
+          path: /tmp/frappe-lt-release-measurements.json
 
       - name: Install second site against the same verified bench MO
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           package="$FRAPPE_LT_PACKAGE_DIR/lt-v16-translations.csv"
           mo=sites/assets/locale/lt/LC_MESSAGES/frappe_lt.mo
@@ -670,7 +645,7 @@ jobs:
           bench --site test_site resume-lithuanian-install | python -c 'import json,sys; assert json.load(sys.stdin)["state"] == "verified"'
 
       - name: Inject install faults on a fresh pinned Bench site and resume from SQL state
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           bench new-site fault_site --db-host 127.0.0.1 --db-root-username root --db-root-password root --admin-password admin --mariadb-user-host-login-scope='%'
           bench --site fault_site install-app erpnext
@@ -680,7 +655,7 @@ jobs:
           bench --site fault_site show-lithuanian-install-status | python -c 'import json,sys; s=json.load(sys.stdin); assert s["maintenance_mode"] and s["installed"] and s["migration"] == "committed" and s["mo"] == "matched" and s["profile"] == "APPLIED", s'
 
       - name: Prove wrong release MO digest fails with diagnostics
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           set +e
           output="$(bench --site test_site execute frappe_lt.verify.run --kwargs '{"site":"test_site","mode":"ci","expected_digest":"0000000000000000000000000000000000000000000000000000000000000000"}' 2>&1)"
@@ -699,7 +674,7 @@ jobs:
           bench --site test_site set-config maintenance_mode 0
 
       - name: Run site integration tests
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           bench --site test_site run-tests --app frappe_lt --module frappe_lt.tests.test_runtime
           bench --site test_site run-tests --app frappe_lt --module frappe_lt.tests.test_profile
@@ -708,7 +683,7 @@ jobs:
           test "$(bench --site test_site execute frappe.db.sql --args '["select count(*) from tabUser where name like '"'"'profile-%'"'"'"]')" = "[[0]]"
 
       - name: Emit candidate-bound existing-test evidence
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           env/bin/python - <<'PY'
           import json
@@ -741,7 +716,7 @@ jobs:
               },
               "schema_version": 2,
           }
-          Path("${{ env.JOB_TEMP }}/frappe-lt-tests.json").write_text(
+          Path("/tmp/frappe-lt-tests.json").write_text(
               json.dumps(report, ensure_ascii=False, separators=(",", ":"), sort_keys=True) + "\n"
           )
           PY
@@ -752,10 +727,10 @@ jobs:
           name: candidate-tests-${{ github.sha }}-${{ github.run_attempt }}
           if-no-files-found: error
           retention-days: 14
-          path: ${{ env.JOB_TEMP }}/frappe-lt-tests.json
+          path: /tmp/frappe-lt-tests.json
 
       - name: Prove uninstall guards remain active
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           set +e
           output="$(bench --site test_site uninstall-app frappe_lt --yes --no-backup 2>&1)"
@@ -775,7 +750,7 @@ jobs:
 
       - name: Assert all app worktrees are clean
         if: always()
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           if test -n "${FRAPPE_LT_PACKAGE_DIR:-}"; then rm -rf "$FRAPPE_LT_PACKAGE_DIR"; fi
           git -C apps/frappe status --short
@@ -785,19 +760,17 @@ jobs:
           test -z "$(git -C apps/erpnext status --porcelain)"
           test -z "$(git -C apps/frappe_lt status --porcelain)"
 
-      - name: Remove isolated job directory
-        if: always()
-        run: rm -rf -- "$JOB_TEMP"
-
   runtime-browser:
-    needs: [select-runner, verify]
-    runs-on: ${{ fromJSON(needs.select-runner.outputs.runner) }}
+    runs-on: ubuntu-24.04
     timeout-minutes: 90
     defaults:
       run:
         shell: bash --noprofile --norc -euo pipefail {0}
     env:
+      BENCH_PATH: /home/runner/frappe-bench
       CI: "Yes"
+      NODE_PATH: /home/runner/frappe-bench/apps/frappe/node_modules
+      RUNTIME_ARTIFACT_DIR: /tmp/frappe-lt-runtime-artifacts
     services:
       mariadb:
         image: mariadb@sha256:79d59758afc91b89b120b0a8904d637f5a3b3e1c4900f29b740d6d46c72fef68
@@ -806,7 +779,6 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --memory=512m
           --health-cmd="mariadb-admin ping -proot"
           --health-interval=5s
           --health-timeout=3s
@@ -816,21 +788,12 @@ jobs:
         ports:
           - 6379:6379
         options: >-
-          --memory=128m
           --health-cmd="redis-cli ping"
           --health-interval=5s
           --health-timeout=3s
           --health-retries=20
 
     steps:
-      - name: Initialize isolated job directory
-        env:
-          JOB_TEMP: ${{ runner.temp }}/frappe-lt-${{ github.run_id }}-${{ github.run_attempt }}-runtime-browser
-        run: |
-          mkdir -p "$JOB_TEMP"
-          printf 'JOB_TEMP=%s\nTMPDIR=%s\nBENCH_PATH=%s\n' "$JOB_TEMP" "$JOB_TEMP" "$JOB_TEMP/frappe-bench" >> "$GITHUB_ENV"
-          printf 'CYPRESS_CACHE_FOLDER=%s\nNODE_PATH=%s\nRUNTIME_ARTIFACT_DIR=%s\n' "$JOB_TEMP/cypress-cache" "$JOB_TEMP/frappe-bench/apps/frappe/node_modules" "$JOB_TEMP/frappe-lt-runtime-artifacts" >> "$GITHUB_ENV"
-
       - name: Check out frappe_lt
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
         with:
@@ -859,29 +822,21 @@ jobs:
           PY
 
       - name: Install bench prerequisites
-        if: runner.environment == 'github-hosted'
         run: |
           sudo apt-get update
-          sudo apt-get install --yes mariadb-client libmariadb-dev pkg-config build-essential xvfb libgtk-3-0t64 libgbm1 libnss3 libasound2t64 libxss1 libxtst6 libatk-bridge2.0-0t64
-
-      - name: Install bench tools
-        run: |
-          python -m venv "$JOB_TEMP/tools-venv"
-          printf '%s\n' "$JOB_TEMP/tools-venv/bin" >> "$GITHUB_PATH"
-          npm install --prefix "$JOB_TEMP/tools" --no-package-lock --no-save "yarn@1.22.22"
-          printf '%s\n' "$JOB_TEMP/tools/node_modules/.bin" >> "$GITHUB_PATH"
-          "$JOB_TEMP/tools-venv/bin/python" -m pip install --disable-pip-version-check "frappe-bench==5.31.0"
+          sudo apt-get install --yes mariadb-client libmariadb-dev pkg-config
+          python -m pip install --disable-pip-version-check "frappe-bench==5.31.0"
 
       - name: Fetch pinned Frappe
         run: |
-          git init "$JOB_TEMP/frappe"
-          git -C "$JOB_TEMP/frappe" remote add origin https://github.com/frappe/frappe.git
-          git -C "$JOB_TEMP/frappe" fetch --depth 1 origin "$FRAPPE_COMMIT"
-          git -C "$JOB_TEMP/frappe" checkout --detach FETCH_HEAD
-          bench init --skip-assets --skip-redis-config-generation --python "$(which python)" --frappe-path "$JOB_TEMP/frappe" "$BENCH_PATH"
+          git init /home/runner/frappe
+          git -C /home/runner/frappe remote add origin https://github.com/frappe/frappe.git
+          git -C /home/runner/frappe fetch --depth 1 origin "$FRAPPE_COMMIT"
+          git -C /home/runner/frappe checkout --detach FETCH_HEAD
+          bench init --skip-assets --skip-redis-config-generation --python "$(which python)" --frappe-path /home/runner/frappe "$BENCH_PATH"
 
       - name: Configure bench services
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           bench set-config -g db_host 127.0.0.1
           bench set-config -g redis_cache redis://127.0.0.1:6379/0
@@ -889,13 +844,13 @@ jobs:
           bench set-config -g redis_socketio redis://127.0.0.1:6379/2
 
       - name: Fetch pinned ERPNext then frappe_lt
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
-          git init "$JOB_TEMP/erpnext"
-          git -C "$JOB_TEMP/erpnext" remote add origin https://github.com/frappe/erpnext.git
-          git -C "$JOB_TEMP/erpnext" fetch --depth 1 origin "$ERPNEXT_COMMIT"
-          git -C "$JOB_TEMP/erpnext" checkout --detach FETCH_HEAD
-          bench get-app --skip-assets erpnext "$JOB_TEMP/erpnext"
+          git init /home/runner/erpnext
+          git -C /home/runner/erpnext remote add origin https://github.com/frappe/erpnext.git
+          git -C /home/runner/erpnext fetch --depth 1 origin "$ERPNEXT_COMMIT"
+          git -C /home/runner/erpnext checkout --detach FETCH_HEAD
+          bench get-app --skip-assets erpnext /home/runner/erpnext
           test "$(git -C apps/erpnext status --porcelain)" = " M banking/yarn.lock"
           git -C apps/erpnext restore --source="$ERPNEXT_COMMIT" --staged --worktree -- banking/yarn.lock
           bench get-app --skip-assets frappe_lt "$GITHUB_WORKSPACE"
@@ -904,13 +859,13 @@ jobs:
           test "$(git -C apps/erpnext rev-parse HEAD)" = "$ERPNEXT_COMMIT"
 
       - name: Create pinned Lithuanian runtime site
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           bench new-site development.localhost --db-host 127.0.0.1 --db-root-username root --db-root-password root --admin-password admin --mariadb-user-host-login-scope='%'
           bench --site development.localhost install-app erpnext
 
       - name: Compare runtime target inventory before deployment
-        working-directory: ${{ env.BENCH_PATH }}/sites
+        working-directory: /home/runner/frappe-bench/sites
         run: |
           ../env/bin/python - <<'PY'
           import frappe
@@ -927,7 +882,7 @@ jobs:
           PY
 
       - name: Prepare authenticated runtime install and configure site
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         env:
           FRAPPE_LT_ORIGINAL_CSV_URL: ${{ secrets.FRAPPE_LT_ORIGINAL_CSV_URL }}
           FRAPPE_LT_ORIGINAL_CSV_PART_1: ${{ secrets.FRAPPE_LT_ORIGINAL_CSV_PART_1 }}
@@ -954,7 +909,7 @@ jobs:
             printf '%s\n' 'BLOCKED: authenticated original CSV secret is missing; runtime install requires the original package.' >&2
             exit 1
           fi
-          private_dir="$(mktemp -d "$JOB_TEMP/private.XXXXXX")"
+          private_dir="$(mktemp -d)"
           trap 'rm -rf "$private_dir"' EXIT
           package="$private_dir/lt-v16-translations.csv"
           if test -n "$FRAPPE_LT_ORIGINAL_CSV_PART_1"
@@ -991,7 +946,7 @@ jobs:
           bench build --apps frappe,erpnext,frappe_lt
 
       - name: Export pinned runtime candidates
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           install -d -m 700 "$RUNTIME_ARTIFACT_DIR"
           python - <<'PY'
@@ -1000,18 +955,18 @@ jobs:
 
           backup_root = Path("sites/development.localhost/private/backups")
           paths = sorted(path.relative_to(backup_root).as_posix() for path in backup_root.rglob("*") if path.is_file()) if backup_root.is_dir() else []
-          Path("${{ env.JOB_TEMP }}/frappe-lt-runtime-backups-before.json").write_text(json.dumps(paths, separators=(",", ":")) + "\n")
+          Path("/tmp/frappe-lt-runtime-backups-before.json").write_text(json.dumps(paths, separators=(",", ":")) + "\n")
           PY
           bench --site development.localhost export-lithuanian-runtime-candidates --output "$RUNTIME_ARTIFACT_DIR/candidate-snapshot.json"
 
       - name: Run expanded runtime integration tests
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: bench --site development.localhost run-tests --app frappe_lt --module frappe_lt.tests.test_runtime
 
       - name: Install locked Frappe UI runner dependencies
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         env:
-          UI_RUNNER_ROOT: ${{ env.JOB_TEMP }}/frappe-lt-ui-runner
+          UI_RUNNER_ROOT: /tmp/frappe-lt-ui-runner
         run: |
           test "$(yarn --version)" = "1.22.22"
           install -d -m 700 "$UI_RUNNER_ROOT"
@@ -1033,29 +988,25 @@ jobs:
           test -z "$(git -C apps/erpnext status --porcelain)"
           test -z "$(git -C apps/frappe_lt status --porcelain)"
 
-      - name: Set up job-local Chrome
-        if: runner.environment == 'self-hosted'
-        run: bash .github/scripts/setup-local-chrome.sh
-
       - name: Print browser version and start runtime web process
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           google-chrome --version
-          bench --site development.localhost serve --port 8000 --noreload > "$JOB_TEMP/frappe-lt-runtime-web.log" 2>&1 &
-          printf '%s\n' "$!" > "$JOB_TEMP/frappe-lt-runtime-web.pid"
+          bench --site development.localhost serve --port 8000 --noreload > /tmp/frappe-lt-runtime-web.log 2>&1 &
+          printf '%s\n' "$!" > /tmp/frappe-lt-runtime-web.pid
           for attempt in {1..60}
           do
             if curl --fail --silent --show-error http://development.localhost:8000/api/method/ping > /dev/null
             then
               break
             fi
-            kill -0 "$(cat "$JOB_TEMP/frappe-lt-runtime-web.pid")"
+            kill -0 "$(cat /tmp/frappe-lt-runtime-web.pid)"
             sleep 2
           done
           curl --fail --silent --show-error http://development.localhost:8000/api/method/ping > /dev/null
 
       - name: Require a passing runtime report
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           bench --site development.localhost validate-lithuanian-runtime --output-dir "$RUNTIME_ARTIFACT_DIR/run"
           env/bin/python - <<'PY'
@@ -1065,7 +1016,7 @@ jobs:
           from frappe_lt.runtime_contracts import load_contracts
           from frappe_lt.runtime_validation import validate_machine_report
 
-          report = json.loads(Path("${{ env.JOB_TEMP }}/frappe-lt-runtime-artifacts/run/runtime-report.json").read_text())
+          report = json.loads(Path("/tmp/frappe-lt-runtime-artifacts/run/runtime-report.json").read_text())
           scenario_contract = load_contracts()["scenarios"]
           expected_ids = [scenario["id"] for scenario in scenario_contract["scenarios"]]
           validate_machine_report(report, scenario_contract)
@@ -1090,9 +1041,9 @@ jobs:
       - name: Stop runtime web process
         if: always()
         run: |
-          if test -f "$JOB_TEMP/frappe-lt-runtime-web.pid"
+          if test -f /tmp/frappe-lt-runtime-web.pid
           then
-            pid="$(cat "$JOB_TEMP/frappe-lt-runtime-web.pid")"
+            pid="$(cat /tmp/frappe-lt-runtime-web.pid)"
             if kill -0 "$pid" 2>/dev/null
             then
               kill "$pid"
@@ -1109,13 +1060,13 @@ jobs:
                 kill -KILL "$pid"
               fi
             fi
-            rm -f "$JOB_TEMP/frappe-lt-runtime-web.pid"
+            rm -f /tmp/frappe-lt-runtime-web.pid
           fi
-          rm -f "$JOB_TEMP/frappe-lt-runtime-web.log"
+          rm -f /tmp/frappe-lt-runtime-web.log
 
       - name: Assert runtime cleanup and clean worktrees
         if: always()
-        working-directory: ${{ env.BENCH_PATH }}
+        working-directory: /home/runner/frappe-bench
         run: |
           test ! -e sites/development.localhost/private/frappe_lt_runtime/journal.json
           ! compgen -G 'sites/development.localhost/private/frappe_lt_runtime/*.browser.json' > /dev/null
@@ -1123,17 +1074,17 @@ jobs:
           ! compgen -G 'sites/development.localhost/private/frappe_lt_runtime/.*.browser.json.*.tmp' > /dev/null
           ! compgen -G 'sites/development.localhost/private/frappe_lt_runtime/.*.evidence.json.*.tmp' > /dev/null
           test ! -e "$RUNTIME_ARTIFACT_DIR/run/browser-results.json"
-          bench --site development.localhost execute frappe_lt.runtime_control.assert_no_runtime_residue > "$JOB_TEMP/frappe-lt-runtime-residue.json"
+          bench --site development.localhost execute frappe_lt.runtime_control.assert_no_runtime_residue > /tmp/frappe-lt-runtime-residue.json
           python - <<'PY'
           import json
           from pathlib import Path
 
-          residue = json.loads(Path("${{ env.JOB_TEMP }}/frappe-lt-runtime-residue.json").read_text())
+          residue = json.loads(Path("/tmp/frappe-lt-runtime-residue.json").read_text())
           assert set(residue) == {"findings", "schema_version"}
           assert residue["findings"] == []
           assert type(residue["schema_version"]) is int and residue["schema_version"] == 1
           backup_root = Path("sites/development.localhost/private/backups")
-          before = json.loads(Path("${{ env.JOB_TEMP }}/frappe-lt-runtime-backups-before.json").read_text())
+          before = json.loads(Path("/tmp/frappe-lt-runtime-backups-before.json").read_text())
           after = sorted(path.relative_to(backup_root).as_posix() for path in backup_root.rglob("*") if path.is_file()) if backup_root.is_dir() else []
           assert after == before, {"before": before, "after": after}
           PY
@@ -1152,13 +1103,9 @@ jobs:
           if-no-files-found: error
           retention-days: 14
           path: |
-            ${{ env.JOB_TEMP }}/frappe-lt-runtime-artifacts/candidate-snapshot.json
-            ${{ env.JOB_TEMP }}/frappe-lt-runtime-artifacts/run/runtime-report.json
-            ${{ env.JOB_TEMP }}/frappe-lt-runtime-artifacts/run/runtime-report.md
-            ${{ env.JOB_TEMP }}/frappe-lt-runtime-artifacts/run/evidence/**/*.json
-            ${{ env.JOB_TEMP }}/frappe-lt-runtime-artifacts/run/evidence/**/*.html
-            ${{ env.JOB_TEMP }}/frappe-lt-runtime-artifacts/run/evidence/**/*.txt
-
-      - name: Remove isolated job directory
-        if: always()
-        run: rm -rf -- "$JOB_TEMP"
+            /tmp/frappe-lt-runtime-artifacts/candidate-snapshot.json
+            /tmp/frappe-lt-runtime-artifacts/run/runtime-report.json
+            /tmp/frappe-lt-runtime-artifacts/run/runtime-report.md
+            /tmp/frappe-lt-runtime-artifacts/run/evidence/**/*.json
+            /tmp/frappe-lt-runtime-artifacts/run/evidence/**/*.html
+            /tmp/frappe-lt-runtime-artifacts/run/evidence/**/*.txt

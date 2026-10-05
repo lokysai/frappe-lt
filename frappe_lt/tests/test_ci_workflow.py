@@ -19,7 +19,7 @@ class CIWorkflowTest(TestCase):
 
 	def test_all_workflow_shell_steps_parse(self):
 		for name, job in self.workflow["jobs"].items():
-			for step in job.get("steps", []):
+			for step in job["steps"]:
 				if "run" in step:
 					with self.subTest(job=name, step=step["name"]):
 						result = subprocess.run(
@@ -89,7 +89,7 @@ class CIWorkflowTest(TestCase):
 				"PREPARED_INPUTS_MISSING",
 				'if test -z "$FRAPPE_LT_ORIGINAL_CSV_URL" && test -z "$FRAPPE_LT_ORIGINAL_CSV_PART_1"',
 				"BLOCKED: authenticated original CSV secret is missing",
-				'private_dir="$(mktemp -d "$JOB_TEMP/private.XXXXXX")"',
+				'private_dir="$(mktemp -d)"',
 				'package="$private_dir/lt-v16-translations.csv"',
 				'base64.b64decode("".join(parts), validate=True)',
 				"gzip.decompress(",
@@ -103,8 +103,7 @@ class CIWorkflowTest(TestCase):
 				self.assertIn(required, run)
 			if job_name == "verify":
 				self.assertIn('printf \'FRAPPE_LT_PACKAGE_DIR=%s\\n\' "$private_dir" >> "$GITHUB_ENV"', run)
-				cleanup = next(step for step in steps if step["name"] == "Assert all app worktrees are clean")
-				self.assertIn('rm -rf "$FRAPPE_LT_PACKAGE_DIR"', cleanup["run"])
+				self.assertIn('rm -rf "$FRAPPE_LT_PACKAGE_DIR"', steps[-1]["run"])
 				verify_step = next(step for step in steps if step["name"] == "Run integrated verification")
 				self.assertIn("resume-lithuanian-install", verify_step["run"])
 				self.assertLess(
@@ -157,7 +156,7 @@ class CIWorkflowTest(TestCase):
 		self.assertIn("-m frappe_lt.measurements baseline_site test_site", measure["run"])
 		self.assertIn("paired_warm_p95_overhead_ms", measure["run"])
 		self.assertEqual(upload["if"], "always()")
-		self.assertEqual(upload["with"]["path"], "${{ env.JOB_TEMP }}/frappe-lt-release-measurements.json")
+		self.assertEqual(upload["with"]["path"], "/tmp/frappe-lt-release-measurements.json")
 		second = next(
 			step for step in steps if step["name"] == "Install second site against the same verified bench MO"
 		)
@@ -218,7 +217,7 @@ class CIWorkflowTest(TestCase):
 			upload["with"]["name"],
 			"candidate-tests-${{ github.sha }}-${{ github.run_attempt }}",
 		)
-		self.assertEqual(upload["with"]["path"], "${{ env.JOB_TEMP }}/frappe-lt-tests.json")
+		self.assertEqual(upload["with"]["path"], "/tmp/frappe-lt-tests.json")
 		self.assertEqual(upload["with"]["if-no-files-found"], "error")
 
 	def test_finance_origin_is_exercised_by_ci_without_reverting_item_provenance(self):
@@ -236,7 +235,7 @@ class CIWorkflowTest(TestCase):
 
 	def test_runtime_browser_job_is_pinned_isolated_and_fail_closed(self):
 		job = self.workflow["jobs"]["runtime-browser"]
-		self.assertEqual(job["runs-on"], "${{ fromJSON(needs.select-runner.outputs.runner) }}")
+		self.assertEqual(job["runs-on"], "ubuntu-24.04")
 		self.assertEqual(set(job["services"]), {"mariadb", "redis"})
 		steps = job["steps"]
 		commands = "\n".join(step.get("run", "") for step in steps)
@@ -382,7 +381,7 @@ class CIWorkflowTest(TestCase):
 
 	def test_actions_and_runtime_artifact_allowlist_are_exact(self):
 		for job in self.workflow["jobs"].values():
-			for step in job.get("steps", []):
+			for step in job["steps"]:
 				if action := step.get("uses"):
 					self.assertRegex(action, r"^[^@]+@[0-9a-f]{40}$")
 		upload = next(
@@ -399,70 +398,14 @@ class CIWorkflowTest(TestCase):
 		self.assertEqual(
 			paths,
 			[
-				"${{ env.JOB_TEMP }}/frappe-lt-runtime-artifacts/candidate-snapshot.json",
-				"${{ env.JOB_TEMP }}/frappe-lt-runtime-artifacts/run/runtime-report.json",
-				"${{ env.JOB_TEMP }}/frappe-lt-runtime-artifacts/run/runtime-report.md",
-				"${{ env.JOB_TEMP }}/frappe-lt-runtime-artifacts/run/evidence/**/*.json",
-				"${{ env.JOB_TEMP }}/frappe-lt-runtime-artifacts/run/evidence/**/*.html",
-				"${{ env.JOB_TEMP }}/frappe-lt-runtime-artifacts/run/evidence/**/*.txt",
+				"/tmp/frappe-lt-runtime-artifacts/candidate-snapshot.json",
+				"/tmp/frappe-lt-runtime-artifacts/run/runtime-report.json",
+				"/tmp/frappe-lt-runtime-artifacts/run/runtime-report.md",
+				"/tmp/frappe-lt-runtime-artifacts/run/evidence/**/*.json",
+				"/tmp/frappe-lt-runtime-artifacts/run/evidence/**/*.html",
+				"/tmp/frappe-lt-runtime-artifacts/run/evidence/**/*.txt",
 			],
 		)
 		self.assertFalse(
 			any(re.search(r"browser-plan|journal|cookie|credential|\.log$", path) for path in paths)
 		)
-
-	def test_runner_routing_serializes_jobs_and_isolates_host_resources(self):
-		self.assertEqual(
-			self.workflow["concurrency"],
-			{"group": "ci-${{ github.repository }}", "cancel-in-progress": "false"},
-		)
-		selector = self.workflow["jobs"]["select-runner"]
-		self.assertEqual(selector["uses"], "lokysai/CI/.github/workflows/select-runner.yml@main")
-		self.assertEqual(
-			selector["with"]["primary"],
-			'${{ vars.CI_RUNNER || \'["self-hosted","linux","lokys-shop"]\' }}',
-		)
-		self.assertEqual(selector["with"]["fallback"], "ubuntu-24.04")
-		self.assertFalse((ROOT / ".github/workflows/select-runner.yml").exists())
-		self.assertEqual(selector["secrets"], {"runner-token": "${{ secrets.CI_RUNNER_READ_TOKEN }}"})
-		self.assertEqual(self.workflow["jobs"]["verify"]["needs"], "select-runner")
-		self.assertEqual(self.workflow["jobs"]["runtime-browser"]["needs"], ["select-runner", "verify"])
-		for name in ("verify", "runtime-browser"):
-			job = self.workflow["jobs"][name]
-			self.assertEqual(job["runs-on"], "${{ fromJSON(needs.select-runner.outputs.runner) }}")
-			self.assertNotIn("container", job)
-			root = "${{ runner.temp }}/frappe-lt-${{ github.run_id }}-${{ github.run_attempt }}-" + name
-			initialize = job["steps"][0]
-			self.assertEqual(initialize["env"]["JOB_TEMP"], root)
-			self.assertIn("JOB_TEMP=%s\\nTMPDIR=%s\\nBENCH_PATH=%s\\n", initialize["run"])
-			self.assertIn('"$JOB_TEMP/frappe-bench" >> "$GITHUB_ENV"', initialize["run"])
-			self.assertIn("--memory=512m", job["services"]["mariadb"]["options"])
-			self.assertIn("--memory=128m", job["services"]["redis"]["options"])
-			for step in job["steps"]:
-				if "sudo " in step.get("run", ""):
-					self.assertEqual(step["if"], "runner.environment == 'github-hosted'")
-				if "working-directory" in step:
-					self.assertTrue(step["working-directory"].startswith("${{ env.BENCH_PATH }}"))
-			self.assertEqual(job["steps"][-1]["if"], "always()")
-			self.assertEqual(job["steps"][-1]["run"], 'rm -rf -- "$JOB_TEMP"')
-		text = WORKFLOW_PATH.read_text(encoding="utf-8")
-		self.assertNotIn("/home/runner", text)
-		self.assertNotIn("/tmp/", text)
-
-	def test_self_hosted_chrome_is_job_local_and_shell_parses(self):
-		steps = self.workflow["jobs"]["runtime-browser"]["steps"]
-		setup = next(step for step in steps if step["name"] == "Set up job-local Chrome")
-		start = next(
-			step for step in steps if step["name"] == "Print browser version and start runtime web process"
-		)
-		self.assertEqual(setup["if"], "runner.environment == 'self-hosted'")
-		self.assertLess(steps.index(setup), steps.index(start))
-		script = ROOT / ".github/scripts/setup-local-chrome.sh"
-		result = subprocess.run(["bash", "-n", str(script)], capture_output=True, text=True, check=False)
-		self.assertEqual(result.returncode, 0, result.stderr)
-		text = script.read_text(encoding="utf-8")
-		self.assertIn('chrome_root="$JOB_TEMP/chrome"', text)
-		self.assertIn("dpkg-deb --extract", text)
-		self.assertNotIn("--no-sandbox", text)
-		self.assertNotIn("sudo", text)
-		self.assertNotIn("apt-get", text)
