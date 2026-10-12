@@ -54,6 +54,18 @@ bench --site "$SITE" preflight-lithuanian-install \
   --package "$PACKAGE" > "$EVIDENCE/preflight.json"
 ```
 
+Automatic CI runs on pull requests; merging or pushing to `main` does not start CI. PR evidence must not be assumed to cover a different merged or squashed commit. If successful CI evidence for the exact `CANDIDATE_SHA` is unavailable, use the existing `workflow_dispatch` trigger on a branch or tag that resolves to that candidate:
+
+```bash
+CANDIDATE_REF=main # Or an existing candidate branch/tag pointing to CANDIDATE_SHA.
+test "$(gh api "repos/lokysai/frappe-lt/commits/$CANDIDATE_REF" --jq .sha)" = "$CANDIDATE_SHA"
+gh workflow run ci.yml --repo lokysai/frappe-lt --ref "$CANDIDATE_REF"
+gh run list --repo lokysai/frappe-lt --workflow ci.yml \
+  --event workflow_dispatch --commit "$CANDIDATE_SHA"
+```
+
+Select the new run's ID and attempt, wait for it to succeed (`gh run watch "$RUN_ID" --repo lokysai/frappe-lt --exit-status`), and check the exact SHA again using the provenance check below. If the selected ref moved before dispatch and the run has a different SHA, it cannot supply this candidate's evidence; dispatch again on a ref resolving to the candidate. A green `verify` PR check remains the merge gate, but release evidence is bound to the exact candidate commit.
+
 Download the successful GitHub CI artifact for this exact commit and attempt, verify its bounded Actions API provenance, and place its sole report at the fixed input name. Do not rename evidence from another commit; finalization re-queries the bounded GitHub Actions run API and requires repository `lokysai/frappe-lt`, workflow `.github/workflows/ci.yml`, the exact candidate SHA and attempt, and `conclusion: success` in addition to all three green categories. GitHub unavailability blocks publication:
 
 ```bash
